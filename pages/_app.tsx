@@ -1,18 +1,28 @@
-import '@mantine/core/styles.css';
-import { MantineProvider } from '@mantine/core';
-import type { AppProps } from 'next/app';
-import Head from 'next/head';
-import { theme } from '../theme';
+import "@mantine/core/styles.css";
+import "../types/global-extensions";
+import { MantineProvider } from "@mantine/core";
+import type { AppProps } from "next/app";
+import Head from "next/head";
+import { theme } from "../theme";
+import { useEffect } from "react";
+import { wsClient } from "../lib/wsClient";
 
 export default function App({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    // Initialize global WS client when app mounts (if token present)
+    try {
+      const token = typeof window !== "undefined" ? localStorage.getItem("jellystat_token") : null;
+      if (token) wsClient.init();
+    } catch {
+      // ignore localStorage issues
+    }
+  }, []);
+
   return (
     <MantineProvider theme={theme}>
       <Head>
         <title>Mantine Template</title>
-        <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
-        />
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no" />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
       <Component {...pageProps} />
