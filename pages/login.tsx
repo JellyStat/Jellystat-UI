@@ -7,31 +7,11 @@ import { wsClient } from "../lib/wsClient";
 export default function LoginPage() {
   const router = useRouter();
 
-  function isTokenExpired(token: string): boolean {
-    try {
-      const parts = token.split(".");
-      if (parts.length < 2) return true;
-      const payload = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-      const decoded = decodeURIComponent(
-        atob(payload)
-          .split("")
-          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-          .join(""),
-      );
-      const obj = JSON.parse(decoded) as { exp?: number };
-      if (!obj.exp) return false;
-      const now = Date.now() / 1000;
-      return now >= obj.exp;
-    } catch {
-      return true;
-    }
-  }
-
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
       const token = localStorage.getItem("jellystat_token");
-      if (token && !isTokenExpired(token)) {
+      if (token) {
         router.replace("/");
       }
     } catch {

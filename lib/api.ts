@@ -80,8 +80,9 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
       if (newAuth) retryHeaders["Authorization"] = newAuth;
       else delete retryHeaders["Authorization"];
       res = await fetch(url, { ...options, headers: retryHeaders });
-    } catch {
+    } catch (er) {
       // refresh failed - log out and redirect
+      console.error("Token refresh failed during apiFetch retry:", er);
       logoutAndRedirect();
     }
   }
@@ -149,8 +150,9 @@ export async function apiFetchRaw(path: string, options?: RequestInit): Promise<
       if (newAuth) retryHeaders["Authorization"] = newAuth;
       else delete retryHeaders["Authorization"];
       res = await fetch(url, { ...options, headers: retryHeaders });
-    } catch {
+    } catch (er) {
       // refresh failed - log out and redirect
+      console.error("Token refresh failed during apiFetchRaw retry:", er);
       logoutAndRedirect();
     }
   }
@@ -309,6 +311,7 @@ export const createUser = async (payload: LocalUser): Promise<void> =>
 
 // Refresh auth (no body expected)
 export const refreshToken = async (): Promise<void> => {
+  console.log("Attempting token refresh");
   const url = new URL("/Auth/Refresh", API_BASE).toString();
 
   let refresh: string | null = null;
@@ -320,6 +323,8 @@ export const refreshToken = async (): Promise<void> => {
     }
   }
 
+  console.log("Using refresh token:", refresh ? "Yes" : "No");
+
   const headers: Record<string, string> = {};
   if (refresh) headers["Authorization"] = `Bearer ${refresh}`;
 
@@ -327,11 +332,13 @@ export const refreshToken = async (): Promise<void> => {
   try {
     res = await fetch(url, { method: "GET", headers });
   } catch (err) {
+    console.error("Refresh token request failed:", err);
     logoutAndRedirect();
     throw err;
   }
 
   if (!res.ok) {
+    console.error("Refresh token request failed with status:", res.status, res.statusText);
     const text = await res.text().catch(() => "");
     logoutAndRedirect();
     throw new ApiError(text || `${res.status} ${res.statusText}`, res.status, res.statusText, text);

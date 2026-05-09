@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import type { IGridifyQuery } from "gridify-client";
 import ItemCards from "../ItemsCards/ItemCards";
 import { getRecentlyAdded } from "../../lib/api";
@@ -15,29 +15,43 @@ const RecentlyAdded: React.FC<Props> = ({ gridify, cardWidth, onItemClick, class
   const [items, setItems] = useState<ItemsWithParentData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isCancelledRef = useRef(false);
 
-  useEffect(() => {
-    let cancelled = false;
+  const fetchItems = async () => {
+    isCancelledRef.current = false;
     setLoading(true);
     setError(null);
-    getRecentlyAdded(gridify)
-      .then((res) => {
-        if (!cancelled) setItems(res?.data ?? []);
-      })
-      .catch((err: any) => {
-        if (!cancelled) setError(err?.message ?? String(err));
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+    try {
+      const res = await getRecentlyAdded(gridify);
+      if (!isCancelledRef.current) setItems(res?.data ?? []);
+    } catch (err: any) {
+      if (!isCancelledRef.current) setError(err?.message ?? String(err));
+    } finally {
+      if (!isCancelledRef.current) setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    isCancelledRef.current = false;
+    fetchItems();
     return () => {
-      cancelled = true;
+      isCancelledRef.current = true;
     };
   }, [gridify]);
 
+  const handleRefresh = () => {
+    isCancelledRef.current = false;
+    fetchItems();
+  };
+
   return (
     <div className={className}>
-      <h2>Recently Added</h2>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <h2 style={{ margin: 0 }}>Recently Added</h2>
+        <button onClick={handleRefresh} disabled={loading} style={{ marginLeft: 8 }}>
+          Refresh
+        </button>
+      </div>
       {loading && <div>Loading...</div>}
       {error && <div style={{ color: "var(--mantine-color-red, red)" }}>{error}</div>}
       {!loading && !error && <ItemCards items={items} cardWidth={cardWidth} onItemClick={onItemClick} />}
