@@ -22,6 +22,3 @@ export interface Items {
   index?: number | null;
   archived?: boolean;
 }
-
-export type { BaseMediaStream };
-export { MediaStreamType, ItemTypes };

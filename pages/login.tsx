@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { TextInput, PasswordInput, Button, Container, Title, Text, Space, Select, Loader } from "@mantine/core";
+import { TextInput, PasswordInput, Button, Container, Title, Text, Space, Select, Loader, Center } from "@mantine/core";
 import { login, getConfig } from "../lib/api";
 import { wsClient } from "../lib/wsClient";
 
@@ -105,13 +105,12 @@ export default function LoginPage() {
 
   return (
     <Container size={420} my={40}>
-      <Title order={2} align="center">
-        Sign in
-      </Title>
-      <Text color="dimmed" size="sm" align="center" mt={5}>
-        Enter your credentials to continue
-      </Text>
-
+      <Center style={{ flexDirection: "column" }}>
+        <Title order={2}>Sign in</Title>
+        <Text color="dimmed" size="sm" mt={5}>
+          Enter your credentials to continue
+        </Text>
+      </Center>
       <form onSubmit={handleSubmit}>
         <TextInput
           label="Username"
@@ -156,8 +155,7 @@ export default function LoginPage() {
                     /* ignore */
                   }
                 }}
-                searchable
-                nothingFound="No matching servers"
+                // searchable
                 mt="sm"
               />
             )}

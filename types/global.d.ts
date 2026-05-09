@@ -1,6 +1,7 @@
 declare global {
   interface Number {
-    toDurationString(): string;
+    ticksToDurationString(): string | null;
+    secondsToDurationString(): string | null;
   }
 }
 

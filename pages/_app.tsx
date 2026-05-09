@@ -4,6 +4,7 @@ import { MantineProvider } from "@mantine/core";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { theme } from "../theme";
+import SideNav from "../components/SideNav/SideNav";
 import { useEffect } from "react";
 import { wsClient } from "../lib/wsClient";
 
@@ -23,9 +24,14 @@ export default function App({ Component, pageProps }: AppProps) {
       <Head>
         <title>Mantine Template</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no" />
-        <link rel="shortcut icon" href="/favicon.svg" />
+        <link rel="shortcut icon" href="/favicon.ico" />
       </Head>
-      <Component {...pageProps} />
+      <div style={{ display: "flex", minHeight: "100vh" }}>
+        <SideNav />
+        <main style={{ flex: 1, padding: 20 }}>
+          <Component {...pageProps} />
+        </main>
+      </div>
     </MantineProvider>
   );
 }

@@ -20,12 +20,12 @@ export interface ActivityV1 {
   isPaused?: boolean;
   userId: string;
   userName: string;
-  client?: string;
-  deviceName?: string;
-  deviceId?: string;
-  applicationVersion?: string;
-  nowPlayingItemId?: string;
-  nowPlayingItemName?: string;
+  client: string;
+  deviceName: string;
+  deviceId: string;
+  applicationVersion: string;
+  nowPlayingItemId: string;
+  nowPlayingItemName: string;
   seasonId?: string | null;
   seriesName?: string | null;
   episodeId?: string | null;
