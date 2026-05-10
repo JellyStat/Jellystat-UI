@@ -65,7 +65,7 @@ export default function ItemPage() {
               <div style={{ width: 160, height: 240, borderRadius: 8, overflow: "hidden", background: "#222" }}>
                 {!errorImage ? (
                   <Image
-                    src={`${client.API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(item?.id ?? "")}&Width=600&ServerId=${encodeURIComponent(item?.serverId ?? "")}`}
+                    src={`${client.API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(item?.parent?.id ?? item?.id ?? "")}&Width=600&ServerId=${encodeURIComponent(item?.serverId ?? "")}`}
                     alt={item?.name ?? ""}
                     style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                     onError={() => {
