@@ -1,6 +1,6 @@
 import React from "react";
 import ItemCard from "./ItemCard";
-import type ItemsWithParentData from "../../lib/models/itemsWithParentData";
+import type ItemsWithParentData from "@/lib/models/itemsWithParentData";
 
 export { default as ItemCard } from "./ItemCard";
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import type { IGridifyQuery } from "gridify-client";
 import ItemCards from "../ItemsCards/ItemCards";
-import client from "../../lib/api";
-import type ItemsWithParentData from "../../lib/models/itemsWithParentData";
+import client from "@/lib/api";
+import type ItemsWithParentData from "@/lib/models/itemsWithParentData";
 
 type Props = {
   gridify?: IGridifyQuery;

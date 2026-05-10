@@ -8,7 +8,7 @@ import {
   IconMusic,
   IconVideo,
 } from "@tabler/icons-react";
-import LibraryTypes from "../models/enums/LibraryTypes";
+import LibraryTypes from "@/lib/models/enums/LibraryTypes";
 
 const LibraryTypeIcons: Record<string, any> = {
   [LibraryTypes.Series]: IconDeviceTv,

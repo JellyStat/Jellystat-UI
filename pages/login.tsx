@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { TextInput, PasswordInput, Button, Container, Title, Text, Space, Select, Loader, Center } from "@mantine/core";
-import client from "../lib/api";
-import { wsClient } from "../lib/wsClient";
+import client from "@/lib/api";
+import { wsClient } from "@/lib/wsClient";
 
 export default function LoginPage() {
   const router = useRouter();

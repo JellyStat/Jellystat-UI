@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Card, Text, Group, Stack, Badge, Center } from "@mantine/core";
-import type { LibrariesWithStats } from "../../lib/models/librariesWithStats";
-import { API_BASE } from "../../lib/api";
+import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
+import { API_BASE } from "@/lib/api";
 import { IconPhoto } from "@tabler/icons-react";
 import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
 

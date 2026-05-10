@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Card, Title, Group, Popover, Checkbox, Button, SimpleGrid, Text, Loader, ActionIcon } from "@mantine/core";
 import { IconDotsVertical } from "@tabler/icons-react";
-import client from "../../lib/api";
-import StatType from "../../lib/models/enums/StatType";
+import client from "@/lib/api";
+import StatType from "@/lib/models/enums/StatType";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 
 type Props = {

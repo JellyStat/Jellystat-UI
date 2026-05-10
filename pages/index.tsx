@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import { ColorSchemeToggle } from "../components/ColorSchemeToggle/ColorSchemeToggle";
-import { Welcome } from "../components/Welcome/Welcome";
+import { ColorSchemeToggle } from "@/components/ColorSchemeToggle/ColorSchemeToggle";
+import { Welcome } from "@/components/Welcome/Welcome";
 import RecentlyAdded from "@/components/RecentlyAdded/RecentlyAdded";
 
 export default function HomePage() {

@@ -2,7 +2,7 @@ import SystemState from "@/lib/models/enums/systemState";
 import { Button, Center, Container, Group, Stepper } from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import CreateUserPage from "./createUser";
-import client from "../../lib/api";
+import client from "@/lib/api";
 import { IconServer, IconUser } from "@tabler/icons-react";
 import SetupCompletePage from "./setupComplete";
 

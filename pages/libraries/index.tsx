@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Container, SimpleGrid, Title, Loader, Text, Center } from "@mantine/core";
-import client from "../../lib/api";
-import type { LibrariesWithStats } from "../../lib/models/librariesWithStats";
-import LibraryCard from "../../components/LibraryCard/LibraryCard";
+import client from "@/lib/api";
+import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
+import LibraryCard from "@/components/LibraryCard/LibraryCard";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 
 export default function LibrariesPage() {

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { TextInput, PasswordInput, Button, Container, Title, Text, Space, Select, Loader, Center } from "@mantine/core";
-import client from "../../lib/api";
-import { on } from "node:cluster";
+import client from "@/lib/api";
 
 type Props = { onComplete?: (result?: { username?: string }) => void };
 

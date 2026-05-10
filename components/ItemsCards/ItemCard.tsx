@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Text, Badge, Image } from "@mantine/core";
-import type { ItemsWithParentData } from "../../lib/models/itemsWithParentData";
-import { API_BASE } from "../../lib/api";
+import type { ItemsWithParentData } from "@/lib/models/itemsWithParentData";
+import { API_BASE } from "@/lib/api";
 import { useRouter } from "next/router";
 import { Blurhash } from "react-blurhash";
 

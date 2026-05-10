@@ -1,14 +1,15 @@
 import "@mantine/core/styles.css";
-import "../types/global-extensions";
+import "@/styles/globals.css";
+import "@/types/global-extensions";
 import { MantineProvider, Center, Loader, Text, Card, Button, Group, Code, Flex } from "@mantine/core";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import { theme } from "../theme";
-import SideNav from "../components/SideNav/SideNav";
+import { theme } from "@/theme";
+import SideNav from "@/components/SideNav/SideNav";
 import { useEffect, useState } from "react";
-import { wsClient } from "../lib/wsClient";
-import client from "../lib/api";
-import SystemState from "../lib/models/enums/systemState";
+import { wsClient } from "@/lib/wsClient";
+import client from "@/lib/api";
+import SystemState from "@/lib/models/enums/systemState";
 import { useRouter } from "next/router";
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -77,7 +78,7 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <Flex direction={{ base: "column", md: "row" }} style={{ minHeight: "100vh" }}>
         {showNav && <SideNav />}
-        <main style={{ flex: 1, padding: 20, minWidth: 0 }}>
+        <main style={{ flex: 1, padding: 10, minWidth: 0 }}>
           {showLoading && (
             <Center style={{ height: "100%" }}>
               <Loader />
