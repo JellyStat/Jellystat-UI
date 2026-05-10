@@ -29,6 +29,8 @@ class ApiError extends Error {
   }
 }
 
+const ServerId: string | null = typeof window !== "undefined" ? localStorage.getItem("jellystat_serverId") : null;
+
 function logoutAndRedirect(): void {
   if (typeof window === "undefined") return;
   try {
@@ -202,10 +204,20 @@ function gridifyToApiParams(grid?: IGridifyQuery | null): Record<string, any> {
   return out;
 }
 
-async function buildQuery(params?: Record<string, any>, gridify?: IGridifyQuery | null): Promise<string> {
+async function buildQuery(gridify?: IGridifyQuery | null, params?: Record<string, any>): Promise<string> {
   const fromGrid = gridifyToApiParams(gridify ?? null);
   // explicit params should override gridify-derived values
   const merged = { ...fromGrid, ...(params ?? {}) } as Record<string, any>;
+
+  // If no ServerId was provided explicitly, try to pick it up from localStorage (browser only).
+  // This allows callers to omit ServerId and rely on the user's selected server stored in localStorage.
+  if (merged.ServerId == null || merged.ServerId === "") {
+    try {
+      if (ServerId) merged.ServerId = ServerId;
+    } catch {
+      /* ignore localStorage errors */
+    }
+  }
 
   if (Object.keys(merged).length === 0) return "";
 
@@ -221,65 +233,45 @@ async function buildQuery(params?: Record<string, any>, gridify?: IGridifyQuery 
 }
 
 const getRecentlyAdded = async (gridify?: IGridifyQuery): Promise<PagingResponse<ItemsWithParentData>> => {
-  const path = `/Api/RecentlyAdded${await buildQuery(undefined, gridify)}`;
+  const path = `/Api/RecentlyAdded${await buildQuery(gridify)}`;
   return apiFetch<PagingResponse<ItemsWithParentData>>(path);
 };
 
 // Minimal typed models for common endpoints (subset of schema)
 
 // Generic list endpoints
-const getTrackedUsers = async (
-  params?: {
-    ServerId?: string;
-  },
-  gridify?: IGridifyQuery,
-): Promise<PagingResponse<TrackedUsers>> =>
-  apiFetch<PagingResponse<TrackedUsers>>(`/Api/TrackedUsers${await buildQuery(params as Record<string, any>, gridify)}`);
+const getTrackedUsers = async (gridify?: IGridifyQuery): Promise<PagingResponse<TrackedUsers>> =>
+  apiFetch<PagingResponse<TrackedUsers>>(`/Api/TrackedUsers${await buildQuery(gridify)}`);
 
 const postTrackedUsers = async (payload: TrackedUsers[]): Promise<TrackedUsers[]> =>
   apiFetch<TrackedUsers[]>("/Api/TrackedUsers", { method: "POST", body: JSON.stringify(payload) });
 
-const getTrackedLibraries = async (
-  params?: {
-    ServerId?: string;
-  },
-  gridify?: IGridifyQuery,
-): Promise<PagingResponse<TrackedLibraries>> =>
-  apiFetch<PagingResponse<TrackedLibraries>>(`/Api/TrackedLibraries${await buildQuery(params as Record<string, any>, gridify)}`);
+const getTrackedLibraries = async (gridify?: IGridifyQuery): Promise<PagingResponse<TrackedLibraries>> =>
+  apiFetch<PagingResponse<TrackedLibraries>>(`/Api/TrackedLibraries${await buildQuery(gridify)}`);
 
 const postTrackedLibraries = async (payload: TrackedLibraries[]): Promise<TrackedLibraries[]> =>
   apiFetch<TrackedLibraries[]>("/Api/TrackedLibraries", { method: "POST", body: JSON.stringify(payload) });
 
-const getUsers = async (
-  params?: {
-    ServerId?: string;
-  },
-  gridify?: IGridifyQuery,
-): Promise<PagingResponse<Users>> =>
-  apiFetch<PagingResponse<Users>>(`/Api/Users${await buildQuery(params as Record<string, any>, gridify)}`);
+const getUsers = async (gridify?: IGridifyQuery): Promise<PagingResponse<Users>> =>
+  apiFetch<PagingResponse<Users>>(`/Api/Users${await buildQuery(gridify)}`);
 
 const getLibraries = async (gridify?: IGridifyQuery): Promise<PagingResponse<LibrariesWithStats>> =>
-  apiFetch<PagingResponse<LibrariesWithStats>>(`/Api/Libraries${await buildQuery(undefined, gridify)}`);
+  apiFetch<PagingResponse<LibrariesWithStats>>(`/Api/Libraries${await buildQuery(gridify)}`);
 
-const getLibraryItems = async (
-  params?: {
-    ServerId?: string;
-  },
-  gridify?: IGridifyQuery,
-): Promise<PagingResponse<ItemsWithStats>> =>
-  apiFetch<PagingResponse<ItemsWithStats>>(`/Api/LibraryItems${await buildQuery(params as Record<string, any>, gridify)}`);
+const getLibraryItems = async (gridify?: IGridifyQuery): Promise<PagingResponse<ItemsWithStats>> =>
+  apiFetch<PagingResponse<ItemsWithStats>>(`/Api/LibraryItems${await buildQuery(gridify)}`);
 
 const startSync = async (): Promise<boolean> => apiFetch<boolean>("/Api/StartSync");
 
-const insertActivity = async (serverId: string | undefined, payload: ActivityV1[]): Promise<void> => {
-  const headers: Record<string, string> = {};
-  if (serverId) headers["ServerId"] = serverId;
-  await apiFetch<void>(`/Api/InsertActivity${serverId ? `?ServerId=${encodeURIComponent(serverId)}` : ""}`, {
-    method: "POST",
-    body: JSON.stringify(payload),
-    headers,
-  });
-};
+// const insertActivity = async (serverId: string | undefined, payload: ActivityV1[]): Promise<void> => {
+//   const headers: Record<string, string> = {};
+//   if (serverId) headers["ServerId"] = serverId;
+//   await apiFetch<void>(`/Api/InsertActivity${serverId ? `?ServerId=${encodeURIComponent(serverId)}` : ""}`, {
+//     method: "POST",
+//     body: JSON.stringify(payload),
+//     headers,
+//   });
+// };
 
 // Set a local user's default server
 const setLocalUserServer = async (payload: { userId: string; serverId: string }): Promise<void> =>
@@ -362,12 +354,8 @@ const refreshToken = async (): Promise<void> => {
 };
 
 // History
-const getHistoryActivity = async (
-  params?: {
-    ServerId?: string;
-  },
-  gridify?: IGridifyQuery,
-): Promise<PagingResponse<unknown>> => apiFetch(`/History/Activity${await buildQuery(params as Record<string, any>, gridify)}`);
+const getHistoryActivity = async (gridify?: IGridifyQuery): Promise<PagingResponse<unknown>> =>
+  apiFetch(`/History/Activity${await buildQuery(gridify)}`);
 
 const deleteHistoryActivity = async (serverId: string | undefined, ids: string[]): Promise<void> =>
   apiFetch<void>(`/History/Activity${serverId ? `?ServerId=${encodeURIComponent(serverId)}` : ""}`, {
@@ -377,25 +365,25 @@ const deleteHistoryActivity = async (serverId: string | undefined, ids: string[]
 
 // Proxy image helpers (return Blob)
 const getProxyDeviceImage = async (serverId?: string, deviceName?: string): Promise<Blob> => {
-  const path = `/Proxy/Images/Devices${await buildQuery({ DeviceName: deviceName, ServerId: serverId })}`;
+  const path = `/Proxy/Images/Devices${await buildQuery(undefined, { DeviceName: deviceName, ServerId: serverId })}`;
   const res = await apiFetchRaw(path);
   return res.blob();
 };
 
 const getItemBackdrop = async (serverId?: string, id?: string, width = 800, quality = 100, blur = 0): Promise<Blob> => {
-  const path = `/Proxy/Images/Items/Backdrop${await buildQuery({ Id: id, Width: width, Quality: quality, Blur: blur, ServerId: serverId })}`;
+  const path = `/Proxy/Images/Items/Backdrop${await buildQuery(undefined, { Id: id, Width: width, Quality: quality, Blur: blur, ServerId: serverId })}`;
   const res = await apiFetchRaw(path);
   return res.blob();
 };
 
 const getItemPrimary = async (serverId?: string, id?: string, width = 800, quality = 100, blur = 0): Promise<Blob> => {
-  const path = `/Proxy/Images/Items/Primary${await buildQuery({ Id: id, Width: width, Quality: quality, Blur: blur, ServerId: serverId })}`;
+  const path = `/Proxy/Images/Items/Primary${await buildQuery(undefined, { Id: id, Width: width, Quality: quality, Blur: blur, ServerId: serverId })}`;
   const res = await apiFetchRaw(path);
   return res.blob();
 };
 
 const getUserPrimary = async (serverId?: string, id?: string, width = 800, quality = 100, blur = 0): Promise<Blob> => {
-  const path = `/Proxy/Images/User/Primary${await buildQuery({ Id: id, Width: width, Quality: quality, Blur: blur, ServerId: serverId })}`;
+  const path = `/Proxy/Images/User/Primary${await buildQuery(undefined, { Id: id, Width: width, Quality: quality, Blur: blur, ServerId: serverId })}`;
   const res = await apiFetchRaw(path);
   return res.blob();
 };
@@ -403,61 +391,54 @@ const getUserPrimary = async (serverId?: string, id?: string, width = 800, quali
 // Stats endpoints (common pattern)
 const getItemStats = async (
   params?: {
-    ServerId?: string;
     days?: number;
   },
   gridify?: IGridifyQuery,
-) => apiFetch<PagingResponse<ItemsWithStats>>(`/Stats/ItemStats${await buildQuery(params as Record<string, any>, gridify)}`);
+) => apiFetch<PagingResponse<ItemsWithStats>>(`/Stats/ItemStats${await buildQuery(gridify, params as Record<string, any>)}`);
 
 const getMostPopularItems = async (
   params?: {
-    ServerId?: string;
     days?: number;
   },
   gridify?: IGridifyQuery,
 ) =>
-  apiFetch<PagingResponse<ItemsWithStats>>(`/Stats/MostPopularItems${await buildQuery(params as Record<string, any>, gridify)}`);
+  apiFetch<PagingResponse<ItemsWithStats>>(`/Stats/MostPopularItems${await buildQuery(gridify, params as Record<string, any>)}`);
 
 const getLibraryStats = async (
   params?: {
-    ServerId?: string;
     days?: number;
   },
   gridify?: IGridifyQuery,
 ) =>
-  apiFetch<PagingResponse<LibrariesWithStats>>(`/Stats/LibraryStats${await buildQuery(params as Record<string, any>, gridify)}`);
+  apiFetch<PagingResponse<LibrariesWithStats>>(`/Stats/LibraryStats${await buildQuery(gridify, params as Record<string, any>)}`);
 
 const getMostUsedClients = async (
   params?: {
-    ServerId?: string;
     days?: number;
   },
   gridify?: IGridifyQuery,
-) => apiFetch<PagingResponse<unknown>>(`/Stats/MostUsedClients${await buildQuery(params as Record<string, any>, gridify)}`);
+) => apiFetch<PagingResponse<unknown>>(`/Stats/MostUsedClients${await buildQuery(gridify, params as Record<string, any>)}`);
 
 const getUserStats = async (
   params?: {
-    ServerId?: string;
     days?: number;
   },
   gridify?: IGridifyQuery,
-) => apiFetch<PagingResponse<unknown>>(`/Stats/UserStats${await buildQuery(params as Record<string, any>, gridify)}`);
+) => apiFetch<PagingResponse<unknown>>(`/Stats/UserStats${await buildQuery(gridify, params as Record<string, any>)}`);
 
 const getTranscodeStats = async (
   params?: {
-    ServerId?: string;
     days?: number;
   },
   gridify?: IGridifyQuery,
-) => apiFetch<PagingResponse<unknown>>(`/Stats/TranscodeStats${await buildQuery(params as Record<string, any>, gridify)}`);
+) => apiFetch<PagingResponse<unknown>>(`/Stats/TranscodeStats${await buildQuery(gridify, params as Record<string, any>)}`);
 
 const getMostPopularTranscodes = async (
   params?: {
-    ServerId?: string;
     days?: number;
   },
   gridify?: IGridifyQuery,
-) => apiFetch<PagingResponse<unknown>>(`/Stats/MostPopularItems${await buildQuery(params as Record<string, any>, gridify)}`);
+) => apiFetch<PagingResponse<unknown>>(`/Stats/MostPopularItems${await buildQuery(gridify, params as Record<string, any>)}`);
 
 // History
 const getSystemInfo = async (): Promise<SystemInfo> => apiFetch(`/System/Info`);
@@ -472,7 +453,7 @@ export const Api = {
   getLibraries,
   getLibraryItems,
   startSync,
-  insertActivity,
+  // insertActivity,
   setLocalUserServer,
 };
 
@@ -510,6 +491,7 @@ export const System = {
 
 export default {
   API_BASE,
+  ServerId,
   // apiFetch,
   // apiFetchRaw,
   Api,

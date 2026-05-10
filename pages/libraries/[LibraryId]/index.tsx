@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Title, Loader, Text, Group, Tabs, Center } from "@mantine/core";
-import client from "../../lib/api";
-import type { LibrariesWithStats } from "../../lib/models/librariesWithStats";
+import client from "@/lib/api";
+import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
 import { IconPhoto } from "@tabler/icons-react";
@@ -10,7 +10,7 @@ import LibraryOverView from "./overview";
 
 export default function LibraryPage() {
   const router = useRouter();
-  const { id } = router.query;
+  const { LibraryId } = router.query;
 
   const [lib, setLib] = useState<LibrariesWithStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -20,13 +20,13 @@ export default function LibraryPage() {
   useEffect(() => {
     let mounted = true;
     async function load() {
-      if (!id || Array.isArray(id)) return;
+      if (!LibraryId || Array.isArray(LibraryId)) return;
       setLoading(true);
       setError(null);
       try {
         // Load libraries and find the matching one
         const libsRes = await client.Api.getLibraries(new GridifyQueryBuilder().addOrderBy("name").build());
-        const found = libsRes?.data?.find((l) => l.id === id) ?? null;
+        const found = libsRes?.data?.find((l) => l.id === LibraryId) ?? null;
         if (!mounted) return;
         setLib(found);
 
@@ -44,9 +44,9 @@ export default function LibraryPage() {
     return () => {
       mounted = false;
     };
-  }, [id]);
+  }, [LibraryId]);
 
-  if (!id || Array.isArray(id)) return null;
+  if (!LibraryId || Array.isArray(LibraryId)) return null;
 
   return (
     <div style={{ padding: 20 }}>
@@ -81,7 +81,7 @@ export default function LibraryPage() {
               </div>
 
               <div>
-                <Title order={2}>{lib?.name ?? id}</Title>
+                <Title order={2}>{lib?.name ?? LibraryId}</Title>
                 <Text color="dimmed">{lib ? lib.type : "Library"}</Text>
               </div>
             </Group>

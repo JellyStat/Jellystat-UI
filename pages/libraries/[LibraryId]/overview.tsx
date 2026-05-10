@@ -1,5 +1,5 @@
 import { Title, Text, Card } from "@mantine/core";
-import type { LibrariesWithStats } from "../../lib/models/librariesWithStats";
+import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import RecentlyAdded from "@/components/RecentlyAdded/RecentlyAdded";
 import StatsCard from "@/components/StatsCard/StatsCard";
@@ -17,7 +17,7 @@ export default function LibraryOverView({ library }: Props) {
   return (
     <div style={{ padding: 20 }}>
       <div style={{ marginTop: 16 }}>
-        <StatsCard type={StatType.Library} serverId={library?.serverId} id={library?.id ?? ""} />
+        <StatsCard type={StatType.Library} id={library?.id ?? ""} />
       </div>
 
       <div style={{ marginTop: 20 }}>
@@ -51,7 +51,6 @@ export default function LibraryOverView({ library }: Props) {
             .addCondition("LatestActivityDate", op.NotEqual, "null")
             .addOrderBy("LatestActivityDate", true)
             .build()}
-          serverId={library.serverId}
         />
       </div>
     </div>

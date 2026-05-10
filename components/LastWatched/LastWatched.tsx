@@ -6,13 +6,11 @@ import ActivityItemCards from "../ActivityItemsCards/ActivityItemCards";
 
 type Props = {
   gridify?: IGridifyQuery;
-  serverId?: string;
   cardWidth?: number | string;
-  onItemClick?: (item: ItemsWithStats) => void;
   className?: string;
 };
 
-const LastWatched: React.FC<Props> = ({ gridify, serverId, cardWidth, onItemClick, className }) => {
+const LastWatched: React.FC<Props> = ({ gridify, cardWidth, className }) => {
   const [items, setItems] = useState<ItemsWithStats[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +21,7 @@ const LastWatched: React.FC<Props> = ({ gridify, serverId, cardWidth, onItemClic
     setLoading(true);
     setError(null);
     try {
-      const res = await client.Api.getLibraryItems({ ServerId: serverId }, gridify);
+      const res = await client.Api.getLibraryItems(gridify);
       if (!isCancelledRef.current) setItems(res?.data ?? []);
     } catch (err: any) {
       if (!isCancelledRef.current) setError(err?.message ?? String(err));
@@ -55,7 +53,7 @@ const LastWatched: React.FC<Props> = ({ gridify, serverId, cardWidth, onItemClic
       </div>
       {loading && <div>Loading...</div>}
       {error && <div style={{ color: "var(--mantine-color-red, red)" }}>{error}</div>}
-      {!loading && !error && <ActivityItemCards items={items} cardWidth={cardWidth} onItemClick={onItemClick} />}
+      {!loading && !error && <ActivityItemCards items={items} cardWidth={cardWidth} />}
     </div>
   );
 };

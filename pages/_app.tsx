@@ -1,6 +1,6 @@
 import "@mantine/core/styles.css";
 import "../types/global-extensions";
-import { MantineProvider, Center, Loader, Text, Card, Button, Group, Code } from "@mantine/core";
+import { MantineProvider, Center, Loader, Text, Card, Button, Group, Code, Flex } from "@mantine/core";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { theme } from "../theme";
@@ -50,16 +50,10 @@ export default function App({ Component, pageProps }: AppProps) {
       else setLoading(false);
     } catch (err: any) {
       let msg = err?.message ?? String(err ?? "Unknown error");
-      if (err instanceof client.ApiError) {
-        msg = `${err.message} (${err.status} ${err.statusText})`;
-        if (err.raw) msg += `\n\n${err.raw}`;
-      } else if (err && typeof err === "object") {
-        try {
-          msg = JSON.stringify(err, null, 2);
-        } catch {
-          /* ignore stringify errors */
-        }
-      }
+      // if (err instanceof client.ApiError) {
+      //   msg = `${err.message} (${err.status} ${err.statusText})`;
+      //   if (err.raw) msg += `\n\n${err.raw}`;
+      // }
       setError(msg);
       if (isRetry) setRetrying(false);
       else setLoading(false);
@@ -81,9 +75,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no" />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
-      <div style={{ display: "flex", minHeight: "100vh" }}>
+      <Flex direction={{ base: "column", md: "row" }} style={{ minHeight: "100vh" }}>
         {showNav && <SideNav />}
-        <main style={{ flex: 1, padding: 20 }}>
+        <main style={{ flex: 1, padding: 20, minWidth: 0 }}>
           {showLoading && (
             <Center style={{ height: "100%" }}>
               <Loader />
@@ -113,7 +107,7 @@ export default function App({ Component, pageProps }: AppProps) {
           )}
           {!showLoading && !showError && <Component {...pageProps} />}
         </main>
-      </div>
+      </Flex>
     </MantineProvider>
   );
 }

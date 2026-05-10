@@ -7,7 +7,6 @@ import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 
 type Props = {
   type: StatType;
-  serverId?: string;
   id: string;
 };
 
@@ -20,7 +19,7 @@ const PERIODS: Array<{ key: string; label: string; days: number }> = [
   { key: "0", label: "All Time", days: 0 },
 ];
 
-export default function StatsCard({ type, serverId, id }: Props) {
+export default function StatsCard({ type, id }: Props) {
   const title = (() => {
     switch (type) {
       case StatType.Library:
@@ -52,20 +51,10 @@ export default function StatsCard({ type, serverId, id }: Props) {
       try {
         let res: any = null;
         if (type === StatType.Library)
-          res = await client.Stats.getLibraryStats(
-            { ServerId: serverId, days },
-            new GridifyQueryBuilder().addCondition("Id", op.Equal, id).build(),
-          );
+          res = await client.Stats.getLibraryStats({ days }, new GridifyQueryBuilder().addCondition("Id", op.Equal, id).build());
         else if (type === StatType.Item)
-          res = await client.Stats.getItemStats(
-            { ServerId: serverId, days },
-            new GridifyQueryBuilder().addCondition("Id", op.Equal, id).build(),
-          );
-        else
-          res = await client.Stats.getUserStats(
-            { ServerId: serverId, days },
-            new GridifyQueryBuilder().addCondition("Id", op.Equal, id).build(),
-          );
+          res = await client.Stats.getItemStats({ days }, new GridifyQueryBuilder().addCondition("Id", op.Equal, id).build());
+        else res = await client.Stats.getUserStats({ days }, new GridifyQueryBuilder().addCondition("Id", op.Equal, id).build());
 
         // aggregate
         const arr = res?.data ?? [];
@@ -98,7 +87,7 @@ export default function StatsCard({ type, serverId, id }: Props) {
     return () => {
       mounted = false;
     };
-  }, [selected, serverId, type]);
+  }, [selected, type]);
 
   function toggleDays(days: number) {
     setSelected((prev) => {

@@ -5,11 +5,10 @@ import { ItemsWithStats } from "@/lib/models/itemsWithStats";
 type Props = {
   items: ItemsWithStats[];
   cardWidth?: number | string;
-  onItemClick?: (item: ItemsWithStats) => void;
   className?: string;
 };
 
-export const ActivityItemCards: React.FC<Props> = ({ items, cardWidth = 160, onItemClick, className }) => {
+export const ActivityItemCards: React.FC<Props> = ({ items, cardWidth = 160, className }) => {
   return (
     <div
       className={className}
@@ -25,7 +24,7 @@ export const ActivityItemCards: React.FC<Props> = ({ items, cardWidth = 160, onI
     >
       {items.map((it) => (
         <div key={`${it.serverId || ""}-${it.id}`} style={{ flex: "0 0 auto", display: "flex", alignItems: "stretch" }}>
-          <ActivityItemCard item={it} width={cardWidth} onClick={() => onItemClick?.(it)} />
+          <ActivityItemCard item={it} width={cardWidth} />
         </div>
       ))}
     </div>

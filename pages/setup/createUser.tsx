@@ -54,8 +54,7 @@ export default function CreateUserPage({ onComplete }: Props) {
         setLoading(false);
         return;
       }
-
-      //   await client.Auth.createUser({ username, password });
+      await client.Auth.createUser({ username, password });
       onComplete?.({ username });
     } catch (err: any) {
       setError(err?.message ?? "Login failed");
