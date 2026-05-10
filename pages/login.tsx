@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { TextInput, PasswordInput, Button, Container, Title, Text, Space, Select, Loader, Center } from "@mantine/core";
-import { login, getConfig } from "../lib/api";
+import client from "../lib/api";
 import { wsClient } from "../lib/wsClient";
 
 export default function LoginPage() {
@@ -60,7 +60,7 @@ export default function LoginPage() {
       }
 
       const serverId = selectedServer ?? undefined;
-      await login({ username, password, serverId });
+      await client.Auth.login({ username, password, serverId });
       try {
         wsClient.init();
       } catch {
@@ -78,7 +78,7 @@ export default function LoginPage() {
     setLoadingServers(true);
     setServerError(null);
     try {
-      const list = await getConfig();
+      const list = await client.Auth.getConfig();
       const opts = (list ?? []).map((s: any) => ({ value: s.id, label: `${s.type} - ${s.name}` }));
       setServerOptions(opts);
     } catch (err: any) {

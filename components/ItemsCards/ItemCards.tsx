@@ -22,6 +22,7 @@ export const ItemCards: React.FC<Props> = ({ items, cardWidth = 160, onItemClick
         padding: 8,
         WebkitOverflowScrolling: "touch",
         alignItems: "stretch",
+        maxWidth: "100%",
       }}
     >
       {items.map((it) => (

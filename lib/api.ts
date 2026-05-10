@@ -11,10 +11,11 @@ import type { ActivityV1 } from "./models/activityV1";
 import type { LoginModel } from "./models/loginModel";
 import type { LocalUser } from "./models/localUser";
 import ItemsWithParentData from "./models/itemsWithParentData";
+import { SystemInfo } from "./models/systemInfo";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5020/";
 
-export class ApiError extends Error {
+class ApiError extends Error {
   status: number;
   statusText: string;
   raw?: string;
@@ -43,7 +44,7 @@ function logoutAndRedirect(): void {
   }
 }
 
-export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const url = new URL(path, API_BASE).toString();
   // Include stored auth token (when available in browser) and allow callers to override headers
   let authHeader: string | undefined;
@@ -114,7 +115,7 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
 }
 
 // raw fetch for binary/image endpoints and where we must control headers
-export async function apiFetchRaw(path: string, options?: RequestInit): Promise<Response> {
+async function apiFetchRaw(path: string, options?: RequestInit): Promise<Response> {
   const url = new URL(path, API_BASE).toString();
   // For raw fetches (images/binaries) also include Authorization when available
   let authHeader: string | undefined;
@@ -176,10 +177,10 @@ export async function apiFetchRaw(path: string, options?: RequestInit): Promise<
 // Model interfaces moved to individual files under ./models/
 
 // Updated per OpenAPI: server list is returned from Auth/Config
-export const getConfig = async (): Promise<Server[]> => apiFetch<Server[]>("/Auth/Config");
+const getConfig = async (): Promise<Server[]> => apiFetch<Server[]>("/Auth/Config");
 
 // Updated per OpenAPI: use /Api/UpdateConfig to add/update a server
-export const addServer = async (payload: AddServer): Promise<Server> =>
+const addServer = async (payload: AddServer): Promise<Server> =>
   apiFetch<Server>("/Api/UpdateConfig", { method: "POST", body: JSON.stringify(payload) });
 
 // Convert an IGridifyQuery into API query params using the server's expected keys
@@ -201,7 +202,7 @@ function gridifyToApiParams(grid?: IGridifyQuery | null): Record<string, any> {
   return out;
 }
 
-export async function buildQuery(params?: Record<string, any>, gridify?: IGridifyQuery | null): Promise<string> {
+async function buildQuery(params?: Record<string, any>, gridify?: IGridifyQuery | null): Promise<string> {
   const fromGrid = gridifyToApiParams(gridify ?? null);
   // explicit params should override gridify-derived values
   const merged = { ...fromGrid, ...(params ?? {}) } as Record<string, any>;
@@ -219,7 +220,7 @@ export async function buildQuery(params?: Record<string, any>, gridify?: IGridif
   return out ? `?${out}` : "";
 }
 
-export const getRecentlyAdded = async (gridify?: IGridifyQuery): Promise<PagingResponse<ItemsWithParentData>> => {
+const getRecentlyAdded = async (gridify?: IGridifyQuery): Promise<PagingResponse<ItemsWithParentData>> => {
   const path = `/Api/RecentlyAdded${await buildQuery(undefined, gridify)}`;
   return apiFetch<PagingResponse<ItemsWithParentData>>(path);
 };
@@ -227,7 +228,7 @@ export const getRecentlyAdded = async (gridify?: IGridifyQuery): Promise<PagingR
 // Minimal typed models for common endpoints (subset of schema)
 
 // Generic list endpoints
-export const getTrackedUsers = async (
+const getTrackedUsers = async (
   params?: {
     ServerId?: string;
   },
@@ -235,10 +236,10 @@ export const getTrackedUsers = async (
 ): Promise<PagingResponse<TrackedUsers>> =>
   apiFetch<PagingResponse<TrackedUsers>>(`/Api/TrackedUsers${await buildQuery(params as Record<string, any>, gridify)}`);
 
-export const postTrackedUsers = async (payload: TrackedUsers[]): Promise<TrackedUsers[]> =>
+const postTrackedUsers = async (payload: TrackedUsers[]): Promise<TrackedUsers[]> =>
   apiFetch<TrackedUsers[]>("/Api/TrackedUsers", { method: "POST", body: JSON.stringify(payload) });
 
-export const getTrackedLibraries = async (
+const getTrackedLibraries = async (
   params?: {
     ServerId?: string;
   },
@@ -246,10 +247,10 @@ export const getTrackedLibraries = async (
 ): Promise<PagingResponse<TrackedLibraries>> =>
   apiFetch<PagingResponse<TrackedLibraries>>(`/Api/TrackedLibraries${await buildQuery(params as Record<string, any>, gridify)}`);
 
-export const postTrackedLibraries = async (payload: TrackedLibraries[]): Promise<TrackedLibraries[]> =>
+const postTrackedLibraries = async (payload: TrackedLibraries[]): Promise<TrackedLibraries[]> =>
   apiFetch<TrackedLibraries[]>("/Api/TrackedLibraries", { method: "POST", body: JSON.stringify(payload) });
 
-export const getUsers = async (
+const getUsers = async (
   params?: {
     ServerId?: string;
   },
@@ -257,10 +258,10 @@ export const getUsers = async (
 ): Promise<PagingResponse<Users>> =>
   apiFetch<PagingResponse<Users>>(`/Api/Users${await buildQuery(params as Record<string, any>, gridify)}`);
 
-export const getLibraries = async (gridify?: IGridifyQuery): Promise<PagingResponse<LibrariesWithStats>> =>
+const getLibraries = async (gridify?: IGridifyQuery): Promise<PagingResponse<LibrariesWithStats>> =>
   apiFetch<PagingResponse<LibrariesWithStats>>(`/Api/Libraries${await buildQuery(undefined, gridify)}`);
 
-export const getLibraryItems = async (
+const getLibraryItems = async (
   params?: {
     ServerId?: string;
   },
@@ -268,9 +269,9 @@ export const getLibraryItems = async (
 ): Promise<PagingResponse<ItemsWithStats>> =>
   apiFetch<PagingResponse<ItemsWithStats>>(`/Api/LibraryItems${await buildQuery(params as Record<string, any>, gridify)}`);
 
-export const startSync = async (): Promise<boolean> => apiFetch<boolean>("/Api/StartSync");
+const startSync = async (): Promise<boolean> => apiFetch<boolean>("/Api/StartSync");
 
-export const insertActivity = async (serverId: string | undefined, payload: ActivityV1[]): Promise<void> => {
+const insertActivity = async (serverId: string | undefined, payload: ActivityV1[]): Promise<void> => {
   const headers: Record<string, string> = {};
   if (serverId) headers["ServerId"] = serverId;
   await apiFetch<void>(`/Api/InsertActivity${serverId ? `?ServerId=${encodeURIComponent(serverId)}` : ""}`, {
@@ -281,13 +282,13 @@ export const insertActivity = async (serverId: string | undefined, payload: Acti
 };
 
 // Set a local user's default server
-export const setLocalUserServer = async (payload: { userId: string; serverId: string }): Promise<void> =>
+const setLocalUserServer = async (payload: { userId: string; serverId: string }): Promise<void> =>
   apiFetch<void>("/Api/SetLocalUserServer", { method: "POST", body: JSON.stringify(payload) });
 
 // Auth
 // Interface/type definitions have been moved to ./models/
 
-export const login = async (payload: LoginModel): Promise<void> => {
+const login = async (payload: LoginModel): Promise<void> => {
   const result = await apiFetch<{ token: string; refreshToken?: string }>("/Auth/Login", {
     method: "POST",
     body: JSON.stringify(payload),
@@ -303,14 +304,14 @@ export const login = async (payload: LoginModel): Promise<void> => {
   }
 };
 
-export const updateUser = async (payload: LocalUser): Promise<void> =>
+const updateUser = async (payload: LocalUser): Promise<void> =>
   apiFetch<void>("/Auth/UpdateUser", { method: "POST", body: JSON.stringify(payload) });
 
-export const createUser = async (payload: LocalUser): Promise<void> =>
+const createUser = async (payload: LocalUser): Promise<void> =>
   apiFetch<void>("/Auth/CreateUser", { method: "POST", body: JSON.stringify(payload) });
 
 // Refresh auth (no body expected)
-export const refreshToken = async (): Promise<void> => {
+const refreshToken = async (): Promise<void> => {
   console.log("Attempting token refresh");
   const url = new URL("/Auth/Refresh", API_BASE).toString();
 
@@ -361,46 +362,46 @@ export const refreshToken = async (): Promise<void> => {
 };
 
 // History
-export const getHistoryActivity = async (
+const getHistoryActivity = async (
   params?: {
     ServerId?: string;
   },
   gridify?: IGridifyQuery,
 ): Promise<PagingResponse<unknown>> => apiFetch(`/History/Activity${await buildQuery(params as Record<string, any>, gridify)}`);
 
-export const deleteHistoryActivity = async (serverId: string | undefined, ids: string[]): Promise<void> =>
+const deleteHistoryActivity = async (serverId: string | undefined, ids: string[]): Promise<void> =>
   apiFetch<void>(`/History/Activity${serverId ? `?ServerId=${encodeURIComponent(serverId)}` : ""}`, {
     method: "DELETE",
     body: JSON.stringify(ids),
   });
 
 // Proxy image helpers (return Blob)
-export const getProxyDeviceImage = async (serverId?: string, deviceName?: string): Promise<Blob> => {
+const getProxyDeviceImage = async (serverId?: string, deviceName?: string): Promise<Blob> => {
   const path = `/Proxy/Images/Devices${await buildQuery({ DeviceName: deviceName, ServerId: serverId })}`;
   const res = await apiFetchRaw(path);
   return res.blob();
 };
 
-export const getItemBackdrop = async (serverId?: string, id?: string, width = 800, quality = 100, blur = 0): Promise<Blob> => {
+const getItemBackdrop = async (serverId?: string, id?: string, width = 800, quality = 100, blur = 0): Promise<Blob> => {
   const path = `/Proxy/Images/Items/Backdrop${await buildQuery({ Id: id, Width: width, Quality: quality, Blur: blur, ServerId: serverId })}`;
   const res = await apiFetchRaw(path);
   return res.blob();
 };
 
-export const getItemPrimary = async (serverId?: string, id?: string, width = 800, quality = 100, blur = 0): Promise<Blob> => {
+const getItemPrimary = async (serverId?: string, id?: string, width = 800, quality = 100, blur = 0): Promise<Blob> => {
   const path = `/Proxy/Images/Items/Primary${await buildQuery({ Id: id, Width: width, Quality: quality, Blur: blur, ServerId: serverId })}`;
   const res = await apiFetchRaw(path);
   return res.blob();
 };
 
-export const getUserPrimary = async (serverId?: string, id?: string, width = 800, quality = 100, blur = 0): Promise<Blob> => {
+const getUserPrimary = async (serverId?: string, id?: string, width = 800, quality = 100, blur = 0): Promise<Blob> => {
   const path = `/Proxy/Images/User/Primary${await buildQuery({ Id: id, Width: width, Quality: quality, Blur: blur, ServerId: serverId })}`;
   const res = await apiFetchRaw(path);
   return res.blob();
 };
 
 // Stats endpoints (common pattern)
-export const getItemStats = async (
+const getItemStats = async (
   params?: {
     ServerId?: string;
     days?: number;
@@ -408,7 +409,7 @@ export const getItemStats = async (
   gridify?: IGridifyQuery,
 ) => apiFetch<PagingResponse<ItemsWithStats>>(`/Stats/ItemStats${await buildQuery(params as Record<string, any>, gridify)}`);
 
-export const getMostPopularItems = async (
+const getMostPopularItems = async (
   params?: {
     ServerId?: string;
     days?: number;
@@ -417,7 +418,7 @@ export const getMostPopularItems = async (
 ) =>
   apiFetch<PagingResponse<ItemsWithStats>>(`/Stats/MostPopularItems${await buildQuery(params as Record<string, any>, gridify)}`);
 
-export const getLibraryStats = async (
+const getLibraryStats = async (
   params?: {
     ServerId?: string;
     days?: number;
@@ -426,7 +427,7 @@ export const getLibraryStats = async (
 ) =>
   apiFetch<PagingResponse<LibrariesWithStats>>(`/Stats/LibraryStats${await buildQuery(params as Record<string, any>, gridify)}`);
 
-export const getMostUsedClients = async (
+const getMostUsedClients = async (
   params?: {
     ServerId?: string;
     days?: number;
@@ -434,7 +435,7 @@ export const getMostUsedClients = async (
   gridify?: IGridifyQuery,
 ) => apiFetch<PagingResponse<unknown>>(`/Stats/MostUsedClients${await buildQuery(params as Record<string, any>, gridify)}`);
 
-export const getUserStats = async (
+const getUserStats = async (
   params?: {
     ServerId?: string;
     days?: number;
@@ -442,7 +443,7 @@ export const getUserStats = async (
   gridify?: IGridifyQuery,
 ) => apiFetch<PagingResponse<unknown>>(`/Stats/UserStats${await buildQuery(params as Record<string, any>, gridify)}`);
 
-export const getTranscodeStats = async (
+const getTranscodeStats = async (
   params?: {
     ServerId?: string;
     days?: number;
@@ -450,36 +451,39 @@ export const getTranscodeStats = async (
   gridify?: IGridifyQuery,
 ) => apiFetch<PagingResponse<unknown>>(`/Stats/TranscodeStats${await buildQuery(params as Record<string, any>, gridify)}`);
 
-export const getMostPopularTranscodes = async (
+const getMostPopularTranscodes = async (
   params?: {
     ServerId?: string;
     days?: number;
   },
   gridify?: IGridifyQuery,
 ) => apiFetch<PagingResponse<unknown>>(`/Stats/MostPopularItems${await buildQuery(params as Record<string, any>, gridify)}`);
+
+// History
+const getSystemInfo = async (): Promise<SystemInfo> => apiFetch(`/System/Info`);
+
 // Grouped exports by parent path
 export const Api = {
-  getConfig,
   addServer,
   getRecentlyAdded,
   trackedUsers: { get: getTrackedUsers, post: postTrackedUsers },
   trackedLibraries: { get: getTrackedLibraries, post: postTrackedLibraries },
-  users: getUsers,
-  libraries: getLibraries,
-  libraryItems: getLibraryItems,
+  getUsers,
+  getLibraries,
+  getLibraryItems,
   startSync,
   insertActivity,
   setLocalUserServer,
 };
 
 export const Stats = {
-  itemStats: getItemStats,
-  mostPopularItems: getMostPopularItems,
-  libraryStats: getLibraryStats,
-  mostUsedClients: getMostUsedClients,
-  userStats: getUserStats,
-  transcodeStats: getTranscodeStats,
-  mostPopularTranscodes: getMostPopularTranscodes,
+  getItemStats,
+  getMostPopularItems,
+  getLibraryStats,
+  getMostUsedClients,
+  getUserStats,
+  getTranscodeStats,
+  getMostPopularTranscodes,
 };
 
 export const History = {
@@ -488,28 +492,33 @@ export const History = {
 
 export const Auth = {
   login,
+  getConfig,
   updateUser,
   createUser,
   refreshToken,
 };
 
 export const Proxy = {
-  images: {
-    devices: getProxyDeviceImage,
-    items: { backdrop: getItemBackdrop, primary: getItemPrimary },
-    user: { primary: getUserPrimary },
-  },
+  devices: getProxyDeviceImage,
+  items: { getItemBackdrop, getItemPrimary },
+  user: { getUserPrimary },
+};
+
+export const System = {
+  getSystemInfo,
 };
 
 export default {
   API_BASE,
-  apiFetch,
-  apiFetchRaw,
+  // apiFetch,
+  // apiFetchRaw,
   Api,
   Stats,
   History,
   Auth,
   Proxy,
+  System,
+  ApiError,
   // keep individual exports for backward compatibility
   //   getConfig,
   //   addServer,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import type { IGridifyQuery } from "gridify-client";
-import { getLibraryItems, getRecentlyAdded } from "../../lib/api";
+import client from "../../lib/api";
 import { ItemsWithStats } from "../../lib/models/itemsWithStats";
 import ActivityItemCards from "../ActivityItemsCards/ActivityItemCards";
 
@@ -23,7 +23,7 @@ const LastWatched: React.FC<Props> = ({ gridify, serverId, cardWidth, onItemClic
     setLoading(true);
     setError(null);
     try {
-      const res = await getLibraryItems({ ServerId: serverId }, gridify);
+      const res = await client.Api.getLibraryItems({ ServerId: serverId }, gridify);
       if (!isCancelledRef.current) setItems(res?.data ?? []);
     } catch (err: any) {
       if (!isCancelledRef.current) setError(err?.message ?? String(err));

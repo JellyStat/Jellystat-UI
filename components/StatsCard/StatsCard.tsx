@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Card, Title, Group, Popover, Checkbox, Button, SimpleGrid, Text, Loader, ActionIcon } from "@mantine/core";
 import { IconDotsVertical } from "@tabler/icons-react";
-import { getLibraryStats, getItemStats, getUserStats } from "../../lib/api";
+import client from "../../lib/api";
 import StatType from "../../lib/models/enums/StatType";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 
@@ -52,17 +52,17 @@ export default function StatsCard({ type, serverId, id }: Props) {
       try {
         let res: any = null;
         if (type === StatType.Library)
-          res = await getLibraryStats(
+          res = await client.Stats.getLibraryStats(
             { ServerId: serverId, days },
             new GridifyQueryBuilder().addCondition("Id", op.Equal, id).build(),
           );
         else if (type === StatType.Item)
-          res = await getItemStats(
+          res = await client.Stats.getItemStats(
             { ServerId: serverId, days },
             new GridifyQueryBuilder().addCondition("Id", op.Equal, id).build(),
           );
         else
-          res = await getUserStats(
+          res = await client.Stats.getUserStats(
             { ServerId: serverId, days },
             new GridifyQueryBuilder().addCondition("Id", op.Equal, id).build(),
           );

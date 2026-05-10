@@ -1,17 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { Container, Title, Loader, Text, Group, Tabs, Card, SimpleGrid } from "@mantine/core";
-import { getLibraries, getLibraryItems, API_BASE } from "../../lib/api";
+import { Title, Text, Card } from "@mantine/core";
 import type { LibrariesWithStats } from "../../lib/models/librariesWithStats";
-import type { ItemsWithParentData } from "../../lib/models/itemsWithParentData";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
-import ItemCards from "../../components/ItemsCards/ItemCards";
 import RecentlyAdded from "@/components/RecentlyAdded/RecentlyAdded";
-import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
-import { IconPhoto } from "@tabler/icons-react";
 import StatsCard from "@/components/StatsCard/StatsCard";
 import StatType from "@/lib/models/enums/StatType";
 import LastWatched from "@/components/LastWatched/LastWatched";
+import ItemTypes from "@/lib/models/enums/ItemTypes";
 
 type Props = {
   library: LibrariesWithStats | null;
@@ -34,13 +28,25 @@ export default function LibraryOverView({ library }: Props) {
       </div>
 
       <div style={{ marginTop: 20 }}>
-        <RecentlyAdded gridify={new GridifyQueryBuilder().addCondition("LibraryId", op.Equal, library.id).build()} />
+        <RecentlyAdded
+          gridify={new GridifyQueryBuilder()
+            .addCondition("LibraryId", op.Equal, library.id)
+            .and()
+            .addCondition("Type", op.NotEqual, ItemTypes.Season.toString())
+            .and()
+            .addCondition("Type", op.NotEqual, ItemTypes.Series.toString())
+            .build()}
+        />
       </div>
 
       <div style={{ marginTop: 20 }}>
         <LastWatched
           gridify={new GridifyQueryBuilder()
             .addCondition("LibraryId", op.Equal, library.id)
+            .and()
+            .addCondition("Type", op.NotEqual, ItemTypes.Season.toString())
+            .and()
+            .addCondition("Type", op.NotEqual, ItemTypes.Series.toString())
             .and()
             .addCondition("LatestActivityDate", op.NotEqual, "null")
             .addOrderBy("LatestActivityDate", true)

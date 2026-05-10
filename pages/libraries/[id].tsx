@@ -1,17 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Container, Title, Loader, Text, Group, Tabs, Card, SimpleGrid, Center } from "@mantine/core";
-import { getLibraries, getLibraryItems, API_BASE } from "../../lib/api";
+import { Title, Loader, Text, Group, Tabs, Center } from "@mantine/core";
+import client from "../../lib/api";
 import type { LibrariesWithStats } from "../../lib/models/librariesWithStats";
-import type { ItemsWithParentData } from "../../lib/models/itemsWithParentData";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
-import ItemCards from "../../components/ItemsCards/ItemCards";
-import RecentlyAdded from "@/components/RecentlyAdded/RecentlyAdded";
 import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
 import { IconPhoto } from "@tabler/icons-react";
-import StatsCard from "@/components/StatsCard/StatsCard";
-import StatType from "@/lib/models/enums/StatType";
-import LastWatched from "@/components/LastWatched/LastWatched";
 import LibraryOverView from "./overview";
 
 export default function LibraryPage() {
@@ -31,7 +25,7 @@ export default function LibraryPage() {
       setError(null);
       try {
         // Load libraries and find the matching one
-        const libsRes = await getLibraries(new GridifyQueryBuilder().addOrderBy("name").build());
+        const libsRes = await client.Api.getLibraries(new GridifyQueryBuilder().addOrderBy("name").build());
         const found = libsRes?.data?.find((l) => l.id === id) ?? null;
         if (!mounted) return;
         setLib(found);
