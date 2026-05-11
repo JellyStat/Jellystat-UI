@@ -26,7 +26,7 @@ export default function ItemActivity({ item }: Props) {
 
   return (
     <div style={{ padding: 20 }}>
-      <ActivityTable gridify={itemMediaQuery} />
+      <ActivityTable gridify={itemMediaQuery} GroupResults={false} />
     </div>
   );
 }

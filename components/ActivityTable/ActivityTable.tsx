@@ -8,9 +8,10 @@ import client from "@/lib/api";
 
 type Props = {
   gridify?: GridifyQueryBuilder | null;
+  GroupResults?: boolean;
 };
 
-export function ActivityTable({ gridify }: Props) {
+export function ActivityTable({ gridify, GroupResults }: Props) {
   const [activityData, setActivityData] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +39,7 @@ export function ActivityTable({ gridify }: Props) {
         const builtQuery = query.build();
         console.log("Fetching activity with query:", builtQuery);
 
-        const res = await client.History.activity.get(builtQuery);
+        const res = await client.History.activity.get(builtQuery, { GroupResults: GroupResults });
         const data = res?.data ?? [];
         const count = res?.count ?? 0;
         setPageCount(count);
@@ -106,7 +107,7 @@ export function ActivityTable({ gridify }: Props) {
                 const episodeIndex = `S${activity.item?.parentIndex?.toString().padStart(2, "0") ?? "??"}E${activity.item?.index?.toString().padStart(2, "0") ?? "??"}`;
                 const display = seriesName ? `${seriesName} : ${episodeIndex} - ${name}` : name;
                 const href = `/libraries/${activity.libraryId}/items/${activity.itemId}`;
-                return <Text>{display}</Text>;
+                //return <Text>{display}</Text>;
                 return <NavLink href={href} key={activity.id} label={display} />;
               },
             },
@@ -138,6 +139,7 @@ export function ActivityTable({ gridify }: Props) {
             {
               accessor: "playCount",
               title: "Play Count",
+              textAlign: "center",
             },
 
             {
@@ -176,7 +178,7 @@ export function ActivityTable({ gridify }: Props) {
                       const episodeIndex = `S${activity.item?.parentIndex?.toString().padStart(2, "0") ?? "??"}E${activity.item?.index?.toString().padStart(2, "0") ?? "??"}`;
                       const display = seriesName ? `${seriesName} : ${episodeIndex} - ${name}` : name;
                       const href = `/libraries/${activity.libraryId}/items/${activity.itemId}`;
-                      return <Text>{display}</Text>;
+                      //return <Text>{display}</Text>;
                       return <NavLink href={href} key={activity.id} label={display} />;
                     },
                   },
