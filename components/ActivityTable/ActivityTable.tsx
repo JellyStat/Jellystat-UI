@@ -88,6 +88,7 @@ export function ActivityTable({ gridify }: Props) {
           recordsPerPage={20}
           page={page}
           onPageChange={(p) => setPage(p)}
+          fetching={loading}
           // define columns
           columns={[
             {
@@ -149,29 +150,11 @@ export function ActivityTable({ gridify }: Props) {
             },
             // { accessor: "playCount", title: "Play Count" },
           ]}
-          //   rowExpansion={{
-          //     content: ({ record }) => (
-          //       <Stack p="xs" gap={6}>
-          //         <Group gap={6}>
-          //           <div>Postal address:</div>
-          //           <div>
-          //             {record.groupedResults?.map((activity) => (
-          //               <div key={activity.id}>
-          //                 {activity.name}, {activity.userName}, {activity.dateCreated}
-          //               </div>
-          //             ))}
-          //           </div>
-          //         </Group>
-          //         <Group gap={6}>
-          //           <div>Mission statement:</div>
-          //           <Box fs="italic">“{record.groupedResults?.length ?? 0}”</Box>
-          //         </Group>
-          //       </Stack>
-          //     ),
-          //   }}
           rowExpansion={{
-            allowMultiple: true,
             expanded: { recordIds: expandedActivityIds, onRecordIdsChange: setExpandedActivityIds },
+            expandable(params) {
+              return params.record.playCount != null && params.record.playCount > 1;
+            },
             content: (groupedActivity) => (
               <DataTable
                 noHeader
