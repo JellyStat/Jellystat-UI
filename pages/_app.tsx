@@ -65,7 +65,7 @@ export default function App({ Component, pageProps }: AppProps) {
     void fetchSystem();
   }, [router]);
 
-  const showNav = !loading && !retrying && !error && currentPath !== "/login" && currentPath !== "/setup";
+  const showNav = currentPath !== "/login" && currentPath !== "/setup";
   const showLoading = loading || retrying;
   const showError = error;
 

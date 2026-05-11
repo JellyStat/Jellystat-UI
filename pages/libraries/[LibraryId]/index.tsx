@@ -7,6 +7,8 @@ import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
 import { IconPhoto } from "@tabler/icons-react";
 import LibraryOverView from "./overview";
+import MediaGrid from "@/components/MediaGrid/MediaGrid";
+import LibraryMedia from "./media";
 
 export default function LibraryPage() {
   const router = useRouter();
@@ -103,10 +105,7 @@ export default function LibraryPage() {
             </Tabs.Panel>
 
             <Tabs.Panel value="media">
-              <div style={{ marginTop: 16 }}>
-                <Title order={3}>Media</Title>
-                <Text color="dimmed">Media listing will appear here.</Text>
-              </div>
+              <LibraryMedia library={lib} />
             </Tabs.Panel>
 
             <Tabs.Panel value="activity">

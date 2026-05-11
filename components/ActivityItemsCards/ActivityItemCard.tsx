@@ -1,9 +1,10 @@
 import React from "react";
-import { Card, Text, Image } from "@mantine/core";
+import { Card, Text, Image, Loader } from "@mantine/core";
 import { API_BASE } from "@/lib/api";
 import { ItemsWithStats } from "@/lib/models/itemsWithStats";
 import { Blurhash } from "react-blurhash";
 import { useRouter } from "next/router";
+import { IconLock } from "@tabler/icons-react";
 
 type Props = {
   item: ItemsWithStats;
@@ -14,6 +15,7 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 220 }) => {
   const imageId = item.parent?.id ?? item.id;
   const serverId = item.serverId;
   const [imageError, setImageError] = React.useState(false);
+  const [imageLoaded, setImageLoaded] = React.useState(false);
   const router = useRouter();
 
   const imageUrl = `${API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(imageId)}&Width=600&ServerId=${encodeURIComponent(serverId)}`;
@@ -75,25 +77,78 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 220 }) => {
           alignItems: "center",
           justifyContent: "center",
           flex: "0 0 auto",
+          overflow: "hidden",
+          borderTopLeftRadius: 8,
+          borderTopRightRadius: 8,
+          boxSizing: "border-box",
         }}
       >
-        {!imageError ? (
+        <div style={{ position: "relative", width: "100%", height: "100%", boxSizing: "border-box" }}>
+          {(!imageLoaded || imageError) && (
+            <div
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+                zIndex: 2,
+                borderTopLeftRadius: 8,
+                borderTopRightRadius: 8,
+                overflow: "hidden",
+              }}
+            >
+              <Blurhash
+                hash={item.imageHash ?? "LEHV6nWB2yk8pyo0adR*.7kCMdnj"}
+                width={"100%"}
+                height={"100%"}
+                style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, display: "block" }}
+              />
+
+              <div
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  zIndex: 3,
+                }}
+              >
+                {!imageLoaded && !imageError && <Loader size="lg" />}
+                {!imageLoaded && imageError && item.archived && <IconLock size={48} />}
+              </div>
+            </div>
+          )}
+
           <Image
             src={imageUrl}
             alt={item.name}
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              display: "block",
+              position: "relative",
+              zIndex: 1,
+              transition: "opacity 200ms ease",
+              borderTopLeftRadius: 8,
+              borderTopRightRadius: 8,
+              overflow: "hidden",
+            }}
             onError={() => {
               setImageError(true);
+              setImageLoaded(false);
+            }}
+            onLoad={() => {
+              setImageError(false);
+              setImageLoaded(true);
             }}
           />
-        ) : (
-          <Blurhash
-            hash={item.imageHash ?? "LEHV6nWB2yk8pyo0adR*.7kCMdnj"}
-            width={"100%"}
-            height={"100%"}
-            className="rounded-top-3 overflow-hidden position-absolute"
-          />
-        )}
+        </div>
       </div>
 
       <div style={{ padding: 10, display: "flex", flexDirection: "column", gap: 8, flex: "1 1 auto" }}>

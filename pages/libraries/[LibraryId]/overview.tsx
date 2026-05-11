@@ -6,6 +6,7 @@ import StatsCard from "@/components/StatsCard/StatsCard";
 import StatType from "@/lib/models/enums/StatType";
 import LastWatched from "@/components/LastWatched/LastWatched";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
+import { useMemo } from "react";
 
 type Props = {
   library: LibrariesWithStats | null;
@@ -13,6 +14,32 @@ type Props = {
 
 export default function LibraryOverView({ library }: Props) {
   if (!library) return null;
+  const recentQuery = useMemo(
+    () =>
+      new GridifyQueryBuilder()
+        .addCondition("LibraryId", op.Equal, library.id)
+        .and()
+        .addCondition("Type", op.NotEqual, ItemTypes.Season.toString())
+        .and()
+        .addCondition("Type", op.NotEqual, ItemTypes.Series.toString())
+        .build(),
+    [library.id],
+  );
+
+  const lastWatchedQuery = useMemo(
+    () =>
+      new GridifyQueryBuilder()
+        .addCondition("LibraryId", op.Equal, library.id)
+        .and()
+        .addCondition("Type", op.NotEqual, ItemTypes.Season.toString())
+        .and()
+        .addCondition("Type", op.NotEqual, ItemTypes.Series.toString())
+        .and()
+        .addCondition("LatestActivityDate", op.NotEqual, "null")
+        .addOrderBy("LatestActivityDate", true)
+        .build(),
+    [library.id],
+  );
 
   return (
     <div style={{ padding: 20 }}>
@@ -28,30 +55,11 @@ export default function LibraryOverView({ library }: Props) {
       </div>
 
       <div style={{ marginTop: 20 }}>
-        <RecentlyAdded
-          gridify={new GridifyQueryBuilder()
-            .addCondition("LibraryId", op.Equal, library.id)
-            .and()
-            .addCondition("Type", op.NotEqual, ItemTypes.Season.toString())
-            .and()
-            .addCondition("Type", op.NotEqual, ItemTypes.Series.toString())
-            .build()}
-        />
+        <RecentlyAdded gridify={recentQuery} />
       </div>
 
       <div style={{ marginTop: 20 }}>
-        <LastWatched
-          gridify={new GridifyQueryBuilder()
-            .addCondition("LibraryId", op.Equal, library.id)
-            .and()
-            .addCondition("Type", op.NotEqual, ItemTypes.Season.toString())
-            .and()
-            .addCondition("Type", op.NotEqual, ItemTypes.Series.toString())
-            .and()
-            .addCondition("LatestActivityDate", op.NotEqual, "null")
-            .addOrderBy("LatestActivityDate", true)
-            .build()}
-        />
+        <LastWatched gridify={lastWatchedQuery} />
       </div>
     </div>
   );

@@ -3,14 +3,14 @@ import type { IGridifyQuery } from "gridify-client";
 import client from "@/lib/api";
 import { ItemsWithStats } from "@/lib/models/itemsWithStats";
 import ActivityItemCards from "../ActivityItemsCards/ActivityItemCards";
+import { Group, Title } from "@mantine/core";
 
 type Props = {
   gridify?: IGridifyQuery;
   cardWidth?: number | string;
-  className?: string;
 };
 
-const LastWatched: React.FC<Props> = ({ gridify, cardWidth, className }) => {
+const LastWatched: React.FC<Props> = ({ gridify, cardWidth }) => {
   const [items, setItems] = useState<ItemsWithStats[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,23 +38,13 @@ const LastWatched: React.FC<Props> = ({ gridify, cardWidth, className }) => {
     };
   }, [gridify]);
 
-  const handleRefresh = () => {
-    isCancelledRef.current = false;
-    fetchItems();
-  };
-
   return (
-    <div className={className}>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <h2 style={{ margin: 0 }}>Last Watched</h2>
-        <button onClick={handleRefresh} disabled={loading} style={{ marginLeft: 8 }}>
-          Refresh
-        </button>
-      </div>
+    <Group>
+      <Title order={2}>Last Watched</Title>
       {loading && <div>Loading...</div>}
       {error && <div style={{ color: "var(--mantine-color-red, red)" }}>{error}</div>}
       {!loading && !error && <ActivityItemCards items={items} cardWidth={cardWidth} />}
-    </div>
+    </Group>
   );
 };
 

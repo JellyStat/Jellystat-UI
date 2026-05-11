@@ -3,6 +3,7 @@ import type { IGridifyQuery } from "gridify-client";
 import ItemCards from "../ItemsCards/ItemCards";
 import client from "@/lib/api";
 import type ItemsWithParentData from "@/lib/models/itemsWithParentData";
+import { Group, Title } from "@mantine/core";
 
 type Props = {
   gridify?: IGridifyQuery;
@@ -37,28 +38,13 @@ const RecentlyAdded: React.FC<Props> = ({ gridify, cardWidth }) => {
     };
   }, [gridify]);
 
-  const handleRefresh = () => {
-    isCancelledRef.current = false;
-    fetchItems();
-  };
-
   return (
-    <div
-      style={{
-        // overflowX: "hidden",
-        maxWidth: "100%",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <h2 style={{ margin: 0 }}>Recently Added</h2>
-        <button onClick={handleRefresh} disabled={loading} style={{ marginLeft: 8 }}>
-          Refresh
-        </button>
-      </div>
+    <Group>
+      <Title order={2}>Recently Added</Title>
       {loading && <div>Loading...</div>}
       {error && <div style={{ color: "var(--mantine-color-red, red)" }}>{error}</div>}
       {!loading && !error && <ItemCards items={items} cardWidth={cardWidth} />}
-    </div>
+    </Group>
   );
 };
 
