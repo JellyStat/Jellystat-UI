@@ -12,6 +12,7 @@ import type { LoginModel } from "./models/loginModel";
 import type { LocalUser } from "./models/localUser";
 import ItemsWithParentData from "./models/itemsWithParentData";
 import { SystemInfo } from "./models/systemInfo";
+import Activity from "./models/activity";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5020/";
 
@@ -354,8 +355,10 @@ const refreshToken = async (): Promise<void> => {
 };
 
 // History
-const getHistoryActivity = async (gridify?: IGridifyQuery): Promise<PagingResponse<unknown>> =>
-  apiFetch(`/History/Activity${await buildQuery(gridify)}`);
+const getHistoryActivity = async (
+  gridify?: IGridifyQuery,
+  params?: { GroupResults?: boolean },
+): Promise<PagingResponse<Activity>> => apiFetch(`/History/Activity${await buildQuery(gridify, params as Record<string, any>)}`);
 
 const deleteHistoryActivity = async (serverId: string | undefined, ids: string[]): Promise<void> =>
   apiFetch<void>(`/History/Activity${serverId ? `?ServerId=${encodeURIComponent(serverId)}` : ""}`, {

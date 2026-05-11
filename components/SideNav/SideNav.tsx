@@ -3,11 +3,12 @@ import { useRouter } from "next/router";
 import styles from "./SideNav.module.css";
 import React from "react";
 import { Center, Container, Image, NavLink } from "@mantine/core";
-import { IconHome, IconLogout, IconPhoto } from "@tabler/icons-react";
+import { IconHistory, IconHome, IconLogout, IconPhoto } from "@tabler/icons-react";
 
 const items = [
   { icon: IconHome, label: "Home", href: "/" },
   { icon: IconPhoto, label: "Libraries", href: "/libraries" },
+  { icon: IconHistory, label: "Activity", href: "/activity" },
 ];
 
 export default function SideNav() {

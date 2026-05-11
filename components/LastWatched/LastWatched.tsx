@@ -39,7 +39,7 @@ const LastWatched: React.FC<Props> = ({ gridify, cardWidth }) => {
   }, [gridify]);
 
   return (
-    <Group>
+    <Group style={{ flexDirection: "column", alignItems: "start" }}>
       <Title order={2}>Last Watched</Title>
       {loading && <div>Loading...</div>}
       {error && <div style={{ color: "var(--mantine-color-red, red)" }}>{error}</div>}

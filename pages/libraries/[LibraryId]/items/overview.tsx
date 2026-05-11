@@ -21,7 +21,7 @@ export default function ItemOverview({ item }: Props) {
         <StatsCard type={StatType.Item} id={item?.id ?? ""} />
       </div>
 
-      {item?.type && [ItemTypes.Series, ItemTypes.Season].includes(item!.type!) && (
+      {/* {item?.type && [ItemTypes.Series, ItemTypes.Season].includes(item!.type!) && (
         <div style={{ marginTop: 20 }}>
           <LastWatched
             gridify={new GridifyQueryBuilder()
@@ -36,7 +36,7 @@ export default function ItemOverview({ item }: Props) {
               .build()}
           />
         </div>
-      )}
+      )} */}
     </div>
   );
 }

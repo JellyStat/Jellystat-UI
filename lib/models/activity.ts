@@ -1,4 +1,5 @@
 import type { BaseMediaStream } from "./baseMediaStream";
+import { Items } from "./items";
 
 export interface BaseTranscodingInfo {
   videoCodec?: string | null;
@@ -37,6 +38,11 @@ export interface Activity {
   ipAddress?: string;
   runtimeTicks?: number;
   completionPercentage?: number;
+  libraryId?: string;
+  item?: Items | null;
+  groupedResults?: Activity[] | null;
+  playCount?: number;
+  playDuration?: number;
 }
 
 export default Activity;

@@ -9,6 +9,7 @@ import StatType from "@/lib/models/enums/StatType";
 import { Blurhash } from "react-blurhash";
 import { IconLock } from "@tabler/icons-react";
 import ItemOverview from "./overview";
+import ItemActivity from "./activity";
 
 export default function ItemPage() {
   const router = useRouter();
@@ -108,10 +109,7 @@ export default function ItemPage() {
             </Tabs.Panel>
 
             <Tabs.Panel value="activity">
-              <div style={{ marginTop: 16 }}>
-                <Title order={3}>Activity</Title>
-                <Text color="dimmed">Activity stream / charts will appear here.</Text>
-              </div>
+              <ItemActivity item={item} />
             </Tabs.Panel>
             {/* 
             <Tabs.Panel value="options">

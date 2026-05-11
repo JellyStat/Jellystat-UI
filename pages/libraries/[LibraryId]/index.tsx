@@ -9,6 +9,7 @@ import { IconPhoto } from "@tabler/icons-react";
 import LibraryOverView from "./overview";
 import MediaGrid from "@/components/MediaGrid/MediaGrid";
 import LibraryMedia from "./media";
+import LibraryActivity from "./activity";
 
 export default function LibraryPage() {
   const router = useRouter();
@@ -109,10 +110,7 @@ export default function LibraryPage() {
             </Tabs.Panel>
 
             <Tabs.Panel value="activity">
-              <div style={{ marginTop: 16 }}>
-                <Title order={3}>Activity</Title>
-                <Text color="dimmed">Activity stream / charts will appear here.</Text>
-              </div>
+              <LibraryActivity library={lib} />
             </Tabs.Panel>
 
             <Tabs.Panel value="options">
