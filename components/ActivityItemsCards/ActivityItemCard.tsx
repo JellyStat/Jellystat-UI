@@ -99,7 +99,7 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 220 }) => {
               }}
             >
               <Blurhash
-                hash={item.imageHash ?? "LEHV6nWB2yk8pyo0adR*.7kCMdnj"}
+                hash={item.imageHash && item.imageHash.length > 6 ? item.imageHash : "LEHV6nWB2yk8pyo0adR*.7kCMdnj"}
                 width={"100%"}
                 height={"100%"}
                 style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, display: "block" }}
