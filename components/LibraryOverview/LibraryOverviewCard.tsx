@@ -29,7 +29,7 @@ export default function LibraryOverviewCard({ title, libraries, Icon }: WatchSta
   });
 
   const types = Array.from(aggregateTypes);
-  const unitString = types.length > 0 ? types.join("/ ") : "Items";
+  const unitString = types.length > 0 ? types.join(" / ") : "Items";
 
   return (
     <Card
@@ -72,7 +72,7 @@ export default function LibraryOverviewCard({ title, libraries, Icon }: WatchSta
               .filter((t) => t.type !== undefined && types.includes(t.type))
               .map((tc) => tc.count);
 
-            const countString = counts.length > 0 ? counts.join("/ ") : "0";
+            const countString = counts.length > 0 ? counts.join(" / ") : "0";
 
             return (
               <Group key={it.id} align="center" justify="space-between" style={{ width: "100%" }}>
