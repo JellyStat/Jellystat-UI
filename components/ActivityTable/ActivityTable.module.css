@@ -1,0 +1,27 @@
+.root {
+  border-radius: var(--mantine-radius-md);
+  border: 3px solid var(--mantine-color-dark-5);
+  table-layout: fixed;
+  width: 100%;
+}
+
+.subRoot {
+  border-radius: var(--mantine-radius-md);
+  table-layout: fixed;
+  width: 100%;
+}
+
+.icon {
+  width: rem(20px);
+  height: auto;
+  vertical-align: rem(-1px);
+  margin-right: rem(8px);
+}
+
+.expandIcon {
+  transition: transform 0.2s;
+}
+
+.expandIconRotated {
+  transform: rotate(180deg);
+}

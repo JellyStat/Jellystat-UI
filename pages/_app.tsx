@@ -1,4 +1,5 @@
 import "@mantine/core/styles.css";
+import "mantine-datatable/styles.layer.css";
 import "@/styles/globals.css";
 import "@/types/global-extensions";
 import { MantineProvider, Center, Loader, Text, Card, Button, Group, Code, Flex } from "@mantine/core";

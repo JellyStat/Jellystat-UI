@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import { ColorSchemeToggle } from "@/components/ColorSchemeToggle/ColorSchemeToggle";
 import { Welcome } from "@/components/Welcome/Welcome";
 import RecentlyAdded from "@/components/RecentlyAdded/RecentlyAdded";
+import WatchStatCards from "@/components/WatchStatCards/WatchStatCards";
+import LibraryOverview from "@/components/LibraryOverview/LibraryOverview";
 
 export default function HomePage() {
   const router = useRouter();
@@ -27,9 +29,9 @@ export default function HomePage() {
 
   return (
     <>
-      <Welcome />
-      <ColorSchemeToggle />
       <RecentlyAdded />
+      <WatchStatCards />
+      <LibraryOverview />
     </>
   );
 }

@@ -20,8 +20,9 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 220 }) => {
 
   const imageUrl = `${API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(imageId)}&Width=600&ServerId=${encodeURIComponent(serverId)}`;
 
+  const isValidParent = item.parent && item.parent.id && item.parent.id !== item.id;
   const indexString = item.parentIndex != null ? `S${item.parentIndex} - E${item.index}` : "";
-  const title = item.name;
+  const title = item.parent?.name ?? item.name;
   const difference = item.latestActivity?.dateCreated ? Date.now() - new Date(item.latestActivity.dateCreated).getTime() : null;
   const differenceString = formatTime(difference);
   const twelve_hr = typeof window !== "undefined" ? new Intl.DateTimeFormat().resolvedOptions().hour12 : false;
@@ -152,17 +153,23 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 220 }) => {
       </div>
 
       <div style={{ padding: 10, display: "flex", flexDirection: "column", gap: 8, flex: "1 1 auto" }}>
-        <Text size="xs" color="blue">
+        <Text size="xs" style={{ color: "var(--mantine-primary-color-4)" }}>
           {item.latestActivity?.dateCreated ? differenceString : ""}
         </Text>
 
-        <Text size="xs" color="blue" style={{ paddingBottom: 10 }}>
+        <Text size="sm" style={{ paddingBottom: 5, lineHeight: 1.1, fontWeight: 700 }}>
           {item.latestActivity?.userName ?? "N/A"}
         </Text>
 
         <Text size="sm" style={{ lineHeight: 1.1, fontWeight: 700 }}>
           {title}
         </Text>
+
+        {isValidParent && (
+          <Text size="xs" color="dimmed" lineClamp={2}>
+            {item.name}
+          </Text>
+        )}
 
         {item.parentIndex && (
           <Text size="xs" color="dimmed" style={{ marginTop: 8 }} lineClamp={2}>

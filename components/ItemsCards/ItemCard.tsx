@@ -135,7 +135,7 @@ export const ItemCard: React.FC<Props> = ({ item, width = 220 }) => {
       </div>
 
       <div style={{ padding: 10, display: "flex", flexDirection: "column", gap: 8, flex: "1 1 auto" }}>
-        <Text size="xs" color="blue" style={{ paddingBottom: 10 }}>
+        <Text size="xs" color="primary" style={{ paddingBottom: 10, color: "var(--mantine-primary-color-4)" }}>
           {item.dateCreated ? new Date(item.dateCreated).toLocaleString(undefined, dateOptions) : ""}
         </Text>
 
@@ -144,7 +144,7 @@ export const ItemCard: React.FC<Props> = ({ item, width = 220 }) => {
         </Text>
 
         {isValidParent && (
-          <Text size="xs" color="dimmed" style={{ marginTop: 8 }} lineClamp={2}>
+          <Text size="xs" color="dimmed" lineClamp={2}>
             {item.name}
           </Text>
         )}

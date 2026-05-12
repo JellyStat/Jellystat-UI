@@ -13,6 +13,9 @@ import type { LocalUser } from "./models/localUser";
 import ItemsWithParentData from "./models/itemsWithParentData";
 import { SystemInfo } from "./models/systemInfo";
 import Activity from "./models/activity";
+import { MostUsedClients } from "./models/mostUsedClients";
+import { UserStats } from "./models/userStats";
+import { TranscodeStats } from "./models/transcodeStats";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5020/";
 
@@ -420,21 +423,22 @@ const getMostUsedClients = async (
     days?: number;
   },
   gridify?: IGridifyQuery,
-) => apiFetch<PagingResponse<unknown>>(`/Stats/MostUsedClients${await buildQuery(gridify, params as Record<string, any>)}`);
+) =>
+  apiFetch<PagingResponse<MostUsedClients>>(`/Stats/MostUsedClients${await buildQuery(gridify, params as Record<string, any>)}`);
 
 const getUserStats = async (
   params?: {
     days?: number;
   },
   gridify?: IGridifyQuery,
-) => apiFetch<PagingResponse<unknown>>(`/Stats/UserStats${await buildQuery(gridify, params as Record<string, any>)}`);
+) => apiFetch<PagingResponse<UserStats>>(`/Stats/UserStats${await buildQuery(gridify, params as Record<string, any>)}`);
 
 const getTranscodeStats = async (
   params?: {
     days?: number;
   },
   gridify?: IGridifyQuery,
-) => apiFetch<PagingResponse<unknown>>(`/Stats/TranscodeStats${await buildQuery(gridify, params as Record<string, any>)}`);
+) => apiFetch<PagingResponse<TranscodeStats>>(`/Stats/TranscodeStats${await buildQuery(gridify, params as Record<string, any>)}`);
 
 const getMostPopularTranscodes = async (
   params?: {

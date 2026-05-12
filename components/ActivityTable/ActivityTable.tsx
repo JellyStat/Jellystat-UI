@@ -5,6 +5,9 @@ import { GridifyQueryBuilder, IGridifyQuery } from "gridify-client";
 import { DataTable } from "mantine-datatable";
 import { useCallback, useEffect, useState } from "react";
 import client from "@/lib/api";
+import { IconChevronRight, IconCircleMinus, IconCirclePlusFilled, IconPlus, IconUsers } from "@tabler/icons-react";
+import clsx from "clsx";
+import classes from "./ActivityTable.module.css";
 
 type Props = {
   gridify?: GridifyQueryBuilder | null;
@@ -75,13 +78,14 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
       <Group align="center" justify="space-between">
         <Title order={2}>Activity</Title>
       </Group>
-      <Card shadow="sm" p="md" style={{ width: "100%", marginTop: 12 }}>
+      <Card shadow="sm" p={0} style={{ width: "100%", marginTop: 12 }}>
         <DataTable
+          className={classes.root}
           minHeight={150}
           withTableBorder
           borderRadius="sm"
-          withColumnBorders
-          striped
+          //   withColumnBorders
+          //   striped
           highlightOnHover
           // provide data
           records={activityData}
@@ -92,6 +96,35 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
           fetching={loading}
           // define columns
           columns={[
+            {
+              accessor: "expanded",
+              title: "Expand",
+              noWrap: true,
+              render: ({ id, groupedResults }) => {
+                if (groupedResults && groupedResults.length > 1) {
+                  if (expandedActivityIds.includes(id ?? "")) {
+                    return (
+                      <Box component="span" ml={20}>
+                        <IconCircleMinus
+                          className={clsx(classes.icon, classes.expandIcon, {
+                            [classes.expandIconRotated]: expandedActivityIds.includes(id ?? ""),
+                          })}
+                        />
+                      </Box>
+                    );
+                  }
+                  return (
+                    <Box component="span" ml={20}>
+                      <IconCirclePlusFilled
+                        className={clsx(classes.icon, classes.expandIcon, {
+                          [classes.expandIconRotated]: expandedActivityIds.includes(id ?? ""),
+                        })}
+                      />
+                    </Box>
+                  );
+                }
+              },
+            },
             {
               accessor: "userName",
               title: "User",
@@ -159,8 +192,10 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
             },
             content: (groupedActivity) => (
               <DataTable
-                noHeader
-                withColumnBorders
+                // noHeader
+                // withColumnBorders
+                withTableBorder
+                className={classes.subRoot}
                 records={groupedActivity?.record?.groupedResults ?? []}
                 columns={[
                   {
@@ -220,19 +255,10 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
                       return <Text>{activity.playDuration.secondsToDurationString()}</Text>;
                     },
                   },
-                  // { accessor: "playCount", title: "Play Count" },
                 ]}
               />
             ),
           }}
-          // execute this callback when a row is clicked
-          //   onRowClick={({ record: { name, dateCreated } }) =>
-          //     showNotification({
-          //       title: `Clicked on ${name}`,
-          //       message: `You clicked on ${name}, created on ${dateCreated}`,
-          //       withBorder: true,
-          //     })
-          //   }
         />
       </Card>
     </div>
