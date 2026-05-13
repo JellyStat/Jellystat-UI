@@ -3,13 +3,13 @@ import { useRouter } from "next/router";
 import { Title, Loader, Text, Group, Tabs, Center } from "@mantine/core";
 import client from "@/lib/api";
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
-import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
+import { GridifyQueryBuilder } from "gridify-client";
 import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
 import { IconPhoto } from "@tabler/icons-react";
 import LibraryOverView from "./overview";
-import MediaGrid from "@/components/MediaGrid/MediaGrid";
 import LibraryMedia from "./media";
 import LibraryActivity from "./activity";
+import NotFound from "@/components/ErrorCards/NotFound";
 
 export default function LibraryPage() {
   const router = useRouter();
@@ -32,7 +32,6 @@ export default function LibraryPage() {
         const found = libsRes?.data?.find((l) => l.id === LibraryId) ?? null;
         if (!mounted) return;
         setLib(found);
-
         // Load items for this library (scaffold - may include parent data)
         // const q = new GridifyQueryBuilder().addOrderBy("name").build();
       } catch (er: any) {
@@ -49,7 +48,10 @@ export default function LibraryPage() {
     };
   }, [LibraryId]);
 
-  if (!LibraryId || Array.isArray(LibraryId)) return null;
+  if (!lib && !loading && !error) {
+    console.error("No LibraryId provided in query");
+    return <NotFound title="Library not found" message={`Library with id ${LibraryId} could not be found`} />;
+  }
 
   return (
     <div style={{ padding: 20 }}>
@@ -69,7 +71,6 @@ export default function LibraryPage() {
                 style={{
                   width: 96,
                   height: 96,
-                  //   background: "#7a7a7a",
                   borderRadius: 8,
                   overflow: "hidden",
                   display: "flex",
@@ -83,22 +84,22 @@ export default function LibraryPage() {
                 })()}
               </div>
 
-              <div>
-                <Title order={2}>{lib?.name ?? LibraryId}</Title>
-                <Text color="dimmed">{lib ? lib.type : "Library"}</Text>
-              </div>
+              <Group gap={4} style={{ flexDirection: "column", alignItems: "start" }}>
+                <Group>
+                  <Title order={2}>{lib?.name ?? LibraryId}</Title>
+                </Group>
+                <Tabs value={activeTab} onChange={setActiveTab}>
+                  <Tabs.List>
+                    <Tabs.Tab value="overview">Overview</Tabs.Tab>
+                    <Tabs.Tab value="media">Media</Tabs.Tab>
+                    <Tabs.Tab value="activity">Activity</Tabs.Tab>
+                    <Tabs.Tab value="options">Options</Tabs.Tab>
+                  </Tabs.List>
+                </Tabs>
+              </Group>
             </Group>
 
-            <div>
-              <Tabs value={activeTab} onChange={setActiveTab}>
-                <Tabs.List>
-                  <Tabs.Tab value="overview">Overview</Tabs.Tab>
-                  <Tabs.Tab value="media">Media</Tabs.Tab>
-                  <Tabs.Tab value="activity">Activity</Tabs.Tab>
-                  <Tabs.Tab value="options">Options</Tabs.Tab>
-                </Tabs.List>
-              </Tabs>
-            </div>
+            <div></div>
           </Group>
           <Tabs value={activeTab} keepMountedMode="display-none">
             <Tabs.Panel value="overview">

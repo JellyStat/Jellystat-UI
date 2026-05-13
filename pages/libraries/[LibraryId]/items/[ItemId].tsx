@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Title, Loader, Text, Group, Center, Card, Image, Tabs } from "@mantine/core";
+import { Title, Loader, Text, Group, Center, Image, Tabs, ActionIcon } from "@mantine/core";
 import client from "@/lib/api";
 import { ItemsWithStats } from "@/lib/models/itemsWithStats";
 import { GridifyQueryBuilder } from "gridify-client";
-import StatsCard from "@/components/StatsCard/StatsCard";
-import StatType from "@/lib/models/enums/StatType";
 import { Blurhash } from "react-blurhash";
-import { IconLock } from "@tabler/icons-react";
+import { IconExternalLink, IconLock } from "@tabler/icons-react";
 import ItemOverview from "./overview";
 import ItemActivity from "./activity";
+import NotFound from "@/components/ErrorCards/NotFound";
+import { Server } from "@/lib/models/server";
+import configManager from "@/lib/configManager";
 
 export default function ItemPage() {
   const router = useRouter();
@@ -20,6 +21,8 @@ export default function ItemPage() {
   const [error, setError] = useState<string | null>(null);
   const [errorImage, setErrorImage] = useState(false);
   const [activeTab, setActiveTab] = useState<string | null>("overview");
+
+  const [config, setConfig] = useState<Server | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -32,6 +35,9 @@ export default function ItemPage() {
         if (!mounted) return;
         const found = (res?.data && res.data.length > 0 && res.data[0]) || null;
         setItem(found);
+        var config = await configManager.getActiveConfig();
+
+        setConfig(config);
       } catch (er: any) {
         console.error(er);
         if (!mounted) return;
@@ -47,7 +53,12 @@ export default function ItemPage() {
     };
   }, [ItemId]);
 
-  if (!ItemId || Array.isArray(ItemId)) return null;
+  if (!item && !loading && !error) {
+    console.error("No ItemId provided in query");
+    return <NotFound title="Item not found" message={`Item with id ${ItemId} could not be found`} />;
+  }
+
+  const externalURLBase = config?.externalURL && config?.externalURL.trim().length > 0 ? config.externalURL : config?.url;
 
   return (
     <div style={{ padding: 20 }}>
@@ -87,6 +98,16 @@ export default function ItemPage() {
             <div style={{ flex: 1 }}>
               <Group>
                 <Title order={2}>{item?.name ?? ItemId}</Title>
+                {config && item && (
+                  <ActionIcon
+                    variant="transparent"
+                    component="a"
+                    href={`${externalURLBase}/web/index.html#/details?id=${item?.id}&serverId=${item?.serverId}`}
+                    target="_blank"
+                  >
+                    <IconExternalLink size={20} />
+                  </ActionIcon>
+                )}
                 {item?.archived && <IconLock size={20} color="orange" />}
               </Group>
               {/* <Text color="dimmed" style={{ marginTop: 8 }}>

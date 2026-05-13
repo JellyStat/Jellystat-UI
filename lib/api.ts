@@ -294,6 +294,16 @@ const login = async (payload: LoginModel): Promise<void> => {
     try {
       if (result?.token) localStorage.setItem("jellystat_token", result.token);
       if (result?.refreshToken) localStorage.setItem("jellystat_refreshToken", result.refreshToken);
+
+      if (result?.token) {
+        // Decode token to extract serverId and store it for later use (e.g. auto-include in queries)
+        try {
+          const payloadBase64 = result.token.split(".")[1];
+          const decoded = JSON.parse(atob(payloadBase64));
+          if (decoded?.serverId || payload.serverId)
+            localStorage.setItem("jellystat_serverId", decoded.serverId ?? payload.serverId);
+        } catch {}
+      }
     } catch {
       /* ignore localStorage failures */
     }

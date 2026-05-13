@@ -6,6 +6,8 @@ import RecentlyAdded from "@/components/RecentlyAdded/RecentlyAdded";
 import WatchStatCards from "@/components/WatchStatCards/WatchStatCards";
 import LibraryOverview from "@/components/LibraryOverview/LibraryOverview";
 import { Container } from "@mantine/core";
+import client from "@/lib/api";
+import configManager from "@/lib/configManager";
 
 export default function HomePage() {
   const router = useRouter();
@@ -14,6 +16,8 @@ export default function HomePage() {
     if (typeof window === "undefined") return;
     try {
       const token = localStorage.getItem("jellystat_token");
+      const configs = localStorage.getItem("jellystat_config");
+
       if (!token) {
         localStorage.removeItem("jellystat_token");
         localStorage.removeItem("jellystat_refreshToken");

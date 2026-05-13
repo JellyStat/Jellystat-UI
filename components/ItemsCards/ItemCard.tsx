@@ -74,6 +74,7 @@ export const ItemCard: React.FC<Props> = ({ item, width = 220 }) => {
               right={0}
               top={0}
               bottom={0}
+              p={0}
               style={{
                 zIndex: 2,
                 borderTopLeftRadius: 8,
@@ -114,7 +115,7 @@ export const ItemCard: React.FC<Props> = ({ item, width = 220 }) => {
               width: "100%",
               height: "100%",
               objectFit: "cover",
-              display: "block",
+              display: imageError ? "none" : "block",
               position: "relative",
               zIndex: 1,
               transition: "opacity 200ms ease",

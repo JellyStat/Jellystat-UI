@@ -2,12 +2,13 @@ import { useRouter } from "next/router";
 import styles from "./SideNav.module.css";
 import React from "react";
 import { ActionIcon, Button, Text, Container, Image, NavLink, useMantineColorScheme } from "@mantine/core";
-import { IconHistory, IconHome, IconLogout, IconMoonStars, IconPhoto, IconSun } from "@tabler/icons-react";
+import { IconHistory, IconHome, IconLogout, IconMoonStars, IconPhoto, IconSettings, IconSun } from "@tabler/icons-react";
 
 const items = [
   { icon: IconHome, label: "Home", href: "/" },
   { icon: IconPhoto, label: "Libraries", href: "/libraries" },
   { icon: IconHistory, label: "Activity", href: "/activity" },
+  { icon: IconSettings, label: "Settings", href: "/settings" },
 ];
 
 export default function SideNav() {
@@ -47,6 +48,8 @@ export default function SideNav() {
               try {
                 localStorage.removeItem("jellystat_token");
                 localStorage.removeItem("jellystat_refreshToken");
+                localStorage.removeItem("jellystat_serverId");
+                localStorage.removeItem("jellystat_config");
                 window.location.href = "/login";
               } catch {
                 console.warn("Failed to clear localStorage during logout, but proceeding with navigation.");
