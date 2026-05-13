@@ -42,6 +42,7 @@ export default function WatchStatCards() {
             imageTag: m.imageTag, // force different image for testing
             type: m.type,
             serverId: m.serverId,
+            navLink: `/libraries/${m.libraryId}/items/${m.id}`,
           })) || [];
         setMostViewedMovies(items);
       } catch (er: any) {
@@ -66,6 +67,7 @@ export default function WatchStatCards() {
             imageTag: m.imageTag, // force different image for testing
             type: m.type,
             serverId: m.serverId,
+            navLink: `/libraries/${m.libraryId}/items/${m.id}`,
           })) || [];
         setMostPopularMovies(items);
       } catch (er: any) {
@@ -93,6 +95,7 @@ export default function WatchStatCards() {
             imageTag: m.imageTag, // force different image for testing
             type: m.type,
             serverId: m.serverId,
+            navLink: `/libraries/${m.libraryId}/items/${m.id}`,
           })) || [];
         setMostViewedShows(items);
       } catch (er: any) {
@@ -120,6 +123,7 @@ export default function WatchStatCards() {
             imageTag: m.imageTag, // force different image for testing
             type: m.type,
             serverId: m.serverId,
+            navLink: `/libraries/${m.libraryId}/items/${m.id}`,
           })) || [];
         setMostPopularShows(items);
       } catch (er: any) {
@@ -144,6 +148,7 @@ export default function WatchStatCards() {
             icon: LibraryTypeIcons[m.type],
             type: m.type,
             serverId: m.serverId,
+            navLink: `/libraries/${m.id}`,
           })) || [];
         setMostViewedLibrary(items);
       } catch (er: any) {
@@ -162,7 +167,7 @@ export default function WatchStatCards() {
         if (!mounted) return;
         const items =
           res?.data?.map((m: MostUsedClients) => ({
-            id: "null",
+            id: m.clientName,
             name: m.clientName,
             value: m.playCount ?? 0,
             icon: IconDeviceDesktop,
@@ -236,7 +241,7 @@ export default function WatchStatCards() {
   }, [days]);
 
   return (
-    <Group style={{ flexDirection: "column", alignItems: "start" }}>
+    <Group style={{ flexDirection: "column", alignItems: "start", minHeight: 200 }}>
       <Group style={{ width: "100%", justifyContent: "space-between", alignItems: "end" }}>
         <Title order={2}>Watch Statistics</Title>
         <NumberInput
@@ -252,6 +257,7 @@ export default function WatchStatCards() {
           aria-label="Days to show statistics for"
         />
       </Group>
+      {loading && <Loader />}
       <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg" style={{ width: "100%" }}>
         <WatchStatCard items={mostViewedMovies} title="MOST VIEWED MOVIES" unit="Plays" />
         <WatchStatCard items={mostPopularMovies} title="MOST POPULAR MOVIES" unit="Users" />

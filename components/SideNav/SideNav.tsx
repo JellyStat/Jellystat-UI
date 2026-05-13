@@ -35,7 +35,6 @@ export default function SideNav() {
             const paths = router.pathname.split("/");
             const path = paths.length > 1 ? `/${paths[1]}` : router.pathname; // Get the first segment of the path
             const active = path.toLocaleLowerCase() === it.href.toLocaleLowerCase();
-            console.log(`Comparing path "${path}" to href "${it.href}" - active: ${active}`);
             return <NavLink href={it.href} active={active} key={it.label} label={it.label} leftSection={<it.icon size={25} />} />;
           })}
 

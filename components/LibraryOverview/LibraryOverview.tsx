@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Title, Group, SimpleGrid } from "@mantine/core";
+import { Title, Group, SimpleGrid, Loader } from "@mantine/core";
 import { IconChartBarPopular } from "@tabler/icons-react";
 import client from "@/lib/api";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
@@ -35,10 +35,11 @@ export default function LibraryOverview() {
   }, []);
 
   return (
-    <Group style={{ flexDirection: "column", alignItems: "start" }}>
+    <Group style={{ flexDirection: "column", alignItems: "start", minHeight: 200 }}>
       <Group style={{ width: "100%", justifyContent: "space-between" }}>
         <Title order={2}>Library Overview</Title>
       </Group>
+      {loading && <Loader />}
       <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg" style={{ width: "100%" }}>
         <LibraryOverviewCard
           title="MOVIE LIBRARIES"
