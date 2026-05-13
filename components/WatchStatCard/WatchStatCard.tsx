@@ -1,11 +1,25 @@
 import React from "react";
-import { Card, Title, Group, Text, Avatar, Stack, Container, Image, BackgroundImage, Button } from "@mantine/core";
+import {
+  Card,
+  Title,
+  Group,
+  Text,
+  Avatar,
+  Stack,
+  Container,
+  Image,
+  BackgroundImage,
+  Button,
+  Tooltip,
+  alpha,
+} from "@mantine/core";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
 import { API_BASE } from "@/lib/api";
 import { Icon, IconPhoto } from "@tabler/icons-react";
 import classes from "./WatchStatCard.module.css";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { theme } from "@/theme";
 
 export type WatchStatItem = {
   id: string | number;
@@ -51,7 +65,7 @@ export default function WatchStatCard({ title = "Most Viewed", unit = "Plays", i
           maxWidth: 700,
 
           backdropFilter: "blur(10px)",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          backgroundColor: "light-dark(rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0.5))",
         }}
       >
         <Card.Section className={classes.imageSection}>
@@ -115,20 +129,21 @@ export default function WatchStatCard({ title = "Most Viewed", unit = "Plays", i
                   <Text color="dimmed" style={{ fontSize: 12 }}>
                     {idx + 1}
                   </Text>
-
-                  {it.navLink ? (
-                    <Text
-                      component="a"
-                      href={it.navLink}
-                      style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: 0 }}
-                    >
-                      {it.name}
-                    </Text>
-                  ) : (
-                    <Text style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: 0 }}>
-                      {it.name}
-                    </Text>
-                  )}
+                  <Tooltip position="bottom" multiline withArrow transitionProps={{ duration: 200 }} label={it.name}>
+                    {it.navLink ? (
+                      <Text
+                        component="a"
+                        href={it.navLink}
+                        style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: 0 }}
+                      >
+                        {it.name}
+                      </Text>
+                    ) : (
+                      <Text style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: 0 }}>
+                        {it.name}
+                      </Text>
+                    )}
+                  </Tooltip>
                 </Group>
 
                 <Text style={{ fontWeight: 600, color: "var(--mantine-primary-color-4)", marginLeft: 8, flex: "0 0 auto" }}>

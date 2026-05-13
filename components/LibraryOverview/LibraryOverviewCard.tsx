@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Title, Group, Text, Avatar, Stack, Container, Image, BackgroundImage } from "@mantine/core";
+import { Card, Title, Group, Text, Avatar, Stack, Container, Image, BackgroundImage, Tooltip } from "@mantine/core";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
 import { API_BASE } from "@/lib/api";
 import { Icon, IconPhoto } from "@tabler/icons-react";
@@ -82,8 +82,15 @@ export default function LibraryOverviewCard({ title, libraries, Icon }: WatchSta
                   <Text color="dimmed" style={{ fontSize: 12 }}>
                     {idx + 1}
                   </Text>
-
-                  <Text style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{it.name}</Text>
+                  <Tooltip position="bottom" multiline withArrow transitionProps={{ duration: 200 }} label={it.name}>
+                    <Text
+                      component="a"
+                      href={`/libraries/${it.id}`}
+                      style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: 0 }}
+                    >
+                      {it.name}
+                    </Text>
+                  </Tooltip>
                 </Group>
 
                 <Text style={{ fontWeight: 600, color: "var(--mantine-primary-color-4)" }}>{countString}</Text>

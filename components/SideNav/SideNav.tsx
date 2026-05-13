@@ -39,23 +39,19 @@ export default function SideNav() {
           })}
 
           <NavLink
-            active={router.pathname === "/login"}
             key="logout"
             label="Logout"
-            leftSection={
-              <IconLogout
-                size={25}
-                onClick={() => {
-                  try {
-                    localStorage.removeItem("jellystat_token");
-                    localStorage.removeItem("jellystat_refreshToken");
-                    window.location.href = "/login";
-                  } catch {
-                    console.warn("Failed to clear localStorage during logout, but proceeding with navigation.");
-                  }
-                }}
-              />
-            }
+            href="#"
+            leftSection={<IconLogout size={25} />}
+            onClick={() => {
+              try {
+                localStorage.removeItem("jellystat_token");
+                localStorage.removeItem("jellystat_refreshToken");
+                window.location.href = "/login";
+              } catch {
+                console.warn("Failed to clear localStorage during logout, but proceeding with navigation.");
+              }
+            }}
           />
         </Container>
       </Container>
