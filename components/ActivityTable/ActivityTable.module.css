@@ -1,6 +1,6 @@
 .root {
   border-radius: var(--mantine-radius-md);
-  border: 3px solid var(--mantine-color-dark-5);
+  border: 1px solid var(--mantine-color-dark-5);
   table-layout: fixed;
   width: 100%;
 }

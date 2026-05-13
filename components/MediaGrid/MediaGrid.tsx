@@ -136,7 +136,17 @@ const MediaGrid: React.FC<Props> = ({ gridify }) => {
           />
         </Group>
       </Group>
-      <Card shadow="sm" p="md" style={{ width: "100%", marginTop: 12 }}>
+      <Card
+        shadow="sm"
+        p="md"
+        style={{
+          width: "100%",
+          marginTop: 12,
+          backgroundColor: "transparent",
+          borderRadius: "var(--mantine-radius-md)",
+          border: "1px solid var(--mantine-color-dark-5)",
+        }}
+      >
         <div
           style={{
             display: "grid",

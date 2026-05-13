@@ -3,7 +3,7 @@ import type { IGridifyQuery } from "gridify-client";
 import ItemCards from "../ItemsCards/ItemCards";
 import client from "@/lib/api";
 import type ItemsWithParentData from "@/lib/models/itemsWithParentData";
-import { Group, Title } from "@mantine/core";
+import { Group, Loader, Text, Title } from "@mantine/core";
 
 type Props = {
   gridify?: IGridifyQuery;
@@ -39,10 +39,10 @@ const RecentlyAdded: React.FC<Props> = ({ gridify, cardWidth }) => {
   }, [gridify]);
 
   return (
-    <Group style={{ flexDirection: "column", alignItems: "start" }} mb={20}>
+    <Group style={{ flexDirection: "column", alignItems: "start" }}>
       <Title order={2}>Recently Added</Title>
-      {loading && <div>Loading...</div>}
-      {error && <div style={{ color: "var(--mantine-color-red, red)" }}>{error}</div>}
+      {loading && <Loader />}
+      {error && <Text style={{ color: "var(--mantine-color-red, red)" }}>{error}</Text>}
       {!loading && !error && <ItemCards items={items} cardWidth={cardWidth} />}
     </Group>
   );

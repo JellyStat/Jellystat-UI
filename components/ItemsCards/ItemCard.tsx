@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Text, Badge, Image, Skeleton, Loader } from "@mantine/core";
+import { Card, Text, Badge, Image, Skeleton, Loader, Group, Container } from "@mantine/core";
 import { API_BASE } from "@/lib/api";
 import { useRouter } from "next/router";
 import { Blurhash } from "react-blurhash";
@@ -51,30 +51,30 @@ export const ItemCard: React.FC<Props> = ({ item, width = 220 }) => {
         console.log("Item clicked:", item);
       }}
     >
-      <div
+      <Container
+        w={"100%"}
+        h={250}
+        display={"flex"}
+        flex={"0 0 auto"}
+        p={0}
         style={{
-          width: "100%",
-          height: 250,
-          background: "#222",
-          display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          flex: "0 0 auto",
           overflow: "hidden",
           borderTopLeftRadius: 8,
           borderTopRightRadius: 8,
           boxSizing: "border-box",
         }}
       >
-        <div style={{ position: "relative", width: "100%", height: "100%", boxSizing: "border-box" }}>
+        <Container pos={"relative"} w={"100%"} h={"100%"} p={0} style={{ boxSizing: "border-box" }}>
           {(!imageLoaded || imageError) && (
-            <div
+            <Container
+              pos={"absolute"}
+              left={0}
+              right={0}
+              top={0}
+              bottom={0}
               style={{
-                position: "absolute",
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0,
                 zIndex: 2,
                 borderTopLeftRadius: 8,
                 borderTopRightRadius: 8,
@@ -88,14 +88,14 @@ export const ItemCard: React.FC<Props> = ({ item, width = 220 }) => {
                 style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, display: "block" }}
               />
 
-              <div
+              <Container
+                pos={"absolute"}
+                left={0}
+                right={0}
+                top={0}
+                bottom={0}
+                display={"flex"}
                 style={{
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                  display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   zIndex: 3,
@@ -103,8 +103,8 @@ export const ItemCard: React.FC<Props> = ({ item, width = 220 }) => {
               >
                 {!imageLoaded && !imageError && <Loader size="lg" />}
                 {!imageLoaded && imageError && item.archived && <IconLock size={48} />}
-              </div>
-            </div>
+              </Container>
+            </Container>
           )}
 
           <Image
@@ -131,10 +131,10 @@ export const ItemCard: React.FC<Props> = ({ item, width = 220 }) => {
               setImageLoaded(true);
             }}
           />
-        </div>
-      </div>
+        </Container>
+      </Container>
 
-      <div style={{ padding: 10, display: "flex", flexDirection: "column", gap: 8, flex: "1 1 auto" }}>
+      <Container p={10} display={"flex"} flex={"1 1 auto"} w={"100%"} style={{ flexDirection: "column", gap: 8 }}>
         <Text size="xs" color="primary" style={{ paddingBottom: 10, color: "var(--mantine-primary-color-4)" }}>
           {item.dateCreated ? new Date(item.dateCreated).toLocaleString(undefined, dateOptions) : ""}
         </Text>
@@ -154,7 +154,7 @@ export const ItemCard: React.FC<Props> = ({ item, width = 220 }) => {
             {indexString}
           </Text>
         )}
-      </div>
+      </Container>
     </Card>
   );
 };

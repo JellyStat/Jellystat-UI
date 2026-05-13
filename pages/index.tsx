@@ -5,6 +5,7 @@ import { Welcome } from "@/components/Welcome/Welcome";
 import RecentlyAdded from "@/components/RecentlyAdded/RecentlyAdded";
 import WatchStatCards from "@/components/WatchStatCards/WatchStatCards";
 import LibraryOverview from "@/components/LibraryOverview/LibraryOverview";
+import { Container } from "@mantine/core";
 
 export default function HomePage() {
   const router = useRouter();
@@ -28,10 +29,10 @@ export default function HomePage() {
   }, [router]);
 
   return (
-    <>
+    <div style={{ gap: 10 }}>
       <RecentlyAdded />
       <WatchStatCards />
       <LibraryOverview />
-    </>
+    </div>
   );
 }

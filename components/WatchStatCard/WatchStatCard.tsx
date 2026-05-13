@@ -3,6 +3,7 @@ import { Card, Title, Group, Text, Avatar, Stack, Container, Image, BackgroundIm
 import ItemTypes from "@/lib/models/enums/ItemTypes";
 import { API_BASE } from "@/lib/api";
 import { Icon, IconPhoto } from "@tabler/icons-react";
+import classes from "./WatchStatCard.module.css";
 
 export type WatchStatItem = {
   id: string | number;
@@ -49,7 +50,7 @@ export default function WatchStatCard({ title = "Most Viewed", unit = "Plays", i
           backgroundColor: "rgba(0, 0, 0, 0.5)",
         }}
       >
-        <Card.Section style={{ width: 120 }}>
+        <Card.Section className={classes.imageSection}>
           {topItem.imageTag ? (
             <Image
               src={imageUrl}
@@ -80,26 +81,45 @@ export default function WatchStatCard({ title = "Most Viewed", unit = "Plays", i
             </div>
           )}
         </Card.Section>
-        <Card.Section p={8} style={{ width: "100%", minWidth: 350 }}>
-          <Group align="center" justify="space-between" style={{ marginBottom: 4 }}>
-            <Title order={4}>{title}</Title>
-            <Text size="sm" color="blue">
-              {unit}
-            </Text>
+        <Card.Section p={8} style={{ width: "100%", minWidth: 0 }}>
+          <Group
+            align="center"
+            justify="space-between"
+            style={{ marginBottom: 4, flexWrap: "nowrap", overflow: "hidden", maxLines: 1, textOverflow: "ellipsis" }}
+          >
+            <Title order={4} style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: 0 }}>
+              {title}
+            </Title>
+            <Text color="blue">{unit}</Text>
           </Group>
 
           <Stack style={{ gap: 2 }}>
             {display.map((it, idx) => (
               <Group key={it.id} align="center" justify="space-between" style={{ width: "100%" }}>
-                <Group align="center" style={{ gap: 8 }}>
+                <Group
+                  align="center"
+                  style={{
+                    gap: 8,
+                    flex: 1,
+                    minWidth: 0,
+                    overflow: "hidden",
+                    maxLines: 1,
+                    textOverflow: "ellipsis",
+                    flexWrap: "nowrap",
+                  }}
+                >
                   <Text color="dimmed" style={{ fontSize: 12 }}>
                     {idx + 1}
                   </Text>
 
-                  <Text style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{it.name}</Text>
+                  <Text style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: 0 }}>
+                    {it.name}
+                  </Text>
                 </Group>
 
-                <Text style={{ fontWeight: 600, color: "var(--mantine-primary-color-4)" }}>{it.value}</Text>
+                <Text style={{ fontWeight: 600, color: "var(--mantine-primary-color-4)", marginLeft: 8, flex: "0 0 auto" }}>
+                  {it.value}
+                </Text>
               </Group>
             ))}
           </Stack>

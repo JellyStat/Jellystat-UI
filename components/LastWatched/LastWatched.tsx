@@ -3,7 +3,7 @@ import type { IGridifyQuery } from "gridify-client";
 import client from "@/lib/api";
 import { ItemsWithStats } from "@/lib/models/itemsWithStats";
 import ActivityItemCards from "../ActivityItemsCards/ActivityItemCards";
-import { Group, Title } from "@mantine/core";
+import { Group, Loader, Text, Title } from "@mantine/core";
 
 type Props = {
   gridify?: IGridifyQuery;
@@ -41,8 +41,8 @@ const LastWatched: React.FC<Props> = ({ gridify, cardWidth }) => {
   return (
     <Group style={{ flexDirection: "column", alignItems: "start" }}>
       <Title order={2}>Last Watched</Title>
-      {loading && <div>Loading...</div>}
-      {error && <div style={{ color: "var(--mantine-color-red, red)" }}>{error}</div>}
+      {loading && <Loader />}
+      {error && <Text style={{ color: "var(--mantine-color-red, red)" }}>{error}</Text>}
       {!loading && !error && <ActivityItemCards items={items} cardWidth={cardWidth} />}
     </Group>
   );

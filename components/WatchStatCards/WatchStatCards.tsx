@@ -237,7 +237,7 @@ export default function WatchStatCards() {
 
   return (
     <Group style={{ flexDirection: "column", alignItems: "start" }}>
-      <Group style={{ width: "100%", justifyContent: "space-between" }} mb={10}>
+      <Group style={{ width: "100%", justifyContent: "space-between", alignItems: "end" }}>
         <Title order={2}>Watch Statistics</Title>
         <NumberInput
           value={days}
@@ -252,7 +252,7 @@ export default function WatchStatCards() {
           aria-label="Days to show statistics for"
         />
       </Group>
-      <SimpleGrid cols={3}>
+      <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg" style={{ width: "100%" }}>
         <WatchStatCard items={mostViewedMovies} title="MOST VIEWED MOVIES" unit="Plays" />
         <WatchStatCard items={mostPopularMovies} title="MOST POPULAR MOVIES" unit="Users" />
         <WatchStatCard items={mostViewedShows} title="MOST VIEWED SHOWS" unit="Plays" />

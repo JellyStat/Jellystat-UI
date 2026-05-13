@@ -5,6 +5,8 @@ import { API_BASE } from "@/lib/api";
 import { Icon, IconPhoto } from "@tabler/icons-react";
 import { LibrariesWithStats, TypeCountModel } from "@/lib/models/librariesWithStats";
 
+import classes from "./LibraryOverviewCard.module.css";
+
 export interface WatchStatCardProps {
   title: string;
   libraries: LibrariesWithStats[];
@@ -43,7 +45,7 @@ export default function LibraryOverviewCard({ title, libraries, Icon }: WatchSta
         backgroundColor: "rgba(0, 0, 0, 0.5)",
       }}
     >
-      <Card.Section style={{ width: 120 }}>
+      <Card.Section className={classes.imageSection}>
         <div
           style={{
             height: 180,
