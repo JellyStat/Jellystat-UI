@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
-import type { IGridifyQuery } from "gridify-client";
+import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import client from "@/lib/api";
 import { ItemsWithStats } from "@/lib/models/itemsWithStats";
 import ActivityItemCards from "../ActivityItemsCards/ActivityItemCards";
 import { Group, Loader, Text, Title } from "@mantine/core";
+import NotFound from "../ErrorCards/NotFound";
 
 type Props = {
-  gridify?: IGridifyQuery;
+  gridify?: GridifyQueryBuilder;
   cardWidth?: number | string;
 };
 
@@ -21,7 +22,10 @@ const LastWatched: React.FC<Props> = ({ gridify, cardWidth }) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await client.Api.getLibraryItems(gridify);
+      const query: GridifyQueryBuilder = gridify ? new GridifyQueryBuilder({ from: gridify }) : new GridifyQueryBuilder();
+      query.and().addCondition("latestActivity ", op.NotEqual, "null").addOrderBy("LatestActivityDate", true);
+      const builtQuery = query.build();
+      const res = await client.Api.getLibraryItems(builtQuery);
       if (!isCancelledRef.current) setItems(res?.data ?? []);
     } catch (err: any) {
       if (!isCancelledRef.current) setError(err?.message ?? String(err));
@@ -43,7 +47,10 @@ const LastWatched: React.FC<Props> = ({ gridify, cardWidth }) => {
       <Title order={2}>Last Watched</Title>
       {loading && <Loader />}
       {error && <Text style={{ color: "var(--mantine-color-red, red)" }}>{error}</Text>}
-      {!loading && !error && <ActivityItemCards items={items} cardWidth={cardWidth} />}
+      {!loading && !error && items.length === 0 && (
+        <NotFound title="No Activity Found" message="No items in your watch history" enableGoBack={false} />
+      )}
+      {!loading && !error && items.length > 0 && <ActivityItemCards items={items} cardWidth={cardWidth} />}
     </Group>
   );
 };

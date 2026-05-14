@@ -1,10 +1,5 @@
-import { Title, Text, Card } from "@mantine/core";
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
-import RecentlyAdded from "@/components/RecentlyAdded/RecentlyAdded";
-import StatsCard from "@/components/StatsCard/StatsCard";
-import StatType from "@/lib/models/enums/StatType";
-import LastWatched from "@/components/LastWatched/LastWatched";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
 import MediaGrid from "@/components/MediaGrid/MediaGrid";
 import { useMemo } from "react";

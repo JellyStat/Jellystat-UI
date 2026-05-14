@@ -36,8 +36,7 @@ export default function LibraryOverView({ library }: Props) {
         .addCondition("Type", op.NotEqual, ItemTypes.Series.toString())
         .and()
         .addCondition("LatestActivityDate", op.NotEqual, "null")
-        .addOrderBy("LatestActivityDate", true)
-        .build(),
+        .addOrderBy("LatestActivityDate", true),
     [library.id],
   );
 

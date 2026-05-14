@@ -6,9 +6,14 @@ import { IconQuestionMark, IconZoomQuestion } from "@tabler/icons-react";
 export interface NotFoundProps {
   title?: string;
   message?: string;
+  enableGoBack?: boolean;
 }
 
-export default function NotFound({ title = "Not Found", message = "The requested resource could not be found." }: NotFoundProps) {
+export default function NotFound({
+  title = "Not Found",
+  message = "The requested resource could not be found.",
+  enableGoBack = true,
+}: NotFoundProps) {
   const router = useRouter();
 
   return (
@@ -27,9 +32,11 @@ export default function NotFound({ title = "Not Found", message = "The requested
             {message}
           </Text>
 
-          <Group style={{ alignItems: "start" }}>
-            <Button onClick={() => router.back()}>Go Back</Button>
-          </Group>
+          {enableGoBack && (
+            <Group style={{ alignItems: "start" }}>
+              <Button onClick={() => router.back()}>Go Back</Button>
+            </Group>
+          )}
         </Card.Section>
       </Card>
     </Center>

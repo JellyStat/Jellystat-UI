@@ -16,6 +16,7 @@ import Activity from "./models/activity";
 import { MostUsedClients } from "./models/mostUsedClients";
 import { UserStats } from "./models/userStats";
 import { TranscodeStats } from "./models/transcodeStats";
+import { Items } from "./models/items";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5020/";
 
@@ -265,16 +266,17 @@ const getLibraries = async (gridify?: IGridifyQuery): Promise<PagingResponse<Lib
 const getLibraryItems = async (gridify?: IGridifyQuery): Promise<PagingResponse<ItemsWithStats>> =>
   apiFetch<PagingResponse<ItemsWithStats>>(`/Api/LibraryItems${await buildQuery(gridify)}`);
 
-const startSync = async (): Promise<boolean> => apiFetch<boolean>("/Api/StartSync");
+const getMatchingItems = async (name?: string, gridify?: IGridifyQuery): Promise<PagingResponse<Items>> =>
+  apiFetch<PagingResponse<Items>>(`/Api/MatchingItems${await buildQuery(gridify, { Name: name })}`);
 
-// const insertActivity = async (serverId: string | undefined, payload: ActivityV1[]): Promise<void> => {
-//   const headers: Record<string, string> = {};
-//   if (serverId) headers["ServerId"] = serverId;
-//   await apiFetch<void>(`/Api/InsertActivity${serverId ? `?ServerId=${encodeURIComponent(serverId)}` : ""}`, {
-//     method: "POST",
-//     body: JSON.stringify(payload),
-//     headers,
-//   });
+const startSync = async (serverId?: string): Promise<boolean> => {
+  const path = `/Api/StartSync${await buildQuery(undefined, { ServerId: serverId })}`;
+  return apiFetch<boolean>(path);
+};
+
+// const insertActivity = async (payload: ActivityV1[], serverId?: string): Promise<void> => {
+//   const path = `/Api/InsertActivity${await buildQuery(undefined, { ServerId: serverId })}`;
+//   await apiFetch<void>(path, { method: "POST", body: JSON.stringify(payload) });
 // };
 
 // Set a local user's default server
@@ -371,10 +373,11 @@ const refreshToken = async (): Promise<void> => {
 const getHistoryActivity = async (
   gridify?: IGridifyQuery,
   params?: { GroupResults?: boolean },
-): Promise<PagingResponse<Activity>> => apiFetch(`/History/Activity${await buildQuery(gridify, params as Record<string, any>)}`);
+): Promise<PagingResponse<Activity>> =>
+  apiFetch<PagingResponse<Activity>>(`/History/Activity${await buildQuery(gridify, params as Record<string, any>)}`);
 
 const deleteHistoryActivity = async (serverId: string | undefined, ids: string[]): Promise<void> =>
-  apiFetch<void>(`/History/Activity${serverId ? `?ServerId=${encodeURIComponent(serverId)}` : ""}`, {
+  apiFetch<void>(`/History/Activity${await buildQuery(undefined, { ServerId: serverId })}`, {
     method: "DELETE",
     body: JSON.stringify(ids),
   });
@@ -450,13 +453,6 @@ const getTranscodeStats = async (
   gridify?: IGridifyQuery,
 ) => apiFetch<PagingResponse<TranscodeStats>>(`/Stats/TranscodeStats${await buildQuery(gridify, params as Record<string, any>)}`);
 
-const getMostPopularTranscodes = async (
-  params?: {
-    days?: number;
-  },
-  gridify?: IGridifyQuery,
-) => apiFetch<PagingResponse<unknown>>(`/Stats/MostPopularItems${await buildQuery(gridify, params as Record<string, any>)}`);
-
 // History
 const getSystemInfo = async (): Promise<SystemInfo> => apiFetch(`/System/Info`);
 
@@ -469,6 +465,7 @@ export const Api = {
   getUsers,
   getLibraries,
   getLibraryItems,
+  getMatchingItems,
   startSync,
   // insertActivity,
   setLocalUserServer,
@@ -481,7 +478,6 @@ export const Stats = {
   getMostUsedClients,
   getUserStats,
   getTranscodeStats,
-  getMostPopularTranscodes,
 };
 
 export const History = {

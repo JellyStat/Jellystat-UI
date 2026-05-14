@@ -12,6 +12,7 @@ import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
 import { MostUsedClients } from "@/lib/models/mostUsedClients";
 import { UserStats } from "@/lib/models/userStats";
 import { TranscodeStats } from "@/lib/models/transcodeStats";
+import NotFound from "../ErrorCards/NotFound";
 
 export default function WatchStatCards() {
   const [mostViewedMovies, setMostViewedMovies] = useState<WatchStatItem[]>([]);
@@ -31,7 +32,12 @@ export default function WatchStatCards() {
       setLoading(true);
       try {
         // Example API call - replace with actual endpoint and query
-        const query = new GridifyQueryBuilder().addCondition("type", op.Equal, ItemTypes.Movie.toString()).setPageSize(5).build();
+        const query = new GridifyQueryBuilder()
+          .addCondition("type", op.Equal, ItemTypes.Movie.toString())
+          .and()
+          .addCondition("playCount", op.GreaterThan, 0)
+          .setPageSize(5)
+          .build();
         const res = await client.Stats.getItemStats({ days: days as number }, query);
         if (!mounted) return;
         const items =
@@ -56,7 +62,12 @@ export default function WatchStatCards() {
       setLoading(true);
       try {
         // Example API call - replace with actual endpoint and query
-        const query = new GridifyQueryBuilder().addCondition("type", op.Equal, ItemTypes.Movie.toString()).setPageSize(5).build();
+        const query = new GridifyQueryBuilder()
+          .addCondition("type", op.Equal, ItemTypes.Movie.toString())
+          .and()
+          .addCondition("playCount", op.GreaterThan, 0)
+          .setPageSize(5)
+          .build();
         const res = await client.Stats.getMostPopularItems({ days: days as number }, query);
         if (!mounted) return;
         const items =
@@ -83,6 +94,8 @@ export default function WatchStatCards() {
         // Example API call - replace with actual endpoint and query
         const query = new GridifyQueryBuilder()
           .addCondition("type", op.Equal, ItemTypes.Series.toString())
+          .and()
+          .addCondition("playCount", op.GreaterThan, 0)
           .setPageSize(5)
           .build();
         const res = await client.Stats.getItemStats({ days: days as number }, query);
@@ -111,6 +124,8 @@ export default function WatchStatCards() {
         // Example API call - replace with actual endpoint and query
         const query = new GridifyQueryBuilder()
           .addCondition("type", op.Equal, ItemTypes.Series.toString())
+          .and()
+          .addCondition("playCount", op.GreaterThan, 0)
           .setPageSize(5)
           .build();
         const res = await client.Stats.getMostPopularItems({ days: days as number }, query);
@@ -240,6 +255,16 @@ export default function WatchStatCards() {
     };
   }, [days]);
 
+  const hasData =
+    mostViewedMovies.length > 0 ||
+    mostPopularMovies.length > 0 ||
+    mostViewedShows.length > 0 ||
+    mostPopularShows.length > 0 ||
+    mostViewedLibrary.length > 0 ||
+    mostUsedClients.length > 0 ||
+    mostActiveUsers.length > 0 ||
+    mostConcurrentStreams.length > 0;
+
   return (
     <Group style={{ flexDirection: "column", alignItems: "start", minHeight: 200 }}>
       <Group style={{ width: "100%", justifyContent: "space-between", alignItems: "end" }}>
@@ -258,6 +283,9 @@ export default function WatchStatCards() {
         />
       </Group>
       {loading && <Loader />}
+      {!loading && !hasData && (
+        <NotFound title="No Data" message="No watch statistics found for the selected period" enableGoBack={false} />
+      )}
       <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg" style={{ width: "100%" }}>
         <WatchStatCard items={mostViewedMovies} title="MOST VIEWED MOVIES" unit="Plays" />
         <WatchStatCard items={mostPopularMovies} title="MOST POPULAR MOVIES" unit="Users" />

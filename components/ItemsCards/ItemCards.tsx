@@ -13,15 +13,17 @@ type Props = {
 export const ItemCards: React.FC<Props> = ({ items, cardWidth = 160 }) => {
   return (
     <Container
-      maw={"100%"}
-      display={"flex"}
+      fluid
       p={0}
+      m={0}
+      display={"flex"}
       style={{
         flexWrap: "nowrap",
         gap: 12,
         overflowX: "auto",
         WebkitOverflowScrolling: "touch",
         alignItems: "stretch",
+        justifyContent: "flex-start",
         boxSizing: "border-box",
       }}
     >
