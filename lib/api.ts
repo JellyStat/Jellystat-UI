@@ -382,6 +382,9 @@ const deleteHistoryActivity = async (serverId: string | undefined, ids: string[]
     body: JSON.stringify(ids),
   });
 
+const getUnlinkedActivity = async (gridify?: IGridifyQuery): Promise<PagingResponse<Activity>> =>
+  apiFetch<PagingResponse<Activity>>(`/History/UnlinkedActivity${await buildQuery(gridify)}`);
+
 // Proxy image helpers (return Blob)
 const getProxyDeviceImage = async (serverId?: string, deviceName?: string): Promise<Blob> => {
   const path = `/Proxy/Images/Devices${await buildQuery(undefined, { DeviceName: deviceName, ServerId: serverId })}`;
@@ -482,6 +485,7 @@ export const Stats = {
 
 export const History = {
   activity: { get: getHistoryActivity, delete: deleteHistoryActivity },
+  getUnlinkedActivity,
 };
 
 export const Auth = {
