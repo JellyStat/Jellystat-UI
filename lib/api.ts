@@ -17,6 +17,9 @@ import { MostUsedClients } from "./models/mostUsedClients";
 import { UserStats } from "./models/userStats";
 import { TranscodeStats } from "./models/transcodeStats";
 import { Items } from "./models/items";
+import { MigrateActivity } from "./models/MigrateActivity";
+import permissionsManager from "./permissionsManager";
+import Permissions from "./models/enums/Permissions";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5020/";
 
@@ -266,8 +269,8 @@ const getLibraries = async (gridify?: IGridifyQuery): Promise<PagingResponse<Lib
 const getLibraryItems = async (gridify?: IGridifyQuery): Promise<PagingResponse<ItemsWithStats>> =>
   apiFetch<PagingResponse<ItemsWithStats>>(`/Api/LibraryItems${await buildQuery(gridify)}`);
 
-const getMatchingItems = async (name?: string, gridify?: IGridifyQuery): Promise<PagingResponse<Items>> =>
-  apiFetch<PagingResponse<Items>>(`/Api/MatchingItems${await buildQuery(gridify, { Name: name })}`);
+const getMatchingItems = async (name?: string, gridify?: IGridifyQuery): Promise<PagingResponse<ItemsWithParentData>> =>
+  apiFetch<PagingResponse<ItemsWithParentData>>(`/Api/MatchingItems${await buildQuery(gridify, { Name: name })}`);
 
 const startSync = async (serverId?: string): Promise<boolean> => {
   const path = `/Api/StartSync${await buildQuery(undefined, { ServerId: serverId })}`;
@@ -302,8 +305,14 @@ const login = async (payload: LoginModel): Promise<void> => {
         try {
           const payloadBase64 = result.token.split(".")[1];
           const decoded = JSON.parse(atob(payloadBase64));
-          if (decoded?.serverId || payload.serverId)
-            localStorage.setItem("jellystat_serverId", decoded.serverId ?? payload.serverId);
+
+          if (!decoded.serverId && !payload.serverId && permissionsManager.hasPermission(Permissions.Administrator)) {
+            const servers = await getConfig();
+            if (servers.length > 0) {
+              decoded.serverId = servers[0].id;
+            }
+          }
+          localStorage.setItem("jellystat_serverId", decoded.serverId ?? payload.serverId);
         } catch {}
       }
     } catch {
@@ -384,6 +393,9 @@ const deleteHistoryActivity = async (serverId: string | undefined, ids: string[]
 
 const getUnlinkedActivity = async (gridify?: IGridifyQuery): Promise<PagingResponse<Activity>> =>
   apiFetch<PagingResponse<Activity>>(`/History/UnlinkedActivity${await buildQuery(gridify)}`);
+
+const migrateActivity = async (payload: MigrateActivity[]): Promise<MigrateActivity[]> =>
+  apiFetch<MigrateActivity[]>("/History/MigrateActivity", { method: "POST", body: JSON.stringify(payload) });
 
 // Proxy image helpers (return Blob)
 const getProxyDeviceImage = async (serverId?: string, deviceName?: string): Promise<Blob> => {
@@ -486,6 +498,7 @@ export const Stats = {
 export const History = {
   activity: { get: getHistoryActivity, delete: deleteHistoryActivity },
   getUnlinkedActivity,
+  migrateActivity,
 };
 
 export const Auth = {

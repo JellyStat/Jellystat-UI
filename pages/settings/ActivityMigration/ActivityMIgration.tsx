@@ -1,12 +1,26 @@
-import { Card, Container, FloatingIndicator, Select, Tabs, Text, Title } from "@mantine/core";
+import { Badge, Button, Card, Container, FloatingIndicator, Group, Select, Tabs, Text, Title } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
 import classes from "@/components/ActivityTable/ActivityTable.module.css";
 import { DataTable } from "mantine-datatable";
 import Activity, { BaseTranscodingInfo } from "@/lib/models/activity";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import client from "@/lib/api";
-import { Items } from "@/lib/models/items";
-import LibraryTypes from "@/lib/models/enums/LibraryTypes";
+import { MigrateActivity } from "@/lib/models/MigrateActivity";
+import ItemTypes from "@/lib/models/enums/ItemTypes";
+import ItemsWithParentData from "@/lib/models/itemsWithParentData";
+import { DefaultSelectedItem, SelectAsync } from "@/components/SelectAsync";
+
+class SelectedItem {
+  id: string;
+  itemId: string;
+  itemName: string;
+
+  public constructor(id: string, itemId: string, itemName: string) {
+    this.id = id;
+    this.itemId = itemId;
+    this.itemName = itemName;
+  }
+}
 
 export default function ActivityMigrationPage() {
   const [page, setPage] = useState(1);
@@ -14,10 +28,66 @@ export default function ActivityMigrationPage() {
   const [error, setError] = useState<string | null>(null);
   const [activityData, setActivityData] = useState<Activity[]>([]);
   const [pageCount, setPageCount] = useState(0);
-  const [expandedActivityIds, setExpandedActivityIds] = useState<string[]>([]);
+  const [migrationLoading, setMigrationLoading] = useState(false);
 
-  const [seriesMatches, setSeriesMatches] = useState<Record<string, Items[]>>({});
-  const [selectedSeries, setSelectedSeries] = useState<Record<string, string | null>>({});
+  const [seriesMatches, setSeriesMatches] = useState<Record<string, ItemsWithParentData[]>>({});
+  const [selectedItem, setSelectedItem] = useState<Record<string, SelectedItem | null>>({});
+
+  const [migrations, setMigrations] = useState<MigrateActivity[]>([]);
+
+  // Replace all occurrences of `oldSeriesId` with `newSeriesId` on migrations
+  function updateMigrationBySeriesId(oldSeriesId: string, newSeriesId: string) {
+    setMigrations((prev) => prev.map((m) => (m.SeriesId === oldSeriesId ? m.copyWith({ SeriesId: newSeriesId }) : m)));
+  }
+
+  // Replace all occurrences of `oldSeasonId` with `newSeasonId` on migrations
+  function updateMigrationBySeasonId(oldSeasonId: string, newSeasonId: string) {
+    setMigrations((prev) => prev.map((m) => (m.SeasonId === oldSeasonId ? m.copyWith({ SeasonId: newSeasonId }) : m)));
+  }
+
+  // Replace all occurrences of `oldItemId` with `newItemId` on migrations
+  function updateMigrationByItemId(oldItemId: string, newItemId: string) {
+    setMigrations((prev) => prev.map((m) => (m.ItemId === oldItemId ? m.copyWith({ ItemId: newItemId }) : m)));
+  }
+
+  async function applyMigrations() {
+    try {
+      setMigrationLoading(true);
+      const res = await client.History.migrateActivity(migrations);
+      setMigrationLoading(false);
+      const failedMigrations = res.filter((m) => !m.success);
+      setMigrations(failedMigrations);
+      setActivityData([]);
+      setPageCount(1);
+      setPage(1);
+      await fetchPage(1, true);
+    } catch (err) {
+      console.error(err);
+      setMigrationLoading(false);
+    }
+  }
+
+  const fetchMatchingItems = async (id: string) => {
+    const activity = activityData.find((a) => a.id === id);
+    if (!activity) return [];
+    const migration = migrations.find((m) => m.id === id);
+    if (!migration) return [];
+    try {
+      const query = new GridifyQueryBuilder()
+        .startGroup()
+        .addCondition("type", op.Equal, ItemTypes.Episode.toString())
+        .or()
+        .addCondition("type", op.Equal, ItemTypes.Movie.toString())
+        .endGroup();
+      if (migration.SeriesId) query.and().addCondition("rootId", op.Equal, migration.SeriesId);
+      const res = await client.Api.getMatchingItems(activity.name, query.build());
+      const data = res?.data ?? [];
+      return data;
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  };
 
   const fetchPage = useCallback(
     async (pageToLoad: number, replace = false) => {
@@ -34,8 +104,7 @@ export default function ActivityMigrationPage() {
         const count = res?.count ?? 0;
 
         const distinctSeriesSet = new Set<string>();
-        const seriesMatchesTemp: Record<string, Items[]> = {};
-        const selectedSeriesTemp: Record<string, string | null> = { ...selectedSeries };
+        const seriesMatchesTemp: Record<string, ItemsWithParentData[]> = {};
         data.forEach((activity) => {
           if (activity.seriesName) distinctSeriesSet.add(activity.seriesName);
         });
@@ -46,19 +115,35 @@ export default function ActivityMigrationPage() {
           seriesArray.map(async (series) => {
             const res = await client.Api.getMatchingItems(
               series,
-              new GridifyQueryBuilder().addCondition("type", op.Equal, LibraryTypes.Series.toString()).build(),
+              new GridifyQueryBuilder().addCondition("type", op.Equal, ItemTypes.Series.toString()).build(),
             );
             const data = res?.data ?? [];
             seriesMatchesTemp[series] = data;
-            if (data.length > 0 && !selectedSeriesTemp[series]) {
-              selectedSeriesTemp[series] = data[0].id;
-            }
           }),
         );
 
+        const tempMigrations: MigrateActivity[] = [];
+
+        for (const activity of data) {
+          const migration = new MigrateActivity({
+            id: activity.id,
+            ServerId: activity.serverId,
+            SeriesId: (activity.seriesName && seriesMatchesTemp[activity.seriesName]?.[0]?.id) || activity.seriesId || "",
+            SeasonId: activity.seasonId || "",
+            ItemId: activity.itemId,
+          });
+          tempMigrations.push(migration);
+        }
+
+        setMigrations((prev) => {
+          const existingIds = new Set(prev.map((m) => m.id));
+          const toAdd = tempMigrations.filter((m) => !existingIds.has(m.id));
+          return toAdd.length ? [...prev, ...toAdd] : prev;
+        });
+
         setPageCount(count);
         setSeriesMatches(seriesMatchesTemp);
-        setSelectedSeries(selectedSeriesTemp);
+        // setSelectedSeries(selectedSeriesTemp);
 
         setActivityData(data);
       } catch (err: any) {
@@ -86,7 +171,19 @@ export default function ActivityMigrationPage() {
 
   return (
     <div style={{ padding: 20 }}>
-      <Title order={2}>Activity Migration</Title>
+      <Group justify="space-between">
+        <Group>
+          <Title order={2}>Activity Migration</Title>
+          {migrations.length > 0 && (
+            <Badge size="lg" circle>
+              {migrations.length}
+            </Badge>
+          )}
+        </Group>
+        <Button loading={migrationLoading} onClick={applyMigrations} disabled={migrations.length == 0}>
+          Apply Migrations
+        </Button>
+      </Group>
       <Card shadow="sm" p={0} style={{ width: "100%", marginTop: 12 }}>
         <DataTable
           className={classes.root}
@@ -106,10 +203,6 @@ export default function ActivityMigrationPage() {
           // define columns
           columns={[
             {
-              accessor: "name",
-              title: "Title",
-            },
-            {
               accessor: "seriesName",
               title: "Series",
               render: (activity) => {
@@ -120,22 +213,57 @@ export default function ActivityMigrationPage() {
               accessor: "matchedSeries",
               title: "Matched Series",
               render: (activity) => {
-                if (!activity.seriesName) return "-";
+                if (!activity.seriesName || !activity.seriesId) return "-";
                 const matchedSeries = (seriesMatches[activity.seriesName] ?? []).map((item) => ({
                   value: item.id,
                   label: item.name,
                 }));
-                const value: string | null = selectedSeries[activity.seriesName] ?? null;
+                const value: string | null = migrations.find((m) => m.id === activity.id)?.SeriesId || null;
                 return (
                   <Select
-                    placeholder={matchedSeries.length > 0 ? "Select a series" : "No similar items found"}
+                    placeholder={matchedSeries.length > 0 ? "Select an item" : "No similar items found"}
                     data={matchedSeries}
                     value={value}
                     onChange={(v) => {
-                      setSelectedSeries((prev) => ({ ...prev, [activity.seriesName!]: v }));
+                      updateMigrationBySeriesId(activity.seriesId!, v ?? "");
                     }}
                     // searchable
                     mt="sm"
+                  />
+                );
+              },
+            },
+            {
+              accessor: "name",
+              title: "Title",
+            },
+            {
+              accessor: "matchedTitle",
+              title: "Matched Title",
+              render: (activity) => {
+                if (!activity.id) return "-";
+
+                return (
+                  <SelectAsync<ItemsWithParentData>
+                    fetchMethod={() => fetchMatchingItems(activity.id!)}
+                    onSelect={(item) => {
+                      if (!item) return;
+                      if (activity.seasonId && item?.parentId) {
+                        updateMigrationBySeasonId(activity.seasonId!, item?.parentId || "");
+                      }
+                      updateMigrationByItemId(activity.itemId!, item?.id || "");
+                      setSelectedItem((prev) => ({
+                        ...prev,
+                        [activity.id!]: new SelectedItem(activity.id!, item.id, item.name),
+                      }));
+                    }}
+                    idPredicate={(it) => it.id}
+                    namePredicate={(it) => it.name}
+                    value={
+                      selectedItem[activity.id!]
+                        ? new DefaultSelectedItem(selectedItem[activity.id!]!.id, selectedItem[activity.id!]!.itemName)
+                        : null
+                    }
                   />
                 );
               },
