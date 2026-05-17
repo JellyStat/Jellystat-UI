@@ -1,18 +1,6 @@
 import type { BaseMediaStream } from "./baseMediaStream";
+import { BaseTranscodingInfo } from "./baseTranscodingInfo";
 import { Items } from "./items";
-
-export interface BaseTranscodingInfo {
-  videoCodec?: string | null;
-  audioCodec?: string | null;
-  container?: string | null;
-  isVideoDirect?: boolean;
-  isAudioDirect?: boolean;
-  bitrate?: number;
-  completionPercentage?: number;
-  width?: number;
-  height?: number;
-  transcodeReasons?: string[];
-}
 
 export interface Activity {
   id?: string;

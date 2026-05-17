@@ -11,6 +11,7 @@ export interface BaseMediaStream {
   type?: MediaStreamType;
   aspectRatio?: string | null;
   index?: number | null;
+  channels?: number | null;
 }
 
 export default BaseMediaStream;

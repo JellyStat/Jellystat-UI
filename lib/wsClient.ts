@@ -4,6 +4,9 @@
    - Exposes `init`, `send`, `close`, `on`, `off`, and `isConnected`
 */
 import { API_BASE } from "./api";
+import WebSocketMessageTypes from "./models/enums/WebSocketMessageTypes";
+import SessionItem from "./models/sessionItem";
+import { WebsocketMessage } from "./models/WebsocketMessage";
 
 type Handler = (payload: any) => void;
 
@@ -43,32 +46,44 @@ class WebSocketClient {
   init(): void {
     if (typeof window === "undefined") return;
     if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) return;
-
-    const token = (() => {
-      try {
-        return localStorage.getItem("jellystat_token");
-      } catch {
-        return null;
-      }
-    })();
-
-    let url = this.buildUrl();
-    if (!url) return;
-    if (token) {
-      const sep = url.includes("?") ? "&" : "?";
-      url = `${url}${sep}token=${encodeURIComponent(token)}`;
-    }
-
     this.shouldReconnect = true;
-    this.connect(url);
+    this.connect();
   }
 
-  private connect(url: string) {
+  private connect() {
+    // Build fresh url each time so token/serverId changes are picked up on reconnect
+    let url = this.buildUrl();
+    if (!url) return;
+
     try {
+      const token = (() => {
+        try {
+          return localStorage.getItem("jellystat_token");
+        } catch {
+          return null;
+        }
+      })();
+
+      const serverId = (() => {
+        try {
+          return localStorage.getItem("jellystat_serverId");
+        } catch {
+          return null;
+        }
+      })();
+
+      const params: string[] = [];
+      if (token) params.push(`token=${encodeURIComponent(token)}`);
+      if (serverId) params.push(`serverId=${encodeURIComponent(serverId)}`);
+      if (params.length) {
+        const sep = url.includes("?") ? "&" : "?";
+        url = `${url}${sep}${params.join("&")}`;
+      }
+
       this.ws = new WebSocket(url);
     } catch (err) {
       this.emit("error", err as any);
-      this.scheduleReconnect(url);
+      this.scheduleReconnect();
       return;
     }
 
@@ -78,18 +93,37 @@ class WebSocketClient {
     };
 
     this.ws.onmessage = (ev) => {
-      let payload: any = ev.data;
       try {
-        payload = JSON.parse(ev.data);
+        // ignore binary frames explicitly
+        if (ev.data instanceof Blob || ev.data instanceof ArrayBuffer) return;
+
+        let parsed: any;
+        if (typeof ev.data === "string") {
+          parsed = JSON.parse(ev.data);
+        } else if (ev.data && typeof ev.data === "object") {
+          parsed = ev.data;
+        } else {
+          return; // ignore other non-json frames
+        }
+
+        if (!parsed || typeof parsed !== "object") return;
+
+        var message = parsed as WebsocketMessage;
+
+        const emitTag: string = message.type.toString();
+        if (message.type == WebSocketMessageTypes.Sessions) {
+          message = parsed as WebsocketMessage<SessionItem[]>;
+        }
+        // emit parsed object directly; do not normalize key casing
+        this.emit(emitTag, message);
       } catch {
-        // keep raw data
+        // invalid JSON — ignore
       }
-      this.emit("message", payload);
     };
 
     this.ws.onclose = (ev) => {
       this.emit("close", ev);
-      if (this.shouldReconnect) this.scheduleReconnect(url);
+      if (this.shouldReconnect) this.scheduleReconnect();
     };
 
     this.ws.onerror = (ev) => {
@@ -97,12 +131,12 @@ class WebSocketClient {
     };
   }
 
-  private scheduleReconnect(url: string) {
+  private scheduleReconnect() {
     setTimeout(() => {
       if (!this.shouldReconnect) return;
       // exponential backoff
       this.reconnectDelay = Math.min(this.reconnectDelay * 1.5, this.maxDelay);
-      this.connect(url);
+      this.connect();
     }, this.reconnectDelay);
   }
 
@@ -127,13 +161,13 @@ class WebSocketClient {
     this.ws = null;
   }
 
-  on(event: "open" | "message" | "close" | "error", handler: Handler) {
+  on(event: string, handler: Handler) {
     const set = this.handlers.get(event) ?? new Set<Handler>();
     set.add(handler);
     this.handlers.set(event, set);
   }
 
-  off(event: "open" | "message" | "close" | "error", handler?: Handler) {
+  off(event: string, handler?: Handler) {
     if (!handler) {
       this.handlers.delete(event);
       return;
@@ -146,6 +180,7 @@ class WebSocketClient {
 
   private emit(event: string, payload: any) {
     const set = this.handlers.get(event);
+    console.debug(`Emitting event '${event}' to ${set?.size ?? 0} handler(s)`, payload);
     if (!set) return;
     for (const h of Array.from(set)) {
       try {
@@ -161,6 +196,8 @@ class WebSocketClient {
   }
 }
 
-export const wsClient = new WebSocketClient();
+// Ensure a single global instance even if the module is imported multiple ways
+const g = globalThis as any;
+export const wsClient: WebSocketClient = g.__jellystat_wsClient ?? (g.__jellystat_wsClient = new WebSocketClient());
 
 export default wsClient;

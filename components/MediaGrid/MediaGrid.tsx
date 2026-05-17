@@ -164,7 +164,6 @@ const MediaGrid: React.FC<Props> = ({ gridify }) => {
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: 12 }}>
           {loading && <Loader size="sm" />}
-          {!loading && !hasMore && items.length > 0 && <Text color="dimmed">End of results</Text>}
           {!loading && items.length === 0 && <Text color="dimmed">No results</Text>}
         </div>
 

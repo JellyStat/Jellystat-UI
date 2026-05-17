@@ -2,7 +2,7 @@ import { Badge, Button, Card, Container, FloatingIndicator, Group, Select, Tabs,
 import { useCallback, useEffect, useState } from "react";
 import classes from "@/components/ActivityTable/ActivityTable.module.css";
 import { DataTable } from "mantine-datatable";
-import Activity, { BaseTranscodingInfo } from "@/lib/models/activity";
+import Activity from "@/lib/models/activity";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import client from "@/lib/api";
 import { MigrateActivity } from "@/lib/models/MigrateActivity";

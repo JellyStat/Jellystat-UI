@@ -8,6 +8,7 @@ import LibraryOverview from "@/components/LibraryOverview/LibraryOverview";
 import { Container } from "@mantine/core";
 import client from "@/lib/api";
 import configManager from "@/lib/configManager";
+import Sessions from "@/components/Sessions/Sessions";
 
 export default function HomePage() {
   const router = useRouter();
@@ -34,6 +35,7 @@ export default function HomePage() {
 
   return (
     <div style={{ gap: 10 }}>
+      <Sessions />
       <RecentlyAdded />
       <WatchStatCards />
       <LibraryOverview />

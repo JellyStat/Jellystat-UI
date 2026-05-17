@@ -7,6 +7,8 @@ import StatType from "@/lib/models/enums/StatType";
 import LastWatched from "@/components/LastWatched/LastWatched";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
 import { ItemsWithStats } from "@/lib/models/itemsWithStats";
+import { useEffect, useMemo, useState } from "react";
+import client from "@/lib/api";
 
 type Props = {
   item: ItemsWithStats | null;
@@ -20,23 +22,6 @@ export default function ItemOverview({ item }: Props) {
       <div style={{ marginTop: 16 }}>
         <StatsCard type={StatType.Item} id={item?.id ?? ""} />
       </div>
-
-      {/* {item?.type && [ItemTypes.Series, ItemTypes.Season].includes(item!.type!) && (
-        <div style={{ marginTop: 20 }}>
-          <LastWatched
-            gridify={new GridifyQueryBuilder()
-              .addCondition("Id", op.Equal, item?.id ?? "")
-              .and()
-              // .addCondition("Type", op.NotEqual, ItemTypes.Season.toString())
-              // .and()
-              // .addCondition("Type", op.NotEqual, ItemTypes.Series.toString())
-              // .and()
-              .addCondition("LatestActivityDate", op.NotEqual, "null")
-              .addOrderBy("LatestActivityDate", true)
-              .build()}
-          />
-        </div>
-      )} */}
     </div>
   );
 }

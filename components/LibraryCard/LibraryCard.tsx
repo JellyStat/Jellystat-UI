@@ -6,13 +6,6 @@ import { API_BASE } from "@/lib/api";
 import { IconPhoto } from "@tabler/icons-react";
 import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
 
-function formatBytes(bytes?: number | null) {
-  if (!bytes || bytes <= 0) return "0.00 KB";
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
-}
-
 export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
   const router = useRouter();
   // Construct a direct proxy image URL (no blob usage). The API proxy endpoint
@@ -53,7 +46,7 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
       )}
 
       <div style={{ padding: 10, display: "flex", flexDirection: "column", gap: 8, flex: "1 1 auto" }}>
-        <Group align="center" mb="xs" style={{ width: "100%" }}>
+        <Group justify="space-between" align="center" mb="xs" style={{ width: "100%" }}>
           <Text size="lg" style={{ fontWeight: 700 }}>
             {lib.name}
           </Text>
@@ -75,7 +68,7 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
               .reduce((a, b) => a + b, 0) ?? "N/A"}
           </Text>
           <Text size="sm" color="dimmed">
-            Total Size: {formatBytes(lib.size)}
+            Total Size: {lib.size?.formatBytes() ?? "N/A"}
           </Text>
           <Text size="sm" color="dimmed">
             Play Count: {lib.playCount ?? 0}

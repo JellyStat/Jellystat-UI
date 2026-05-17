@@ -7,6 +7,7 @@ export enum ItemTypes {
   Folder = "Folder",
   Trailer = "Trailer",
   Unknown = "Unknown",
+  TvChannel = "TvChannel",
 }
 
 export default ItemTypes;

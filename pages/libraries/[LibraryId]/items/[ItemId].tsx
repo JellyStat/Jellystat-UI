@@ -11,6 +11,8 @@ import ItemActivity from "./activity";
 import NotFound from "@/components/ErrorCards/NotFound";
 import { Server } from "@/lib/models/server";
 import configManager from "@/lib/configManager";
+import ItemTypes from "@/lib/models/enums/ItemTypes";
+import ItemMedia from "./media";
 
 export default function ItemPage() {
   const router = useRouter();
@@ -59,7 +61,11 @@ export default function ItemPage() {
   }
 
   const externalURLBase = config?.externalURL && config?.externalURL.trim().length > 0 ? config.externalURL : config?.url;
-
+  const isValidParent = item && item.parent && item.parent.id && item.parent.id !== item.id && item.parent.name;
+  const title = isValidParent ? item?.parent?.name : item?.name;
+  const subtitle = isValidParent ? item?.name : null;
+  const parentIndexUnit = isValidParent && item.type == ItemTypes.Episode ? "Season" : null;
+  const indexUnit = item?.type == ItemTypes.Episode ? "Episode" : null;
   return (
     <div style={{ padding: 20 }}>
       {loading && (
@@ -97,17 +103,59 @@ export default function ItemPage() {
 
             <div style={{ flex: 1 }}>
               <Group>
-                <Title order={2}>{item?.name ?? ItemId}</Title>
-                {config && item && (
-                  <ActionIcon
-                    variant="transparent"
-                    component="a"
-                    href={`${externalURLBase}/web/index.html#/details?id=${item?.id}&serverId=${item?.serverId}`}
-                    target="_blank"
-                  >
-                    <IconExternalLink size={20} />
-                  </ActionIcon>
-                )}
+                <Group align="start" style={{ flexDirection: "column" }}>
+                  <Group align="start" gap={4}>
+                    <Text
+                      component={item?.parentId ? "a" : undefined}
+                      href={`/libraries/${item?.libraryId}/items/${item?.parentId}`}
+                      style={{ fontWeight: "bold", fontSize: 32 }}
+                    >
+                      {title}
+                    </Text>
+                    {config && item && (
+                      <ActionIcon
+                        variant="transparent"
+                        component="a"
+                        href={`${externalURLBase}/web/index.html#/details?id=${item?.id}&serverId=${item?.serverId}`}
+                        target="_blank"
+                      >
+                        <IconExternalLink size={20} />
+                      </ActionIcon>
+                    )}
+                  </Group>
+                  {isValidParent && (
+                    <Group gap={4}>
+                      {parentIndexUnit && (
+                        <Text
+                          component={item.parentId ? "a" : undefined}
+                          href={`/libraries/${item.libraryId}/items/${item.parentId}`}
+                          style={{ fontWeight: "bold" }}
+                        >
+                          {parentIndexUnit + " " + item.parentIndex}
+                        </Text>
+                      )}
+                      {indexUnit && <Text>{indexUnit + " " + item.index}</Text>}
+                      {parentIndexUnit || indexUnit ? <Text color="dimmed">-</Text> : null}
+                      <Text>{subtitle}</Text>
+                    </Group>
+                  )}
+                  {item?.path && (
+                    <Text color="dimmed" size="sm" style={{ fontStyle: "italic" }}>
+                      File Path: {item.path}
+                    </Text>
+                  )}
+                  {item?.duration && (
+                    <Text color="dimmed" size="sm" style={{ fontStyle: "italic" }}>
+                      Runtime: {item.duration.ticksToDurationString()}
+                    </Text>
+                  )}{" "}
+                  {item?.size && (
+                    <Text color="dimmed" size="sm" style={{ fontStyle: "italic" }}>
+                      Size: {item.size.formatBytes()}
+                    </Text>
+                  )}
+                </Group>
+
                 {item?.archived && <IconLock size={20} color="orange" />}
               </Group>
               {/* <Text color="dimmed" style={{ marginTop: 8 }}>
@@ -117,6 +165,7 @@ export default function ItemPage() {
               <Tabs value={activeTab} onChange={setActiveTab} style={{ marginTop: 12 }}>
                 <Tabs.List>
                   <Tabs.Tab value="overview">Overview</Tabs.Tab>
+                  {item && [ItemTypes.Season, ItemTypes.Series].includes(item.type) && <Tabs.Tab value="media">Media</Tabs.Tab>}
                   <Tabs.Tab value="activity">Activity</Tabs.Tab>
                   {/* <Tabs.Tab value="options">Options</Tabs.Tab> */}
                 </Tabs.List>
@@ -129,6 +178,11 @@ export default function ItemPage() {
               <ItemOverview item={item} />
             </Tabs.Panel>
 
+            {item && [ItemTypes.Season, ItemTypes.Series].includes(item.type) && (
+              <Tabs.Panel value="media">
+                <ItemMedia item={item} />
+              </Tabs.Panel>
+            )}
             <Tabs.Panel value="activity">
               <ItemActivity item={item} />
             </Tabs.Panel>

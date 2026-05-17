@@ -10,7 +10,7 @@ export interface Items {
   dateCreated?: string | null;
   mediaStreams?: BaseMediaStream[];
   duration?: number;
-  type?: ItemTypes;
+  type: ItemTypes;
   imageTag?: string;
   imageHash?: string;
   genres?: string[];
