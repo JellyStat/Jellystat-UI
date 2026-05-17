@@ -28,7 +28,7 @@
     "@tabler/icons-react": "^3.35.0",
     "clsx": "^2.1.1",
     "gridify-client": "^2.2.0",
-    "mantine-datatable": "file:mantine-datatable-9.0.0.tgz",
+    "mantine-datatable": "^9.2.0",
     "next": "16.2.4",
     "react": "19.2.5",
     "react-blurhash": "^0.3.0",
