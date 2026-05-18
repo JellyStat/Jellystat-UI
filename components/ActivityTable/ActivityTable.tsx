@@ -11,6 +11,8 @@ import classes from "./ActivityTable.module.css";
 import { BaseTranscodingInfo } from "@/lib/models/baseTranscodingInfo";
 import TextFilter from "./TextFilter";
 import FilterItem from "./FilterItem";
+import { DatesRangeValue } from "@mantine/dates";
+import DateFilter from "./DateFilter";
 
 type Props = {
   gridify?: GridifyQueryBuilder | null;
@@ -33,6 +35,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
   const [expandedActivityIds, setExpandedActivityIds] = useState<string[]>([]);
 
   function addOrReplaceFilter(newFilter: FilterItem) {
+    if (filter.some((f) => f.key === newFilter.key && f.value === newFilter.value)) return;
     setFilter((prev) => {
       const existingIndex = prev.findIndex((f) => f.key === newFilter.key);
       if (existingIndex !== -1) {
@@ -46,13 +49,14 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
   }
 
   function removeFilter(key: string) {
+    if (!filter.some((f) => f.key === key)) return;
     setFilter((prev) => prev.filter((f) => f.key !== key));
   }
 
   function getFilterValueOrDefault(
     key: string,
-    defaultValue: string | number | boolean | Date | null,
-  ): string | number | boolean | Date | null {
+    defaultValue: string | number | boolean | Date | DatesRangeValue | null,
+  ): string | number | boolean | Date | DatesRangeValue | null {
     const filterItem = filter.find((f) => f.key === key);
     return filterItem?.value ?? defaultValue;
   }
@@ -74,13 +78,28 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
         if (filter.length > 0) {
           console.log("Applying filters to query:", filter);
           filter.forEach((f) => {
-            if (f.value == null) return;
+            const val = f.value as any;
+            const isDateRange = Array.isArray(val) && val.length === 2;
+            if (f.value == null || (isDateRange && val.some((v) => v == null))) return;
             console.log(`Adding filter to query - Key: ${f.key}, Value: ${f.value}`);
             if (query.build().filter != "") {
               console.log("Adding AND operator to query");
               query.and();
             }
-            query.addCondition(f.key, op.Contains, f.value!.toString(), false);
+            if (isDateRange) {
+              const dateRange = val as DatesRangeValue;
+              if (dateRange[0] == null || dateRange[1] == null) return;
+
+              const startDate = new Date(new Date(dateRange[0]!).setHours(0, 0, 0, 0)).toISOString();
+              const endDate = new Date(new Date(dateRange[1]!).setHours(23, 59, 59, 999)).toISOString();
+              query.startGroup();
+              query.addCondition(f.key, op.GreaterThanOrEqual, startDate);
+              query.and();
+              query.addCondition(f.key, op.LessThanOrEqual, endDate);
+              query.endGroup();
+            } else if (typeof val === "string") {
+              query.addCondition(f.key, op.Contains, val.toString(), false);
+            }
           });
         }
         query.addOrderBy(sortStatus.columnAccessor, sortStatus.direction === "desc");
@@ -101,7 +120,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
         setLoading(false);
       }
     },
-    [gridify, page, sortStatus, filter],
+    [gridify, sortStatus, filter, GroupResults],
   );
 
   // initial load & when filter or sort changes
@@ -191,7 +210,19 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
               ),
               filtering: isFilterActive("userName"),
             },
-            { accessor: "ipAddress", title: "IP Address", sortable: true },
+            {
+              accessor: "ipAddress",
+              title: "IP Address",
+              sortable: true,
+              filter: (
+                <TextFilter
+                  keyName="ipAddress"
+                  value={getFilterValueOrDefault("ipAddress", "") as string}
+                  onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("ipAddress"))}
+                />
+              ),
+              filtering: isFilterActive("ipAddress"),
+            },
             {
               accessor: "name",
               title: "Title",
@@ -264,6 +295,14 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
                 return <Text>{date.toLocaleString()}</Text>;
               },
               sortable: true,
+              filter: (
+                <DateFilter
+                  keyName="dateCreated"
+                  value={getFilterValueOrDefault("dateCreated", [null, null]) as DatesRangeValue}
+                  onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("dateCreated"))}
+                />
+              ),
+              filtering: isFilterActive("dateCreated"),
             },
             {
               accessor: "playCount",

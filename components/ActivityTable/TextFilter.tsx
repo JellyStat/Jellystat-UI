@@ -2,6 +2,7 @@ import { ActionIcon, TextInput } from "@mantine/core";
 import { IconSearch, IconX } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import FilterItem from "./FilterItem";
+import { useDebouncedValue } from "@mantine/hooks";
 
 export default function TextFilter({
   keyName,
@@ -13,25 +14,20 @@ export default function TextFilter({
   onChange: (value: FilterItem | null) => void;
 }) {
   const [query, setQuery] = useState(value);
+  const [debounced] = useDebouncedValue(query, 200);
 
   useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      if (query.trim() === value.trim() && query.trim() !== "") return; // Don't trigger onChange if the value hasn't changed after trimming
-      if (query.trim() === "") {
-        onChange(null);
-        return;
-      }
+    if (debounced.trim() === value.trim() && debounced.trim() !== "") return; // Don't trigger onChange if the value hasn't changed after trimming
+    if (debounced.trim() === "") {
+      onChange(null);
+      return;
+    }
 
-      onChange(new FilterItem(keyName, query.trim()));
-    }, 500);
-    return () => clearTimeout(delayDebounce);
-  }, [query]);
+    onChange(new FilterItem(keyName, debounced.trim()));
+  }, [debounced]);
 
   return (
     <TextInput
-      label="Employees"
-      description="Show employees whose names include the specified text"
-      placeholder="Search employees..."
       leftSection={<IconSearch size={16} />}
       rightSection={
         <ActionIcon size="sm" variant="transparent" c="dimmed" onClick={() => setQuery("")}>
