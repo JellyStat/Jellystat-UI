@@ -2,13 +2,13 @@ import { Badge, Button, Card, Container, FloatingIndicator, Group, Select, Tabs,
 import { useCallback, useEffect, useState } from "react";
 import classes from "@/components/ActivityTable/ActivityTable.module.css";
 import { DataTable } from "mantine-datatable";
-import Activity from "@/lib/models/activity";
+import Activity from "@/lib/models/activity.ts";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
-import client from "@/lib/api";
-import { MigrateActivity } from "@/lib/models/MigrateActivity";
-import ItemTypes from "@/lib/models/enums/ItemTypes";
-import ItemsWithParentData from "@/lib/models/itemsWithParentData";
-import { DefaultSelectedItem, SelectAsync } from "@/components/SelectAsync";
+import client from "@/lib/api.ts";
+import { MigrateActivity } from "@/lib/models/MigrateActivity.ts";
+import ItemTypes from "@/lib/models/enums/ItemTypes.ts";
+import ItemsWithParentData from "@/lib/models/itemsWithParentData.ts";
+import { DefaultSelectedItem, SelectAsync } from "@/components/SelectAsync.tsx";
 
 class SelectedItem {
   id: string;
@@ -29,11 +29,17 @@ export default function ActivityMigrationPage() {
   const [activityData, setActivityData] = useState<Activity[]>([]);
   const [pageCount, setPageCount] = useState(0);
   const [migrationLoading, setMigrationLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const [seriesMatches, setSeriesMatches] = useState<Record<string, ItemsWithParentData[]>>({});
   const [selectedItem, setSelectedItem] = useState<Record<string, SelectedItem | null>>({});
 
   const [migrations, setMigrations] = useState<MigrateActivity[]>([]);
+  const [selected, setSelected] = useState<Activity[]>([]);
+
+  const migrateableCount = migrations.filter(
+    (m) => (m.SeriesId != "" && m.ItemId != "") || (m.SeriesId == "" && m.ItemId != ""),
+  ).length;
 
   // Replace all occurrences of `oldSeriesId` with `newSeriesId` on migrations
   function updateMigrationBySeriesId(oldSeriesId: string, newSeriesId: string) {
@@ -65,6 +71,24 @@ export default function ActivityMigrationPage() {
       console.error(err);
       setMigrationLoading(false);
     }
+  }
+
+  async function deleteActivity() {
+    if (selected.length == 0) return;
+    setDeleteLoading(true);
+    const activityIds: string[] = selected.map((a) => a.id!);
+    const serverId = selected[0]?.serverId;
+    try {
+      await client.History.activity.delete(serverId, activityIds);
+      setSelected([]);
+      setActivityData([]);
+      setPageCount(1);
+      setPage(1);
+      await fetchPage(1, true);
+    } catch (err) {
+      console.log(err);
+    }
+    setDeleteLoading(false);
   }
 
   const fetchMatchingItems = async (id: string) => {
@@ -176,13 +200,18 @@ export default function ActivityMigrationPage() {
           <Title order={2}>Activity Migration</Title>
           {migrations.length > 0 && (
             <Badge size="lg" circle>
-              {migrations.length}
+              {migrateableCount}
             </Badge>
           )}
         </Group>
-        <Button loading={migrationLoading} onClick={applyMigrations} disabled={migrations.length == 0}>
-          Apply Migrations
-        </Button>
+        <Group>
+          <Button loading={deleteLoading} onClick={deleteActivity} disabled={selected.length == 0} color="red">
+            Delete {selected.length > 0 && `(${selected.length})`}
+          </Button>
+          <Button loading={migrationLoading} onClick={applyMigrations} disabled={migrations.length == 0}>
+            Apply Migrations
+          </Button>
+        </Group>
       </Group>
       <Card shadow="sm" p={0} style={{ width: "100%", marginTop: 12 }}>
         <DataTable
@@ -200,6 +229,8 @@ export default function ActivityMigrationPage() {
           page={page}
           onPageChange={(p) => setPage(p)}
           fetching={loading}
+          selectedRecords={selected}
+          onSelectedRecordsChange={setSelected}
           // define columns
           columns={[
             {

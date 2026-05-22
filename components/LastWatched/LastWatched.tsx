@@ -8,10 +8,9 @@ import NotFound from "../ErrorCards/NotFound";
 
 type Props = {
   gridify?: GridifyQueryBuilder;
-  cardWidth?: number | string;
 };
 
-const LastWatched: React.FC<Props> = ({ gridify, cardWidth }) => {
+const LastWatched: React.FC<Props> = ({ gridify }) => {
   const [items, setItems] = useState<ItemsWithStats[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +49,7 @@ const LastWatched: React.FC<Props> = ({ gridify, cardWidth }) => {
       {!loading && !error && items.length === 0 && (
         <NotFound title="No Activity Found" message="No items in your watch history" enableGoBack={false} />
       )}
-      {!loading && !error && items.length > 0 && <ActivityItemCards items={items} cardWidth={cardWidth} />}
+      {!loading && !error && items.length > 0 && <ActivityItemCards items={items} />}
     </Group>
   );
 };

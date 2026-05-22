@@ -61,13 +61,6 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
           </Text>
 
           <Text size="sm" color="dimmed">
-            Total Files:{" "}
-            {lib.typeCounts
-              ?.filter((t) => t.type && !["Season", "Series", "Folder"].includes(t.type))
-              .map((t) => t.count!)
-              .reduce((a, b) => a + b, 0) ?? "N/A"}
-          </Text>
-          <Text size="sm" color="dimmed">
             Total Size: {lib.size?.formatBytes() ?? "N/A"}
           </Text>
           <Text size="sm" color="dimmed">

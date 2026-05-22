@@ -1,23 +1,21 @@
 import React from "react";
-import { Card, Text, Badge, Image, Skeleton, Loader, Group, Container } from "@mantine/core";
-import { API_BASE } from "@/lib/api";
+import { Card, Text, Container } from "@mantine/core";
+import { API_BASE } from "@/lib/api.ts";
 import { useRouter } from "next/router";
-import { Blurhash } from "react-blurhash";
-import { ItemsWithStats } from "@/lib/models/itemsWithStats";
-import { IconLock } from "@tabler/icons-react";
+import { ItemsWithStats } from "@/lib/models/itemsWithStats.ts";
+import ItemImage from "../ItemImage/ItemImage.tsx";
 
 type Props = {
   item: ItemsWithStats;
   width?: number | string;
+  height?: number | string;
 };
 
-export const ItemCard: React.FC<Props> = ({ item, width = 220 }) => {
+export const ItemCard: React.FC<Props> = ({ item, width = 160, height = 240 }) => {
   const router = useRouter();
   const isValidParent = item.parent && item.parent.id && item.parent.id !== item.id;
   const id = isValidParent ? item.parent!.id : item.id;
   const serverId = item.serverId;
-  const [imageError, setImageError] = React.useState(false);
-  const [imageLoaded, setImageLoaded] = React.useState(false);
 
   const imageUrl = `${API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(id)}&Width=600&ServerId=${encodeURIComponent(serverId)}`;
 
@@ -44,98 +42,21 @@ export const ItemCard: React.FC<Props> = ({ item, width = 220 }) => {
         flexDirection: "column",
         borderRadius: 8,
         overflow: "hidden",
-        cursor: "pointer",
-      }}
-      onClick={() => {
-        router.push(`/libraries/${encodeURIComponent(item.libraryId)}/items/${encodeURIComponent(item.id)}`);
-        console.log("Item clicked:", item);
       }}
     >
-      <Container
-        w={"100%"}
-        h={250}
-        display={"flex"}
-        flex={"0 0 auto"}
-        p={0}
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          overflow: "hidden",
-          borderTopLeftRadius: 8,
-          borderTopRightRadius: 8,
-          boxSizing: "border-box",
+      <ItemImage
+        imageUrl={imageUrl}
+        imageHash={item.imageHash}
+        archived={item.archived}
+        width={width}
+        height={height}
+        onClick={() => {
+          router.push(`/libraries/${encodeURIComponent(item.libraryId)}/items/${encodeURIComponent(item.id)}`);
+          console.log("Item clicked:", item);
         }}
-      >
-        <Container pos={"relative"} w={"100%"} h={"100%"} p={0} style={{ boxSizing: "border-box" }}>
-          {(!imageLoaded || imageError) && (
-            <Container
-              pos={"absolute"}
-              left={0}
-              right={0}
-              top={0}
-              bottom={0}
-              p={0}
-              style={{
-                zIndex: 2,
-                borderTopLeftRadius: 8,
-                borderTopRightRadius: 8,
-                overflow: "hidden",
-              }}
-            >
-              <Blurhash
-                hash={item.imageHash && item.imageHash.length > 6 ? item.imageHash : "LEHV6nWB2yk8pyo0adR*.7kCMdnj"}
-                width={"100%"}
-                height={"100%"}
-                style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, display: "block" }}
-              />
+      />
 
-              <Container
-                pos={"absolute"}
-                left={0}
-                right={0}
-                top={0}
-                bottom={0}
-                display={"flex"}
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  zIndex: 3,
-                }}
-              >
-                {!imageLoaded && !imageError && <Loader size="lg" />}
-                {!imageLoaded && imageError && item.archived && <IconLock size={48} />}
-              </Container>
-            </Container>
-          )}
-
-          <Image
-            src={imageUrl}
-            alt={item.name}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              display: imageError ? "none" : "block",
-              position: "relative",
-              zIndex: 1,
-              transition: "opacity 200ms ease",
-              borderTopLeftRadius: 8,
-              borderTopRightRadius: 8,
-              overflow: "hidden",
-            }}
-            onError={() => {
-              setImageError(true);
-              setImageLoaded(false);
-            }}
-            onLoad={() => {
-              setImageError(false);
-              setImageLoaded(true);
-            }}
-          />
-        </Container>
-      </Container>
-
-      <Container p={10} display={"flex"} flex={"1 1 auto"} w={"100%"} style={{ flexDirection: "column", gap: 8 }}>
+      <Container p={10} display="flex" flex="1 1 auto" w="100%" style={{ flexDirection: "column", gap: 8 }}>
         <Text size="xs" color="primary" style={{ paddingBottom: 10, color: "var(--mantine-primary-color-4)" }}>
           {item.dateCreated ? new Date(item.dateCreated).toLocaleString(undefined, dateOptions) : ""}
         </Text>

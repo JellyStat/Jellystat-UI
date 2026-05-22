@@ -1,6 +1,5 @@
-import { ItemTypes } from "./enums/ItemTypes";
-import { MediaStreamType } from "./enums/MediaStreamType";
-import type { BaseMediaStream } from "./baseMediaStream";
+import { ItemTypes } from "./enums/ItemTypes.ts";
+import type { BaseMediaStream } from "./baseMediaStream.ts";
 
 export interface Items {
   id: string;
@@ -20,5 +19,5 @@ export interface Items {
   parentId?: string | null;
   parentIndex?: number | null;
   index?: number | null;
-  archived?: boolean;
+  archived: boolean;
 }

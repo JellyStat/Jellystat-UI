@@ -1,5 +1,6 @@
 import client from "./api";
 import type { Server } from "./models/server";
+import { TaskSettings } from "./models/taskSettings.ts";
 
 const STORAGE_KEY = "jellystat_config";
 
@@ -55,6 +56,11 @@ const configManager = {
 
     // fallback: fetch from API
     return fetchAndStore();
+  },
+
+  async getTaskSettings(): Promise<TaskSettings[]> {
+    const cfg = await this.getActiveConfig();
+    return cfg?.taskSettings ?? [];
   },
 
   async getActiveConfig(refresh = false): Promise<Server | null> {

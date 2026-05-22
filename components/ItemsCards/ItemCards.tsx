@@ -1,22 +1,21 @@
 import React from "react";
-import ItemCard from "./ItemCard";
-import type ItemsWithParentData from "@/lib/models/itemsWithParentData";
+import ItemCard from "./ItemCard.tsx";
+import type ItemsWithParentData from "@/lib/models/itemsWithParentData.ts";
 import { Container } from "@mantine/core";
 
-export { default as ItemCard } from "./ItemCard";
+export { default as ItemCard } from "./ItemCard.tsx";
 
 type Props = {
   items: ItemsWithParentData[];
-  cardWidth?: number | string;
 };
 
-export const ItemCards: React.FC<Props> = ({ items, cardWidth = 160 }) => {
+export const ItemCards: React.FC<Props> = ({ items }) => {
   return (
     <Container
       fluid
       p={0}
       m={0}
-      display={"flex"}
+      display="flex"
       style={{
         flexWrap: "nowrap",
         gap: 12,
@@ -30,12 +29,12 @@ export const ItemCards: React.FC<Props> = ({ items, cardWidth = 160 }) => {
       {items.map((it) => (
         <Container
           key={`${it.serverId || ""}-${it.id}`}
-          display={"flex"}
-          flex={"0 0 auto"}
+          display="flex"
+          flex="0 0 auto"
           p={0}
           style={{ alignItems: "stretch", boxSizing: "border-box" }}
         >
-          <ItemCard item={it} width={cardWidth} />
+          <ItemCard item={it} />
         </Container>
       ))}
     </Container>

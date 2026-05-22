@@ -78,7 +78,7 @@ export function SelectAsync<T>({ fetchMethod, onSelect, idPredicate, namePredica
       </Combobox.Target>
 
       <Combobox.Dropdown>
-        <Combobox.Options>
+        <Combobox.Options style={{ overflowY: "auto" }}>
           {loading ? (
             <Combobox.Empty>Loading....</Combobox.Empty>
           ) : options.length > 0 ? (

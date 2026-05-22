@@ -18,6 +18,8 @@ import SessionItem from "@/lib/models/sessionItem";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
 import { IconPlayerPause, IconPlayerPauseFilled, IconPlayerPlay, IconPlayerPlayFilled } from "@tabler/icons-react";
 import ItemTypeIcons from "@/lib/declarations/itemIcons";
+import ItemImage from "../ItemImage/ItemImage.tsx";
+import { useRouter } from "next/router";
 
 export type SessionCardProps = {
   session: SessionItem;
@@ -164,6 +166,7 @@ function getVideoBitrate(session: SessionItem) {
 
 function LabeledText({ label, value }: { label: string; value: string | undefined | null }) {
   if (!value) return null;
+  const router = useRouter();
   return (
     <Group align="center" w="100%" wrap="nowrap">
       <Text color="dimmed" size="xs" w={100} style={{ textAlign: "end" }}>
@@ -178,11 +181,12 @@ function LabeledText({ label, value }: { label: string; value: string | undefine
 
 export default function SessionCard({ session }: SessionCardProps) {
   if (!session || !session.nowPlayingItem) return null;
+  const router = useRouter();
   const item = session?.nowPlayingItem;
   const imageUrl =
     (item?.seriesId ?? item?.id)
       ? `${API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(item?.seriesId ?? item?.id ?? "")}&Width=160&ServerId=${encodeURIComponent(session.serverId ?? "")}`
-      : undefined;
+      : "";
 
   const backgroundImage = `${API_BASE}Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(item?.seriesId ?? item?.id ?? "")}&Width=300&Quality=80&ServerId=${encodeURIComponent(session.serverId ?? "")}`;
   const deviceImage = `${API_BASE}Proxy/Images/Devices?DeviceName=${encodeURIComponent(session.deviceName ?? "")}&Width=50&Quality=80&ServerId=${encodeURIComponent(session.serverId ?? "")}`;
@@ -239,16 +243,14 @@ export default function SessionCard({ session }: SessionCardProps) {
                 overflow: "hidden",
               }}
             >
-              <Image
-                src={imageUrl}
-                alt={item?.name ?? "session backdrop"}
+              <ItemImage
+                imageUrl={imageUrl}
+                imageHash={item.imageHash}
                 width={160}
                 height={240}
-                style={{
-                  objectFit: "contain",
-                  transition: "opacity 200ms ease",
-                  borderTopLeftRadius: 8,
-                  overflow: "hidden",
+                onClick={() => {
+                  router.push(`/items/${encodeURIComponent(item?.id ?? "")}`);
+                  console.log("Item clicked:", item);
                 }}
               />
             </Card.Section>

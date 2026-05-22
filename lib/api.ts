@@ -120,7 +120,13 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   try {
     return (await res.json()) as T;
   } catch {
-    return (await res.text()) as unknown as T;
+    try {
+      console.log("Response was not JSON, returning as text: ", await res.text());
+      return (await res.text()) as unknown as T;
+    } catch {
+      console.log("Unable to parse response as JSON or text, returning empty object as fallback");
+      return {} as T;
+    }
   }
 }
 
@@ -271,11 +277,6 @@ const getLibraryItems = async (gridify?: IGridifyQuery): Promise<PagingResponse<
 
 const getMatchingItems = async (name?: string, gridify?: IGridifyQuery): Promise<PagingResponse<ItemsWithParentData>> =>
   apiFetch<PagingResponse<ItemsWithParentData>>(`/Api/MatchingItems${await buildQuery(gridify, { Name: name })}`);
-
-const startSync = async (serverId?: string): Promise<boolean> => {
-  const path = `/Api/StartSync${await buildQuery(undefined, { ServerId: serverId })}`;
-  return apiFetch<boolean>(path);
-};
 
 // const insertActivity = async (payload: ActivityV1[], serverId?: string): Promise<void> => {
 //   const path = `/Api/InsertActivity${await buildQuery(undefined, { ServerId: serverId })}`;
@@ -471,6 +472,17 @@ const getTranscodeStats = async (
 // History
 const getSystemInfo = async (): Promise<SystemInfo> => apiFetch(`/System/Info`);
 
+//Tasks
+const startSync = async () =>
+  apiFetchRaw(`/Tasks/StartSync${await buildQuery()}`)
+    .then(() => true)
+    .catch(() => false);
+
+const startPartialSync = async () =>
+  apiFetchRaw(`/Tasks/StartPartialSync${await buildQuery()}`)
+    .then(() => true)
+    .catch(() => false);
+
 // Grouped exports by parent path
 export const Api = {
   addServer,
@@ -481,7 +493,6 @@ export const Api = {
   getLibraries,
   getLibraryItems,
   getMatchingItems,
-  startSync,
   // insertActivity,
   setLocalUserServer,
 };
@@ -519,6 +530,11 @@ export const System = {
   getSystemInfo,
 };
 
+export const Tasks = {
+  startSync,
+  startPartialSync,
+};
+
 export default {
   API_BASE,
   ServerId,
@@ -530,6 +546,7 @@ export default {
   Auth,
   Proxy,
   System,
+  Tasks,
   ApiError,
   // keep individual exports for backward compatibility
   //   getConfig,
@@ -542,7 +559,6 @@ export default {
   //   getUsers,
   //   getLibraries,
   //   getLibraryItems,
-  //   startSync,
   //   insertActivity,
   //   login,
   //   updateUser,

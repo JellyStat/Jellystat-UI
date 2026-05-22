@@ -2,6 +2,7 @@ import { Container, FloatingIndicator, Tabs, Text, Title } from "@mantine/core";
 import { useState } from "react";
 import classes from "./settings.index.module.css";
 import ActivityMigrationPage from "./ActivityMigration/ActivityMIgration";
+import TasksPage from "./Tasks/Tasks.tsx";
 
 export default function SettingsPage() {
   const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
@@ -21,8 +22,8 @@ export default function SettingsPage() {
           <Tabs.Tab value="migrations" ref={setControlRef("migrations")} className={classes.tab}>
             Activity Migration
           </Tabs.Tab>
-          <Tabs.Tab value="3" ref={setControlRef("3")} className={classes.tab}>
-            Third tab
+          <Tabs.Tab value="tasks" ref={setControlRef("tasks")} className={classes.tab}>
+            Tasks
           </Tabs.Tab>
 
           <FloatingIndicator target={value ? controlsRefs[value] : null} parent={rootRef} className={classes.indicator} />
@@ -32,7 +33,9 @@ export default function SettingsPage() {
         <Tabs.Panel value="migrations">
           <ActivityMigrationPage />
         </Tabs.Panel>
-        <Tabs.Panel value="3">Third tab content</Tabs.Panel>
+        <Tabs.Panel value="tasks">
+          <TasksPage />
+        </Tabs.Panel>
       </Tabs>
     </div>
   );

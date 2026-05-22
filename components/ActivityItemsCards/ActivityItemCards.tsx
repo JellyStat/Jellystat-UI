@@ -1,20 +1,19 @@
 import React from "react";
-import ActivityItemCard from "./ActivityItemCard";
-import { ItemsWithStats } from "@/lib/models/itemsWithStats";
+import ActivityItemCard from "./ActivityItemCard.tsx";
+import { ItemsWithStats } from "@/lib/models/itemsWithStats.ts";
 import { Container } from "@mantine/core";
 
 type Props = {
   items: ItemsWithStats[];
-  cardWidth?: number | string;
 };
 
-export const ActivityItemCards: React.FC<Props> = ({ items, cardWidth = 160 }) => {
+export const ActivityItemCards: React.FC<Props> = ({ items }) => {
   return (
     <Container
       fluid
       p={0}
       m={0}
-      display={"flex"}
+      display="flex"
       style={{
         flexWrap: "nowrap",
         gap: 12,
@@ -28,12 +27,12 @@ export const ActivityItemCards: React.FC<Props> = ({ items, cardWidth = 160 }) =
       {items.map((it) => (
         <Container
           key={`${it.serverId || ""}-${it.id}`}
-          display={"flex"}
-          flex={"0 0 auto"}
+          display="flex"
+          flex="0 0 auto"
           p={0}
           style={{ alignItems: "stretch", boxSizing: "border-box" }}
         >
-          <ActivityItemCard item={it} width={cardWidth} />
+          <ActivityItemCard item={it} />
         </Container>
       ))}
     </Container>
