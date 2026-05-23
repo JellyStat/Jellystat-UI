@@ -67,7 +67,7 @@ export default function ItemPage() {
   const parentIndexUnit = isValidParent && item.type == ItemTypes.Episode ? "Season" : null;
   const indexUnit = item?.type == ItemTypes.Episode ? "Episode" : null;
   const imageUrl = `${client.API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(item?.parent?.id ?? item?.id ?? "")}&Width=600&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
-  const backgroundImage = `${client.API_BASE}Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(item?.parent?.id ?? item?.id ?? "")}&Width=900&Quality=80&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
+  const backgroundImage = `${client.API_BASE}Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(item?.parent?.id ?? item?.id ?? "")}&Width=900&Quality=90&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
   return (
     <div style={{ padding: 20 }}>
       {loading && (
