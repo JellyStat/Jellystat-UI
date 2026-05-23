@@ -9,9 +9,12 @@ import ItemCard from "../ItemsCards/ItemCard";
 
 type Props = {
   gridify?: GridifyQueryBuilder;
+  defaultOrderBy?: string;
+  defaultOrderDesc?: boolean;
+  showSort?: boolean;
 };
 
-const MediaGrid: React.FC<Props> = ({ gridify }) => {
+const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc, showSort = true }) => {
   const [items, setItems] = useState<ItemsWithStats[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -20,8 +23,8 @@ const MediaGrid: React.FC<Props> = ({ gridify }) => {
 
   const [filter, setFilter] = useState("");
   const [input, setInput] = useState("");
-  const [sortField, setSortField] = useState<string>("dateCreated");
-  const [sortDesc, setSortDesc] = useState<boolean>(true);
+  const [sortField, setSortField] = useState<string>(defaultOrderBy ?? "dateCreated");
+  const [sortDesc, setSortDesc] = useState<boolean>(defaultOrderDesc ?? true);
   const [archivedFilter, setArchivedFilter] = useState<boolean | null>(null);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -114,20 +117,25 @@ const MediaGrid: React.FC<Props> = ({ gridify }) => {
             onChange={(v) => setArchivedFilter(v === "true" ? true : v === "false" ? false : null)}
             style={{ width: 160 }}
           />
-          <Select
-            data={[
-              { value: "name", label: "Title" },
-              { value: "dateCreated", label: "Date Added" },
-              { value: "playCount", label: "Views" },
-              { value: "size", label: "Size" },
-            ]}
-            value={sortField}
-            onChange={(v) => setSortField(v ?? "name")}
-            style={{ width: 160 }}
-          />
-          <Button size="xs" variant="outline" onClick={() => setSortDesc((s) => !s)} style={{ padding: "6px 8px" }}>
-            {sortDesc ? "↓" : "↑"}
-          </Button>
+          {showSort && (
+            <Group gap={8}>
+              <Select
+                data={[
+                  { value: "name", label: "Title" },
+                  { value: "dateCreated", label: "Date Added" },
+                  { value: "playCount", label: "Views" },
+                  { value: "size", label: "Size" },
+                ]}
+                value={sortField}
+                onChange={(v) => setSortField(v ?? "name")}
+                style={{ width: 160 }}
+              />
+              <Button size="xs" variant="outline" onClick={() => setSortDesc((s) => !s)} style={{ padding: "6px 8px" }}>
+                {sortDesc ? "↓" : "↑"}
+              </Button>
+            </Group>
+          )}
+
           <TextInput
             placeholder="Search media..."
             value={input}

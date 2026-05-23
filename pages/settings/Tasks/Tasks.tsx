@@ -5,6 +5,10 @@ import configManager from "../../../lib/configManager.ts";
 import { TaskSettings } from "../../../lib/models/taskSettings.ts";
 import { IconPlayerPlay, IconRun } from "@tabler/icons-react";
 import client from "../../../lib/api.ts";
+import WebSocketMessageTypes from "../../../lib/models/enums/WebSocketMessageTypes.ts";
+import { WebsocketMessage } from "../../../lib/models/WebsocketMessage.ts";
+import wsClient from "../../../lib/wsClient.ts";
+import { TaskQueueUpdate } from "../../../lib/models/taskQueueUpdate.ts";
 
 const taskOptions = [
   { value: 60, label: "1 Hour" },
@@ -14,6 +18,23 @@ const taskOptions = [
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<TaskSettings[]>([]);
+  const [taskStatus, setTaskStatus] = useState<TaskQueueUpdate>({ enqueuedTasks: [], currentTask: null });
+  const eventTag = WebSocketMessageTypes.TaskUpdate.toString();
+
+  useEffect(() => {
+    const handler = (msg: WebsocketMessage<TaskQueueUpdate>) => {
+      const payload = msg?.data;
+      if (!payload) {
+        console.warn("Received taskSettings message with no data");
+        return;
+      }
+      setTaskStatus(payload);
+    };
+
+    // runtime subscribe (wsClient.on is narrowly typed)
+    wsClient.on(eventTag, handler);
+    return () => wsClient.off(eventTag, handler);
+  }, []);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -71,10 +92,28 @@ export default function TasksPage() {
               },
             },
             {
+              accessor: "status",
+              title: "Status",
+              render: (taskSetting) => {
+                const isRunning = taskStatus.currentTask?.task === taskSetting.task;
+                const isQueued = taskStatus.enqueuedTasks.some((t) => t.task === taskSetting.task);
+
+                if (isRunning) {
+                  return <Badge color="green">Running</Badge>;
+                } else if (isQueued) {
+                  return <Badge color="blue">Queued</Badge>;
+                } else {
+                  return <Badge color="yellow">Idle</Badge>;
+                }
+              },
+            },
+            {
               accessor: "actions",
               title: <Box mr={6}>Row actions</Box>,
               textAlign: "right",
               render: (taskSetting) => {
+                const isRunning = taskStatus.currentTask?.task === taskSetting.task;
+                const isQueued = taskStatus.enqueuedTasks.some((t) => t.task === taskSetting.task);
                 const executeTask = () => {
                   switch (taskSetting.task) {
                     case "Backup":
@@ -93,7 +132,13 @@ export default function TasksPage() {
                 };
 
                 return (
-                  <ActionIcon size="sm" variant="subtle" color="green" onClick={executeTask} disabled={!taskSetting.enabled}>
+                  <ActionIcon
+                    size="sm"
+                    variant="subtle"
+                    color="green"
+                    onClick={executeTask}
+                    disabled={!taskSetting.enabled || isRunning || isQueued}
+                  >
                     <IconPlayerPlay size={16} />
                   </ActionIcon>
                 );

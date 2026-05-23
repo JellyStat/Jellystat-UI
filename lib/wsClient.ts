@@ -108,12 +108,10 @@ class WebSocketClient {
 
         if (!parsed || typeof parsed !== "object") return;
 
-        var message = parsed as WebsocketMessage;
+        const message = parsed as WebsocketMessage;
 
         const emitTag: string = message.type.toString();
-        if (message.type == WebSocketMessageTypes.Sessions) {
-          message = parsed as WebsocketMessage<SessionItem[]>;
-        }
+
         // emit parsed object directly; do not normalize key casing
         this.emit(emitTag, message);
       } catch {

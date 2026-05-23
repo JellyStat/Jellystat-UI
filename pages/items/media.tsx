@@ -27,7 +27,7 @@ export default function ItemMedia({ item }: Props) {
 
   return (
     <div style={{ padding: 20 }}>
-      <MediaGrid gridify={itemMediaQuery} />
+      <MediaGrid gridify={itemMediaQuery} defaultOrderBy="index" defaultOrderDesc={false} showSort={false} />
     </div>
   );
 }
