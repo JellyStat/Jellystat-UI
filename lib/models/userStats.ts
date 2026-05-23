@@ -1,4 +1,4 @@
-import { BaseStats } from "./baseStats.ts";
-import { Users } from "./users.ts";
+import { BaseStats } from "./baseStats";
+import { Users } from "./users";
 
 export interface UserStats extends Users, BaseStats {}

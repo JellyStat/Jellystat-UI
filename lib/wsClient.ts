@@ -4,8 +4,6 @@
    - Exposes `init`, `send`, `close`, `on`, `off`, and `isConnected`
 */
 import { API_BASE } from "./api";
-import WebSocketMessageTypes from "./models/enums/WebSocketMessageTypes";
-import SessionItem from "./models/sessionItem";
 import { WebsocketMessage } from "./models/WebsocketMessage";
 
 type Handler = (payload: any) => void;

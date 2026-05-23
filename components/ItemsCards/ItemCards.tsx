@@ -1,9 +1,9 @@
 import React from "react";
-import ItemCard from "./ItemCard.tsx";
-import type ItemsWithParentData from "@/lib/models/itemsWithParentData.ts";
+import ItemCard from "./ItemCard";
+import type ItemsWithParentData from "@/lib/models/itemsWithParentData";
 import { Container } from "@mantine/core";
 
-export { default as ItemCard } from "./ItemCard.tsx";
+export { default as ItemCard } from "./ItemCard";
 
 type Props = {
   items: ItemsWithParentData[];

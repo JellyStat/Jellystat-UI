@@ -1,6 +1,6 @@
 import { Checkbox, Group, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
-import FilterItem from "./FilterItem.ts";
+import FilterItem from "./FilterItem";
 import { useDebouncedValue } from "@mantine/hooks";
 
 export default function BooleanFilter({

@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import styles from "./SideNav.module.css";
-import React, { useEffect, useState } from "react";
-import { ActionIcon, Button, Text, Container, Image, NavLink, useMantineColorScheme, Select, Group } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { Button, Container, Image, NavLink, useMantineColorScheme, Select, Group } from "@mantine/core";
 import {
   IconHistory,
   IconHome,
@@ -10,12 +10,13 @@ import {
   IconPhoto,
   IconSettings,
   IconSun,
-  IconUser,
   IconUsers,
 } from "@tabler/icons-react";
 import permissionsManager from "@/lib/permissionsManager";
 import Permissions from "@/lib/models/enums/Permissions";
 import configManager from "@/lib/configManager";
+import { Server } from "@/lib/models/server";
+import wsClient from "@/lib/wsClient";
 
 const items = [
   { icon: IconHome, label: "Home", href: "/" },
@@ -60,7 +61,7 @@ export default function SideNav() {
   async function loadServers() {
     try {
       const list = await configManager.getConfig();
-      const opts = list.map((s: any) => ({ value: s.id, label: `${s.type} - ${s.name}` }));
+      const opts = list.map((s: Server) => ({ value: s.id, label: `${s.type} - ${s.name}` }));
       setServerOptions(opts);
     } catch (err: any) {
       console.error("Failed to load server options", err);
@@ -70,6 +71,25 @@ export default function SideNav() {
   function toggleColorScheme() {
     setColorScheme(currentColorScheme === "dark" ? "light" : "dark");
   }
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const token = localStorage.getItem("jellystat_token");
+
+      if (!token) {
+        localStorage.removeItem("jellystat_token");
+        localStorage.removeItem("jellystat_refreshToken");
+        router.replace("/login");
+      }
+    } catch {
+      try {
+        localStorage.removeItem("jellystat_token");
+        localStorage.removeItem("jellystat_refreshToken");
+      } catch {}
+      router.replace("/login");
+    }
+  }, [router]);
 
   return (
     <Container className={styles.container}>
@@ -98,7 +118,7 @@ export default function SideNav() {
                 localStorage.removeItem("jellystat_refreshToken");
                 localStorage.removeItem("jellystat_serverId");
                 localStorage.removeItem("jellystat_config");
-                window.location.href = "/login";
+                router.push("/login");
               } catch {
                 console.warn("Failed to clear localStorage during logout, but proceeding with navigation.");
               }
@@ -117,6 +137,7 @@ export default function SideNav() {
                 if (v) {
                   localStorage.setItem("jellystat_serverId", v);
                   setSelectedServer(v);
+                  wsClient.close();
                   router.push("/"); // Force reload to apply new server context
                 }
               } catch {
@@ -131,7 +152,7 @@ export default function SideNav() {
           className={styles.footerButton}
           onClick={toggleColorScheme}
           leftSection={mounted ? currentColorScheme === "dark" ? <IconSun size={18} /> : <IconMoonStars size={18} /> : null}
-          w={"100%"}
+          w="100%"
         >
           {mounted
             ? currentColorScheme === "dark"

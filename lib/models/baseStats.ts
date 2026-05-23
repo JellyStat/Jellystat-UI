@@ -1,4 +1,4 @@
-import Activity from "./activity.ts";
+import Activity from "./activity";
 
 export interface BaseStats {
   playCount?: number | null;

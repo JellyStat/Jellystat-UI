@@ -2,13 +2,13 @@ import { Badge, Button, Card, Container, FloatingIndicator, Group, Select, Tabs,
 import { useCallback, useEffect, useState } from "react";
 import classes from "@/components/ActivityTable/ActivityTable.module.css";
 import { DataTable } from "mantine-datatable";
-import Activity from "@/lib/models/activity.ts";
+import Activity from "@/lib/models/activity";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
-import client from "@/lib/api.ts";
-import { MigrateActivity } from "@/lib/models/MigrateActivity.ts";
-import ItemTypes from "@/lib/models/enums/ItemTypes.ts";
-import ItemsWithParentData from "@/lib/models/itemsWithParentData.ts";
-import { DefaultSelectedItem, SelectAsync } from "@/components/SelectAsync.tsx";
+import client from "@/lib/api";
+import { MigrateActivity } from "@/lib/models/MigrateActivity";
+import ItemTypes from "@/lib/models/enums/ItemTypes";
+import ItemsWithParentData from "@/lib/models/itemsWithParentData";
+import { DefaultSelectedItem, SelectAsync } from "@/components/SelectAsync";
 
 class SelectedItem {
   id: string;

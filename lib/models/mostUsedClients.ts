@@ -1,4 +1,4 @@
-import { BaseStats } from "./baseStats.ts";
+import { BaseStats } from "./baseStats";
 
 export interface MostUsedClients extends BaseStats {
   clientName: string;

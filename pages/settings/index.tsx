@@ -2,7 +2,7 @@ import { Container, FloatingIndicator, Tabs, Text, Title } from "@mantine/core";
 import { useState } from "react";
 import classes from "./settings.index.module.css";
 import ActivityMigrationPage from "./ActivityMigration/ActivityMIgration";
-import TasksPage from "./Tasks/Tasks.tsx";
+import TasksPage from "./Tasks/Tasks";
 
 export default function SettingsPage() {
   const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);

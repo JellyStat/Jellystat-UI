@@ -1,4 +1,4 @@
-import { TaskSettings } from "./taskSettings.ts";
+import { TaskSettings } from "./taskSettings";
 
 export interface Server {
   id: string;

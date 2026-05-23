@@ -1,5 +1,5 @@
-import { BaseStats } from "./baseStats.ts";
-import { Items } from "./items.ts";
+import { BaseStats } from "./baseStats";
+import { Items } from "./items";
 
 export interface TrackedUsers extends BaseStats {
   tracked: boolean;

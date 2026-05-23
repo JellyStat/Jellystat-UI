@@ -18,7 +18,7 @@ import SessionItem from "@/lib/models/sessionItem";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
 import { IconPlayerPause, IconPlayerPauseFilled, IconPlayerPlay, IconPlayerPlayFilled } from "@tabler/icons-react";
 import ItemTypeIcons from "@/lib/declarations/itemIcons";
-import ItemImage from "../ItemImage/ItemImage.tsx";
+import ItemImage from "../ItemImage/ItemImage";
 import { useRouter } from "next/router";
 
 export type SessionCardProps = {

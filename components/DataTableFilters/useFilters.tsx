@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import FilterItem from "./FilterItem.ts";
+import FilterItem from "./FilterItem";
 import { DatesRangeValue } from "@mantine/dates";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 

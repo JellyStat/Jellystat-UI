@@ -1,4 +1,4 @@
-import Tasks from "./enums/Tasks.ts";
+import Tasks from "./enums/Tasks";
 
 export interface TaskSettings {
   task: Tasks;

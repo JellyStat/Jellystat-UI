@@ -1,7 +1,7 @@
 import { ActionIcon, TextInput } from "@mantine/core";
 import { IconSearch, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import FilterItem from "./FilterItem.ts";
+import FilterItem from "./FilterItem";
 import { useDebouncedValue } from "@mantine/hooks";
 
 export default function TextFilter({

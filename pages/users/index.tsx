@@ -3,13 +3,13 @@ import { showNotification } from "@mantine/notifications";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import { DataTable, DataTableSortStatus } from "mantine-datatable";
 import { useCallback, useEffect, useState } from "react";
-import client, { API_BASE } from "@/lib/api.ts";
+import client, { API_BASE } from "@/lib/api";
 import { IconUser } from "@tabler/icons-react";
 
-import { TrackedUsers } from "../../lib/models/trackedUsers.ts";
-import TextFilter from "../../components/DataTableFilters/TextFilter.tsx";
-import useFilters from "../../components/DataTableFilters/useFilters.tsx";
-import BooleanFilter from "../../components/DataTableFilters/BooleanFilter.tsx";
+import { TrackedUsers } from "../../lib/models/trackedUsers";
+import TextFilter from "../../components/DataTableFilters/TextFilter";
+import useFilters from "../../components/DataTableFilters/useFilters";
+import BooleanFilter from "../../components/DataTableFilters/BooleanFilter";
 // import DateFilter from "./DateFilter";
 
 export default function UsersPage() {

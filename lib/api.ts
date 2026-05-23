@@ -16,10 +16,8 @@ import Activity from "./models/activity";
 import { MostUsedClients } from "./models/mostUsedClients";
 import { UserStats } from "./models/userStats";
 import { TranscodeStats } from "./models/transcodeStats";
-import { Items } from "./models/items";
 import { MigrateActivity } from "./models/MigrateActivity";
-import permissionsManager from "./permissionsManager";
-import Permissions from "./models/enums/Permissions";
+import { Token } from "./models/token";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5020/";
 
@@ -37,7 +35,14 @@ class ApiError extends Error {
   }
 }
 
-const ServerId: string | null = typeof window !== "undefined" ? localStorage.getItem("jellystat_serverId") : null;
+function getServerId(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return localStorage.getItem("jellystat_serverId");
+  } catch {
+    return null;
+  }
+}
 
 function logoutAndRedirect(): void {
   if (typeof window === "undefined") return;
@@ -227,6 +232,7 @@ async function buildQuery(gridify?: IGridifyQuery | null, params?: Record<string
   // This allows callers to omit ServerId and rely on the user's selected server stored in localStorage.
   if (merged.ServerId == null || merged.ServerId === "") {
     try {
+      const ServerId = getServerId();
       if (ServerId) merged.ServerId = ServerId;
     } catch {
       /* ignore localStorage errors */
@@ -284,48 +290,22 @@ const getMatchingItems = async (name?: string, gridify?: IGridifyQuery): Promise
 // };
 
 // Set a local user's default server
-const setLocalUserServer = async (payload: { userId: string; serverId: string }): Promise<void> =>
+const setLocalUserServer = (payload: { userId: string; serverId: string }): Promise<void> =>
   apiFetch<void>("/Api/SetLocalUserServer", { method: "POST", body: JSON.stringify(payload) });
 
 // Auth
 // Interface/type definitions have been moved to ./models/
 
-const login = async (payload: LoginModel): Promise<void> => {
-  const result = await apiFetch<{ token: string; refreshToken?: string }>("/Auth/Login", {
+const login = (payload: LoginModel): Promise<Token> =>
+  apiFetch<Token>("/Auth/Login", {
     method: "POST",
     body: JSON.stringify(payload),
   });
 
-  if (typeof window !== "undefined") {
-    try {
-      if (result?.token) localStorage.setItem("jellystat_token", result.token);
-      if (result?.refreshToken) localStorage.setItem("jellystat_refreshToken", result.refreshToken);
-
-      if (result?.token) {
-        // Decode token to extract serverId and store it for later use (e.g. auto-include in queries)
-        try {
-          const payloadBase64 = result.token.split(".")[1];
-          const decoded = JSON.parse(atob(payloadBase64));
-
-          if (!decoded.serverId && !payload.serverId && permissionsManager.hasPermission(Permissions.Administrator)) {
-            const servers = await getConfig();
-            if (servers.length > 0) {
-              decoded.serverId = servers[0].id;
-            }
-          }
-          localStorage.setItem("jellystat_serverId", decoded.serverId ?? payload.serverId);
-        } catch {}
-      }
-    } catch {
-      /* ignore localStorage failures */
-    }
-  }
-};
-
-const updateUser = async (payload: LocalUser): Promise<void> =>
+const updateUser = (payload: LocalUser): Promise<void> =>
   apiFetch<void>("/Auth/UpdateUser", { method: "POST", body: JSON.stringify(payload) });
 
-const createUser = async (payload: LocalUser): Promise<void> =>
+const createUser = (payload: LocalUser): Promise<void> =>
   apiFetch<void>("/Auth/CreateUser", { method: "POST", body: JSON.stringify(payload) });
 
 // Refresh auth (no body expected)
@@ -537,7 +517,7 @@ export const Tasks = {
 
 export default {
   API_BASE,
-  ServerId,
+  getServerId,
   // apiFetch,
   // apiFetchRaw,
   Api,

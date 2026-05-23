@@ -1,6 +1,6 @@
 import client from "./api";
 import type { Server } from "./models/server";
-import { TaskSettings } from "./models/taskSettings.ts";
+import { TaskSettings } from "./models/taskSettings";
 
 const STORAGE_KEY = "jellystat_config";
 

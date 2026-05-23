@@ -3,6 +3,10 @@ import { useRouter } from "next/router";
 import { TextInput, PasswordInput, Button, Container, Title, Text, Space, Select, Loader, Center } from "@mantine/core";
 import client from "@/lib/api";
 import { wsClient } from "@/lib/wsClient";
+import { Token } from "@/lib/models/token";
+import permissionsManager from "@/lib/permissionsManager";
+import Permissions from "@/lib/models/enums/Permissions";
+import configManager from "../lib/configManager";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -60,7 +64,35 @@ export default function LoginPage() {
       }
 
       const serverId = selectedServer ?? undefined;
-      await client.Auth.login({ username, password, serverId });
+      const result: Token = await client.Auth.login({ username, password, serverId });
+      if (typeof window !== "undefined") {
+        try {
+          if (result?.token) {
+            localStorage.setItem("jellystat_token", result.token);
+            try {
+              const payloadBase64 = result.token.split(".")[1];
+              const decoded = JSON.parse(atob(payloadBase64));
+
+              if (!decoded.serverId && !serverId && permissionsManager.hasPermission(Permissions.Administrator)) {
+                const servers = await configManager.getConfig();
+                if (servers.length > 0) {
+                  decoded.serverId = servers[0].id;
+                }
+              }
+              localStorage.setItem("jellystat_serverId", decoded.serverId ?? serverId);
+            } catch {
+              console.warn("Failed to decode token payload, server selection may not persist across sessions");
+              configManager.clearConfig();
+            }
+          }
+          if (result?.refreshToken) localStorage.setItem("jellystat_refreshToken", result.refreshToken);
+        } catch {
+          /* ignore localStorage failures */
+        }
+      } else {
+        console.warn("Window is undefined, skipping localStorage operations");
+        return;
+      }
       try {
         wsClient.init();
       } catch {

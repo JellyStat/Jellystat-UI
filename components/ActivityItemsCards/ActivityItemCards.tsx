@@ -1,6 +1,6 @@
 import React from "react";
-import ActivityItemCard from "./ActivityItemCard.tsx";
-import { ItemsWithStats } from "@/lib/models/itemsWithStats.ts";
+import ActivityItemCard from "./ActivityItemCard";
+import { ItemsWithStats } from "@/lib/models/itemsWithStats";
 import { Container } from "@mantine/core";
 
 type Props = {

@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Loader, Text, Group, Center, Image, Tabs, ActionIcon } from "@mantine/core";
-import client from "@/lib/api.ts";
-import { ItemsWithStats } from "@/lib/models/itemsWithStats.ts";
+import client from "@/lib/api";
+import { ItemsWithStats } from "@/lib/models/itemsWithStats";
 import { GridifyQueryBuilder } from "gridify-client";
 import { Blurhash } from "react-blurhash";
 import { IconExternalLink, IconLock } from "@tabler/icons-react";
-import ItemOverview from "./overview.tsx";
-import ItemActivity from "./activity.tsx";
-import NotFound from "@/components/ErrorCards/NotFound.tsx";
-import { Server } from "@/lib/models/server.ts";
-import configManager from "@/lib/configManager.ts";
-import ItemTypes from "@/lib/models/enums/ItemTypes.ts";
-import ItemMedia from "./media.tsx";
+import ItemOverview from "./overview";
+import ItemActivity from "./activity";
+import NotFound from "@/components/ErrorCards/NotFound";
+import { Server } from "@/lib/models/server";
+import configManager from "@/lib/configManager";
+import ItemTypes from "@/lib/models/enums/ItemTypes";
+import ItemMedia from "./media";
 
 export default function ItemPage() {
   const router = useRouter();

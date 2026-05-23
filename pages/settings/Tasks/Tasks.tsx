@@ -1,14 +1,14 @@
 import { ActionIcon, Badge, Box, Card, Group, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { DataTable } from "mantine-datatable";
-import configManager from "../../../lib/configManager.ts";
-import { TaskSettings } from "../../../lib/models/taskSettings.ts";
+import configManager from "../../../lib/configManager";
+import { TaskSettings } from "../../../lib/models/taskSettings";
 import { IconPlayerPlay, IconRun } from "@tabler/icons-react";
-import client from "../../../lib/api.ts";
-import WebSocketMessageTypes from "../../../lib/models/enums/WebSocketMessageTypes.ts";
-import { WebsocketMessage } from "../../../lib/models/WebsocketMessage.ts";
-import wsClient from "../../../lib/wsClient.ts";
-import { TaskQueueUpdate } from "../../../lib/models/taskQueueUpdate.ts";
+import client from "../../../lib/api";
+import WebSocketMessageTypes from "../../../lib/models/enums/WebSocketMessageTypes";
+import { WebsocketMessage } from "../../../lib/models/WebsocketMessage";
+import wsClient from "../../../lib/wsClient";
+import { TaskQueueUpdate } from "../../../lib/models/taskQueueUpdate";
 
 const taskOptions = [
   { value: 60, label: "1 Hour" },

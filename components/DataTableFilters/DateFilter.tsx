@@ -1,6 +1,6 @@
 import { Button, Stack } from "@mantine/core";
 import { useEffect, useState } from "react";
-import FilterItem from "./FilterItem.ts";
+import FilterItem from "./FilterItem";
 import { DatePicker, DatesRangeValue } from "@mantine/dates";
 import { useDebouncedValue } from "@mantine/hooks";
 

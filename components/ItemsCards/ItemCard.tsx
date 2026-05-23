@@ -1,9 +1,9 @@
 import React from "react";
 import { Card, Text, Container } from "@mantine/core";
-import { API_BASE } from "@/lib/api.ts";
+import { API_BASE } from "@/lib/api";
 import { useRouter } from "next/router";
-import { ItemsWithStats } from "@/lib/models/itemsWithStats.ts";
-import ItemImage from "../ItemImage/ItemImage.tsx";
+import { ItemsWithStats } from "@/lib/models/itemsWithStats";
+import ItemImage from "../ItemImage/ItemImage";
 
 type Props = {
   item: ItemsWithStats;

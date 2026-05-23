@@ -1,5 +1,5 @@
-import { ItemTypes } from "./enums/ItemTypes.ts";
-import type { BaseMediaStream } from "./baseMediaStream.ts";
+import { ItemTypes } from "./enums/ItemTypes";
+import type { BaseMediaStream } from "./baseMediaStream";
 
 export interface Items {
   id: string;

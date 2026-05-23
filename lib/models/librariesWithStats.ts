@@ -1,7 +1,7 @@
 import ItemTypes from "./enums/ItemTypes";
 import LibraryTypes from "./enums/LibraryTypes";
 import type { Activity } from "./activity";
-import { BaseStats } from "./baseStats.ts";
+import { BaseStats } from "./baseStats";
 
 export interface TypeCountModel {
   type?: ItemTypes;

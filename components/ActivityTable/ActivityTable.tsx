@@ -1,17 +1,17 @@
-import Activity from "@/lib/models/activity.ts";
+import Activity from "@/lib/models/activity";
 import { Box, Card, Group, NavLink, Text, Title } from "@mantine/core";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import { DataTable, DataTableSortStatus } from "mantine-datatable";
 import { useCallback, useEffect, useState } from "react";
-import client from "@/lib/api.ts";
+import client from "@/lib/api";
 import { IconCircleMinus, IconCirclePlusFilled } from "@tabler/icons-react";
 import clsx from "clsx";
 import classes from "./ActivityTable.module.css";
-import { BaseTranscodingInfo } from "@/lib/models/baseTranscodingInfo.ts";
-import TextFilter from "../DataTableFilters/TextFilter.tsx";
+import { BaseTranscodingInfo } from "@/lib/models/baseTranscodingInfo";
+import TextFilter from "../DataTableFilters/TextFilter";
 import { DatesRangeValue } from "@mantine/dates";
-import DateFilter from "../DataTableFilters/DateFilter.tsx";
-import useFilters from "../DataTableFilters/useFilters.tsx";
+import DateFilter from "../DataTableFilters/DateFilter";
+import useFilters from "../DataTableFilters/useFilters";
 
 type Props = {
   gridify?: GridifyQueryBuilder | null;

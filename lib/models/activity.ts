@@ -1,7 +1,7 @@
-import type { BaseMediaStream } from "./baseMediaStream.ts";
-import { BaseStats } from "./baseStats.ts";
-import { BaseTranscodingInfo } from "./baseTranscodingInfo.ts";
-import { Items } from "./items.ts";
+import type { BaseMediaStream } from "./baseMediaStream";
+import { BaseStats } from "./baseStats";
+import { BaseTranscodingInfo } from "./baseTranscodingInfo";
+import { Items } from "./items";
 
 export interface Activity extends BaseStats {
   id?: string;
