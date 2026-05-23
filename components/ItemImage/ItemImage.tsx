@@ -1,7 +1,7 @@
 import { Container, Loader, Image } from "@mantine/core";
 import { useState } from "react";
 import { Blurhash } from "react-blurhash";
-import { IconLock } from "@tabler/icons-react";
+import { IconLock, IconPhoto } from "@tabler/icons-react";
 import classes from "./ItemImage.module.css";
 
 export default function ItemImage({
@@ -10,6 +10,7 @@ export default function ItemImage({
   archived = false,
   width = "100%",
   height = 250,
+  PlaceHolderIcon = IconPhoto,
   onClick,
 }: {
   imageUrl: string;
@@ -17,6 +18,7 @@ export default function ItemImage({
   archived?: boolean;
   width?: number | string;
   height?: number | string;
+  PlaceHolderIcon?: React.ElementType;
   onClick?: () => void;
 }) {
   const [imageError, setImageError] = useState(false);
@@ -78,6 +80,7 @@ export default function ItemImage({
             >
               {!imageLoaded && !imageError && <Loader size="lg" />}
               {!imageLoaded && imageError && archived && <IconLock size={48} />}
+              {!imageLoaded && imageError && !archived && PlaceHolderIcon && <PlaceHolderIcon size={48} />}
             </Container>
           </Container>
         )}

@@ -48,7 +48,7 @@ export default function WatchStatCards() {
             imageTag: m.imageTag, // force different image for testing
             type: m.type,
             serverId: m.serverId,
-            navLink: `/libraries/${m.libraryId}/items/${m.id}`,
+            navLink: `/items/${m.id}`,
           })) || [];
         setMostViewedMovies(items);
       } catch (er: any) {
@@ -78,7 +78,7 @@ export default function WatchStatCards() {
             imageTag: m.imageTag, // force different image for testing
             type: m.type,
             serverId: m.serverId,
-            navLink: `/libraries/${m.libraryId}/items/${m.id}`,
+            navLink: `/items/${m.id}`,
           })) || [];
         setMostPopularMovies(items);
       } catch (er: any) {
@@ -108,7 +108,7 @@ export default function WatchStatCards() {
             imageTag: m.imageTag, // force different image for testing
             type: m.type,
             serverId: m.serverId,
-            navLink: `/libraries/${m.libraryId}/items/${m.id}`,
+            navLink: `/items/${m.id}`,
           })) || [];
         setMostViewedShows(items);
       } catch (er: any) {
@@ -138,7 +138,7 @@ export default function WatchStatCards() {
             imageTag: m.imageTag, // force different image for testing
             type: m.type,
             serverId: m.serverId,
-            navLink: `/libraries/${m.libraryId}/items/${m.id}`,
+            navLink: `/items/${m.id}`,
           })) || [];
         setMostPopularShows(items);
       } catch (er: any) {

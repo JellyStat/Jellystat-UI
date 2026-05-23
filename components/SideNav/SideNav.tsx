@@ -2,7 +2,17 @@ import { useRouter } from "next/router";
 import styles from "./SideNav.module.css";
 import React, { useEffect, useState } from "react";
 import { ActionIcon, Button, Text, Container, Image, NavLink, useMantineColorScheme, Select, Group } from "@mantine/core";
-import { IconHistory, IconHome, IconLogout, IconMoonStars, IconPhoto, IconSettings, IconSun } from "@tabler/icons-react";
+import {
+  IconHistory,
+  IconHome,
+  IconLogout,
+  IconMoonStars,
+  IconPhoto,
+  IconSettings,
+  IconSun,
+  IconUser,
+  IconUsers,
+} from "@tabler/icons-react";
 import permissionsManager from "@/lib/permissionsManager";
 import Permissions from "@/lib/models/enums/Permissions";
 import configManager from "@/lib/configManager";
@@ -11,6 +21,7 @@ const items = [
   { icon: IconHome, label: "Home", href: "/" },
   { icon: IconPhoto, label: "Libraries", href: "/libraries" },
   { icon: IconHistory, label: "Activity", href: "/activity" },
+  { icon: IconUsers, label: "Users", href: "/users" },
   { icon: IconSettings, label: "Settings", href: "/settings" },
 ];
 

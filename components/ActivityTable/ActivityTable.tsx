@@ -231,7 +231,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
                 const seriesName = activity.seriesName;
                 const episodeIndex = `S${activity.item?.parentIndex?.toString().padStart(2, "0") ?? "??"}E${activity.item?.index?.toString().padStart(2, "0") ?? "??"}`;
                 const display = seriesName ? `${seriesName} : ${episodeIndex} - ${name}` : name;
-                const href = `/libraries/${activity.libraryId}/items/${activity.itemId}`;
+                const href = `/items/${activity.itemId}`;
                 //return <Text>{display}</Text>;
                 return <NavLink href={href} key={activity.id} label={display} />;
               },
@@ -349,7 +349,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
                       const seriesName = activity.seriesName;
                       const episodeIndex = `S${activity.item?.parentIndex?.toString().padStart(2, "0") ?? "??"}E${activity.item?.index?.toString().padStart(2, "0") ?? "??"}`;
                       const display = seriesName ? `${seriesName} : ${episodeIndex} - ${name}` : name;
-                      const href = `/libraries/${activity.libraryId}/items/${activity.itemId}`;
+                      const href = `/items/${activity.itemId}`;
                       //return <Text>{display}</Text>;
                       return <NavLink href={href} key={activity.id} label={display} />;
                     },

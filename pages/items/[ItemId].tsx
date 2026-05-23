@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Title, Loader, Text, Group, Center, Image, Tabs, ActionIcon } from "@mantine/core";
-import client from "@/lib/api";
-import { ItemsWithStats } from "@/lib/models/itemsWithStats";
+import { Loader, Text, Group, Center, Image, Tabs, ActionIcon } from "@mantine/core";
+import client from "@/lib/api.ts";
+import { ItemsWithStats } from "@/lib/models/itemsWithStats.ts";
 import { GridifyQueryBuilder } from "gridify-client";
 import { Blurhash } from "react-blurhash";
 import { IconExternalLink, IconLock } from "@tabler/icons-react";
-import ItemOverview from "./overview";
-import ItemActivity from "./activity";
-import NotFound from "@/components/ErrorCards/NotFound";
-import { Server } from "@/lib/models/server";
-import configManager from "@/lib/configManager";
-import ItemTypes from "@/lib/models/enums/ItemTypes";
-import ItemMedia from "./media";
+import ItemOverview from "./overview.tsx";
+import ItemActivity from "./activity.tsx";
+import NotFound from "@/components/ErrorCards/NotFound.tsx";
+import { Server } from "@/lib/models/server.ts";
+import configManager from "@/lib/configManager.ts";
+import ItemTypes from "@/lib/models/enums/ItemTypes.ts";
+import ItemMedia from "./media.tsx";
 
 export default function ItemPage() {
   const router = useRouter();
@@ -93,8 +93,8 @@ export default function ItemPage() {
                 ) : (
                   <Blurhash
                     hash={item?.imageHash && item.imageHash.length > 6 ? item.imageHash : "LEHV6nWB2yk8pyo0adR*.7kCMdnj"}
-                    width={"100%"}
-                    height={"100%"}
+                    width="100%"
+                    height="100%"
                     className="rounded-top-3 overflow-hidden position-absolute"
                   />
                 )}
@@ -107,7 +107,7 @@ export default function ItemPage() {
                   <Group align="start" gap={4}>
                     <Text
                       component={item?.parentId ? "a" : undefined}
-                      href={`/libraries/${item?.libraryId}/items/${item?.parentId}`}
+                      href={`/items/${item?.parentId}`}
                       style={{ fontWeight: "bold", fontSize: 32 }}
                     >
                       {title}
@@ -128,7 +128,7 @@ export default function ItemPage() {
                       {parentIndexUnit && (
                         <Text
                           component={item.parentId ? "a" : undefined}
-                          href={`/libraries/${item.libraryId}/items/${item.parentId}`}
+                          href={`/items/${item.parentId}`}
                           style={{ fontWeight: "bold" }}
                         >
                           {parentIndexUnit + " " + item.parentIndex}

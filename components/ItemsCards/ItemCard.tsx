@@ -51,8 +51,7 @@ export const ItemCard: React.FC<Props> = ({ item, width = 160, height = 240 }) =
         width={width}
         height={height}
         onClick={() => {
-          router.push(`/libraries/${encodeURIComponent(item.libraryId)}/items/${encodeURIComponent(item.id)}`);
-          console.log("Item clicked:", item);
+          router.push(`/items/${encodeURIComponent(item.id)}`);
         }}
       />
 

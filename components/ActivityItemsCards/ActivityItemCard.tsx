@@ -1,10 +1,8 @@
 import React from "react";
-import { Card, Text, Image, Loader, Container } from "@mantine/core";
-import { API_BASE } from "@/lib/api";
-import { ItemsWithStats } from "@/lib/models/itemsWithStats";
-import { Blurhash } from "react-blurhash";
+import { Card, Text, Container } from "@mantine/core";
+import { API_BASE } from "@/lib/api.ts";
+import { ItemsWithStats } from "@/lib/models/itemsWithStats.ts";
 import { useRouter } from "next/router";
-import { IconLock } from "@tabler/icons-react";
 import ItemImage from "../ItemImage/ItemImage.tsx";
 
 type Props = {
@@ -16,8 +14,6 @@ type Props = {
 export const ActivityItemCard: React.FC<Props> = ({ item, width = 160, height = 240 }) => {
   const imageId = item.parent?.id ?? item.id;
   const serverId = item.serverId;
-  const [imageError, setImageError] = React.useState(false);
-  const [imageLoaded, setImageLoaded] = React.useState(false);
   const router = useRouter();
 
   const imageUrl = `${API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(imageId)}&Width=600&ServerId=${encodeURIComponent(serverId)}`;
@@ -64,12 +60,11 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 160, height = 
         width={width}
         height={height}
         onClick={() => {
-          router.push(`/libraries/${encodeURIComponent(item.libraryId)}/items/${encodeURIComponent(item.id)}`);
-          console.log("Item clicked:", item);
+          router.push(`/items/${encodeURIComponent(item.id)}`);
         }}
       />
 
-      <Container p={10} display={"flex"} flex={"1 1 auto"} w={"100%"} style={{ flexDirection: "column", gap: 8 }}>
+      <Container p={10} display="flex" flex="1 1 auto" w="100%" style={{ flexDirection: "column", gap: 8 }}>
         <Text size="xs" style={{ color: "var(--mantine-primary-color-4)" }}>
           {item.latestActivity?.dateCreated ? differenceString : ""}
         </Text>
