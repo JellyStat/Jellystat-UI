@@ -177,7 +177,7 @@ export default function UsersPage() {
                 const episodeIndex = `S${item?.parentIndex?.toString().padStart(2, "0") ?? "??"}E${item?.index?.toString().padStart(2, "0") ?? "??"}`;
                 const hasEpisodeIndex = item?.parentIndex != null && item?.index != null;
                 const display = seriesName ? `${seriesName} : ${hasEpisodeIndex ? episodeIndex + " - " : ""}${name}` : name;
-                const href = `/items/${activity.itemId}`;
+                const href = `/libraries/items/${activity.itemId}`;
                 //return <Text>{display}</Text>;
                 return <NavLink href={href} key={activity.id} label={display} />;
               },

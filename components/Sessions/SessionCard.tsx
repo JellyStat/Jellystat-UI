@@ -249,7 +249,7 @@ export default function SessionCard({ session }: SessionCardProps) {
                 width={160}
                 height={240}
                 onClick={() => {
-                  router.push(`/items/${encodeURIComponent(item?.id ?? "")}`);
+                  router.push(`/libraries/items/${encodeURIComponent(item?.id ?? "")}`);
                   console.log("Item clicked:", item);
                 }}
               />

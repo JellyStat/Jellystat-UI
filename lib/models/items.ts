@@ -1,5 +1,6 @@
 import { ItemTypes } from "./enums/ItemTypes";
 import type { BaseMediaStream } from "./baseMediaStream";
+import { Libraries } from "./libraries";
 
 export interface Items {
   id: string;
@@ -20,4 +21,5 @@ export interface Items {
   parentIndex?: number | null;
   index?: number | null;
   archived: boolean;
+  library?: Libraries;
 }

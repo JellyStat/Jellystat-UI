@@ -44,7 +44,7 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 160, height = 
         width={width}
         height={height}
         onClick={() => {
-          router.push(`/items/${encodeURIComponent(item.id)}`);
+          router.push(`/libraries/items/${encodeURIComponent(item.id)}`);
         }}
       />
 

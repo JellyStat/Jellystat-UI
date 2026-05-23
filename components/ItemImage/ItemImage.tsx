@@ -1,4 +1,4 @@
-import { Container, Loader, Image } from "@mantine/core";
+import { Container, Loader, Image, MantineStyleProps, ElementProps } from "@mantine/core";
 import { useState } from "react";
 import { Blurhash } from "react-blurhash";
 import { IconLock, IconPhoto } from "@tabler/icons-react";
@@ -12,6 +12,7 @@ export default function ItemImage({
   height = 250,
   PlaceHolderIcon = IconPhoto,
   onClick,
+  borderRadius = [8, 0, 0, 0],
 }: {
   imageUrl: string;
   imageHash: string | undefined | null;
@@ -20,6 +21,7 @@ export default function ItemImage({
   height?: number | string;
   PlaceHolderIcon?: React.ElementType;
   onClick?: () => void;
+  borderRadius?: number[];
 }) {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -34,12 +36,15 @@ export default function ItemImage({
         alignItems: "center",
         justifyContent: "center",
         overflow: "hidden",
-        borderTopLeftRadius: 8,
+        borderTopLeftRadius: borderRadius[0],
+        borderTopRightRadius: borderRadius[1],
+        borderBottomRightRadius: borderRadius[2],
+        borderBottomLeftRadius: borderRadius[3],
         boxSizing: "border-box",
         cursor: onClick ? "pointer" : "default",
       }}
       onClick={onClick}
-      className={classes.container}
+      className={onClick ? classes.container : undefined}
     >
       <Container pos="relative" w="100%" h="100%" p={0} style={{ boxSizing: "border-box" }}>
         {(!imageLoaded || imageError) && (
@@ -52,7 +57,10 @@ export default function ItemImage({
             p={0}
             style={{
               zIndex: 2,
-              borderTopLeftRadius: 8,
+              borderTopLeftRadius: borderRadius[0],
+              borderTopRightRadius: borderRadius[1],
+              borderBottomRightRadius: borderRadius[2],
+              borderBottomLeftRadius: borderRadius[3],
               overflow: "hidden",
             }}
           >
@@ -96,7 +104,10 @@ export default function ItemImage({
             position: "relative",
             zIndex: 1,
             transition: "opacity 200ms ease",
-            borderTopLeftRadius: 8,
+            borderTopLeftRadius: borderRadius[0],
+            borderTopRightRadius: borderRadius[1],
+            borderBottomRightRadius: borderRadius[2],
+            borderBottomLeftRadius: borderRadius[3],
             overflow: "hidden",
           }}
           onError={() => {
