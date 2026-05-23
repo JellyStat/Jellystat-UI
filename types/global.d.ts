@@ -5,6 +5,7 @@ declare global {
     secondsToDurationString(): string | null;
     secondsToTimeString(): string | null;
     formatBytes(): string | null;
+    formatTimeDifference(): string;
   }
 }
 

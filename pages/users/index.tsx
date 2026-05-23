@@ -1,19 +1,15 @@
-import Activity from "@/lib/models/activity";
-import { Avatar, Box, Card, Group, NavLink, Select, Stack, Switch, Text, Title } from "@mantine/core";
+import { Avatar, Card, Group, NavLink, Switch, Text, Title } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
-import { GridifyQueryBuilder, IGridifyQuery, ConditionalOperator as op } from "gridify-client";
+import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import { DataTable, DataTableSortStatus } from "mantine-datatable";
 import { useCallback, useEffect, useState } from "react";
-import client, { API_BASE } from "@/lib/api";
-import { IconChevronRight, IconCircleMinus, IconCirclePlusFilled, IconPlus, IconUser, IconUsers } from "@tabler/icons-react";
-import clsx from "clsx";
-// import classes from "./ActivityTable.module.css";
-// import { BaseTranscodingInfo } from "@/lib/models/baseTranscodingInfo";
-// import TextFilter from "./TextFilter";
-// import FilterItem from "./FilterItem";
-import { DatesRangeValue } from "@mantine/dates";
-import { Users } from "../../lib/models/users.ts";
+import client, { API_BASE } from "@/lib/api.ts";
+import { IconUser } from "@tabler/icons-react";
+
 import { TrackedUsers } from "../../lib/models/trackedUsers.ts";
+import TextFilter from "../../components/DataTableFilters/TextFilter.tsx";
+import useFilters from "../../components/DataTableFilters/useFilters.tsx";
+import BooleanFilter from "../../components/DataTableFilters/BooleanFilter.tsx";
 // import DateFilter from "./DateFilter";
 
 export default function UsersPage() {
@@ -25,46 +21,12 @@ export default function UsersPage() {
     columnAccessor: "latestActivityDate",
     direction: "desc",
   });
-  //   const [filter, setFilter] = useState<FilterItem[]>([]);
+
+  const { filter, addOrReplaceFilter, removeFilter, getFilterValueOrDefault, isFilterActive, applyFiltersToQuery } = useFilters();
 
   const [pageCount, setPageCount] = useState(1);
 
-  const [expandedActivityIds, setExpandedActivityIds] = useState<string[]>([]);
-
-  //   function addOrReplaceFilter(newFilter: FilterItem) {
-  //     if (filter.some((f) => f.key === newFilter.key && f.value === newFilter.value)) return;
-  //     setFilter((prev) => {
-  //       const existingIndex = prev.findIndex((f) => f.key === newFilter.key);
-  //       if (existingIndex !== -1) {
-  //         const updated = [...prev];
-  //         updated[existingIndex] = newFilter;
-  //         return updated;
-  //       } else {
-  //         return [...prev, newFilter];
-  //       }
-  //     });
-  //   }
-
-  //   function removeFilter(key: string) {
-  //     if (!filter.some((f) => f.key === key)) return;
-  //     setFilter((prev) => prev.filter((f) => f.key !== key));
-  //   }
-
-  //   function getFilterValueOrDefault(
-  //     key: string,
-  //     defaultValue: string | number | boolean | Date | DatesRangeValue | null,
-  //   ): string | number | boolean | Date | DatesRangeValue | null {
-  //     const filterItem = filter.find((f) => f.key === key);
-  //     return filterItem?.value ?? defaultValue;
-  //   }
-
-  //   function isFilterActive(key: string): boolean {
-  //     return filter.some((f) => f.key === key);
-  //   }
-
   function toggleUserTracking(userId: string, tracked: boolean) {
-    // Optimistically update UI
-
     const payload = userData.find((u) => u.id === userId);
 
     if (!payload) return;
@@ -103,36 +65,10 @@ export default function UsersPage() {
       try {
         const query: GridifyQueryBuilder = new GridifyQueryBuilder();
         query.setPage(pageToLoad);
+
         console.log("Current sort status:", sortStatus);
         console.log("Current query:", query.build());
-
-        // if (filter.length > 0) {
-        //   console.log("Applying filters to query:", filter);
-        //   filter.forEach((f) => {
-        //     const val = f.value as any;
-        //     const isDateRange = Array.isArray(val) && val.length === 2;
-        //     if (f.value == null || (isDateRange && val.some((v) => v == null))) return;
-        //     console.log(`Adding filter to query - Key: ${f.key}, Value: ${f.value}`);
-        //     if (query.build().filter != "") {
-        //       console.log("Adding AND operator to query");
-        //       query.and();
-        //     }
-        //     if (isDateRange) {
-        //       const dateRange = val as DatesRangeValue;
-        //       if (dateRange[0] == null || dateRange[1] == null) return;
-
-        //       const startDate = new Date(new Date(dateRange[0]!).setHours(0, 0, 0, 0)).toISOString();
-        //       const endDate = new Date(new Date(dateRange[1]!).setHours(23, 59, 59, 999)).toISOString();
-        //       query.startGroup();
-        //       query.addCondition(f.key, op.GreaterThanOrEqual, startDate);
-        //       query.and();
-        //       query.addCondition(f.key, op.LessThanOrEqual, endDate);
-        //       query.endGroup();
-        //     } else if (typeof val === "string") {
-        //       query.addCondition(f.key, op.Contains, val.toString(), false);
-        //     }
-        //   });
-        // }
+        applyFiltersToQuery(query);
         query.addOrderBy(sortStatus.columnAccessor, sortStatus.direction === "desc");
         const builtQuery = query.build();
         console.log("Fetching activity with query:", builtQuery);
@@ -151,12 +87,12 @@ export default function UsersPage() {
         setLoading(false);
       }
     },
-    [sortStatus],
+    [sortStatus, filter],
   );
 
   useEffect(() => {
     fetchPage(page);
-  }, [fetchPage, page, sortStatus]);
+  }, [fetchPage, page, sortStatus, filter]);
 
   return (
     <div>
@@ -196,14 +132,14 @@ export default function UsersPage() {
               title: "User",
               textAlign: "right",
               sortable: true,
-              //   filter: (
-              //     <TextFilter
-              //       keyName="userName"
-              //       value={getFilterValueOrDefault("userName", "") as string}
-              //       onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("userName"))}
-              //     />
-              //   ),
-              //   filtering: isFilterActive("userName"),
+              filter: (
+                <TextFilter
+                  keyName="userName"
+                  value={getFilterValueOrDefault("userName", "") as string}
+                  onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("userName"))}
+                />
+              ),
+              filtering: isFilterActive("userName"),
             },
             {
               accessor: "tracked",
@@ -218,14 +154,15 @@ export default function UsersPage() {
                   }}
                 />
               ),
-              //   filter: (
-              //     <TextFilter
-              //       keyName="ipAddress"
-              //       value={getFilterValueOrDefault("ipAddress", "") as string}
-              //       onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("ipAddress"))}
-              //     />
-              //   ),
-              //   filtering: isFilterActive("ipAddress"),
+              filter: (
+                <BooleanFilter
+                  keyName="tracked"
+                  label="Tracked"
+                  value={getFilterValueOrDefault("tracked", null) as boolean | null}
+                  onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("tracked"))}
+                />
+              ),
+              filtering: isFilterActive("tracked"),
             },
             {
               accessor: "latestActivity",
@@ -290,6 +227,28 @@ export default function UsersPage() {
               //     />
               //   ),
               //   filtering: isFilterActive("device"),
+            },
+            {
+              accessor: "latestActivityDate",
+              title: "Last Activity Date",
+              render: (user) => {
+                const activity = user.latestActivity;
+                if (!activity || !activity.dateCreated) return <Text>-</Text>;
+                const date = new Date(activity.dateCreated);
+                const difference = activity.dateCreated ? Date.now() - new Date(activity.dateCreated).getTime() : null;
+                const differenceString = difference?.formatTimeDifference();
+
+                return <Text>{differenceString}</Text>;
+              },
+              sortable: true,
+              //   filter: (
+              //     <DateFilter
+              //       keyName="dateCreated"
+              //       value={getFilterValueOrDefault("dateCreated", [null, null]) as DatesRangeValue}
+              //       onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("dateCreated"))}
+              //     />
+              //   ),
+              //   filtering: isFilterActive("dateCreated"),
             },
           ]}
         />

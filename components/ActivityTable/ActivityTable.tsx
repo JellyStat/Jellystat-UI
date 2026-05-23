@@ -1,18 +1,17 @@
-import Activity from "@/lib/models/activity";
-import { Box, Card, Group, NavLink, Select, Stack, Text, Title } from "@mantine/core";
-import { showNotification } from "@mantine/notifications";
-import { GridifyQueryBuilder, IGridifyQuery, ConditionalOperator as op } from "gridify-client";
+import Activity from "@/lib/models/activity.ts";
+import { Box, Card, Group, NavLink, Text, Title } from "@mantine/core";
+import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import { DataTable, DataTableSortStatus } from "mantine-datatable";
 import { useCallback, useEffect, useState } from "react";
-import client from "@/lib/api";
-import { IconChevronRight, IconCircleMinus, IconCirclePlusFilled, IconPlus, IconUsers } from "@tabler/icons-react";
+import client from "@/lib/api.ts";
+import { IconCircleMinus, IconCirclePlusFilled } from "@tabler/icons-react";
 import clsx from "clsx";
 import classes from "./ActivityTable.module.css";
-import { BaseTranscodingInfo } from "@/lib/models/baseTranscodingInfo";
-import TextFilter from "./TextFilter";
-import FilterItem from "./FilterItem";
+import { BaseTranscodingInfo } from "@/lib/models/baseTranscodingInfo.ts";
+import TextFilter from "../DataTableFilters/TextFilter.tsx";
 import { DatesRangeValue } from "@mantine/dates";
-import DateFilter from "./DateFilter";
+import DateFilter from "../DataTableFilters/DateFilter.tsx";
+import useFilters from "../DataTableFilters/useFilters.tsx";
 
 type Props = {
   gridify?: GridifyQueryBuilder | null;
@@ -28,42 +27,11 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
     columnAccessor: "dateCreated",
     direction: "desc",
   });
-  const [filter, setFilter] = useState<FilterItem[]>([]);
+  const { filter, addOrReplaceFilter, removeFilter, getFilterValueOrDefault, isFilterActive, applyFiltersToQuery } = useFilters();
 
   const [pageCount, setPageCount] = useState(1);
 
   const [expandedActivityIds, setExpandedActivityIds] = useState<string[]>([]);
-
-  function addOrReplaceFilter(newFilter: FilterItem) {
-    if (filter.some((f) => f.key === newFilter.key && f.value === newFilter.value)) return;
-    setFilter((prev) => {
-      const existingIndex = prev.findIndex((f) => f.key === newFilter.key);
-      if (existingIndex !== -1) {
-        const updated = [...prev];
-        updated[existingIndex] = newFilter;
-        return updated;
-      } else {
-        return [...prev, newFilter];
-      }
-    });
-  }
-
-  function removeFilter(key: string) {
-    if (!filter.some((f) => f.key === key)) return;
-    setFilter((prev) => prev.filter((f) => f.key !== key));
-  }
-
-  function getFilterValueOrDefault(
-    key: string,
-    defaultValue: string | number | boolean | Date | DatesRangeValue | null,
-  ): string | number | boolean | Date | DatesRangeValue | null {
-    const filterItem = filter.find((f) => f.key === key);
-    return filterItem?.value ?? defaultValue;
-  }
-
-  function isFilterActive(key: string): boolean {
-    return filter.some((f) => f.key === key);
-  }
 
   const fetchPage = useCallback(
     async (pageToLoad: number, replace = false) => {
@@ -75,33 +43,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
         console.log("Current sort status:", sortStatus);
         console.log("Current query:", query.build());
 
-        if (filter.length > 0) {
-          console.log("Applying filters to query:", filter);
-          filter.forEach((f) => {
-            const val = f.value as any;
-            const isDateRange = Array.isArray(val) && val.length === 2;
-            if (f.value == null || (isDateRange && val.some((v) => v == null))) return;
-            console.log(`Adding filter to query - Key: ${f.key}, Value: ${f.value}`);
-            if (query.build().filter != "") {
-              console.log("Adding AND operator to query");
-              query.and();
-            }
-            if (isDateRange) {
-              const dateRange = val as DatesRangeValue;
-              if (dateRange[0] == null || dateRange[1] == null) return;
-
-              const startDate = new Date(new Date(dateRange[0]!).setHours(0, 0, 0, 0)).toISOString();
-              const endDate = new Date(new Date(dateRange[1]!).setHours(23, 59, 59, 999)).toISOString();
-              query.startGroup();
-              query.addCondition(f.key, op.GreaterThanOrEqual, startDate);
-              query.and();
-              query.addCondition(f.key, op.LessThanOrEqual, endDate);
-              query.endGroup();
-            } else if (typeof val === "string") {
-              query.addCondition(f.key, op.Contains, val.toString(), false);
-            }
-          });
-        }
+        applyFiltersToQuery(query);
         query.addOrderBy(sortStatus.columnAccessor, sortStatus.direction === "desc");
         const builtQuery = query.build();
         console.log("Fetching activity with query:", builtQuery);

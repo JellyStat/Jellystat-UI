@@ -135,4 +135,25 @@ Number.prototype.formatBytes = function (): string | null {
   return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
 };
 
+Number.prototype.formatTimeDifference = function (): string {
+  const time = Number(this.valueOf());
+  if (!time) return "Unknown";
+
+  // time is milliseconds difference (Date.now() - pastDate)
+  const totalSeconds = Math.floor(Math.abs(time) / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const parts: string[] = [];
+
+  if (days > 0) parts.push(`${days} ${days > 1 ? "Days" : "Day"}`);
+  if (hours > 0) parts.push(`${hours} ${hours > 1 ? "Hours" : "Hour"}`);
+  if (minutes > 0) parts.push(`${minutes} ${minutes > 1 ? "Minutes" : "Minute"}`);
+  if (seconds > 0 || parts.length === 0) parts.push(`${seconds} ${seconds > 1 ? "Seconds" : "Second"}`);
+
+  return parts.slice(0, 2).join(" ");
+};
+
 export {};

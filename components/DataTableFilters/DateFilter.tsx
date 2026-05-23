@@ -1,8 +1,7 @@
-import { ActionIcon, Button, Stack, TextInput } from "@mantine/core";
-import { IconSearch, IconX } from "@tabler/icons-react";
-import { useEffect, useRef, useState } from "react";
-import FilterItem from "./FilterItem";
-import { DatePicker, DatePickerInput, DatesRangeValue } from "@mantine/dates";
+import { Button, Stack } from "@mantine/core";
+import { useEffect, useState } from "react";
+import FilterItem from "./FilterItem.ts";
+import { DatePicker, DatesRangeValue } from "@mantine/dates";
 import { useDebouncedValue } from "@mantine/hooks";
 
 export default function DateFilter({

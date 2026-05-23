@@ -22,23 +22,7 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 160, height = 
   const indexString = item.parentIndex != null ? `S${item.parentIndex} - E${item.index}` : "";
   const title = item.parent?.name ?? item.name;
   const difference = item.latestActivity?.dateCreated ? Date.now() - new Date(item.latestActivity.dateCreated).getTime() : null;
-  const differenceString = formatTime(difference);
-
-  function formatTime(time: number | null) {
-    if (time === null) return "Unknown";
-
-    // time is milliseconds difference (Date.now() - pastDate)
-    const totalSeconds = Math.floor(Math.abs(time) / 1000);
-    const days = Math.floor(totalSeconds / 86400);
-    const hours = Math.floor((totalSeconds % 86400) / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    if (days > 0) return `${days} ${days > 1 ? "Days" : "Day"} Ago`;
-    if (hours > 0) return `${hours} ${hours > 1 ? "Hours" : "Hour"} Ago`;
-    if (minutes > 0) return `${minutes} ${minutes > 1 ? "Minutes" : "Minute"} Ago`;
-    return `${seconds} ${seconds > 1 ? "Seconds" : "Second"} Ago`;
-  }
+  const differenceString = difference?.formatTimeDifference();
 
   return (
     <Card

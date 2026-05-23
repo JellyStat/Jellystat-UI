@@ -258,7 +258,7 @@ const getTrackedUsers = async (gridify?: IGridifyQuery): Promise<PagingResponse<
   apiFetch<PagingResponse<TrackedUsers>>(`/Api/TrackedUsers${await buildQuery(gridify)}`);
 
 const postTrackedUsers = (payload: TrackedUsers[]): Promise<Response> =>
-  apiFetchRaw("/Api/TrackedUsers", { method: "POST", body: JSON.stringify(payload) });
+  apiFetch("/Api/TrackedUsers", { method: "POST", body: JSON.stringify(payload) });
 
 const getTrackedLibraries = async (gridify?: IGridifyQuery): Promise<PagingResponse<TrackedLibraries>> =>
   apiFetch<PagingResponse<TrackedLibraries>>(`/Api/TrackedLibraries${await buildQuery(gridify)}`);
