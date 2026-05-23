@@ -1,8 +1,5 @@
-import Activity from "./activity";
+import { BaseStats } from "./baseStats.ts";
 
-export interface MostUsedClients {
+export interface MostUsedClients extends BaseStats {
   clientName: string;
-  playCount?: number | null;
-  playDuration?: number | null;
-  latestActivity?: Activity | null;
 }

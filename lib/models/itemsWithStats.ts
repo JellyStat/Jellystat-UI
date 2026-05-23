@@ -1,9 +1,4 @@
-import type { Items } from "./items";
-import type { Activity } from "./activity";
 import ItemsWithParentData from "./itemsWithParentData";
+import { BaseStats } from "./baseStats.ts";
 
-export interface ItemsWithStats extends ItemsWithParentData {
-  playCount?: number | null;
-  playDuration?: number | null;
-  latestActivity?: Activity | null;
-}
+export interface ItemsWithStats extends ItemsWithParentData, BaseStats {}

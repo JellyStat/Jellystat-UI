@@ -1,8 +1,4 @@
-import Activity from "./activity";
-import { Users } from "./users";
+import { BaseStats } from "./baseStats.ts";
+import { Users } from "./users.ts";
 
-export interface UserStats extends Users {
-  playCount?: number | null;
-  playDuration?: number | null;
-  latestActivity?: Activity | null;
-}
+export interface UserStats extends Users, BaseStats {}

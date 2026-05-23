@@ -1,8 +1,9 @@
-import type { BaseMediaStream } from "./baseMediaStream";
-import { BaseTranscodingInfo } from "./baseTranscodingInfo";
-import { Items } from "./items";
+import type { BaseMediaStream } from "./baseMediaStream.ts";
+import { BaseStats } from "./baseStats.ts";
+import { BaseTranscodingInfo } from "./baseTranscodingInfo.ts";
+import { Items } from "./items.ts";
 
-export interface Activity {
+export interface Activity extends BaseStats {
   id?: string;
   serverId?: string;
   name?: string;
@@ -29,8 +30,6 @@ export interface Activity {
   libraryId?: string;
   item?: Items | null;
   groupedResults?: Activity[] | null;
-  playCount?: number;
-  playDuration?: number;
 }
 
 export default Activity;
