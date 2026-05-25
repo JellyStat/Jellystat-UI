@@ -72,6 +72,11 @@ class WebSocketClient {
         }
       })();
 
+      if (!token || !serverId) {
+        this.scheduleReconnect();
+        return;
+      }
+
       const params: string[] = [];
       if (token) params.push(`token=${encodeURIComponent(token)}`);
       if (serverId) params.push(`serverId=${encodeURIComponent(serverId)}`);
