@@ -22,6 +22,9 @@ const items = [
   { icon: IconHome, label: "Home", href: "/" },
   { icon: IconPhoto, label: "Libraries", href: "/libraries" },
   { icon: IconHistory, label: "Activity", href: "/activity" },
+];
+
+const adminItems = [
   { icon: IconUsers, label: "Users", href: "/users" },
   { icon: IconSettings, label: "Settings", href: "/settings" },
 ];
@@ -99,8 +102,7 @@ export default function SideNav() {
           <div className={styles.brand}>Jellystat</div>
         </Container>
         <Container p={0}>
-          {items.map((it) => {
-            if (!isAdmin && it.href === "/settings") return null; // Hide settings from non-admins
+          {[...items, ...(isAdmin ? adminItems : [])].map((it) => {
             const paths = router.pathname.split("/");
             const path = paths.length > 1 ? `/${paths[1]}` : router.pathname; // Get the first segment of the path
             const active = path.toLocaleLowerCase() === it.href.toLocaleLowerCase();
