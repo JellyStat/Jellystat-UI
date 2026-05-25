@@ -7,6 +7,7 @@ import { Token } from "@/lib/models/token";
 import permissionsManager from "@/lib/permissionsManager";
 import Permissions from "@/lib/models/enums/Permissions";
 import configManager from "../lib/configManager";
+import { setToken } from "@/lib/helpers/tokenHelper";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -65,34 +66,13 @@ export default function LoginPage() {
 
       const serverId = selectedServer ?? undefined;
       const result: Token = await client.Auth.login({ username, password, serverId });
-      if (typeof window !== "undefined") {
-        try {
-          if (result?.token) {
-            localStorage.setItem("jellystat_token", result.token);
-            try {
-              const payloadBase64 = result.token.split(".")[1];
-              const decoded = JSON.parse(atob(payloadBase64));
-
-              if (!decoded.serverId && !serverId && permissionsManager.hasPermission(Permissions.Administrator)) {
-                const servers = await configManager.getConfig();
-                if (servers.length > 0) {
-                  decoded.serverId = servers[0].id;
-                }
-              }
-              localStorage.setItem("jellystat_serverId", decoded.serverId ?? serverId);
-            } catch {
-              console.warn("Failed to decode token payload, server selection may not persist across sessions");
-              configManager.clearConfig();
-            }
-          }
-          if (result?.refreshToken) localStorage.setItem("jellystat_refreshToken", result.refreshToken);
-        } catch {
-          /* ignore localStorage failures */
-        }
-      } else {
-        console.warn("Window is undefined, skipping localStorage operations");
+      const tokenSet = await setToken(result);
+      if (!tokenSet) {
+        setError("Login succeeded but failed to persist token");
+        setLoading(false);
         return;
       }
+
       try {
         wsClient.init();
       } catch {

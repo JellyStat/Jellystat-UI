@@ -32,6 +32,7 @@ function writeStored(cfg: Server[] | null) {
 async function fetchAndStore(): Promise<Server[]> {
   const cfg = (await client.Auth.getConfig()) as Server[];
   cache = cfg ?? [];
+  if (cfg.length === 0) return [];
   writeStored(cache);
   return cache;
 }

@@ -5,6 +5,8 @@ import CreateUserPage from "./createUser";
 import client from "@/lib/api";
 import { IconServer, IconUser } from "@tabler/icons-react";
 import SetupCompletePage from "./setupComplete";
+import CreateServerPage from "./createServerInstance";
+import { processServerId, setToken } from "@/lib/helpers/tokenHelper";
 
 export default function SetupPage() {
   const [loading, setLoading] = useState(true);
@@ -48,15 +50,26 @@ export default function SetupPage() {
         <Stepper active={activeIndex} style={{ marginTop: "20%", width: "75%" }}>
           <Stepper.Step icon={<IconUser size={18} />} label="Create user" description="Create an account">
             <CreateUserPage
-              onComplete={(result) => {
-                // result can be data from child
-                fetchSystem(true); // refetch system state to update stepper (or just go to next step with nextStep())
-                // optionally do more with `result`
+              onComplete={async (result) => {
+                const token = await client.Auth.login({ username: result?.username ?? "", password: result?.password ?? "" });
+                const tokenSet = await setToken(token);
+                if (!tokenSet) {
+                  setError("Login succeeded but failed to persist token");
+                  setLoading(false);
+                  return;
+                }
+                fetchSystem(true);
               }}
             />
           </Stepper.Step>
           <Stepper.Step icon={<IconServer size={18} />} label="Add a server" description="Add a Jellyfin/Emby Server ">
-            Step 2 content: Add a Jellyfin/Emby Server
+            <CreateServerPage
+              onComplete={async (result) => {
+                console.log("Server added", result);
+                await processServerId(result?.server?.id);
+                fetchSystem(true);
+              }}
+            />
           </Stepper.Step>
 
           <Stepper.Completed>

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { TextInput, PasswordInput, Button, Container, Title, Text, Space, Select, Loader, Center } from "@mantine/core";
 import client from "@/lib/api";
 
-type Props = { onComplete?: (result?: { username?: string }) => void };
+type Props = { onComplete?: (result?: { username?: string; password?: string }) => void };
 
 export default function CreateUserPage({ onComplete }: Props) {
   const router = useRouter();
@@ -54,7 +54,7 @@ export default function CreateUserPage({ onComplete }: Props) {
         return;
       }
       await client.Auth.createUser({ username, password });
-      onComplete?.({ username });
+      onComplete?.({ username, password });
     } catch (err: any) {
       setError(err?.message ?? "Login failed");
     } finally {

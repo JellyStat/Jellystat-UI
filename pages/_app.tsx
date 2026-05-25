@@ -35,10 +35,12 @@ export default function App({ Component, pageProps }: AppProps) {
       const info = await client.System.getSystemInfo();
       if (info && info.state !== SystemState.Configured) {
         try {
-          router.replace("/setup");
+          router.push("/setup");
+          setLoading(false);
           return;
         } catch {
           if (typeof window !== "undefined") window.location.href = "/setup";
+          setLoading(false);
           return;
         }
       }
@@ -67,7 +69,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     void fetchSystem();
-  }, [router]);
+  }, [router.asPath]);
 
   const showNav = currentPath !== "/login" && currentPath !== "/setup";
   const showLoading = loading || retrying;
