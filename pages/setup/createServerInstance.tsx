@@ -61,7 +61,7 @@ export default function CreateServerPage({ onComplete }: Props) {
   return (
     <Container size={420} my={40}>
       <Center style={{ flexDirection: "column" }}>
-        <Title order={2}>Create a Local Account</Title>
+        <Title order={2}>Add a Jellyfin/Emby Server</Title>
       </Center>
       <>
         <TextInput
