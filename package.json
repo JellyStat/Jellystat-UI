@@ -28,14 +28,18 @@
     "@mantine/notifications": "^9.2.1",
     "@next/bundle-analyzer": "^16.0.0",
     "@tabler/icons-react": "^3.35.0",
+    "@tailwindcss/vite": "^4.3.0",
     "clsx": "^2.1.1",
     "gridify-client": "^2.2.0",
+    "lucide-react": "^1.16.0",
     "mantine-datatable": "^9.2.0",
     "next": "16.2.4",
     "react": "19.2.5",
     "react-blurhash": "^0.3.0",
     "react-dom": "19.2.5",
-    "recharts": "^3.8.1"
+    "recharts": "^3.8.1",
+    "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",
