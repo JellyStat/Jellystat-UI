@@ -3,6 +3,7 @@ import styles from "./SideNav.module.css";
 import { useEffect, useState } from "react";
 import { Button, Container, Image, NavLink, useMantineColorScheme, Select, Group } from "@mantine/core";
 import {
+  IconChartBar,
   IconHistory,
   IconHome,
   IconLogout,
@@ -22,6 +23,7 @@ const items = [
   { icon: IconHome, label: "Home", href: "/" },
   { icon: IconPhoto, label: "Libraries", href: "/libraries" },
   { icon: IconHistory, label: "Activity", href: "/activity" },
+  { icon: IconChartBar, label: "Statistics", href: "/statistics" },
 ];
 
 const adminItems = [

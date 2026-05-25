@@ -18,6 +18,8 @@ import { UserStats } from "./models/userStats";
 import { TranscodeStats } from "./models/transcodeStats";
 import { MigrateActivity } from "./models/MigrateActivity";
 import { Token } from "./models/token";
+import { ChartStats } from "./models/chartStats";
+import StatMetric from "./models/enums/statMetric";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5020/";
 
@@ -449,6 +451,9 @@ const getTranscodeStats = async (
   gridify?: IGridifyQuery,
 ) => apiFetch<PagingResponse<TranscodeStats>>(`/Stats/TranscodeStats${await buildQuery(gridify, params as Record<string, any>)}`);
 
+const getStatsByDay = async (params?: { days?: number; metric?: StatMetric }) =>
+  apiFetch<ChartStats[]>(`/Stats/StatsByDay${await buildQuery(undefined, params as Record<string, any>)}`);
+
 // History
 const getSystemInfo = async (): Promise<SystemInfo> => apiFetch(`/System/Info`);
 
@@ -484,6 +489,7 @@ export const Stats = {
   getMostUsedClients,
   getUserStats,
   getTranscodeStats,
+  getStatsByDay,
 };
 
 export const History = {

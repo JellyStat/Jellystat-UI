@@ -21,6 +21,7 @@
     "storybook:build": "storybook build"
   },
   "dependencies": {
+    "@mantine/charts": "^9.2.1",
     "@mantine/core": "9.2.1",
     "@mantine/dates": "9.2.1",
     "@mantine/hooks": "9.2.1",
@@ -33,7 +34,8 @@
     "next": "16.2.4",
     "react": "19.2.5",
     "react-blurhash": "^0.3.0",
-    "react-dom": "19.2.5"
+    "react-dom": "19.2.5",
+    "recharts": "^3.8.1"
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",
