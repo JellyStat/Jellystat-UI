@@ -1,5 +1,6 @@
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
+import "@mantine/notifications/styles.css";
 import "mantine-datatable/styles.layer.css";
 import "@/styles/globals.css";
 import "@/types/global-extensions";
@@ -13,6 +14,7 @@ import { wsClient } from "@/lib/wsClient";
 import client from "@/lib/api";
 import SystemState from "@/lib/models/enums/systemState";
 import { useRouter } from "next/router";
+import { Notifications } from "@mantine/notifications";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [loading, setLoading] = useState(true);
@@ -73,6 +75,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <MantineProvider theme={theme}>
+      <Notifications />
       <Head>
         <title>Jellystat</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no" />

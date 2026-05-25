@@ -3,6 +3,7 @@ import { useState } from "react";
 import classes from "./settings.index.module.css";
 import ActivityMigrationPage from "./ActivityMigration/ActivityMIgration";
 import TasksPage from "./Tasks/Tasks";
+import LibrarySettingsPage from "./Library/LibrarySettings";
 
 export default function SettingsPage() {
   const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
@@ -19,6 +20,9 @@ export default function SettingsPage() {
           <Tabs.Tab value="settings" ref={setControlRef("settings")} className={classes.tab}>
             Settings
           </Tabs.Tab>
+          <Tabs.Tab value="librarySettings" ref={setControlRef("librarySettings")} className={classes.tab}>
+            Library Settings
+          </Tabs.Tab>
           <Tabs.Tab value="migrations" ref={setControlRef("migrations")} className={classes.tab}>
             Activity Migration
           </Tabs.Tab>
@@ -30,6 +34,9 @@ export default function SettingsPage() {
         </Tabs.List>
 
         <Tabs.Panel value="settings">First tab content</Tabs.Panel>
+        <Tabs.Panel value="librarySettings">
+          <LibrarySettingsPage />
+        </Tabs.Panel>
         <Tabs.Panel value="migrations">
           <ActivityMigrationPage />
         </Tabs.Panel>

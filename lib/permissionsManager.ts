@@ -78,9 +78,9 @@ const permissionsManager = {
    */
   hasPermission(p: Permissions | string): boolean {
     const name = String(p);
-    console.log("hasPermission invoked for", name);
+    // console.log("hasPermission invoked for", name);
     const list = readPermissions();
-    console.log("Checking permission", name, "in", list);
+    // console.log("Checking permission", name, "in", list);
     return list.includes(name);
   },
 };

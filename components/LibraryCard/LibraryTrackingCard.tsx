@@ -1,12 +1,19 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { Card, Text, Group, Stack, Badge, Center } from "@mantine/core";
+import { Card, Text, Group, Stack, Badge, Center, Switch } from "@mantine/core";
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import { API_BASE } from "@/lib/api";
 import { IconPhoto } from "@tabler/icons-react";
 import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
+import { TrackedLibraries } from "@/lib/models/trackedLibraries";
 
-export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
+export default function LibraryTrackingCard({
+  lib,
+  toggleLibraryTracking,
+}: {
+  lib: TrackedLibraries;
+  toggleLibraryTracking: (libraryId: string, tracked: boolean) => void;
+}) {
   const router = useRouter();
   // Construct a direct proxy image URL (no blob usage). The API proxy endpoint
   // is `/Proxy/Images/Items/Primary` and accepts Id, Width, Quality, Blur, ServerId.
@@ -59,34 +66,15 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
         </Group>
 
         <Stack style={{ marginTop: 8 }}>
-          <Text size="sm" color="dimmed">
-            Total Time: {lib.playbackDuration?.ticksToDurationString() ?? "N/A"}
-          </Text>
-
-          <Text size="sm" color="dimmed">
-            Total Size: {lib.size?.formatBytes() ?? "N/A"}
-          </Text>
-          <Text size="sm" color="dimmed">
-            Play Count: {lib.playCount ?? 0}
-          </Text>
-          <Text size="sm" color="dimmed">
-            Play Duration: {lib.playDuration?.secondsToDurationString() ?? "N/A"}
-          </Text>
-          <Text size="sm" color="dimmed">
-            Last Played: {lib.latestActivity?.seriesName ?? lib.latestActivity?.name ?? "N/A"}
-          </Text>
-          <Text size="sm" color="dimmed">
-            Last Activity: {lib.latestActivity?.dateCreated ? new Date(lib.latestActivity.dateCreated).toLocaleString() : "N/A"}
-          </Text>
-          {lib.typeCounts && lib.typeCounts.length > 0 && (
-            <Group align="center">
-              {lib.typeCounts.map((t) => (
-                <Badge key={t.type} color="blue" variant="dot">
-                  {t.type}: {t.count ?? 0}
-                </Badge>
-              ))}
-            </Group>
-          )}
+          <Group justify="space-between">
+            <Text>Tracked</Text>
+            <Switch
+              checked={lib.tracked}
+              onChange={(event) => {
+                toggleLibraryTracking(lib.id, event.currentTarget.checked);
+              }}
+            />
+          </Group>
         </Stack>
       </div>
     </Card>

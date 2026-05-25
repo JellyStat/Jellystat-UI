@@ -5,6 +5,7 @@
 */
 import { API_BASE } from "./api";
 import { WebsocketMessage } from "./models/WebsocketMessage";
+import { notifications } from "@mantine/notifications";
 
 type Handler = (payload: any) => void;
 
@@ -14,6 +15,7 @@ class WebSocketClient {
   private maxDelay = 30000;
   private shouldReconnect = true;
   private handlers: Map<string, Set<Handler>> = new Map();
+  private notificationId: string | null = null;
 
   private buildUrl(): string {
     // Prefer explicit env var
@@ -88,6 +90,18 @@ class WebSocketClient {
     this.ws.onopen = () => {
       this.reconnectDelay = 1000;
       this.emit("open", null);
+      if (this.notificationId != null) {
+        notifications.update({
+          id: this.notificationId,
+          color: "teal",
+          title: "Reconnected",
+          message: "Connection re-established.",
+          loading: false,
+          autoClose: 2000,
+          allowClose: true,
+        });
+        this.notificationId = null;
+      }
     };
 
     this.ws.onmessage = (ev) => {
@@ -130,7 +144,15 @@ class WebSocketClient {
   private scheduleReconnect() {
     setTimeout(() => {
       if (!this.shouldReconnect) return;
-      // exponential backoff
+      if (this.notificationId == null) {
+        this.notificationId = notifications.show({
+          loading: true,
+          title: "Reconnecting...",
+          message: "Connection lost. Attempting to reconnect.",
+          autoClose: false,
+          allowClose: false,
+        });
+      }
       this.reconnectDelay = Math.min(this.reconnectDelay * 1.5, this.maxDelay);
       this.connect();
     }, this.reconnectDelay);
