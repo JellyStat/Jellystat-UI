@@ -72,7 +72,7 @@ export default function App({ Component, pageProps }: AppProps) {
     void fetchSystem();
   }, [router.asPath]);
 
-  const showNav = currentPath !== "/login" && currentPath !== "/setup";
+  const showNav = !currentPath.startsWith("/login") && !currentPath.startsWith("/setup");
   const showLoading = loading || retrying;
   const showError = error;
 

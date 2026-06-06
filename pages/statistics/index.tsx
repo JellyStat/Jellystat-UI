@@ -17,7 +17,7 @@ export default function UsersPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await client.Stats.getStatsByDay({ days: 31 });
+      const data = await client.Stats.getStatTrends({ days: 31 });
 
       setStats(data);
     } catch (err: any) {

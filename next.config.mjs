@@ -6,5 +6,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 export default withBundleAnalyzer({
   reactStrictMode: false,
+  output: "export", // Compiles the app into a static directory
+  trailingSlash: true,
   allowedDevOrigins: ["10.0.0.20"],
 });

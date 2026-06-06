@@ -43,7 +43,7 @@ const RecentlyAdded: React.FC<Props> = ({ gridify, cardWidth }) => {
       <Title order={2}>Recently Added</Title>
       {loading && <Loader />}
       {error && <Text style={{ color: "var(--mantine-color-red, red)" }}>{error}</Text>}
-      {!loading && !error && <ItemCards items={items} cardWidth={cardWidth} />}
+      {!loading && !error && <ItemCards items={items} />}
     </Group>
   );
 };
