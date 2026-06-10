@@ -20,7 +20,7 @@ import { IconPlayerPause, IconPlayerPauseFilled, IconPlayerPlay, IconPlayerPlayF
 import ItemTypeIcons from "@/lib/declarations/itemIcons";
 import ItemImage from "../ItemImage/ItemImage";
 import { useRouter } from "next/router";
-import image from "../../lib/helpers/image.ts";
+import image from "@/lib/helpers/image";
 
 export type SessionCardProps = {
   session: SessionItem;
