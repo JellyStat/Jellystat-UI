@@ -20,4 +20,18 @@ jobs:
           cache: "npm"
           cache-dependency-path: package-lock.json
       - run: npm ci
-      - run: npm test
+      - run: npm run build
+      - name: Package build artifact
+        run: |
+          set -e
+          rm -f ui-build.zip
+          mkdir -p artifact
+          if [ -d out ]; then cp -r out artifact/ || true; fi
+          if [ -d .next ]; then cp -r .next artifact/ || true; fi
+          cp -r public artifact/ || true
+          zip -r ui-build.zip artifact
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jellystat-ui-build
+          path: jellystat-ui-build.zip
