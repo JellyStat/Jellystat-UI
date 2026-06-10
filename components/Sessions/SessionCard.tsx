@@ -20,6 +20,7 @@ import { IconPlayerPause, IconPlayerPauseFilled, IconPlayerPlay, IconPlayerPlayF
 import ItemTypeIcons from "@/lib/declarations/itemIcons";
 import ItemImage from "../ItemImage/ItemImage";
 import { useRouter } from "next/router";
+import image from "../../lib/helpers/image.ts";
 
 export type SessionCardProps = {
   session: SessionItem;
@@ -189,7 +190,21 @@ export default function SessionCard({ session }: SessionCardProps) {
       : "";
 
   const backgroundImage = `${API_BASE}Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(item?.seriesId ?? item?.id ?? "")}&Width=300&Quality=80&ServerId=${encodeURIComponent(session.serverId ?? "")}`;
-  const deviceImage = `${API_BASE}Proxy/Images/Devices?DeviceName=${encodeURIComponent(session.deviceName ?? "")}&Width=50&Quality=80&ServerId=${encodeURIComponent(session.serverId ?? "")}`;
+
+  const deviceIcon = image.getDeviceIcon(session);
+  let deviceIconUrl = null;
+
+  if (deviceIcon == null && session.deviceIconUrl) {
+    deviceIconUrl = new URL(session.deviceIconUrl).toString();
+  }
+
+  let deviceImage = `${API_BASE}Proxy/Images/Devices?ServerId=${encodeURIComponent(session.serverId ?? "")}`;
+  if (deviceIcon != null) {
+    deviceImage += `&Icon=${encodeURIComponent(deviceIcon)}`;
+  }
+  if (deviceIconUrl != null) {
+    deviceImage += `&iconUrl=${encodeURIComponent(deviceIconUrl)}`;
+  }
   const userImage = `${API_BASE}Proxy/Images/User/Primary?ServerId=${encodeURIComponent(session.serverId ?? "")}&Id=${encodeURIComponent(session.userId ?? "")}&Width=80`;
 
   const container = getcontainer(session);
