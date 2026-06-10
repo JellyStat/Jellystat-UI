@@ -24,12 +24,12 @@ jobs:
       - name: Package build artifact
         run: |
           set -e
-          rm -f ui-build.zip
+          rm -f jellystat-ui-build.zip
           mkdir -p artifact
           if [ -d out ]; then cp -r out artifact/ || true; fi
           if [ -d .next ]; then cp -r .next artifact/ || true; fi
           cp -r public artifact/ || true
-          zip -r ui-build.zip artifact
+          zip -r jellystat-ui-build.zip artifact
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
