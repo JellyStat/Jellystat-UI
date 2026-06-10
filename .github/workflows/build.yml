@@ -1,37 +1,54 @@
-name: build
+name: Build and Release UI
 
-# This workflow builds and tests the project on pushes and PRs to main.
 on:
   push:
     branches: ["main"]
-    # Publish semver tags as releases.
-    tags: ["v*.*.*"]
-  pull_request:
-    branches: ["main"]
+
+permissions:
+  contents: write
 
 jobs:
-  build:
+  build-and-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - name: Checkout UI Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 25
+          node-version: "25.2.1"
           cache: "npm"
-          cache-dependency-path: package-lock.json
-      - run: npm ci
-      - run: npm run build
-      - name: Package build artifact
+
+      # Extract version from package.json and short SHA from Git
+      - name: Set Version Environment Variables
+        id: vars
         run: |
-          set -e
-          rm -f jellystat-ui-build.zip
-          mkdir -p artifact
-          if [ -d out ]; then cp -r out artifact/ || true; fi
-          if [ -d .next ]; then cp -r .next artifact/ || true; fi
-          cp -r public artifact/ || true
-          zip -r jellystat-ui-build.zip artifact
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          TAG_NAME="jellystat-ui-v${PACKAGE_VERSION}-${SHORT_SHA}"
+
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Install and Build UI
+        run: |
+          npm ci
+          npm run build
+
+      # Zip the output using your dynamic tag name
+      - name: Zip Build Output
+        run: |
+          cd out && zip -r ../${{ env.TAG_NAME }}.zip .
+
+      # Create a dedicated GitHub Release named after the version + SHA string
+      - name: Create Versioned Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: jellystat-ui-build
-          path: jellystat-ui-build.zip
+          tag_name: ${{ env.TAG_NAME }}
+          name: UI Build v${{ env.TAG_NAME }}
+          files: ${{ env.TAG_NAME }}.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
