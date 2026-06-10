@@ -1,0 +1,48 @@
+name: Docker
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+  push:
+    branches: ["main"]
+    # Publish semver tags as releases.
+    tags: ["v*.*.*"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  fetch-ui-repo:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Allows the default GITHUB_TOKEN to read other accessible repos
+    steps:
+      # 1. Checkout the UI repository instead of the current one
+      - name: Checkout UI Repository
+        uses: actions/checkout@v4
+        with:
+          repository: jellystat/jellystat-ui
+          ref: "main"
+          token: ${{ secrets.JELLYSTAT_UI_TOKEN }} # This will now work!
+
+      # 2. Set up Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "25.2.1" # Adjust based on the UI repo requirements
+          cache: "npm"
+
+      # 3. Install dependencies and build the UI
+      - name: Install and Build UI
+        run: |
+          npm ci
+          npm run build
+
+      # 4. Upload the built files so the API job can grab them
+      - name: Upload UI Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-build-output
+          path: out/
