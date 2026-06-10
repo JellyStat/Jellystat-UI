@@ -1,4 +1,4 @@
-import SessionItem from "../models/sessionItem.ts";
+import SessionItem from "../models/sessionItem";
 
 const BASE_DEVICE_IMAGE_URL = "";
 
