@@ -1,4 +1,4 @@
 import ItemsWithParentData from "./itemsWithParentData";
-import { BaseStats } from "./baseStats";
+import { BaseStatsWithActivity } from "./baseStatsWithActivity";
 
-export interface ItemsWithStats extends ItemsWithParentData, BaseStats {}
+export interface ItemsWithStats extends ItemsWithParentData, BaseStatsWithActivity {}

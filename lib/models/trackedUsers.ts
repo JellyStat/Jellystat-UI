@@ -1,7 +1,7 @@
-import { BaseStats } from "./baseStats";
+import { BaseStatsWithActivity } from "./baseStatsWithActivity";
 import { Items } from "./items";
 
-export interface TrackedUsers extends BaseStats {
+export interface TrackedUsers extends BaseStatsWithActivity {
   tracked: boolean;
   id: string;
   username: string;

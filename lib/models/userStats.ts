@@ -1,4 +1,4 @@
-import { BaseStats } from "./baseStats";
+import { BaseStatsWithActivity } from "./baseStatsWithActivity";
 import { Users } from "./users";
 
-export interface UserStats extends Users, BaseStats {}
+export interface UserStats extends Users, BaseStatsWithActivity {}

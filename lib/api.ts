@@ -21,7 +21,7 @@ import { Token } from "./models/token";
 import { ChartStats } from "./models/chartStats";
 import StatMetric from "./models/enums/statMetric";
 
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5020/";
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://10.0.0.199:5020/";
 
 class ApiError extends Error {
   status: number;
