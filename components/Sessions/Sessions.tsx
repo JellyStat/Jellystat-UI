@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Title, Text, SimpleGrid, Group } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { MonitorPlay } from "lucide-react";
+import { useTranslation } from "next-i18next/pages";
 import { wsClient } from "@/lib/wsClient";
-import classes from "./Sessions.module.css";
 import { WebsocketMessage } from "@/lib/models/WebsocketMessage";
 import WebSocketMessageTypes from "@/lib/models/enums/WebSocketMessageTypes";
-import SessionCard from "./SessionCard";
 import SessionItem from "@/lib/models/sessionItem";
+import SessionCard from "./SessionCard";
 
-export function Sessions() {
+export default function Sessions() {
+  const { t } = useTranslation("common");
   const [sessions, setSessions] = useState<SessionItem[]>([]);
   const eventTag = WebSocketMessageTypes.Sessions.toString();
 
@@ -18,31 +19,53 @@ export function Sessions() {
         console.warn("Received sessions message with no data");
         return;
       }
-      if (Array.isArray(payload)) setSessions(payload);
-      else setSessions((prev) => [payload, ...prev]);
+      
+      if (Array.isArray(payload)) {
+        setSessions(payload);
+      } else {
+        setSessions((prev) => [payload as any, ...prev]);
+      }
     };
 
-    // runtime subscribe (wsClient.on is narrowly typed)
     wsClient.on(eventTag, handler);
     return () => wsClient.off(eventTag, handler);
-  }, []);
+  }, [eventTag]);
 
   return (
-    <Group style={{ flexDirection: "column", alignItems: "start" }}>
-      <Title order={2}>Sessions</Title>
-      <div className={classes.container}>
+    <div className="flex flex-col w-full animate-in fade-in duration-500">
+      
+      {/* Section Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="relative flex h-3 w-3">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-rose opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-rose"></span>
+        </div>
+        <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
+          {t("sessions.active_streams", "Active Streams")}
+        </h2>
+      </div>
+
+      <div className="w-full">
         {sessions.length === 0 ? (
-          <Text style={{ fontStyle: "italic" }}>No active sessions</Text>
+          /* Empty State */
+          <div className="w-full py-16 bg-surface/30 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-gray-500 shadow-inner">
+            <MonitorPlay size={48} className="mb-4 opacity-20" />
+            <span className="font-bold text-lg tracking-wide text-gray-400">
+              {t("sessions.no_active", "No active sessions")}
+            </span>
+            <span className="text-sm mt-1">
+              {t("sessions.waiting", "Waiting for users to start playing media...")}
+            </span>
+          </div>
         ) : (
-          <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xs" style={{ width: "100%" }}>
+          /* Responsive Grid */
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {sessions.map((s: SessionItem) => (
               <SessionCard key={s.id} session={s} />
             ))}
-          </SimpleGrid>
+          </div>
         )}
       </div>
-    </Group>
+    </div>
   );
 }
-
-export default Sessions;

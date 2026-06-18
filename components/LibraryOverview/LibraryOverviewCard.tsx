@@ -1,104 +1,64 @@
-import React from "react";
-import { Card, Title, Group, Text, Avatar, Stack, Container, Image, BackgroundImage, Tooltip } from "@mantine/core";
-import ItemTypes from "@/lib/models/enums/ItemTypes";
-import { API_BASE } from "@/lib/api";
-import { Icon, IconPhoto } from "@tabler/icons-react";
-import { LibrariesWithStats, TypeCountModel } from "@/lib/models/librariesWithStats";
+import { useRouter } from 'next/router';
+import { Film, Tv, Music, Image as ImageIcon, Folders, ChevronRight } from 'lucide-react';
 
-import classes from "./LibraryOverviewCard.module.css";
-
-export interface WatchStatCardProps {
-  title: string;
-  libraries: LibrariesWithStats[];
-  Icon: Icon;
+interface LibraryOverviewCardProps {
+  library: any;
 }
 
-export default function LibraryOverviewCard({ title, libraries, Icon }: WatchStatCardProps) {
-  const display = libraries.slice(0, 5);
-  if (libraries.length === 0) {
-    return null;
+export default function LibraryOverviewCard({ library }: LibraryOverviewCardProps) {
+  const router = useRouter();
+
+  let Icon = Folders;
+  let themeColor = "brand-cyan";
+  
+  const type = library.CollectionType?.toLowerCase() || '';
+  
+  if (type === 'movies') {
+    Icon = Film;
+    themeColor = "brand-purple";
+  } else if (type === 'tvshows') {
+    Icon = Tv;
+    themeColor = "brand-emerald";
+  } else if (type === 'music') {
+    Icon = Music;
+    themeColor = "brand-amber";
+  } else if (type === 'homevideos' || type === 'photos') {
+    Icon = ImageIcon;
+    themeColor = "brand-rose";
   }
 
-  const aggregateTypes = new Set<TypeCountModel["type"]>();
-  const excludedTypes = [ItemTypes.Folder, ItemTypes.Unknown];
-
-  libraries.forEach((lib) => {
-    if (lib.typeCounts) {
-      lib.typeCounts
-        .filter((tc) => !excludedTypes.includes(tc.type ?? ItemTypes.Unknown))
-        .forEach((tc) => aggregateTypes.add(tc.type));
-    }
-  });
-
-  const types = Array.from(aggregateTypes);
-  const unitString = types.length > 0 ? types.join(" / ") : "Items";
+  const iconBg = `bg-${themeColor}/10`;
+  const iconText = `text-${themeColor}`;
+  const hoverBorder = `hover:border-${themeColor}/50`;
+  const hoverShadow = `group-hover:shadow-${themeColor}/10`;
 
   return (
-    <Card
-      orientation="horizontal"
-      style={{
-        height: 180,
-        width: "100%",
-        maxWidth: 700,
-
-        backdropFilter: "blur(10px)",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-      }}
+    <div 
+      onClick={() => router.push(`/libraries/${library.Id}`)}
+      className={`relative flex items-center p-4 bg-surface/50 backdrop-blur-sm border border-border rounded-2xl cursor-pointer transition-all duration-300 group hover:-translate-y-0.5 shadow-md hover:shadow-xl ${hoverBorder} ${hoverShadow}`}
     >
-      <Card.Section className={classes.imageSection}>
-        <div
-          style={{
-            height: 180,
-            width: 120,
-            borderRadius: 8,
-            overflow: "hidden",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Icon size={64} />
-        </div>
-      </Card.Section>
-      <Card.Section p={8} style={{ width: "100%", minWidth: 350 }}>
-        <Group align="center" justify="space-between" style={{ marginBottom: 4 }}>
-          <Title order={4}>{title}</Title>
-          <Text size="sm" color="blue">
-            {unitString}
-          </Text>
-        </Group>
+      {/* Icon Container */}
+      <div className={`p-3 rounded-xl border border-border/50 shadow-inner mr-4 transition-transform duration-300 group-hover:scale-110 ${iconBg} ${iconText}`}>
+        <Icon size={22} />
+      </div>
 
-        <Stack style={{ gap: 2 }}>
-          {display.map((it, idx) => {
-            const counts = (it.typeCounts ?? [])
-              .filter((t) => t.type !== undefined && types.includes(t.type))
-              .map((tc) => tc.count);
+      {/* Library Info */}
+      <div className="flex flex-col flex-1 min-w-0">
+        <h3 className="text-sm font-bold text-gray-100 truncate group-hover:text-white transition-colors">
+          {library.Name}
+        </h3>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mt-0.5">
+          {library.CollectionType || 'Mixed Content'}
+        </span>
+      </div>
 
-            const countString = counts.length > 0 ? counts.join(" / ") : "0";
+      {/* Action Chevron */}
+      <div className="pl-2 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+        <ChevronRight size={18} className={iconText} />
+      </div>
 
-            return (
-              <Group key={it.id} align="center" justify="space-between" style={{ width: "100%" }}>
-                <Group align="center" style={{ gap: 8 }}>
-                  <Text color="dimmed" style={{ fontSize: 12 }}>
-                    {idx + 1}
-                  </Text>
-                  <Tooltip position="bottom" multiline withArrow transitionProps={{ duration: 200 }} label={it.name}>
-                    <Text
-                      component="a"
-                      href={`/libraries/${it.id}`}
-                      style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: 0 }}
-                    >
-                      {it.name}
-                    </Text>
-                  </Tooltip>
-                </Group>
-
-                <Text style={{ fontWeight: 600, color: "var(--mantine-primary-color-4)" }}>{countString}</Text>
-              </Group>
-            );
-          })}
-        </Stack>
-      </Card.Section>
-    </Card>
+      {/* Ambient Inner Glow */}
+      <div className={`absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/5 pointer-events-none transition-opacity duration-300 opacity-0 group-hover:opacity-100`}></div>
+    </div>
   );
 }

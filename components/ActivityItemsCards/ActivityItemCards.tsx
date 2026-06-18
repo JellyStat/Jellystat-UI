@@ -1,7 +1,6 @@
 import React from "react";
 import ActivityItemCard from "./ActivityItemCard";
 import { ItemsWithStats } from "@/lib/models/itemsWithStats";
-import { Container } from "@mantine/core";
 
 type Props = {
   items: ItemsWithStats[];
@@ -9,33 +8,16 @@ type Props = {
 
 export const ActivityItemCards: React.FC<Props> = ({ items }) => {
   return (
-    <Container
-      fluid
-      p={0}
-      m={0}
-      display="flex"
-      style={{
-        flexWrap: "nowrap",
-        gap: 12,
-        overflowX: "auto",
-        WebkitOverflowScrolling: "touch",
-        alignItems: "stretch",
-        justifyContent: "flex-start",
-        boxSizing: "border-box",
-      }}
-    >
+    <div className="flex flex-nowrap items-stretch justify-start gap-4 overflow-x-auto custom-scrollbar pb-4 w-full snap-x">
       {items.map((it) => (
-        <Container
+        <div
           key={`${it.serverId || ""}-${it.id}`}
-          display="flex"
-          flex="0 0 auto"
-          p={0}
-          style={{ alignItems: "stretch", boxSizing: "border-box" }}
+          className="flex-none flex items-stretch snap-start"
         >
           <ActivityItemCard item={it} />
-        </Container>
+        </div>
       ))}
-    </Container>
+    </div>
   );
 };
 

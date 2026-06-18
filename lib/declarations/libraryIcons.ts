@@ -1,25 +1,26 @@
 import {
-  IconArrowsShuffle,
-  IconBook2,
-  IconDeviceTv,
-  IconFileUnknown,
-  IconLibraryPhoto,
-  IconMovie,
-  IconMusic,
-  IconVideo,
-} from "@tabler/icons-react";
+  Shuffle,
+  Book,
+  Tv,
+  FileQuestion,
+  Images,
+  Film,
+  Music,
+  Video,
+} from "lucide-react";
+
 import LibraryTypes from "@/lib/models/enums/LibraryTypes";
 
 const LibraryTypeIcons: Record<string, any> = {
-  [LibraryTypes.Series]: IconDeviceTv,
-  [LibraryTypes.BoxSets]: IconLibraryPhoto,
-  [LibraryTypes.Movies]: IconMovie,
-  [LibraryTypes.Music]: IconMusic,
-  [LibraryTypes.HomeVideos]: IconVideo,
-  [LibraryTypes.MusicVideos]: IconVideo,
-  [LibraryTypes.Books]: IconBook2,
-  [LibraryTypes.Mixed]: IconArrowsShuffle,
-  [LibraryTypes.Unknown]: IconFileUnknown,
+  [LibraryTypes.Series]: Tv,
+  [LibraryTypes.BoxSets]: Images,
+  [LibraryTypes.Movies]: Film,
+  [LibraryTypes.Music]: Music,
+  [LibraryTypes.HomeVideos]: Video,
+  [LibraryTypes.MusicVideos]: Video,
+  [LibraryTypes.Books]: Book,
+  [LibraryTypes.Mixed]: Shuffle,
+  [LibraryTypes.Unknown]: FileQuestion,
 };
 
 export default LibraryTypeIcons;

@@ -1,11 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Container, SimpleGrid, Title, Loader, Text, Center } from "@mantine/core";
+import { useEffect, useState } from "react";
+import Head from "next/head";
+import { useTranslation } from "next-i18next/pages";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { Database, Loader2, AlertCircle } from "lucide-react";
+
 import client from "@/lib/api";
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import LibraryCard from "@/components/LibraryCard/LibraryCard";
-import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
+import { GridifyQueryBuilder } from "gridify-client";
 
 export default function LibrariesPage() {
+  const { t } = useTranslation("common");
   const [libs, setLibs] = useState<LibrariesWithStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -14,11 +19,11 @@ export default function LibrariesPage() {
     let mounted = true;
     async function load() {
       setLoading(true);
+      setError(null);
       try {
         const query = new GridifyQueryBuilder().addOrderBy("name").build();
         const res = await client.Api.getLibraries(query);
         if (!mounted) return;
-        console.log("Loaded libraries:", res?.data);
         setLibs(res?.data ?? []);
       } catch (er: any) {
         console.error("Failed to load libraries", er);
@@ -35,26 +40,74 @@ export default function LibrariesPage() {
   }, []);
 
   return (
-    <div style={{ padding: 20 }}>
-      <Title order={1} mb="md">
-        Libraries
-      </Title>
+    <>
+      <Head>
+        <title>{t("nav.libraries", "Libraries")} | Jellystat</title>
+      </Head>
 
-      {loading && (
-        <Center>
-          <Loader />
-        </Center>
-      )}
+      <div className="space-y-8 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12">
+        
+        {/* Header */}
+        <div className="flex items-center gap-4 border-b border-border/50 pb-6">
+          <div className="p-3.5 bg-brand-cyan/10 rounded-2xl border border-brand-cyan/20 shadow-inner">
+            <Database size={28} className="text-brand-cyan" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-black text-white tracking-tight">
+              {t("nav.libraries", "Libraries")}
+            </h1>
+            <p className="text-sm text-gray-400 mt-1 font-medium">
+              {t("libraries.libraries_desc", "Manage, track, and analyze your media collections")}
+            </p>
+          </div>
+        </div>
 
-      {error && <Text color="red">Error loading libraries: {error}</Text>}
+        {/* Loading State */}
+        {loading && (
+          <div className="w-full py-32 flex flex-col items-center justify-center">
+            <Loader2 size={48} className="text-brand-cyan animate-spin mb-4" />
+            <span className="text-gray-400 font-medium tracking-wide">{t("libraries.scanning_libraries", "Scanning server libraries...")}</span>
+          </div>
+        )}
 
-      {!loading && !error && (
-        <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
-          {libs.map((l) => (
-            <LibraryCard key={`${l.serverId}-${l.id}`} lib={l} />
-          ))}
-        </SimpleGrid>
-      )}
-    </div>
+        {/* Error State */}
+        {error && (
+          <div className="p-5 rounded-2xl bg-brand-rose/10 border border-brand-rose/20 flex items-start gap-4 shadow-xl shadow-brand-rose/5">
+            <AlertCircle size={24} className="text-brand-rose shrink-0 mt-0.5" />
+            <div className="flex flex-col">
+              <h3 className="text-lg font-bold text-brand-rose mb-1">{t("libraries.failed_load", "Failed to load libraries")}</h3>
+              <p className="text-sm text-brand-rose/80 font-medium">{error}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && !error && libs.length === 0 && (
+          <div className="w-full py-24 bg-surface/30 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-gray-500">
+            <Database size={48} className="mb-4 opacity-20" />
+            <span className="font-bold text-lg tracking-wide text-gray-400">{t("libraries.no_libraries", "No libraries found")}</span>
+            <span className="text-sm mt-1">{t("libraries.no_libraries_desc", "Make sure your server is connected and synced.")}</span>
+          </div>
+        )}
+
+        {/* Library Grid */}
+        {!loading && !error && libs.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8">
+            {libs.map((l) => (
+              <LibraryCard key={`${l.serverId}-${l.id}`} lib={l} />
+            ))}
+          </div>
+        )}
+        
+      </div>
+    </>
   );
+}
+
+export async function getStaticProps({ locale }: { locale: string }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
 }

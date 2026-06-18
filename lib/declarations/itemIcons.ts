@@ -1,26 +1,24 @@
 import {
-  IconArrowsShuffle,
-  IconBook2,
-  IconDeviceTv,
-  IconFileUnknown,
-  IconFolder,
-  IconLibraryPhoto,
-  IconMovie,
-  IconMusic,
-  IconVideo,
-} from "@tabler/icons-react";
+  Film,
+  Music,
+  Tv,
+  Folder,
+  Video,
+  FileQuestion,
+  LucideIcon
+} from "lucide-react";
 import ItemTypes from "../models/enums/ItemTypes";
 
-const ItemTypeIcons: Record<string, any> = {
-  [ItemTypes.Movie]: IconMovie,
-  [ItemTypes.Audio]: IconMusic,
-  [ItemTypes.Series]: IconDeviceTv,
-  [ItemTypes.Season]: IconDeviceTv,
-  [ItemTypes.Episode]: IconDeviceTv,
-  [ItemTypes.Folder]: IconFolder,
-  [ItemTypes.Trailer]: IconVideo,
-  [ItemTypes.Unknown]: IconFileUnknown,
-  [ItemTypes.TvChannel]: IconDeviceTv,
+const ItemTypeIcons: Record<string, LucideIcon> = {
+  [ItemTypes.Movie]: Film,
+  [ItemTypes.Audio]: Music,
+  [ItemTypes.Series]: Tv,
+  [ItemTypes.Season]: Tv,
+  [ItemTypes.Episode]: Tv,
+  [ItemTypes.Folder]: Folder,
+  [ItemTypes.Trailer]: Video,
+  [ItemTypes.Unknown]: FileQuestion,
+  [ItemTypes.TvChannel]: Tv,
 };
 
 export default ItemTypeIcons;

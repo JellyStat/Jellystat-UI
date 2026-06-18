@@ -1,7 +1,7 @@
-import { Checkbox, Group, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import FilterItem from "./FilterItem";
-import { useDebouncedValue } from "@mantine/hooks";
+import { Check, X, Minus } from "lucide-react";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 
 export default function BooleanFilter({
   keyName,
@@ -15,46 +15,52 @@ export default function BooleanFilter({
   onChange: (value: FilterItem | null) => void;
 }) {
   const [query, setQuery] = useState<boolean | null>(value);
-  const [debounced] = useDebouncedValue(query, 200);
-
-  const equalBooleans = (a: boolean | null, b: boolean | null) => {
-    return a === b;
-  };
+  
+  const debounced = useDebounce(query, 200); 
 
   useEffect(() => {
-    // If the debounced value is equal to the current value, do nothing
-    if (equalBooleans(debounced, value)) return;
+    if (debounced === value) return;
 
-    // If both are null -> clear the filter
     if (debounced == null) {
       onChange(null);
-      return;
+    } else {
+      onChange(new FilterItem(keyName, debounced));
     }
-
-    onChange(new FilterItem(keyName, debounced));
-  }, [debounced, value, keyName, onChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debounced]);
 
   function cycleValue() {
-    switch (query) {
-      case null:
-        setQuery(true);
-        break;
-      case true:
-        setQuery(false);
-        break;
-      case false:
-        setQuery(null);
-        break;
-    }
+    setQuery((prev) => {
+      switch (prev) {
+        case null: return true;
+        case true: return false;
+        case false: return null;
+        default: return null;
+      }
+    });
   }
 
-  const checked = !!debounced;
-  const intermediate = debounced === null;
+  const stateStyles = {
+    null: "bg-surface border-border text-gray-500",
+    true: "bg-brand-emerald border-brand-emerald text-black",
+    false: "bg-brand-rose border-brand-rose text-white",
+  };
+
+  const currentState = query === null ? "null" : query ? "true" : "false";
 
   return (
-    <Group>
-      <Text>{label}</Text>
-      <Checkbox checked={checked} indeterminate={intermediate} onChange={cycleValue} />
-    </Group>
+    <div className="flex items-center gap-3">
+      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+        {label}
+      </span>
+      <button
+        onClick={cycleValue}
+        className={`w-6 h-6 flex items-center justify-center rounded border transition-all duration-300 shadow-inner ${stateStyles[currentState as keyof typeof stateStyles]}`}
+      >
+        {query === null && <Minus size={14} />}
+        {query === true && <Check size={14} strokeWidth={3} />}
+        {query === false && <X size={14} strokeWidth={3} />}
+      </button>
+    </div>
   );
 }

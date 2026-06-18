@@ -1,57 +1,85 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Title, Group, SimpleGrid, Loader } from "@mantine/core";
-import { IconChartBarPopular } from "@tabler/icons-react";
+import { useEffect, useState, useRef } from "react";
+import { useTranslation } from "next-i18next/pages";
 import client from "@/lib/api";
-import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
-import { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import LibraryOverviewCard from "./LibraryOverviewCard";
-import LibraryTypes from "@/lib/models/enums/LibraryTypes";
+import { Database, Loader2, AlertCircle } from "lucide-react";
+import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 
 export default function LibraryOverview() {
-  const [libraryStats, setLibraryStats] = useState<LibrariesWithStats[]>([]);
+  const { t } = useTranslation("common");
+
+  const [libraries, setLibraries] = useState<LibrariesWithStats[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const isCancelledRef = useRef(false);
+
+  const fetchLibraries = async () => {
+    isCancelledRef.current = false;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await client.Api.getLibraries();
+      if (!isCancelledRef.current) setLibraries(res?.data ?? []);
+      
+    } catch (err: any) {
+      if (!isCancelledRef.current) setError(err?.message ?? t("library.failed_to_load", "Failed to load libraries"));
+    } finally {
+      if (!isCancelledRef.current) setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    let mounted = true;
-    async function fetchLibraryStats() {
-      setLoading(true);
-      try {
-        // Example API call - replace with actual endpoint and query
-        const query = new GridifyQueryBuilder().setPageSize(100).build();
-        const res = await client.Stats.getLibraryStats({ days: 0 }, query);
-        if (!mounted) return;
-        setLibraryStats(res?.data ?? []);
-      } catch (er: any) {
-        console.error("Failed to load most viewed movies", er);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    }
-
-    fetchLibraryStats();
+    fetchLibraries();
     return () => {
-      mounted = false;
+      isCancelledRef.current = true;
     };
   }, []);
 
   return (
-    <Group style={{ flexDirection: "column", alignItems: "start", minHeight: 200 }}>
-      <Group style={{ width: "100%", justifyContent: "space-between" }}>
-        <Title order={2}>Library Overview</Title>
-      </Group>
-      {loading && <Loader />}
-      <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg" style={{ width: "100%" }}>
-        <LibraryOverviewCard
-          title="MOVIE LIBRARIES"
-          libraries={libraryStats.filter((lib) => lib.type === LibraryTypes.Movies)}
-          Icon={IconChartBarPopular}
-        />
-        <LibraryOverviewCard
-          title="SHOW LIBRARIES"
-          libraries={libraryStats.filter((lib) => lib.type === LibraryTypes.Series)}
-          Icon={IconChartBarPopular}
-        />
-      </SimpleGrid>
-    </Group>
+    <div className="flex flex-col w-full h-full animate-in fade-in duration-500">
+      
+      {/* Section Header */}
+      <div className="flex items-center mb-4">
+        <Database size={20} className="text-brand-purple mr-2" />
+        <h2 className="text-xl font-bold text-gray-100 tracking-tight">
+          {t("library.overview_title", "Libraries")}
+        </h2>
+      </div>
+
+      {/* Content Area */}
+      <div className="flex flex-col gap-3">
+        
+        {loading && (
+          <div className="w-full h-48 bg-surface/30 border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse shadow-inner">
+            <Loader2 size={24} className="text-brand-purple animate-spin mb-3" />
+            <span className="text-xs text-gray-500 font-medium">
+              {t("library.scanning", "Scanning libraries...")}
+            </span>
+          </div>
+        )}
+
+        {error && (
+          <div className="p-4 rounded-xl bg-brand-rose/10 border border-brand-rose/20 flex items-start gap-3">
+            <AlertCircle size={18} className="text-brand-rose shrink-0 mt-0.5" />
+            <p className="text-sm text-brand-rose/90 font-medium">{error}</p>
+          </div>
+        )}
+
+        {!loading && !error && libraries.length > 0 && (
+          libraries.map((lib) => (
+            <LibraryOverviewCard key={lib.id} library={lib} />
+          ))
+        )}
+
+        {!loading && !error && libraries.length === 0 && (
+          <div className="w-full h-32 bg-surface/30 border border-border border-dashed rounded-2xl flex flex-col items-center justify-center text-gray-500 shadow-inner">
+            <span className="font-medium text-sm">
+              {t("library.no_libraries", "No libraries found")}
+            </span>
+          </div>
+        )}
+
+      </div>
+    </div>
   );
 }

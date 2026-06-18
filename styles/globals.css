@@ -1,38 +1,41 @@
-/* Global scrollbar styles (Chromium) */
-body::-webkit-scrollbar {
-  width: 10px;
+@import "tailwindcss";
+
+@theme {
+  --color-brand-cyan: #00a4dc;
+  --color-brand-purple: #aa3bff;
+  --color-brand-emerald: #34d399;
+  --color-brand-rose: #f43f5e;
+  --color-brand-amber: #fbbf24;
+  
+  --color-background: #09090b; 
+  --color-surface: #121214;    
+  --color-surface-hover: #1e1e24;
+  --color-border: #27272a;
 }
 
-body::-webkit-scrollbar-track {
-  background-color: transparent;
-}
+@layer base {
+  html, body {
+    @apply bg-background text-gray-100 antialiased h-screen w-screen overflow-hidden;
+    margin: 0;
+    padding: 0;
+  }
+  
+  #__next {
+    @apply h-full w-full flex;
+  }
 
-body::-webkit-scrollbar-thumb {
-  background-color: #8888884d;
-  border-radius: 5px;
-}
-
-body::-webkit-scrollbar-thumb:hover {
-  background-color: #88888883;
-}
-
-/* also apply to all scrollable elements */
-*::-webkit-scrollbar {
-  width: 10px;
-}
-*::-webkit-scrollbar-track {
-  background-color: transparent;
-}
-*::-webkit-scrollbar-thumb {
-  background-color: #8888884d;
-  border-radius: 5px;
-}
-*::-webkit-scrollbar-thumb:hover {
-  background-color: #88888883;
-}
-
-/* Firefox */
-:root {
-  scrollbar-width: thin;
-  scrollbar-color: #8888884d transparent;
+  /* Premium Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-zinc-800 rounded-full border-[1px] border-background;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-zinc-600;
+  }
 }

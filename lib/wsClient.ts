@@ -5,7 +5,7 @@
 */
 import { API_BASE } from "./api";
 import { WebsocketMessage } from "./models/WebsocketMessage";
-import { notifications } from "@mantine/notifications";
+import { toast } from "sonner";
 
 type Handler = (payload: any) => void;
 
@@ -15,7 +15,7 @@ class WebSocketClient {
   private maxDelay = 30000;
   private shouldReconnect = true;
   private handlers: Map<string, Set<Handler>> = new Map();
-  private notificationId: string | null = null;
+  private isReconnecting = false;
 
   private buildUrl(): string {
     // Prefer explicit env var
@@ -57,19 +57,13 @@ class WebSocketClient {
 
     try {
       const token = (() => {
-        try {
-          return localStorage.getItem("jellystat_token");
-        } catch {
-          return null;
-        }
+        try { return localStorage.getItem("jellystat_token"); } 
+        catch { return null; }
       })();
 
       const serverId = (() => {
-        try {
-          return localStorage.getItem("jellystat_serverId");
-        } catch {
-          return null;
-        }
+        try { return localStorage.getItem("jellystat_serverId"); } 
+        catch { return null; }
       })();
 
       if (!token || !serverId) {
@@ -95,17 +89,14 @@ class WebSocketClient {
     this.ws.onopen = () => {
       this.reconnectDelay = 1000;
       this.emit("open", null);
-      if (this.notificationId != null) {
-        notifications.update({
-          id: this.notificationId,
-          color: "teal",
-          title: "Reconnected",
-          message: "Connection re-established.",
-          loading: false,
-          autoClose: 2000,
-          allowClose: true,
+      
+      // If we successfully reconnected, update the loading toast to success
+      if (this.isReconnecting) {
+        toast.success("Connection re-established", { 
+          id: "ws-status",
+          duration: 3000,
         });
-        this.notificationId = null;
+        this.isReconnecting = false;
       }
     };
 
@@ -120,16 +111,14 @@ class WebSocketClient {
         } else if (ev.data && typeof ev.data === "object") {
           parsed = ev.data;
         } else {
-          return; // ignore other non-json frames
+          return; 
         }
 
         if (!parsed || typeof parsed !== "object") return;
 
         const message = parsed as WebsocketMessage;
-
         const emitTag: string = message.type.toString();
 
-        // emit parsed object directly; do not normalize key casing
         this.emit(emitTag, message);
       } catch {
         // invalid JSON — ignore
@@ -149,15 +138,15 @@ class WebSocketClient {
   private scheduleReconnect() {
     setTimeout(() => {
       if (!this.shouldReconnect) return;
-      if (this.notificationId == null) {
-        this.notificationId = notifications.show({
-          loading: true,
-          title: "Reconnecting...",
-          message: "Connection lost. Attempting to reconnect.",
-          autoClose: false,
-          allowClose: false,
+      
+      // Trigger the loading toast if it hasn't been triggered yet
+      if (!this.isReconnecting) {
+        this.isReconnecting = true;
+        toast.loading("Connection lost. Reconnecting...", { 
+          id: "ws-status" 
         });
       }
+      
       this.reconnectDelay = Math.min(this.reconnectDelay * 1.5, this.maxDelay);
       this.connect();
     }, this.reconnectDelay);
@@ -203,7 +192,6 @@ class WebSocketClient {
 
   private emit(event: string, payload: any) {
     const set = this.handlers.get(event);
-    console.debug(`Emitting event '${event}' to ${set?.size ?? 0} handler(s)`, payload);
     if (!set) return;
     for (const h of Array.from(set)) {
       try {
@@ -219,7 +207,7 @@ class WebSocketClient {
   }
 }
 
-// Ensure a single global instance even if the module is imported multiple ways
+// Ensure a single global instance
 const g = globalThis as any;
 export const wsClient: WebSocketClient = g.__jellystat_wsClient ?? (g.__jellystat_wsClient = new WebSocketClient());
 

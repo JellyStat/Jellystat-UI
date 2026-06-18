@@ -1,54 +1,37 @@
-import React from "react";
-import {
-  Card,
-  Image,
-  Group,
-  Stack,
-  Text,
-  Progress,
-  Badge,
-  Box,
-  Avatar,
-  BackgroundImage,
-  CardSection,
-  Space,
-} from "@mantine/core";
+import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next/pages";
+import { Play, Pause, Tv } from "lucide-react";
+
 import { API_BASE } from "@/lib/api";
 import SessionItem from "@/lib/models/sessionItem";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
-import { IconPlayerPause, IconPlayerPauseFilled, IconPlayerPlay, IconPlayerPlayFilled } from "@tabler/icons-react";
 import ItemTypeIcons from "@/lib/declarations/itemIcons";
 import ItemImage from "../ItemImage/ItemImage";
-import { useRouter } from "next/router";
+import DeviceIcon from "../DeviceIcon/DeviceIcon";
 
 export type SessionCardProps = {
   session: SessionItem;
 };
 
+// --- HELPER FUNCTIONS ---
 function convertBitrate(bitrate: number) {
-  if (!bitrate) {
-    return "N/A";
-  }
+  if (!bitrate) return "N/A";
   const kbps: number = parseFloat((bitrate / 1000).toFixed(1));
   const mbps: number = parseFloat((bitrate / 1000000).toFixed(1));
-
-  if (kbps >= 1000) {
-    return mbps + " Mbps";
-  } else {
-    return kbps + " Kbps";
-  }
+  return kbps >= 1000 ? `${mbps} Mbps` : `${kbps} Kbps`;
 }
 
-function getcontainer(item: SessionItem) {
+function getContainer(item: SessionItem) {
   let transcodeContainer = "";
-  if (item.transcodingInfo && item.transcodingInfo.container)
+  if (item.transcodingInfo && item.transcodingInfo.container) {
     transcodeContainer = ` -> ${item.transcodingInfo.container.toUpperCase()}`;
-
-  let NowPlayingItemContainer = item?.nowPlayingItem?.container ?? "";
-  if (item?.nowPlayingItem?.container && item?.nowPlayingItem?.type == ItemTypes.TvChannel) {
-    NowPlayingItemContainer = "LiveTV";
   }
-  return `${NowPlayingItemContainer.toUpperCase()}${transcodeContainer}`;
+
+  let nowPlayingContainer = item?.nowPlayingItem?.container ?? "";
+  if (item?.nowPlayingItem?.container && item?.nowPlayingItem?.type === ItemTypes.TvChannel) {
+    nowPlayingContainer = "LiveTV";
+  }
+  return `${nowPlayingContainer.toUpperCase()}${transcodeContainer}`;
 }
 
 function getAudio(session: SessionItem) {
@@ -63,7 +46,7 @@ function getAudio(session: SessionItem) {
       : "";
 
   const originalCodec =
-    item?.type == ItemTypes.Audio
+    item?.type === ItemTypes.Audio
       ? (item.container ?? "").toUpperCase()
       : item?.mediaStreams && validStreamIndex
         ? `${(item.mediaStreams[streamIndex]?.codec ?? "").toUpperCase()}${item.mediaStreams[streamIndex]?.channels ? `-${item.mediaStreams[streamIndex].channels}Ch` : ""}`
@@ -74,28 +57,20 @@ function getAudio(session: SessionItem) {
 }
 
 function getAudioBitrate(session: SessionItem) {
-  let mediaTypeAudio = session.nowPlayingItem?.type === ItemTypes.Audio;
-  let streamIndex = session.playState?.audioStreamIndex ?? -1;
-  if ((streamIndex === undefined || streamIndex === -1) && !mediaTypeAudio) {
-    return "";
-  }
+  const mediaTypeAudio = session.nowPlayingItem?.type === ItemTypes.Audio;
+  const streamIndex = session.playState?.audioStreamIndex ?? -1;
+  if ((streamIndex === undefined || streamIndex === -1) && !mediaTypeAudio) return "";
 
   let transcodeBitRate = "";
-  // if (session.transcodingInfo && session.transcodingInfo.audioBitrate) {
-  //   transcodeBitRate = " -> " + convertBitrate(session.transcodingInfo.audioBitrate);
-  // }
-
   let originalBitrate = "";
-  // if (mediaTypeAudio && session.nowPlayingItem?.bitrate) {
-  //   originalBitrate = convertBitrate(session.nowPlayingItem?.bitrate);
-  // } else
+
   if (
     session.nowPlayingItem?.mediaStreams &&
     session.nowPlayingItem.mediaStreams.length &&
     streamIndex < session.nowPlayingItem.mediaStreams.length &&
     session.nowPlayingItem.mediaStreams[streamIndex].bitRate
   ) {
-    originalBitrate = convertBitrate(session.nowPlayingItem.mediaStreams[streamIndex].bitRate);
+    originalBitrate = convertBitrate(session.nowPlayingItem.mediaStreams[streamIndex].bitRate!);
   } else if (transcodeBitRate) {
     originalBitrate = "N/A";
   }
@@ -103,36 +78,24 @@ function getAudioBitrate(session: SessionItem) {
 }
 
 function getVideoResolution(videoHeight: number | null | undefined) {
-  let videoResolution = "";
-  if (!videoHeight) return videoResolution;
-  if (videoHeight > 2160) {
-    videoResolution = "8K";
-  } else if (videoHeight > 1080) {
-    videoResolution = "4K";
-  } else if (videoHeight > 720) {
-    videoResolution = "1080p";
-  } else if (videoHeight > 480) {
-    videoResolution = "720p";
-  } else if (videoHeight > 360) {
-    videoResolution = "480p";
-  } else if (videoHeight > 240) {
-    videoResolution = "360p";
-  } else {
-    videoResolution = "240p";
-  }
-  return videoResolution;
+  if (!videoHeight) return "";
+  if (videoHeight > 2160) return "8K";
+  if (videoHeight > 1080) return "4K";
+  if (videoHeight > 720) return "1080p";
+  if (videoHeight > 480) return "720p";
+  if (videoHeight > 360) return "480p";
+  if (videoHeight > 240) return "360p";
+  return "240p";
 }
 
 function getVideo(session: SessionItem) {
-  let videoStream = session.nowPlayingItem?.mediaStreams?.find((stream) => stream.type === "Video");
-
-  if (videoStream === undefined) {
-    return "";
-  }
+  const videoStream = session.nowPlayingItem?.mediaStreams?.find((stream) => stream.type === "Video");
+  if (!videoStream) return "";
 
   let transcodeType = "Direct Play";
   let transcodeVideoCodec = "";
   let transcodeVideoResolution = "";
+  
   if (session.transcodingInfo && !session.transcodingInfo.isVideoDirect) {
     transcodeType = "Transcode";
     transcodeVideoResolution = getVideoResolution(session.transcodingInfo.height);
@@ -140,16 +103,14 @@ function getVideo(session: SessionItem) {
   }
 
   const originalVideoCodec = videoStream.codec?.toUpperCase();
-  let videoResolution = getVideoResolution(videoStream.height);
+  const videoResolution = getVideoResolution(videoStream.height);
 
   return `${transcodeType} (${originalVideoCodec}-${videoResolution}${transcodeVideoCodec})`;
 }
 
 function getVideoBitrate(session: SessionItem) {
-  let videoStream = session.nowPlayingItem?.mediaStreams?.find((stream) => stream.type === "Video");
-  if (videoStream === undefined) {
-    return "";
-  }
+  const videoStream = session.nowPlayingItem?.mediaStreams?.find((stream) => stream.type === "Video");
+  if (!videoStream) return "";
 
   let transcodeBitrate = "";
   if (session.transcodingInfo && !session.transcodingInfo.isVideoDirect && session.transcodingInfo.bitrate) {
@@ -164,167 +125,165 @@ function getVideoBitrate(session: SessionItem) {
   return `${originalBitrate}${transcodeBitrate}`;
 }
 
+// --- SUB-COMPONENT ---
 function LabeledText({ label, value }: { label: string; value: string | undefined | null }) {
   if (!value) return null;
-  const router = useRouter();
   return (
-    <Group align="center" w="100%" wrap="nowrap">
-      <Text color="dimmed" size="xs" w={100} style={{ textAlign: "end" }}>
+    <div className="flex items-center gap-2 w-full flex-nowrap">
+      <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider w-20 text-right shrink-0">
         {label}
-      </Text>
-      <Text size="xs" w="100%">
+      </span>
+      <span className="text-xs text-gray-200 font-medium truncate" title={value}>
         {value}
-      </Text>
-    </Group>
+      </span>
+    </div>
   );
 }
 
+// --- MAIN COMPONENT ---
 export default function SessionCard({ session }: SessionCardProps) {
-  if (!session || !session.nowPlayingItem) return null;
   const router = useRouter();
-  const item = session?.nowPlayingItem;
-  const imageUrl =
-    (item?.seriesId ?? item?.id)
-      ? `${API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(item?.seriesId ?? item?.id ?? "")}&Width=160&ServerId=${encodeURIComponent(session.serverId ?? "")}`
-      : "";
+  const { t } = useTranslation("common");
 
-  const backgroundImage = `${API_BASE}Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(item?.seriesId ?? item?.id ?? "")}&Width=300&Quality=80&ServerId=${encodeURIComponent(session.serverId ?? "")}`;
-  const deviceImage = `${API_BASE}Proxy/Images/Devices?DeviceName=${encodeURIComponent(session.deviceName ?? "")}&Width=50&Quality=80&ServerId=${encodeURIComponent(session.serverId ?? "")}`;
+  if (!session || !session.nowPlayingItem) return null;
+
+  const item = session.nowPlayingItem;
+  
+  // Images
+  const imageUrl = (item?.seriesId ?? item?.id)
+    ? `${API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(item?.seriesId ?? item?.id ?? "")}&Width=160&ServerId=${encodeURIComponent(session.serverId ?? "")}`
+    : "";
+  const backgroundImage = `${API_BASE}Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(item?.seriesId ?? item?.id ?? "")}&Width=600&Quality=80&ServerId=${encodeURIComponent(session.serverId ?? "")}`;
   const userImage = `${API_BASE}Proxy/Images/User/Primary?ServerId=${encodeURIComponent(session.serverId ?? "")}&Id=${encodeURIComponent(session.userId ?? "")}&Width=80`;
 
-  const container = getcontainer(session);
+  // Telemetry strings
+  const container = getContainer(session);
   const video = getVideo(session);
   const videoBitrate = getVideoBitrate(session);
   const audio = getAudio(session);
-  const audioBitrate = getAudioBitrate(session); // getAudioBitrate(session);
+  const audioBitrate = getAudioBitrate(session);
   const ip = session.ipAddress ?? "";
 
+  // Time & Progress
   const TICKS_PER_MS = 10000;
   const etaDate = new Date(Date.now() + Math.round((item?.runtimeTicks ?? 0) / TICKS_PER_MS));
   const eta = etaDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   const progressVal = ((session.playState?.positionTicks ?? 0) / (item?.runtimeTicks ?? 1)) * 100;
+  
   const subtitles = (item?.mediaStreams ?? [])[session.playState?.subtitleStreamIndex ?? -1]?.displayTitle ?? "";
-  const TypeIcon = ItemTypeIcons[item.type ?? ItemTypes.Unknown];
-  const indexString: string | null =
-    item.parentIndexNumber && item.indexNumber ? `S${item.parentIndexNumber} - E${item.indexNumber}` : null;
+  const TypeIcon = ItemTypeIcons[item.type ?? ItemTypes.Unknown] ?? Tv;
+  const indexString = item.parentIndexNumber && item.indexNumber ? `S${item.parentIndexNumber} - E${item.indexNumber}` : null;
 
   return (
-    <Card p={0} style={{ backgroundColor: "transparent" }}>
-      <Card.Section p={0} m={0}>
-        <BackgroundImage
-          src={backgroundImage}
-          radius="md"
-          style={{
-            backdropFilter: "blur(10px)",
-            // maxWidth: 700,
-          }}
-        >
-          <Card
-            orientation="horizontal"
-            shadow="sm"
-            style={{
-              width: "100%",
-              borderTopLeftRadius: 8,
-              borderTopRightRadius: 8,
-              borderBottomLeftRadius: 0,
-              borderBottomRightRadius: 0,
-              height: 240,
-              backdropFilter: "blur(10px)",
-              backgroundColor: "light-dark(rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0.5))",
-            }}
-          >
-            <Card.Section
-              style={{
-                height: 240,
-                flex: "0 0 160px",
-                display: "block",
-                borderTopLeftRadius: 8,
+    <div className="relative flex flex-col bg-surface border border-border rounded-2xl overflow-hidden shadow-xl hover:border-brand-cyan/40 hover:shadow-brand-cyan/10 transition-all duration-300 group">
+      
+      {/* Background Blur Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center z-0 opacity-30 mix-blend-screen"
+        style={{ backgroundImage: `url('${backgroundImage}')` }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-background/90 to-background/60 z-0"></div>
 
-                overflow: "hidden",
-              }}
-            >
-              <ItemImage
-                imageUrl={imageUrl}
-                imageHash={item.imageHash}
-                width={160}
-                height={240}
-                onClick={() => {
-                  router.push(`/libraries/items/${encodeURIComponent(item?.id ?? "")}`);
-                  console.log("Item clicked:", item);
-                }}
-              />
-            </Card.Section>
-            <Card.Section h={240} style={{ width: "100%", minWidth: 0 }}>
-              <Stack justify="space-between" w="100%" h="100%" style={{ padding: 12 }}>
-                <Group w="100%" justify="space-between" align="start" wrap="nowrap">
-                  <Stack gap={8}>
-                    <Stack gap={2}>
-                      <LabeledText label="DEVICE" value={session.deviceName} />
-                      <LabeledText label="CLIENT" value={session.client} />
-                    </Stack>
-                    <Stack gap={2}>
-                      <LabeledText label="CONTAINER" value={container} />
-                      <LabeledText label="VIDEO" value={video + " " + videoBitrate} />
-                      {/* <LabeledText label="" value={videoBitrate} /> */}
-                      <LabeledText label="AUDIO" value={audio + " " + audioBitrate} />
-                      {/* <LabeledText label="" value={audioBitrate} /> */}
-                      <LabeledText label="SUBTITLES" value={subtitles} />
-                    </Stack>
-                    <Stack gap={2}>
-                      <LabeledText label="IP ADDRESS" value={ip} />
-                      <LabeledText label="ETA" value={eta} />
-                    </Stack>
-                  </Stack>
-                  <Image src={deviceImage} w={50} h={50} />
-                </Group>
-                <Text w="100%" style={{ textAlign: "end" }}>
-                  {session.playState?.positionTicks?.ticksToTimeString()} / {item?.runtimeTicks?.ticksToTimeString()}
-                </Text>
-              </Stack>
-            </Card.Section>
-          </Card>
-        </BackgroundImage>
-      </Card.Section>
-      <Card.Section p={0} m={0}>
-        <Progress
-          value={progressVal}
-          size="md"
-          styles={() => ({
-            root: { borderRadius: "0 0 8px 8px" },
-            section: {
-              background: "linear-gradient(90deg,#774df7,#1588bf)",
-              borderRadius: "0 0 8px 8px",
-            },
-          })}
-        />
-        <Space h={4} />
-        <Group justify="space-between">
-          <Stack gap={4}>
-            <Group>
-              {session.isPaused ? <IconPlayerPauseFilled size={20} /> : <IconPlayerPlayFilled size={20} />}
+      {/* Top Section: Media Cover + Telemetry Data */}
+      <div className="relative z-10 flex h-[240px]">
+        
+        {/* Left: Poster */}
+        <div className="w-[160px] shrink-0 h-full border-r border-white/5">
+          <ItemImage
+            imageUrl={imageUrl}
+            imageHash={item.imageHash}
+            width={160}
+            height="100%"
+            borderRadius={[16, 0, 0, 0]}
+            onClick={() => router.push(`/libraries/items/${encodeURIComponent(item?.id ?? "")}`)}
+          />
+        </div>
 
-              <Text style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: 0 }}>
-                {item.seriesName ? item.seriesName + " : " : ""}
-                {item?.name}
-              </Text>
-            </Group>
-            {item?.type == ItemTypes.Episode && (
-              <Group>
-                <TypeIcon size={20} />
-                {indexString && (
-                  <Text style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: 0 }}>
-                    {indexString}
-                  </Text>
-                )}
-              </Group>
+        {/* Right: Telemetry Information */}
+        <div className="flex-1 flex flex-col p-3.5 justify-between min-w-0">
+          
+          {/* Header Row (Device Name & Icon) */}
+          <div className="flex justify-between items-start gap-2 mb-2 w-full">
+            <div className="flex flex-col gap-1 w-full min-w-0 mt-1">
+              <LabeledText label={t("session.device", "DEVICE")} value={session.deviceName} />
+              <LabeledText label={t("session.client", "CLIENT")} value={session.client} />
+            </div>
+            
+            {/* Device Icon Mapper */}
+            <div className="shrink-0 flex items-center justify-center p-2 bg-background/50 border border-border rounded-xl shadow-inner">
+              <DeviceIcon client={session.client ?? ""} deviceName={session.deviceName ?? ""} className="w-6 h-6 drop-shadow-lg" />
+            </div>
+          </div>
+
+          {/* Details Row */}
+          <div className="flex flex-col gap-1.5 w-full">
+            <LabeledText label={t("session.container", "CONTAINER")} value={container} />
+            <LabeledText label={t("session.video", "VIDEO")} value={`${video} ${videoBitrate}`} />
+            <LabeledText label={t("session.audio", "AUDIO")} value={`${audio} ${audioBitrate}`} />
+            <LabeledText label={t("session.subtitles", "SUBTITLES")} value={subtitles} />
+          </div>
+
+          {/* Footer Row (IP, ETA, Time) */}
+          <div className="flex flex-col gap-1 w-full mt-auto pt-2 border-t border-white/5">
+            <LabeledText label={t("session.ip_address", "IP ADDRESS")} value={ip} />
+            <LabeledText label={t("session.eta", "ETA")} value={eta} />
+            <div className="text-right w-full mt-1">
+              <span className="text-[10px] font-mono text-gray-400 bg-background/50 px-2 py-1 rounded shadow-inner border border-border">
+                {session.playState?.positionTicks?.ticksToTimeString?.() || "0:00"} / {item?.runtimeTicks?.ticksToTimeString?.() || "0:00"}
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Progress Bar */}
+      <div className="relative z-10 w-full h-1.5 bg-black/50 border-y border-white/5">
+        <div 
+          className="h-full bg-gradient-to-r from-brand-purple to-brand-cyan shadow-[0_0_10px_rgba(0,164,220,0.4)] transition-all duration-1000 ease-out"
+          style={{ width: `${Math.min(100, Math.max(0, progressVal))}%` }}
+        ></div>
+      </div>
+
+      {/* Bottom Section: Title & User */}
+      <div className="relative z-10 p-3 bg-surface/80 flex items-center justify-between gap-4">
+        
+        {/* Title & Status */}
+        <div className="flex items-center gap-3 min-w-0">
+          <div className={`p-1.5 rounded-full ${session.isPaused ? "bg-brand-amber/20 text-brand-amber" : "bg-brand-emerald/20 text-brand-emerald"} shrink-0`}>
+            {session.isPaused ? <Pause size={14} className="fill-current" /> : <Play size={14} className="fill-current" />}
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="text-sm font-bold text-white truncate drop-shadow-sm">
+              {item.seriesName ? `${item.seriesName} : ` : ""}
+              {item?.name}
+            </span>
+            {item?.type === ItemTypes.Episode && (
+              <div className="flex items-center gap-1.5 text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">
+                <TypeIcon size={10} />
+                {indexString && <span className="truncate">{indexString}</span>}
+              </div>
             )}
-          </Stack>
-          <Group gap={4} h="100%" align="center" style={{ flexShrink: 0 }}>
-            <Text>{session.userName}</Text>
-            <Avatar src={userImage} alt={session.userName} />
-          </Group>
-        </Group>
-      </Card.Section>
-    </Card>
+          </div>
+        </div>
+
+        {/* User Info */}
+        <div className="flex items-center gap-2 shrink-0 bg-background/50 pl-3 pr-1 py-1 rounded-full border border-border shadow-inner">
+          <span className="text-xs font-bold text-gray-200">{session.userName}</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img 
+            src={userImage} 
+            alt={session.userName} 
+            className="w-6 h-6 rounded-full object-cover border border-white/10"
+            onError={(e) => {
+              // Fallback if user avatar fails to load
+              (e.currentTarget as HTMLImageElement).style.display = 'none';
+            }}
+          />
+        </div>
+
+      </div>
+
+    </div>
   );
 }

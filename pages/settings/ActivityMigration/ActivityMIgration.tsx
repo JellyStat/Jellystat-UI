@@ -1,10 +1,19 @@
-import { Badge, Button, Card, Container, FloatingIndicator, Group, Select, Tabs, Text, Title } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
-import classes from "@/components/ActivityTable/ActivityTable.module.css";
-import { DataTable } from "mantine-datatable";
-import Activity from "@/lib/models/activity";
+import { 
+  ArrowLeftRight, 
+  Trash2, 
+  Save, 
+  Loader2, 
+  AlertCircle, 
+  CheckSquare, 
+  Square,
+  ChevronDown
+} from "lucide-react";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
+import { useTranslation } from "next-i18next/pages";
+
 import client from "@/lib/api";
+import Activity from "@/lib/models/activity";
 import { MigrateActivity } from "@/lib/models/MigrateActivity";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
 import ItemsWithParentData from "@/lib/models/itemsWithParentData";
@@ -23,11 +32,15 @@ class SelectedItem {
 }
 
 export default function ActivityMigrationPage() {
+  const { t } = useTranslation("common");
+
+  // --- STATE ---
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activityData, setActivityData] = useState<Activity[]>([]);
   const [pageCount, setPageCount] = useState(0);
+  
   const [migrationLoading, setMigrationLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
@@ -37,44 +50,47 @@ export default function ActivityMigrationPage() {
   const [migrations, setMigrations] = useState<MigrateActivity[]>([]);
   const [selected, setSelected] = useState<Activity[]>([]);
 
+  const recordsPerPage = 20;
+  const totalPages = Math.ceil(pageCount / recordsPerPage) || 1;
+
   const migrateableCount = migrations.filter(
     (m) => (m.SeriesId != "" && m.ItemId != "") || (m.SeriesId == "" && m.ItemId != ""),
   ).length;
 
-  // Replace all occurrences of `oldSeriesId` with `newSeriesId` on migrations
+  // --- MIGRATION LOGIC ---
   function updateMigrationBySeriesId(oldSeriesId: string, newSeriesId: string) {
     setMigrations((prev) => prev.map((m) => (m.SeriesId === oldSeriesId ? m.copyWith({ SeriesId: newSeriesId }) : m)));
   }
 
-  // Replace all occurrences of `oldSeasonId` with `newSeasonId` on migrations
   function updateMigrationBySeasonId(oldSeasonId: string, newSeasonId: string) {
     setMigrations((prev) => prev.map((m) => (m.SeasonId === oldSeasonId ? m.copyWith({ SeasonId: newSeasonId }) : m)));
   }
 
-  // Replace all occurrences of `oldItemId` with `newItemId` on migrations
   function updateMigrationByItemId(oldItemId: string, newItemId: string) {
     setMigrations((prev) => prev.map((m) => (m.ItemId === oldItemId ? m.copyWith({ ItemId: newItemId }) : m)));
   }
 
+  // --- ACTIONS ---
   async function applyMigrations() {
     try {
       setMigrationLoading(true);
       const res = await client.History.migrateActivity(migrations);
-      setMigrationLoading(false);
       const failedMigrations = res.filter((m) => !m.success);
       setMigrations(failedMigrations);
+      
       setActivityData([]);
       setPageCount(1);
       setPage(1);
       await fetchPage(1, true);
     } catch (err) {
       console.error(err);
+    } finally {
       setMigrationLoading(false);
     }
   }
 
   async function deleteActivity() {
-    if (selected.length == 0) return;
+    if (selected.length === 0) return;
     setDeleteLoading(true);
     const activityIds: string[] = selected.map((a) => a.id!);
     const serverId = selected[0]?.serverId;
@@ -86,11 +102,13 @@ export default function ActivityMigrationPage() {
       setPage(1);
       await fetchPage(1, true);
     } catch (err) {
-      console.log(err);
+      console.error(err);
+    } finally {
+      setDeleteLoading(false);
     }
-    setDeleteLoading(false);
   }
 
+  // --- DATA FETCHING ---
   const fetchMatchingItems = async (id: string) => {
     const activity = activityData.find((a) => a.id === id);
     if (!activity) return [];
@@ -105,8 +123,7 @@ export default function ActivityMigrationPage() {
         .endGroup();
       if (migration.SeriesId) query.and().addCondition("rootId", op.Equal, migration.SeriesId);
       const res = await client.Api.getMatchingItems(activity.name, query.build());
-      const data = res?.data ?? [];
-      return data;
+      return res?.data ?? [];
     } catch (err) {
       console.error(err);
       return [];
@@ -118,8 +135,9 @@ export default function ActivityMigrationPage() {
       setLoading(true);
       setError(null);
       try {
-        const query: GridifyQueryBuilder = new GridifyQueryBuilder();
+        const query = new GridifyQueryBuilder();
         query.setPage(pageToLoad);
+        query.setPageSize(recordsPerPage);
         query.addOrderBy("dateCreated", true);
         const builtQuery = query.build();
 
@@ -133,7 +151,6 @@ export default function ActivityMigrationPage() {
           if (activity.seriesName) distinctSeriesSet.add(activity.seriesName);
         });
 
-        // Fetch matching items for each distinct series in parallel and wait for all results
         const seriesArray = Array.from(distinctSeriesSet);
         await Promise.all(
           seriesArray.map(async (series) => {
@@ -141,8 +158,7 @@ export default function ActivityMigrationPage() {
               series,
               new GridifyQueryBuilder().addCondition("type", op.Equal, ItemTypes.Series.toString()).build(),
             );
-            const data = res?.data ?? [];
-            seriesMatchesTemp[series] = data;
+            seriesMatchesTemp[series] = res?.data ?? [];
           }),
         );
 
@@ -167,8 +183,6 @@ export default function ActivityMigrationPage() {
 
         setPageCount(count);
         setSeriesMatches(seriesMatchesTemp);
-        // setSelectedSeries(selectedSeriesTemp);
-
         setActivityData(data);
       } catch (err: any) {
         if (err?.name === "AbortError") return;
@@ -178,7 +192,8 @@ export default function ActivityMigrationPage() {
         setLoading(false);
       }
     },
-    [page],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   useEffect(() => {
@@ -186,122 +201,258 @@ export default function ActivityMigrationPage() {
     setPageCount(1);
     setPage(1);
     fetchPage(1, true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchPage]);
 
   useEffect(() => {
     fetchPage(page);
   }, [fetchPage, page]);
 
-  return (
-    <div style={{ padding: 20 }}>
-      <Group justify="space-between">
-        <Group>
-          <Title order={2}>Activity Migration</Title>
-          {migrations.length > 0 && (
-            <Badge size="lg" circle>
-              {migrateableCount}
-            </Badge>
-          )}
-        </Group>
-        <Group>
-          <Button loading={deleteLoading} onClick={deleteActivity} disabled={selected.length == 0} color="red">
-            Delete {selected.length > 0 && `(${selected.length})`}
-          </Button>
-          <Button loading={migrationLoading} onClick={applyMigrations} disabled={migrations.length == 0}>
-            Apply Migrations
-          </Button>
-        </Group>
-      </Group>
-      <Card shadow="sm" p={0} style={{ width: "100%", marginTop: 12 }}>
-        <DataTable
-          className={classes.root}
-          minHeight={150}
-          withTableBorder
-          borderRadius="sm"
-          //   withColumnBorders
-          //   striped
-          highlightOnHover
-          // provide data
-          records={activityData}
-          totalRecords={pageCount}
-          recordsPerPage={20}
-          page={page}
-          onPageChange={(p) => setPage(p)}
-          fetching={loading}
-          selectedRecords={selected}
-          onSelectedRecordsChange={setSelected}
-          // define columns
-          columns={[
-            {
-              accessor: "seriesName",
-              title: "Series",
-              render: (activity) => {
-                return activity.seriesName ?? "-";
-              },
-            },
-            {
-              accessor: "matchedSeries",
-              title: "Matched Series",
-              render: (activity) => {
-                if (!activity.seriesName || !activity.seriesId) return "-";
-                const matchedSeries = (seriesMatches[activity.seriesName] ?? []).map((item) => ({
-                  value: item.id,
-                  label: item.name,
-                }));
-                const value: string | null = migrations.find((m) => m.id === activity.id)?.SeriesId || null;
-                return (
-                  <Select
-                    placeholder={matchedSeries.length > 0 ? "Select an item" : "No similar items found"}
-                    data={matchedSeries}
-                    value={value}
-                    onChange={(v) => {
-                      updateMigrationBySeriesId(activity.seriesId!, v ?? "");
-                    }}
-                    // searchable
-                    mt="sm"
-                  />
-                );
-              },
-            },
-            {
-              accessor: "name",
-              title: "Title",
-            },
-            {
-              accessor: "matchedTitle",
-              title: "Matched Title",
-              render: (activity) => {
-                if (!activity.id) return "-";
+  // --- SELECTION HELPERS ---
+  const isSelected = (id: string) => selected.some((a) => a.id === id);
+  const allSelected = activityData.length > 0 && selected.length === activityData.length;
 
-                return (
-                  <SelectAsync<ItemsWithParentData>
-                    fetchMethod={() => fetchMatchingItems(activity.id!)}
-                    onSelect={(item) => {
-                      if (!item) return;
-                      if (activity.seasonId && item?.parentId) {
-                        updateMigrationBySeasonId(activity.seasonId!, item?.parentId || "");
-                      }
-                      updateMigrationByItemId(activity.itemId!, item?.id || "");
-                      setSelectedItem((prev) => ({
-                        ...prev,
-                        [activity.id!]: new SelectedItem(activity.id!, item.id, item.name),
-                      }));
-                    }}
-                    idPredicate={(it) => it.id}
-                    namePredicate={(it) => it.name}
-                    value={
-                      selectedItem[activity.id!]
-                        ? new DefaultSelectedItem(selectedItem[activity.id!]!.id, selectedItem[activity.id!]!.itemName)
-                        : null
-                    }
-                  />
-                );
-              },
-            },
-          ]}
-        />
-      </Card>
+  const toggleSelectAll = () => {
+    if (allSelected) {
+      setSelected([]);
+    } else {
+      setSelected([...activityData]);
+    }
+  };
+
+  const toggleSelectRow = (activity: Activity) => {
+    setSelected((prev) => 
+      prev.some((a) => a.id === activity.id) 
+        ? prev.filter((a) => a.id !== activity.id) 
+        : [...prev, activity]
+    );
+  };
+
+  return (
+    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 p-6">
+      
+      {/* Header Container */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6">
+        
+        <div className="flex items-center gap-4">
+          <div className="p-3.5 bg-brand-purple/10 rounded-2xl border border-brand-purple/20 shadow-inner shrink-0">
+            <ArrowLeftRight size={28} className="text-brand-purple" />
+          </div>
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-black text-white tracking-tight">
+                {t("settings.migration_title", "Activity Migration")}
+              </h1>
+              {migrations.length > 0 && (
+                <span className="flex items-center justify-center bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30 text-xs font-black h-6 px-2 rounded-full shadow-[0_0_10px_rgba(0,164,220,0.2)] animate-pulse">
+                  {migrateableCount} {t("settings.migration_ready", "Ready")}
+                </span>
+              )}
+            </div>
+            <p className="text-sm text-gray-400 mt-1 font-medium">
+              {t("settings.migration_subtitle", "Map unlinked playback activity to valid library items.")}
+            </p>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <button
+            onClick={deleteActivity}
+            disabled={selected.length === 0 || deleteLoading}
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-brand-rose/10 hover:bg-brand-rose text-brand-rose hover:text-white border border-brand-rose/20 hover:border-brand-rose py-2 px-4 rounded-xl font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-inner"
+          >
+            {deleteLoading ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+            {t("settings.migration_delete", "Delete")} {selected.length > 0 && `(${selected.length})`}
+          </button>
+          
+          <button
+            onClick={applyMigrations}
+            disabled={migrations.length === 0 || migrationLoading}
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-brand-cyan text-black hover:bg-brand-cyan/90 py-2 px-6 rounded-xl font-black transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-lg shadow-brand-cyan/20 active:scale-95"
+          >
+            {migrationLoading ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
+            {t("settings.migration_apply", "Apply Migrations")}
+          </button>
+        </div>
+      </div>
+
+      {/* Main Table Container */}
+      <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col relative min-h-[400px]">
+        
+        {/* Loading Overlay */}
+        {loading && (
+          <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
+            <Loader2 size={40} className="text-brand-purple animate-spin mb-3" />
+            <span className="text-sm font-bold text-gray-300">
+              {t("settings.migration_scanning", "Scanning activity...")}
+            </span>
+          </div>
+        )}
+
+        {/* Error Overlay */}
+        {error && (
+          <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in p-6">
+            <AlertCircle size={40} className="text-brand-rose mb-3" />
+            <span className="text-lg font-bold text-brand-rose mb-1">
+              {t("settings.migration_error_load", "Failed to load data")}
+            </span>
+            <span className="text-sm text-gray-400 text-center max-w-md">{error}</span>
+          </div>
+        )}
+
+        <div className="overflow-x-auto custom-scrollbar flex-1">
+          <table className="w-full text-left border-collapse whitespace-nowrap">
+            <thead>
+              <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
+                <th className="p-3 w-12 text-center">
+                  <button onClick={toggleSelectAll} className="text-gray-400 hover:text-white transition-colors focus:outline-none">
+                    {allSelected ? <CheckSquare size={18} className="text-brand-cyan" /> : <Square size={18} />}
+                  </button>
+                </th>
+                <th className="p-3">{t("settings.migration_col_series", "Series")}</th>
+                <th className="p-3 w-64">{t("settings.migration_col_matched_series", "Matched Series")}</th>
+                <th className="p-3">{t("settings.migration_col_title", "Title")}</th>
+                <th className="p-3 w-64">{t("settings.migration_col_matched_title", "Matched Title")}</th>
+              </tr>
+            </thead>
+            
+            <tbody>
+              {!loading && activityData.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="p-16 text-center text-gray-500">
+                    <ArrowLeftRight size={48} className="mx-auto mb-4 opacity-20" />
+                    <span className="font-medium text-lg">
+                      {t("settings.migration_empty_title", "No unlinked activity found")}
+                    </span>
+                    <p className="text-sm mt-1">
+                      {t("settings.migration_empty_desc", "All your watch history is successfully mapped.")}
+                    </p>
+                  </td>
+                </tr>
+              ) : (
+                activityData.map((activity) => {
+                  const isRowSelected = isSelected(activity.id!);
+                  
+                  // Setup Series Select Data
+                  const matchedSeriesOptions = (activity.seriesName ? seriesMatches[activity.seriesName] : []) ?? [];
+                  const currentSeriesValue = migrations.find((m) => m.id === activity.id)?.SeriesId || "";
+
+                  return (
+                    <tr 
+                      key={activity.id} 
+                      className={`border-b border-border transition-colors hover:bg-surface-hover ${isRowSelected ? "bg-brand-cyan/5" : ""}`}
+                    >
+                      {/* Checkbox */}
+                      <td className="p-3 text-center">
+                        <button 
+                          onClick={() => toggleSelectRow(activity)} 
+                          className="text-gray-400 hover:text-white transition-colors focus:outline-none mt-1"
+                        >
+                          {isRowSelected ? <CheckSquare size={18} className="text-brand-cyan" /> : <Square size={18} />}
+                        </button>
+                      </td>
+                      
+                      {/* Original Series */}
+                      <td className="p-3 text-sm font-bold text-gray-200">
+                        {activity.seriesName ?? <span className="text-gray-600 font-normal italic">{t("settings.migration_none", "None")}</span>}
+                      </td>
+                      
+                      {/* Matched Series Select */}
+                      <td className="p-3">
+                        <div className="relative group w-full">
+                          <select
+                            value={currentSeriesValue}
+                            onChange={(e) => updateMigrationBySeriesId(activity.seriesId!, e.target.value)}
+                            disabled={!activity.seriesName || !activity.seriesId}
+                            className="w-full bg-surface/80 border border-border hover:border-gray-500 rounded-xl py-2 pl-3 pr-8 text-sm text-gray-200 focus:outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan appearance-none transition-all cursor-pointer shadow-inner disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <option value="" disabled>
+                              {matchedSeriesOptions.length > 0 
+                                ? t("settings.migration_select_item", "Select an item") 
+                                : t("settings.migration_no_similar", "No similar items found")}
+                            </option>
+                            {matchedSeriesOptions.map((item) => (
+                              <option key={item.id} value={item.id}>{item.name}</option>
+                            ))}
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
+                            <ChevronDown size={14} />
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Original Title */}
+                      <td className="p-3 text-sm font-bold text-gray-200">
+                        {activity.name}
+                      </td>
+
+                      {/* Matched Title SelectAsync */}
+                      <td className="p-3">
+                        {activity.id ? (
+                          <SelectAsync<ItemsWithParentData>
+                            fetchMethod={() => fetchMatchingItems(activity.id!)}
+                            onSelect={(item) => {
+                              if (!item) return;
+                              if (activity.seasonId && item?.parentId) {
+                                updateMigrationBySeasonId(activity.seasonId!, item.parentId);
+                              }
+                              updateMigrationByItemId(activity.itemId!, item.id);
+                              setSelectedItem((prev) => ({
+                                ...prev,
+                                [activity.id!]: new SelectedItem(activity.id!, item.id, item.name),
+                              }));
+                            }}
+                            idPredicate={(it) => it.id}
+                            namePredicate={(it) => it.name}
+                            placeholder={t("settings.migration_select_title", "Select title...")}
+                            value={
+                              selectedItem[activity.id!]
+                                ? new DefaultSelectedItem(selectedItem[activity.id!]!.id, selectedItem[activity.id!]!.itemName)
+                                : null
+                            }
+                          />
+                        ) : (
+                          <span className="text-gray-500">-</span>
+                        )}
+                      </td>
+
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination Footer */}
+        <div className="bg-background/80 border-t border-border p-4 flex items-center justify-between shrink-0">
+          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+            {t("settings.migration_total_unlinked", "Total Unlinked:")} <span className="text-white">{pageCount}</span>
+          </span>
+          <div className="flex items-center gap-4">
+            <span className="text-xs font-mono text-gray-400">
+              {t("settings.pagination_page_info", "Page {{page}} of {{totalPages}}", { page, totalPages })}
+            </span>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
+              >
+                {t("settings.pagination_prev", "Prev")}
+              </button>
+              <button 
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
+              >
+                {t("settings.pagination_next", "Next")}
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 }

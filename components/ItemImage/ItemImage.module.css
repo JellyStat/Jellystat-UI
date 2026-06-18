@@ -1,7 +1,0 @@
-.container {
-  transition: opacity 0.2s ease-in-out;
-}
-
-.container:hover {
-  opacity: 0.5;
-}

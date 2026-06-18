@@ -1,17 +1,18 @@
-# Mantine Next.js template
+# Jellystat Web UI
 
-This is a template for [Next.js](https://nextjs.org/) pages router + [Mantine](https://mantine.dev/).
-If you want to use app router instead, see [next-app-template](https://github.com/mantinedev/next-app-template).
+A fast, responsive, and lightweight web dashboard for [Jellystat](https://github.com/CyferShepard/Jellystat). Built with Next.js and Tailwind CSS, this interface is designed to provide real-time telemetry, user management, and activity tracking for your Jellyfin or Emby media servers without the overhead of heavy component libraries.
 
 ## Features
 
 This template comes with the following features:
 
-- [PostCSS](https://postcss.org/) with [mantine-postcss-preset](https://mantine.dev/styles/postcss-preset)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Storybook](https://storybook.js.org/)
-- [Jest](https://jestjs.io/) setup with [React Testing Library](https://testing-library.com/docs/react-testing-library/intro)
-- Oxlint setup for TypeScript and React sources
+* **Next.js Pages Router:** Optimized for fast page loads with SSR and static generation.
+* **Tailwind CSS:** A utility-first styling architecture that keeps the CSS bundle minimal while supporting custom brand themes, dark mode, and fluid animations.
+* **Real-Time WebSockets:** Live session monitoring and immediate UI updates without constant API polling.
+* **Modern Tooling:** Toast notifications powered by `sonner` and crisp, consistent iconography via `lucide-react`.
+* **Zero-Dependency Hooks:** Custom native React hooks (like `useDebounce`) to handle complex UI states while keeping JavaScript payloads small.
+* **Internationalization (i18n):** Built-in localization support using `next-i18next`.
+* **Gridify Integration:** Advanced, server-side data table sorting and filtering.
 
 ## npm scripts
 

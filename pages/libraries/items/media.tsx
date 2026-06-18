@@ -1,33 +1,39 @@
-import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
+import React, { useMemo } from "react";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
 import MediaGrid from "@/components/MediaGrid/MediaGrid";
-import { useMemo } from "react";
-import { ItemsWithStats } from "@/lib/models/itemsWithStats";
+import type { ItemsWithStats } from "@/lib/models/itemsWithStats";
 
 type Props = {
   item: ItemsWithStats | null;
 };
 
 export default function ItemMedia({ item }: Props) {
-  if (!item || ![ItemTypes.Season, ItemTypes.Series].includes(item.type)) return null;
+  const itemMediaQuery = useMemo(() => {
+    if (!item?.id) return null;
 
-  const itemMediaQuery = useMemo(
-    () =>
-      new GridifyQueryBuilder()
-        .addCondition("ParentId", op.Equal, item.id)
-        .and()
-        .startGroup()
-        .addCondition("Type", op.Equal, ItemTypes.Season.toString())
-        .or()
-        .addCondition("Type", op.Equal, ItemTypes.Episode.toString())
-        .endGroup(),
-    [item.id],
-  );
+    return new GridifyQueryBuilder()
+      .addCondition("ParentId", op.Equal, item.id)
+      .and()
+      .startGroup()
+      .addCondition("Type", op.Equal, ItemTypes.Season.toString())
+      .or()
+      .addCondition("Type", op.Equal, ItemTypes.Episode.toString())
+      .endGroup();
+  }, [item?.id]);
+
+  if (!item || !itemMediaQuery || ![ItemTypes.Season, ItemTypes.Series].includes(item.type)) {
+    return null;
+  }
 
   return (
-    <div style={{ padding: 20 }}>
-      <MediaGrid gridify={itemMediaQuery} defaultOrderBy="index" defaultOrderDesc={false} showSort={false} />
+    <div className="w-full animate-in fade-in duration-500 pt-2">
+      <MediaGrid 
+        gridify={itemMediaQuery} 
+        defaultOrderBy="index" 
+        defaultOrderDesc={false} 
+        showSort={false} 
+      />
     </div>
   );
 }

@@ -1,8 +1,17 @@
-import { Container, Loader, Image, MantineStyleProps, ElementProps } from "@mantine/core";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Blurhash } from "react-blurhash";
-import { IconLock, IconPhoto } from "@tabler/icons-react";
-import classes from "./ItemImage.module.css";
+import { Lock, Image as ImageIcon, Loader2 } from "lucide-react";
+
+type Props = {
+  imageUrl: string;
+  imageHash?: string | null;
+  archived?: boolean;
+  width?: number | string;
+  height?: number | string;
+  PlaceHolderIcon?: React.ElementType;
+  onClick?: () => void;
+  borderRadius?: number[];
+};
 
 export default function ItemImage({
   imageUrl,
@@ -10,106 +19,67 @@ export default function ItemImage({
   archived = false,
   width = "100%",
   height = 250,
-  PlaceHolderIcon = IconPhoto,
+  PlaceHolderIcon = ImageIcon,
   onClick,
   borderRadius = [8, 0, 0, 0],
-}: {
-  imageUrl: string;
-  imageHash: string | undefined | null;
-  archived?: boolean;
-  width?: number | string;
-  height?: number | string;
-  PlaceHolderIcon?: React.ElementType;
-  onClick?: () => void;
-  borderRadius?: number[];
-}) {
+}: Props) {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const radiusStyle = borderRadius.map((r) => `${r}px`).join(" ");
+
   return (
-    <Container
-      w={width}
-      h={height}
-      display="flex"
-      flex="0 0 auto"
-      p={0}
-      style={{
-        alignItems: "center",
-        justifyContent: "center",
-        overflow: "hidden",
-        borderTopLeftRadius: borderRadius[0],
-        borderTopRightRadius: borderRadius[1],
-        borderBottomRightRadius: borderRadius[2],
-        borderBottomLeftRadius: borderRadius[3],
-        boxSizing: "border-box",
-        cursor: onClick ? "pointer" : "default",
-      }}
+    <div
       onClick={onClick}
-      className={onClick ? classes.container : undefined}
+      className={`relative flex-none overflow-hidden bg-surface-hover transition-colors ${
+        onClick ? "cursor-pointer group" : ""
+      }`}
+      style={{
+        width,
+        height,
+        borderRadius: radiusStyle,
+      }}
     >
-      <Container pos="relative" w="100%" h="100%" p={0} style={{ boxSizing: "border-box" }}>
-        {(!imageLoaded || imageError) && (
-          <Container
-            pos="absolute"
-            left={0}
-            right={0}
-            top={0}
-            bottom={0}
-            p={0}
-            style={{
-              zIndex: 2,
-              borderTopLeftRadius: borderRadius[0],
-              borderTopRightRadius: borderRadius[1],
-              borderBottomRightRadius: borderRadius[2],
-              borderBottomLeftRadius: borderRadius[3],
-              overflow: "hidden",
-            }}
-          >
-            {imageHash && imageHash.length > 6 && (
-              <Blurhash
-                hash={imageHash}
-                width="100%"
-                height="100%"
-                style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, display: "block" }}
-              />
+      {/* Fallback / Loading Overlay */}
+      {(!imageLoaded || imageError) && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center overflow-hidden bg-surface">
+          
+          {/* Blurhash Background */}
+          {imageHash && imageHash.length > 6 && (
+            <Blurhash
+              hash={imageHash}
+              width="100%"
+              height="100%"
+              resolutionX={32}
+              resolutionY={32}
+              punch={1}
+              style={{ position: "absolute", inset: 0, display: "block", opacity: 0.8 }}
+            />
+          )}
+
+          {/* Icons & Loading Spinners */}
+          <div className="relative z-30 flex items-center justify-center text-gray-500 drop-shadow-md">
+            {!imageLoaded && !imageError && (
+              <Loader2 size={32} className="animate-spin text-brand-cyan drop-shadow-[0_0_10px_rgba(0,164,220,0.5)]" />
             )}
+            {!imageLoaded && imageError && archived && (
+              <Lock size={48} className="opacity-50 text-brand-rose" />
+            )}
+            {!imageLoaded && imageError && !archived && PlaceHolderIcon && (
+              <PlaceHolderIcon size={48} className="opacity-30" />
+            )}
+          </div>
 
-            <Container
-              pos="absolute"
-              left={0}
-              right={0}
-              top={0}
-              bottom={0}
-              display="flex"
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 3,
-              }}
-            >
-              {!imageLoaded && !imageError && <Loader size="lg" />}
-              {!imageLoaded && imageError && archived && <IconLock size={48} />}
-              {!imageLoaded && imageError && !archived && PlaceHolderIcon && <PlaceHolderIcon size={48} />}
-            </Container>
-          </Container>
-        )}
+        </div>
+      )}
 
-        <Image
+      {/* Actual Image */}
+      {!imageError && (
+        <img
           src={imageUrl}
-          alt={imageUrl}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            display: imageError ? "none" : "block",
-            position: "relative",
-            zIndex: 1,
-            transition: "opacity 200ms ease",
-            borderTopLeftRadius: borderRadius[0],
-            borderTopRightRadius: borderRadius[1],
-            borderBottomRightRadius: borderRadius[2],
-            borderBottomLeftRadius: borderRadius[3],
-            overflow: "hidden",
-          }}
+          alt="Media Cover"
+          className={`absolute inset-0 z-10 w-full h-full object-cover transition-all duration-500 ease-out ${
+            imageLoaded ? "opacity-100" : "opacity-0"
+          } ${onClick ? "group-hover:scale-105" : ""}`}
           onError={() => {
             setImageError(true);
             setImageLoaded(false);
@@ -119,7 +89,7 @@ export default function ItemImage({
             setImageLoaded(true);
           }}
         />
-      </Container>
-    </Container>
+      )}
+    </div>
   );
 }

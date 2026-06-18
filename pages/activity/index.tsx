@@ -1,19 +1,31 @@
-import { Title, Text, Card } from "@mantine/core";
-import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
-import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
+import React from "react";
+import Head from "next/head";
+import { useTranslation } from "next-i18next/pages";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 
-import { Activity, useMemo } from "react";
 import { ActivityTable } from "@/components/ActivityTable/ActivityTable";
 
 export default function ActivityPage() {
-  //   const libraryMediaQuery = useMemo(
-  //     () => new GridifyQueryBuilder().addCondition("LibraryId", op.Equal, library.id),
-  //     [library.id],
-  //   );
+  const { t } = useTranslation("common");
 
   return (
-    <div style={{ padding: 20 }}>
-      <ActivityTable />
-    </div>
+    <>
+      <Head>
+        <title>{t("activity.title", "Activity Log")} | Jellystat</title>
+      </Head>
+      
+      <div className="w-full h-full animate-in fade-in duration-500">
+        <ActivityTable />
+      </div>
+    </>
   );
+}
+
+// Ensure translations are loaded server-side for this specific page
+export async function getStaticProps({ locale }: { locale: string }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || "en", ["common"])),
+    },
+  };
 }

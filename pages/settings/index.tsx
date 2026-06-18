@@ -1,49 +1,100 @@
-import { Container, FloatingIndicator, Tabs, Text, Title } from "@mantine/core";
 import { useState } from "react";
-import classes from "./settings.index.module.css";
+import Head from "next/head";
+import { Settings, Library, ArrowLeftRight, Terminal, Server } from "lucide-react";
+import { useTranslation } from "next-i18next/pages";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+
 import ActivityMigrationPage from "./ActivityMigration/ActivityMIgration";
 import TasksPage from "./Tasks/Tasks";
 import LibrarySettingsPage from "./Library/LibrarySettings";
+import ServerSettingsPage from "./Servers/ServerSettings";
 
 export default function SettingsPage() {
-  const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
-  const [value, setValue] = useState<string | null>("settings");
-  const [controlsRefs, setControlsRefs] = useState<Record<string, HTMLButtonElement | null>>({});
-  const setControlRef = (val: string) => (node: HTMLButtonElement) => {
-    controlsRefs[val] = node;
-    setControlsRefs(controlsRefs);
-  };
+  const { t } = useTranslation("common");
+  
+  const [activeTab, setActiveTab] = useState<string>("settings");
+
+  const tabs = [
+    { id: "settings", label: t("settings.tab_general", "General Settings"), icon: Settings },
+    { id: "servers", label: t("settings.tab_servers", "Servers & Auth"), icon: Server },
+    { id: "librarySettings", label: t("settings.tab_library", "Library Settings"), icon: Library },
+    { id: "migrations", label: t("settings.tab_migrations", "Activity Migration"), icon: ArrowLeftRight },
+    { id: "tasks", label: t("settings.tab_tasks", "Background Tasks"), icon: Terminal },
+  ];
+
   return (
-    <div style={{ padding: 20 }}>
-      <Tabs variant="none" value={value} onChange={setValue} keepMountedMode="display-none">
-        <Tabs.List ref={setRootRef} className={classes.list}>
-          <Tabs.Tab value="settings" ref={setControlRef("settings")} className={classes.tab}>
-            Settings
-          </Tabs.Tab>
-          <Tabs.Tab value="librarySettings" ref={setControlRef("librarySettings")} className={classes.tab}>
-            Library Settings
-          </Tabs.Tab>
-          <Tabs.Tab value="migrations" ref={setControlRef("migrations")} className={classes.tab}>
-            Activity Migration
-          </Tabs.Tab>
-          <Tabs.Tab value="tasks" ref={setControlRef("tasks")} className={classes.tab}>
-            Tasks
-          </Tabs.Tab>
+    <>
+      <Head>
+        <title>{t("nav.settings", "Settings")} | Jellystat</title>
+      </Head>
+      
+      <div className="w-full min-h-screen">
+        
+        {/* Top Navigation Bar */}
+        <div className="max-w-[1600px] mx-auto px-6 pt-6 animate-in slide-in-from-top-4 duration-500">
+          <div className="flex overflow-x-auto custom-scrollbar pb-4">
+            
+            {/* Glassmorphic Tab Container */}
+            <div className="flex items-center p-1.5 bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-inner w-max">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 group ${
+                      isActive
+                        ? "bg-brand-cyan text-black shadow-md shadow-brand-cyan/20"
+                        : "text-gray-400 hover:text-white hover:bg-surface-hover"
+                    }`}
+                  >
+                    <Icon 
+                      size={18} 
+                      className={`transition-colors ${isActive ? "text-black" : "text-gray-500 group-hover:text-gray-300"}`} 
+                    />
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+            
+          </div>
+        </div>
 
-          <FloatingIndicator target={value ? controlsRefs[value] : null} parent={rootRef} className={classes.indicator} />
-        </Tabs.List>
+        {/* Active Tab Panel */}
+        <div className="w-full transition-opacity duration-300">
+          
+          {activeTab === "settings" && (
+            <div className="max-w-[1600px] mx-auto p-6 animate-in fade-in duration-500">
+              <div className="bg-surface/30 border-2 border-dashed border-border rounded-3xl p-16 flex flex-col items-center justify-center text-center shadow-inner">
+                <Settings size={48} className="text-gray-500 opacity-30 mb-4 animate-[spin_10s_linear_infinite]" />
+                <h3 className="text-2xl font-black text-gray-300 tracking-tight">
+                  {t("settings.general_title", "General Settings")}
+                </h3>
+                <p className="mt-2 text-sm text-gray-500 font-medium max-w-sm">
+                  {t("settings.general_desc", "System configuration, backups, and global UI preferences will be available here in a future update.")}
+                </p>
+              </div>
+            </div>
+          )}
 
-        <Tabs.Panel value="settings">First tab content</Tabs.Panel>
-        <Tabs.Panel value="librarySettings">
-          <LibrarySettingsPage />
-        </Tabs.Panel>
-        <Tabs.Panel value="migrations">
-          <ActivityMigrationPage />
-        </Tabs.Panel>
-        <Tabs.Panel value="tasks">
-          <TasksPage />
-        </Tabs.Panel>
-      </Tabs>
-    </div>
+          {activeTab === "servers" && <ServerSettingsPage />}
+          {activeTab === "librarySettings" && <LibrarySettingsPage />}
+          {activeTab === "migrations" && <ActivityMigrationPage />}
+          {activeTab === "tasks" && <TasksPage />}
+          
+        </div>
+      </div>
+    </>
   );
+}
+
+export async function getStaticProps({ locale }: { locale: string }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || "en", ["common"])),
+    },
+  };
 }

@@ -1,4 +1,4 @@
-import { DatesRangeValue } from "@mantine/dates";
+export type DatesRangeValue = [Date | null, Date | null];
 
 export default class FilterItem {
   key: string;

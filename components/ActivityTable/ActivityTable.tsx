@@ -1,17 +1,22 @@
+import React, { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import { useTranslation } from "next-i18next/pages";
+import { GridifyQueryBuilder } from "gridify-client";
+import { 
+  ActivityIcon, ChevronDown, ChevronRight, ArrowUpDown, 
+  ArrowUp, ArrowDown, Search, Loader2, Cpu, CheckCircle2, AlertCircle,
+  MonitorPlay
+} from "lucide-react";
+
 import Activity from "@/lib/models/activity";
-import { Box, Card, Group, NavLink, Text, Title } from "@mantine/core";
-import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
-import { DataTable, DataTableSortStatus } from "mantine-datatable";
-import { useCallback, useEffect, useState } from "react";
 import client from "@/lib/api";
-import { IconCircleMinus, IconCirclePlusFilled } from "@tabler/icons-react";
-import clsx from "clsx";
-import classes from "./ActivityTable.module.css";
 import { BaseTranscodingInfo } from "@/lib/models/baseTranscodingInfo";
-import TextFilter from "../DataTableFilters/TextFilter";
-import { DatesRangeValue } from "@mantine/dates";
-import DateFilter from "../DataTableFilters/DateFilter";
 import useFilters from "../DataTableFilters/useFilters";
+
+interface SortStatus {
+  columnAccessor: string;
+  direction: "asc" | "desc";
+}
 
 type Props = {
   gridify?: GridifyQueryBuilder | null;
@@ -19,20 +24,30 @@ type Props = {
 };
 
 export function ActivityTable({ gridify, GroupResults }: Props) {
+  const { t } = useTranslation("common");
+
+  // --- STATE ---
   const [activityData, setActivityData] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Pagination & Sorting
   const [page, setPage] = useState(1);
-  const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Activity>>({
+  const [pageCount, setPageCount] = useState(0);
+  const recordsPerPage = 20;
+  const totalPages = Math.ceil(pageCount / recordsPerPage) || 1;
+
+  const [sortStatus, setSortStatus] = useState<SortStatus>({
     columnAccessor: "dateCreated",
     direction: "desc",
   });
-  const { filter, addOrReplaceFilter, removeFilter, getFilterValueOrDefault, isFilterActive, applyFiltersToQuery } = useFilters();
-
-  const [pageCount, setPageCount] = useState(1);
 
   const [expandedActivityIds, setExpandedActivityIds] = useState<string[]>([]);
 
+  // Filter Hook
+  const { filter, addOrReplaceFilter, removeFilter, getFilterValueOrDefault, applyFiltersToQuery } = useFilters();
+
+  // --- DATA FETCHING ---
   const fetchPage = useCallback(
     async (pageToLoad: number, replace = false) => {
       setLoading(true);
@@ -40,37 +55,30 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
       try {
         const query: GridifyQueryBuilder = gridify ? new GridifyQueryBuilder({ from: gridify }) : new GridifyQueryBuilder();
         query.setPage(pageToLoad);
-        console.log("Current sort status:", sortStatus);
-        console.log("Current query:", query.build());
-
+        query.setPageSize(recordsPerPage);
+        
         applyFiltersToQuery(query);
         query.addOrderBy(sortStatus.columnAccessor, sortStatus.direction === "desc");
+        
         const builtQuery = query.build();
-        console.log("Fetching activity with query:", builtQuery);
-
         const res = await client.History.activity.get(builtQuery, { GroupResults: GroupResults });
-        const data = res?.data ?? [];
-        const count = res?.count ?? 0;
-        setPageCount(count);
-
-        setActivityData(data);
+        
+        setActivityData(res?.data ?? []);
+        setPageCount(res?.count ?? 0);
       } catch (err: any) {
         if (err?.name === "AbortError") return;
-        console.error(err);
-        setError(err?.message ?? String(err));
+        setError(err?.message ?? t("activity.failed_to_load", "Failed to load activity data"));
       } finally {
         setLoading(false);
       }
     },
-    [gridify, sortStatus, filter, GroupResults],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [gridify, sortStatus, filter, GroupResults]
   );
 
-  // initial load & when filter or sort changes
   useEffect(() => {
-    console.log("Gridify or sort status changed, resetting page and activity data");
     setActivityData([]);
-    setPageCount(1);
-    // setHasMore(true);
+    setPageCount(0);
     setPage(1);
     fetchPage(1, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -80,266 +88,278 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
     fetchPage(page);
   }, [fetchPage, page, filter, sortStatus]);
 
-  useEffect(() => {
-    console.log("Filter changed:", filter);
-  }, [filter]);
+  // --- HANDLERS ---
+  const handleSort = (accessor: string) => {
+    setSortStatus((prev) => ({
+      columnAccessor: accessor,
+      direction: prev.columnAccessor === accessor && prev.direction === "desc" ? "asc" : "desc",
+    }));
+    setPage(1);
+  };
+
+  const toggleRow = (id: string) => {
+    setExpandedActivityIds((prev) => 
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  // --- RENDER HELPERS ---
+  const formatTitle = (activity: Activity) => {
+    const name = activity.name ?? t("activity.unknown", "Unknown");
+    const seriesName = activity.seriesName;
+    const episodeIndex = `S${activity.item?.parentIndex?.toString().padStart(2, "0") ?? "??"}E${activity.item?.index?.toString().padStart(2, "0") ?? "??"}`;
+    return seriesName ? `${seriesName} : ${episodeIndex} - ${name}` : name;
+  };
+
+  const formatTranscode = (activity: Activity) => {
+    const transcodingInfo = activity.transcodingInfo as BaseTranscodingInfo;
+    if (!transcodingInfo) return (
+      <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-cyan bg-brand-cyan/10 border border-brand-cyan/20 px-2 py-0.5 rounded shadow-inner">
+        <CheckCircle2 size={10} className="mr-1" /> {t("activity.direct", "Direct")}
+      </span>
+    );
+    
+    let display = t("activity.transcoding", "Transcoding");
+    if (transcodingInfo.isVideoDirect === false) display += " (V)";
+    if (transcodingInfo.isAudioDirect === false) display += " (A)";
+    
+    return (
+      <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-amber bg-brand-amber/10 border border-brand-amber/20 px-2 py-0.5 rounded shadow-inner">
+        <Cpu size={10} className="mr-1" /> {display}
+      </span>
+    );
+  };
+
+  const renderRow = (activity: Activity, isSubRow = false) => {
+    const hasGroup = !isSubRow && activity.groupedResults && activity.groupedResults.length > 1;
+    const isExpanded = expandedActivityIds.includes(activity.id ?? "");
+    const fullTitle = formatTitle(activity);
+
+    return (
+      <tr 
+        key={activity.id} 
+        className={`border-b border-border transition-colors hover:bg-surface-hover ${isSubRow ? 'bg-background/40' : 'bg-transparent'}`}
+      >
+        {!isSubRow && (
+          <td className="p-3 w-12 text-center">
+            {hasGroup ? (
+              <button 
+                onClick={() => toggleRow(activity.id ?? "")}
+                className="p-1 rounded hover:bg-surface border border-transparent hover:border-border text-gray-400 hover:text-white transition-all cursor-pointer"
+              >
+                {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+              </button>
+            ) : null}
+          </td>
+        )}
+
+        <td className="p-3 text-sm font-bold text-gray-200">{activity.userName}</td>
+        <td className="p-3 text-xs font-mono text-gray-500">{activity.ipAddress}</td>
+        
+        <td className="p-3 whitespace-normal min-w-[200px] max-w-[320px]">
+          <Link 
+            href={`/libraries/items/${activity.itemId}`}
+            className="text-sm font-bold text-gray-100 hover:text-brand-cyan transition-colors line-clamp-2 leading-tight"
+            title={fullTitle}
+          >
+            {fullTitle}
+          </Link>
+        </td>
+        
+        <td className="p-3 text-xs text-gray-400">{activity.client}</td>
+        <td className="p-3">{formatTranscode(activity)}</td>
+        <td className="p-3 text-xs text-gray-400">{activity.device}</td>
+        
+        <td className="p-3 text-xs text-gray-400 font-mono">
+          {activity.dateCreated ? new Date(activity.dateCreated).toLocaleString() : "-"}
+        </td>
+        
+        <td className="p-3 text-center text-sm font-bold text-gray-200">
+          {activity.playCount || 0}
+        </td>
+        
+        <td className="p-3 text-right text-xs font-mono text-gray-400">
+          {activity.playDuration?.secondsToDurationString?.() || "-"}
+        </td>
+      </tr>
+    );
+  };
 
   return (
-    <div>
-      <Group align="center" justify="space-between">
-        <Title order={2}>Activity</Title>
-      </Group>
-      <Card shadow="sm" p={0} style={{ width: "100%", marginTop: 12 }}>
-        <DataTable
-          className={classes.root}
-          minHeight={150}
-          withTableBorder
-          borderRadius="sm"
-          //   withColumnBorders
-          //   striped
-          highlightOnHover
-          // provide data
-          records={activityData}
-          totalRecords={pageCount}
-          recordsPerPage={20}
-          page={page}
-          onPageChange={(p) => setPage(p)}
-          sortStatus={sortStatus}
-          onSortStatusChange={setSortStatus}
-          fetching={loading}
-          // define columns
-          columns={[
-            {
-              accessor: "expanded",
-              title: "Expand",
-              noWrap: true,
-              render: ({ id, groupedResults }) => {
-                if (groupedResults && groupedResults.length > 1) {
-                  if (expandedActivityIds.includes(id ?? "")) {
-                    return (
-                      <Box component="span" ml={20}>
-                        <IconCircleMinus
-                          className={clsx(classes.icon, classes.expandIcon, {
-                            [classes.expandIconRotated]: expandedActivityIds.includes(id ?? ""),
-                          })}
-                        />
-                      </Box>
-                    );
-                  }
-                  return (
-                    <Box component="span" ml={20}>
-                      <IconCirclePlusFilled
-                        className={clsx(classes.icon, classes.expandIcon, {
-                          [classes.expandIconRotated]: expandedActivityIds.includes(id ?? ""),
-                        })}
-                      />
-                    </Box>
-                  );
-                }
-              },
-            },
-            {
-              accessor: "userName",
-              title: "User",
-              textAlign: "right",
-              sortable: true,
-              filter: (
-                <TextFilter
-                  keyName="userName"
-                  value={getFilterValueOrDefault("userName", "") as string}
-                  onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("userName"))}
-                />
-              ),
-              filtering: isFilterActive("userName"),
-            },
-            {
-              accessor: "ipAddress",
-              title: "IP Address",
-              sortable: true,
-              filter: (
-                <TextFilter
-                  keyName="ipAddress"
-                  value={getFilterValueOrDefault("ipAddress", "") as string}
-                  onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("ipAddress"))}
-                />
-              ),
-              filtering: isFilterActive("ipAddress"),
-            },
-            {
-              accessor: "name",
-              title: "Title",
-              render: (activity) => {
-                const name = activity.name ?? "Unknown";
-                const seriesName = activity.seriesName;
-                const episodeIndex = `S${activity.item?.parentIndex?.toString().padStart(2, "0") ?? "??"}E${activity.item?.index?.toString().padStart(2, "0") ?? "??"}`;
-                const display = seriesName ? `${seriesName} : ${episodeIndex} - ${name}` : name;
-                const href = `/libraries/items/${activity.itemId}`;
-                //return <Text>{display}</Text>;
-                return <NavLink href={href} key={activity.id} label={display} />;
-              },
-              sortable: true,
-              filter: (
-                <TextFilter
-                  keyName="name"
-                  value={getFilterValueOrDefault("name", "") as string}
-                  onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("name"))}
-                />
-              ),
-              filtering: isFilterActive("name"),
-            },
-            {
-              accessor: "client",
-              title: "Client",
-              sortable: true,
-              filter: (
-                <TextFilter
-                  keyName="client"
-                  value={getFilterValueOrDefault("client", "") as string}
-                  onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("client"))}
-                />
-              ),
-              filtering: isFilterActive("client"),
-            },
-            {
-              accessor: "transcodingInfo",
-              title: "Transcode",
-              render: (activity) => {
-                const transcodingInfo = activity.transcodingInfo;
-                if (transcodingInfo == null) return <Text>Direct</Text>;
-                const info = transcodingInfo as BaseTranscodingInfo;
-                var display = "Transcoding";
-                if (info.isVideoDirect == false) display += " (Video)";
-                if (!info.isAudioDirect == false) display += " (Audio)";
-                return <Text>{display}</Text>;
-              },
-              sortable: true,
-            },
+    <div className="space-y-6 animate-in fade-in duration-500">
+      
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
+          <ActivityIcon className="text-brand-purple" size={28} />
+          {t("activity.title", "Activity Log")}
+        </h2>
+      </div>
 
-            {
-              accessor: "device",
-              title: "Device",
-              sortable: true,
-              filter: (
-                <TextFilter
-                  keyName="device"
-                  value={getFilterValueOrDefault("device", "") as string}
-                  onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("device"))}
-                />
-              ),
-              filtering: isFilterActive("device"),
-            },
-            {
-              accessor: "dateCreated",
-              title: "Date Created",
-              render: (activity) => {
-                if (!activity.dateCreated) return <Text>-</Text>;
-                const date = new Date(activity.dateCreated);
-                return <Text>{date.toLocaleString()}</Text>;
-              },
-              sortable: true,
-              filter: (
-                <DateFilter
-                  keyName="dateCreated"
-                  value={getFilterValueOrDefault("dateCreated", [null, null]) as DatesRangeValue}
-                  onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("dateCreated"))}
-                />
-              ),
-              filtering: isFilterActive("dateCreated"),
-            },
-            {
-              accessor: "playCount",
-              title: "Play Count",
-              textAlign: "center",
-              sortable: true,
-            },
+      {/* Main Table Container */}
+      <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col relative min-h-[400px]">
+        
+        {loading && (
+          <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
+            <Loader2 size={40} className="text-brand-cyan animate-spin mb-3" />
+            <span className="text-sm font-bold text-gray-300">{t("activity.syncing", "Syncing activity...")}</span>
+          </div>
+        )}
 
-            {
-              accessor: "playDuration",
-              title: "Total Playback",
-              render: (activity) => {
-                if (!activity.playDuration) return <Text>-</Text>;
-                return <Text>{activity.playDuration.secondsToDurationString()}</Text>;
-              },
-              sortable: true,
-            },
-            // { accessor: "playCount", title: "Play Count" },
-          ]}
-          rowExpansion={{
-            expanded: { recordIds: expandedActivityIds, onRecordIdsChange: setExpandedActivityIds },
-            expandable(params) {
-              return params.record.playCount != null && params.record.playCount > 1;
-            },
-            content: (groupedActivity) => (
-              <DataTable
-                // noHeader
-                // withColumnBorders
-                withTableBorder
-                className={classes.subRoot}
-                records={groupedActivity?.record?.groupedResults ?? []}
-                columns={[
-                  {
-                    accessor: "userName",
-                    title: "User",
-                    textAlign: "right",
-                  },
-                  { accessor: "ipAddress", title: "IP Address" },
-                  {
-                    accessor: "name",
-                    title: "Title",
-                    render: (activity) => {
-                      const name = activity.name ?? "Unknown";
-                      const seriesName = activity.seriesName;
-                      const episodeIndex = `S${activity.item?.parentIndex?.toString().padStart(2, "0") ?? "??"}E${activity.item?.index?.toString().padStart(2, "0") ?? "??"}`;
-                      const display = seriesName ? `${seriesName} : ${episodeIndex} - ${name}` : name;
-                      const href = `/libraries/items/${activity.itemId}`;
-                      //return <Text>{display}</Text>;
-                      return <NavLink href={href} key={activity.id} label={display} />;
-                    },
-                  },
-                  { accessor: "client", title: "Client" },
-                  {
-                    accessor: "transcodingInfo",
-                    title: "Transcode",
-                    render: (activity) => {
-                      const transcodingInfo = activity.transcodingInfo;
-                      if (transcodingInfo == null) return <Text>Direct</Text>;
-                      const info = transcodingInfo as BaseTranscodingInfo;
-                      var display = "Transcoding";
-                      if (info.isVideoDirect == false) display += " (Video)";
-                      if (!info.isAudioDirect == false) display += " (Audio)";
-                      return <Text>{display}</Text>;
-                    },
-                  },
+        {error && (
+          <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in p-6">
+            <AlertCircle size={40} className="text-brand-rose mb-3" />
+            <span className="text-lg font-bold text-brand-rose mb-1">{t("activity.failed", "Failed to load data")}</span>
+            <span className="text-sm text-gray-400 text-center max-w-md">{error}</span>
+          </div>
+        )}
 
-                  { accessor: "device", title: "Device" },
-                  {
-                    accessor: "dateCreated",
-                    title: "Date Created",
-                    render: (activity) => {
-                      if (!activity.dateCreated) return <Text>-</Text>;
-                      const date = new Date(activity.dateCreated);
-                      return <Text>{date.toLocaleString()}</Text>;
-                    },
-                  },
-                  {
-                    accessor: "playCount",
-                    title: "Play Count",
-                  },
+        <div className="overflow-x-auto custom-scrollbar flex-1">
+          <table className="w-full text-left border-collapse whitespace-nowrap">
+            <thead>
+              <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
+                <th className="p-3 w-12"></th>
+                <SortableHeader label={t("activity.user", "User")} accessor="userName" currentSort={sortStatus} onSort={handleSort} />
+                <SortableHeader label={t("activity.ip", "IP Address")} accessor="ipAddress" currentSort={sortStatus} onSort={handleSort} />
+                <SortableHeader label={t("activity.title_col", "Title")} accessor="name" currentSort={sortStatus} onSort={handleSort} />
+                <SortableHeader label={t("activity.client", "Client")} accessor="client" currentSort={sortStatus} onSort={handleSort} />
+                <th className="p-3 cursor-default">{t("activity.transcode", "Transcode")}</th>
+                <SortableHeader label={t("activity.device", "Device")} accessor="device" currentSort={sortStatus} onSort={handleSort} />
+                <SortableHeader label={t("activity.date_created", "Date Created")} accessor="dateCreated" currentSort={sortStatus} onSort={handleSort} />
+                <SortableHeader label={t("activity.plays", "Plays")} accessor="playCount" currentSort={sortStatus} onSort={handleSort} align="center" />
+                <SortableHeader label={t("activity.total_playback", "Total Playback")} accessor="playDuration" currentSort={sortStatus} onSort={handleSort} align="right" />
+              </tr>
+              
+              {/* Filter Row */}
+              <tr className="bg-background/40 border-b border-border shadow-inner">
+                <th className="p-2 border-r border-border/50"></th>
+                
+                <th className="p-2 border-r border-border/50 font-normal relative group">
+                  <FilterInput placeholder={t("activity.filter", "Filter...")} val={getFilterValueOrDefault("userName", "")} onFilter={(v) => v ? addOrReplaceFilter({ key: "userName", value: v }) : removeFilter("userName")} />
+                </th>
+                
+                <th className="p-2 border-r border-border/50 font-normal relative group">
+                  <FilterInput placeholder={t("activity.filter", "Filter...")} val={getFilterValueOrDefault("ipAddress", "")} onFilter={(v) => v ? addOrReplaceFilter({ key: "ipAddress", value: v }) : removeFilter("ipAddress")} />
+                </th>
+                
+                <th className="p-2 border-r border-border/50 font-normal relative group">
+                  <FilterInput placeholder={t("activity.filter", "Filter...")} val={getFilterValueOrDefault("name", "")} onFilter={(v) => v ? addOrReplaceFilter({ key: "name", value: v }) : removeFilter("name")} />
+                </th>
+                
+                <th className="p-2 border-r border-border/50 font-normal relative group">
+                  <FilterInput placeholder={t("activity.filter", "Filter...")} val={getFilterValueOrDefault("client", "")} onFilter={(v) => v ? addOrReplaceFilter({ key: "client", value: v }) : removeFilter("client")} />
+                </th>
+                
+                <th className="p-2 border-r border-border/50"></th>
+                
+                <th className="p-2 border-r border-border/50 font-normal relative group">
+                  <FilterInput placeholder={t("activity.filter", "Filter...")} val={getFilterValueOrDefault("device", "")} onFilter={(v) => v ? addOrReplaceFilter({ key: "device", value: v }) : removeFilter("device")} />
+                </th>
+                
+                <th colSpan={3} className="p-2"></th>
+              </tr>
+            </thead>
+            
+            <tbody>
+              {!loading && activityData.length === 0 ? (
+                <tr>
+                  <td colSpan={10} className="p-16 text-center text-gray-500">
+                    <MonitorPlay size={48} className="mx-auto mb-4 opacity-20" />
+                    <span className="font-medium text-lg">{t("activity.no_activity", "No activity found")}</span>
+                  </td>
+                </tr>
+              ) : (
+                activityData.map((activity) => (
+                  <React.Fragment key={activity.id}>
+                    {renderRow(activity)}
+                    {expandedActivityIds.includes(activity.id ?? "") && activity.groupedResults ? (
+                      <tr className="bg-background shadow-inner border-b border-border">
+                        <td colSpan={10} className="p-0">
+                          <div className="pl-12 py-3 pr-3 bg-black/20 border-l-4 border-brand-purple">
+                            <table className="w-full text-left border-collapse whitespace-nowrap">
+                              <tbody>
+                                {activity.groupedResults.map((subAct) => renderRow(subAct, true))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : null}
+                  </React.Fragment>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
-                  {
-                    accessor: "playDuration",
-                    title: "Total Playback",
-                    render: (activity) => {
-                      if (!activity.playDuration) return <Text>-</Text>;
-                      return <Text>{activity.playDuration.secondsToDurationString()}</Text>;
-                    },
-                  },
-                ]}
-              />
-            ),
-          }}
-        />
-      </Card>
+        {/* Pagination Footer */}
+        <div className="bg-background/80 border-t border-border p-4 flex items-center justify-between shrink-0">
+          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+            {t("activity.total_records", "Total Records:")} <span className="text-white">{pageCount}</span>
+          </span>
+          <div className="flex items-center gap-4">
+            <span className="text-xs font-mono text-gray-400">
+              {t("activity.page_of", "Page {{page}} of {{totalPages}}", { page: page, totalPages: totalPages })}
+            </span>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
+              >
+                {t("activity.prev", "Prev")}
+              </button>
+              <button 
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
+              >
+                {t("activity.next", "Next")}
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
+  );
+}
+
+// --- SUB-COMPONENTS ---
+
+function SortableHeader({ label, accessor, currentSort, onSort, align = "left" }: any) {
+  return (
+    <th 
+      className={`p-3 group cursor-pointer hover:bg-surface-hover transition-colors text-${align}`}
+      onClick={() => onSort(accessor)}
+    >
+      <div className={`flex items-center gap-2 ${align === "right" ? "justify-end" : align === "center" ? "justify-center" : ""}`}>
+        {label}
+        {currentSort.columnAccessor !== accessor ? (
+          <ArrowUpDown size={14} className="opacity-30 group-hover:opacity-100 transition-opacity" />
+        ) : currentSort.direction === "desc" ? (
+          <ArrowDown size={14} className="text-brand-cyan" />
+        ) : (
+          <ArrowUp size={14} className="text-brand-cyan" />
+        )}
+      </div>
+    </th>
+  );
+}
+
+function FilterInput({ val, onFilter, placeholder }: { val: any, onFilter: (v: string) => void, placeholder: string }) {
+  return (
+    <>
+      <div className="absolute inset-y-0 left-2 flex items-center pointer-events-none text-gray-600 group-focus-within:text-brand-cyan">
+        <Search size={12} />
+      </div>
+      <input 
+        type="text"
+        placeholder={placeholder}
+        value={val as string || ""}
+        onChange={(e) => onFilter(e.target.value)}
+        className="w-full bg-background/50 border border-transparent hover:border-border focus:border-brand-cyan rounded py-1 pl-7 pr-2 text-xs text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-cyan transition-all"
+      />
+    </>
   );
 }
