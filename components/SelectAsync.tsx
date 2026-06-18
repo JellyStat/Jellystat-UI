@@ -21,13 +21,13 @@ type Props<T> = {
   placeholder?: string;
 };
 
-export function SelectAsync<T>({ 
-  fetchMethod, 
-  onSelect, 
-  idPredicate, 
-  namePredicate, 
+export function SelectAsync<T>({
+  fetchMethod,
+  onSelect,
+  idPredicate,
+  namePredicate,
   value: initialValue,
-  placeholder 
+  placeholder,
 }: Props<T>) {
   const { t } = useTranslation("common");
 
@@ -35,7 +35,7 @@ export function SelectAsync<T>({
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<T[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export function SelectAsync<T>({
   const handleToggle = () => {
     const nextState = !isOpen;
     setIsOpen(nextState);
-    
+
     if (nextState && data.length === 0 && !loading) {
       setLoading(true);
       fetchMethod()
@@ -92,7 +92,6 @@ export function SelectAsync<T>({
 
   return (
     <div className="relative w-full" ref={containerRef}>
-      
       {/* Trigger Button */}
       <button
         type="button"
@@ -101,15 +100,16 @@ export function SelectAsync<T>({
           isOpen ? "border-brand-cyan" : "border-border hover:border-gray-500"
         }`}
       >
-        <span className={`truncate mr-2 ${isPlaceholder ? "text-gray-500" : "text-gray-200 font-medium"}`}>
-          {displayText}
-        </span>
-        
+        <span className={`truncate mr-2 ${isPlaceholder ? "text-gray-500" : "text-gray-200 font-medium"}`}>{displayText}</span>
+
         <span className="text-gray-500 shrink-0 pointer-events-none">
           {loading ? (
             <Loader2 size={16} className="animate-spin text-brand-cyan" />
           ) : (
-            <ChevronDown size={16} className={`transition-transform duration-300 ${isOpen ? "rotate-180 text-brand-cyan" : ""}`} />
+            <ChevronDown
+              size={16}
+              className={`transition-transform duration-300 ${isOpen ? "rotate-180 text-brand-cyan" : ""}`}
+            />
           )}
         </span>
       </button>
@@ -121,7 +121,7 @@ export function SelectAsync<T>({
             {loading ? (
               <div className="p-4 flex items-center justify-center text-sm text-gray-400 font-medium">
                 <Loader2 size={16} className="animate-spin mr-2 text-brand-cyan" />
-                {t("select_async.loading", "Loading...")}
+                {t("common.loading", "Loading")}
               </div>
             ) : data.length > 0 ? (
               data.map((item) => {
@@ -133,8 +133,8 @@ export function SelectAsync<T>({
                     type="button"
                     onClick={() => handleSelect(item)}
                     className={`w-full text-left flex items-center justify-between px-3 py-2.5 text-sm rounded-lg transition-colors group ${
-                      isSelected 
-                        ? "bg-brand-cyan/10 text-brand-cyan font-bold" 
+                      isSelected
+                        ? "bg-brand-cyan/10 text-brand-cyan font-bold"
                         : "text-gray-300 hover:bg-surface-hover hover:text-white"
                     }`}
                   >
@@ -144,9 +144,7 @@ export function SelectAsync<T>({
                 );
               })
             ) : (
-              <div className="p-4 text-center text-sm text-gray-500">
-                {t("select_async.no_items", "No matching items found")}
-              </div>
+              <div className="p-4 text-center text-sm text-gray-500">{t("select_async.no_items", "No matching items found")}</div>
             )}
           </div>
         </div>

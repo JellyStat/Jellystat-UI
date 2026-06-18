@@ -134,7 +134,7 @@ const MediaGrid: React.FC<Props> = ({
           {t("media_grid.title", "Media")}
         </h2>
 
-        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
           
           {/* Archived Filter */}
           <div className="relative group min-w-[140px]">

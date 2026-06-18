@@ -14,7 +14,7 @@ type Props = {
 
 const RecentlyAdded: React.FC<Props> = ({ gridify, cardWidth }) => {
   const { t } = useTranslation("common");
-  
+
   const [items, setItems] = useState<ItemsWithParentData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,22 +44,17 @@ const RecentlyAdded: React.FC<Props> = ({ gridify, cardWidth }) => {
 
   return (
     <div className="flex flex-col w-full animate-in fade-in duration-500">
-      
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Sparkles size={28} className="text-brand-cyan" />
-        <h2 className="text-2xl font-black text-white tracking-tight">
-          {t("recently_added.title", "Recently Added")}
-        </h2>
+        <h2 className="text-xl font-black text-gray-200 tracking-tight">{t("recently_added.title", "Recently Added")}</h2>
       </div>
 
       <div className="relative w-full">
         {loading && (
           <div className="w-full h-72 bg-surface/30 border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse shadow-inner">
             <Loader2 size={32} className="text-brand-cyan animate-spin mb-3" />
-            <span className="text-gray-500 font-medium">
-              {t("recently_added.fetching_latest", "Fetching latest media...")}
-            </span>
+            <span className="text-gray-500 font-medium">{t("recently_added.fetching_latest", "Fetching latest media...")}</span>
           </div>
         )}
 
@@ -70,19 +65,14 @@ const RecentlyAdded: React.FC<Props> = ({ gridify, cardWidth }) => {
           </div>
         )}
 
-        {!loading && !error && items.length > 0 && (
-          <ItemCards items={items} />
-        )}
+        {!loading && !error && items.length > 0 && <ItemCards items={items} />}
 
         {!loading && !error && items.length === 0 && (
           <div className="w-full h-48 bg-surface/30 border border-border border-dashed rounded-2xl flex flex-col items-center justify-center text-gray-500 shadow-inner">
-            <span className="font-medium">
-              {t("recently_added.no_recent_items", "No recent items found")}
-            </span>
+            <span className="font-medium">{t("recently_added.no_recent_items", "No recent items found")}</span>
           </div>
         )}
       </div>
-      
     </div>
   );
 };

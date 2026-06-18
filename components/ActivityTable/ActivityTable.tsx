@@ -159,7 +159,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
         <td className="p-3 whitespace-normal min-w-[200px] max-w-[320px]">
           <Link 
             href={`/libraries/items/${activity.itemId}`}
-            className="text-sm font-bold text-gray-100 hover:text-brand-cyan transition-colors line-clamp-2 leading-tight"
+            className="text-sm font-bold text-gray-200 hover:text-brand-cyan transition-colors line-clamp-2 leading-tight"
             title={fullTitle}
           >
             {fullTitle}
@@ -190,7 +190,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
       
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
+        <h2 className="text-2xl font-black text-gray-200 tracking-tight flex items-center gap-3">
           <ActivityIcon className="text-brand-purple" size={28} />
           {t("activity.title", "Activity Log")}
         </h2>

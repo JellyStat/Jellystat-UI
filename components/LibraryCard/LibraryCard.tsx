@@ -82,7 +82,7 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
         
         {/* Title Overlay */}
         <div className="absolute bottom-0 left-0 w-full p-5 flex justify-between items-end">
-          <h2 className="text-2xl font-black text-white tracking-tight drop-shadow-lg truncate pr-4">
+          <h2 className="text-2xl font-black text-gray-200 tracking-tight drop-shadow-lg truncate pr-4">
             {lib.name}
           </h2>
           <span className={`${colorClasses.bg} ${colorClasses.text} ${colorClasses.border} border px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest shadow-lg shrink-0 backdrop-blur-md`}>

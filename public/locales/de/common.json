@@ -39,6 +39,9 @@
   "auth": {
     "logout": "Logout"
   },
+  "common": {
+    "loading": "Wird geladen"
+  },
   "error_cards": {
     "go_back": "Zurück",
     "not_found_message": "Die angeforderte Ressource konnte nicht gefunden werden.",
@@ -55,7 +58,6 @@
     "error_loading": "Fehler beim Laden des Elements",
     "file_path": "Dateipfad:",
     "library": "Bibliothek",
-    "loading": "Wird geladen...",
     "not_found_message": "Das angeforderte Medienelement konnte nicht gefunden werden.",
     "not_found_title": "Element nicht gefunden",
     "open_in_server": "Im Medienserver öffnen",
@@ -75,8 +77,7 @@
     "failed_load": "Bibliotheken konnten nicht geladen werden",
     "libraries_desc": "Verwalte, überwache und analysiere deine Mediensammlungen.",
     "no_libraries": "Keine Bibliotheken gefunden",
-    "no_libraries_desc": "Stelle sicher, dass dein Server verbunden und synchronisiert ist.",
-    "scanning_libraries": "Serverbibliotheken werden gescannt..."
+    "no_libraries_desc": "Stelle sicher, dass dein Server verbunden und synchronisiert ist."
   },
   "library": {
     "charts_coming_soon": "Diagramme kommen bald",
@@ -86,7 +87,6 @@
     "genres": "Genres",
     "last_played": "Zuletzt abgespielt",
     "library_time": "Bibliothekszeit",
-    "loading": "Wird geladen...",
     "na": "N/A",
     "never": "Nie",
     "no_libraries": "Keine Bibliotheken gefunden",
@@ -154,7 +154,6 @@
     "title": "Zuletzt hinzugefügt"
   },
   "select_async": {
-    "loading": "Wird geladen...",
     "no_items": "Keine passenden Elemente gefunden",
     "pick_value": "Wert auswählen"
   },

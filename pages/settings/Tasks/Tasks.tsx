@@ -70,16 +70,26 @@ export default function TasksPage() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 max-w-5xl">
-      
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
+      <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 p-6">
+
+
+      {/* Header Container */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6">
+        
+        <div className="flex items-center gap-4">
+          <div className="p-3.5 bg-brand-purple/10 rounded-2xl border border-brand-purple/20 shadow-inner shrink-0">
             <ServerCog className="text-brand-purple" size={28} />
-            Background Tasks
-          </h2>
-          <p className="text-sm text-gray-400 mt-1">Manage and execute scheduled system operations.</p>
+          </div>
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-black text-white tracking-tight">
+                Background Tasks
+              </h1>
+            </div>
+            <p className="text-sm text-gray-400 mt-1 font-medium">
+             Manage and execute scheduled system operations
+            </p>
+          </div>
         </div>
       </div>
 
@@ -93,7 +103,7 @@ export default function TasksPage() {
                 <th className="p-4 pl-6 w-1/4">Task Type</th>
                 <th className="p-4 w-1/4">Run Interval</th>
                 <th className="p-4 w-1/6">Enabled</th>
-                <th className="p-4 w-1/6">Live Status</th>
+                <th className="p-4 w-1/6">Status</th>
                 <th className="p-4 pr-6 text-right w-1/6">Actions</th>
               </tr>
             </thead>

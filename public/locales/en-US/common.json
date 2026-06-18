@@ -10,7 +10,7 @@
     "ip": "IP Address",
     "next": "Next",
     "no_activity": "No activity found",
-    "page_of": "123",
+    "page_of": "Page {{page}} of {{totalPages}}",
     "plays": "Plays",
     "prev": "Prev",
     "syncing": "Syncing activity...",
@@ -39,6 +39,9 @@
   "auth": {
     "logout": "Logout"
   },
+  "common": {
+    "loading": "Loading"
+  },
   "error_cards": {
     "go_back": "Go Back",
     "not_found_message": "The requested resource could not be found.",
@@ -55,7 +58,6 @@
     "error_loading": "Error loading item",
     "file_path": "File Path:",
     "library": "Library",
-    "loading": "Loading...",
     "not_found_message": "The requested media item could not be found.",
     "not_found_title": "Item not found",
     "open_in_server": "Open in Media Server",
@@ -75,8 +77,7 @@
     "failed_load": "Failed to load libraries",
     "libraries_desc": "Manage, track, and analyze your media collections",
     "no_libraries": "No libraries found",
-    "no_libraries_desc": "Make sure your server is connected and synced.",
-    "scanning_libraries": "Scanning server libraries..."
+    "no_libraries_desc": "Make sure your server is connected and synced."
   },
   "library": {
     "charts_coming_soon": "Charts Coming Soon",
@@ -86,7 +87,7 @@
     "genres": "Genres",
     "last_played": "Last Played",
     "library_time": "Library Time",
-    "loading": "Loading...",
+
     "na": "N/A",
     "never": "Never",
     "no_libraries": "No libraries found",
@@ -154,7 +155,6 @@
     "title": "Recently Added"
   },
   "select_async": {
-    "loading": "Loading...",
     "no_items": "No matching items found",
     "pick_value": "Pick value"
   },

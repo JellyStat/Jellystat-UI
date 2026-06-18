@@ -43,7 +43,7 @@ export default function Sessions() {
             className={`relative inline-flex rounded-full h-3 w-3 ${sessions.length == 0 ? "bg-brand-rose" : "bg-brand-emerald"}`}
           ></span>
         </div>
-        <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
+        <h2 className="text-xl font-black text-gray-200 tracking-tight flex items-center gap-2">
           {t("sessions.active_streams", "Active Streams")}
         </h2>
       </div>

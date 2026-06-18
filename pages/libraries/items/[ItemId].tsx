@@ -4,16 +4,7 @@ import Head from "next/head";
 import { useTranslation } from "next-i18next/pages";
 import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import { GridifyQueryBuilder } from "gridify-client";
-import { 
-  ExternalLink, 
-  Lock, 
-  Loader2, 
-  AlertCircle,
-  Info,
-  Film,
-  Activity as ActivityIcon,
-  ChevronLeft
-} from "lucide-react";
+import { ExternalLink, Lock, Loader2, AlertCircle, Info, Film, Activity as ActivityIcon, ChevronLeft } from "lucide-react";
 
 import client from "@/lib/api";
 import { ItemsWithStats } from "@/lib/models/itemsWithStats";
@@ -50,7 +41,7 @@ export default function ItemPage() {
         if (!mounted) return;
         const found = (res?.data && res.data.length > 0 && res.data[0]) || null;
         setItem(found);
-        
+
         const activeConfig = await configManager.getActiveConfig();
         setConfig(activeConfig);
       } catch (er: any) {
@@ -69,19 +60,24 @@ export default function ItemPage() {
   }, [ItemId]);
 
   if (!item && !loading && !error) {
-    return <NotFound title={t("item.not_found_title", "Item not found")} message={t("item.not_found_message", "The requested media item could not be found.")} />;
+    return (
+      <NotFound
+        title={t("item.not_found_title", "Item not found")}
+        message={t("item.not_found_message", "The requested media item could not be found.")}
+      />
+    );
   }
 
   // Derived Properties
   const externalURLBase = config?.externalURL && config?.externalURL.trim().length > 0 ? config.externalURL : config?.url;
   const isValidParent = item && item.parent && item.parent.id && item.parent.id !== item.id && item.parent.name;
-  
+
   const title = isValidParent ? item?.parent?.name : item?.name;
   const subtitle = isValidParent ? item?.name : null;
-  
+
   const parentIndexUnit = isValidParent && item.type === ItemTypes.Episode ? t("item.season", "Season") : null;
   const indexUnit = item?.type === ItemTypes.Episode ? t("item.episode", "Episode") : null;
-  
+
   const imageUrl = `${client.API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(item?.parent?.id ?? item?.id ?? "")}&Width=600&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
   const backgroundImage = `${client.API_BASE}Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(item?.parent?.id ?? item?.id ?? "")}&Width=1920&Quality=90&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
 
@@ -96,11 +92,10 @@ export default function ItemPage() {
   return (
     <>
       <Head>
-        <title>{title || t("item.loading", "Loading...")} | Jellystat</title>
+        <title>{title || t("common.loading", "Loading")} | Jellystat</title>
       </Head>
 
       <div className="w-full max-w-[1600px] mx-auto p-4 md:p-6 lg:p-8 animate-in fade-in duration-500 pb-20">
-        
         {loading && (
           <div className="flex flex-col items-center justify-center h-64">
             <Loader2 size={40} className="text-brand-cyan animate-spin mb-4" />
@@ -117,30 +112,27 @@ export default function ItemPage() {
 
         {!loading && !error && item && (
           <div className="flex flex-col gap-8">
-            
             {/* Header Backdrop Card */}
             <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl shadow-black/40 border border-border/50 bg-surface">
-              
               {/* CSS Background Image */}
-              <div 
+              <div
                 className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-screen"
                 style={{ backgroundImage: `url('${backgroundImage}')` }}
               />
-              
+
               {/* Gradient Overlay to ensure text readability */}
               <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-transparent backdrop-blur-[2px]" />
 
               {/* Header Content */}
               <div className="relative z-10 p-6 md:p-10 flex flex-col md:flex-row gap-8 items-start md:items-center">
-                
                 {/* Poster Image */}
                 <div className="shrink-0 relative group">
-                  <ItemImage 
-                    imageUrl={imageUrl} 
-                    imageHash={item.imageHash} 
-                    width={200} 
-                    height={300} 
-                    borderRadius={[16, 16, 16, 16]} 
+                  <ItemImage
+                    imageUrl={imageUrl}
+                    imageHash={item.imageHash}
+                    width={200}
+                    height={300}
+                    borderRadius={[16, 16, 16, 16]}
                   />
                   {item.archived && (
                     <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md p-1.5 rounded-lg border border-white/10 shadow-lg">
@@ -151,8 +143,7 @@ export default function ItemPage() {
 
                 {/* Details */}
                 <div className="flex flex-col flex-1 items-start">
-                  
-                  <button 
+                  <button
                     onClick={() => router.push(`/libraries/${item.libraryId}`)}
                     className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-cyan/10 text-brand-cyan hover:bg-brand-cyan hover:text-black border border-brand-cyan/20 transition-colors text-xs font-black uppercase tracking-widest mb-4 cursor-pointer"
                   >
@@ -170,9 +161,9 @@ export default function ItemPage() {
                         title
                       )}
                     </h1>
-                    
+
                     {config && (
-                      <a 
+                      <a
                         href={`${externalURLBase}/web/index.html#/details?id=${item.id}&serverId=${item.serverId}`}
                         target="_blank"
                         rel="noreferrer"
@@ -191,7 +182,11 @@ export default function ItemPage() {
                           {parentIndexUnit} {item.parentIndex}
                         </a>
                       )}
-                      {indexUnit && <span>{indexUnit} {item.index}</span>}
+                      {indexUnit && (
+                        <span>
+                          {indexUnit} {item.index}
+                        </span>
+                      )}
                       {(parentIndexUnit || indexUnit) && subtitle && <span className="text-gray-500 mx-1">•</span>}
                       {subtitle && <span className="text-gray-400 font-medium">{subtitle}</span>}
                     </div>
@@ -204,7 +199,7 @@ export default function ItemPage() {
                         {item.path}
                       </p>
                     )}
-                    
+
                     <div className="flex items-center gap-6 mt-1">
                       {item.duration && (
                         <p className="text-xs font-mono text-gray-400">
@@ -220,21 +215,19 @@ export default function ItemPage() {
                       )}
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>
 
             {/* Content Tabs */}
             <div className="flex flex-col w-full">
-              
               {/* Glassmorphic Tab Container */}
               <div className="flex overflow-x-auto custom-scrollbar mb-6">
                 <div className="flex items-center p-1.5 bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-inner w-max">
                   {tabs.map((tab) => {
                     const Icon = tab.icon;
                     const isActive = activeTab === tab.id;
-                    
+
                     return (
                       <button
                         key={tab.id}
@@ -245,9 +238,9 @@ export default function ItemPage() {
                             : "text-gray-400 hover:text-white hover:bg-surface-hover"
                         }`}
                       >
-                        <Icon 
-                          size={18} 
-                          className={`transition-colors ${isActive ? "text-black" : "text-gray-500 group-hover:text-gray-300"}`} 
+                        <Icon
+                          size={18}
+                          className={`transition-colors ${isActive ? "text-black" : "text-gray-500 group-hover:text-gray-300"}`}
                         />
                         {tab.label}
                       </button>
@@ -261,23 +254,20 @@ export default function ItemPage() {
                 <div className={activeTab === "overview" ? "block animate-in fade-in slide-in-from-bottom-2" : "hidden"}>
                   <ItemOverview item={item} />
                 </div>
-                
+
                 {showMediaTab && (
                   <div className={activeTab === "media" ? "block animate-in fade-in slide-in-from-bottom-2" : "hidden"}>
                     <ItemMedia item={item} />
                   </div>
                 )}
-                
+
                 <div className={activeTab === "activity" ? "block animate-in fade-in slide-in-from-bottom-2" : "hidden"}>
                   <ItemActivity item={item} />
                 </div>
               </div>
-
             </div>
-
           </div>
         )}
-
       </div>
     </>
   );
