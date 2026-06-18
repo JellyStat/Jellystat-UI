@@ -451,8 +451,8 @@ const getTranscodeStats = async (
   gridify?: IGridifyQuery,
 ) => apiFetch<PagingResponse<TranscodeStats>>(`/Stats/TranscodeStats${await buildQuery(gridify, params as Record<string, any>)}`);
 
-const getStatsByDay = async (params?: { days?: number; metric?: StatMetric }) =>
-  apiFetch<ChartStats[]>(`/Stats/StatsByDay${await buildQuery(undefined, params as Record<string, any>)}`);
+const getStatTrends = async (params?: { days?: number; metric?: StatMetric }) =>
+  apiFetch<ChartStats[]>(`/Stats/StatTrends${await buildQuery(undefined, params as Record<string, any>)}`);
 
 // History
 const getSystemInfo = async (): Promise<SystemInfo> => apiFetch(`/System/Info`);
@@ -489,7 +489,7 @@ export const Stats = {
   getMostUsedClients,
   getUserStats,
   getTranscodeStats,
-  getStatsByDay,
+  getStatTrends,
 };
 
 export const History = {

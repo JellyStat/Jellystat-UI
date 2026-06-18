@@ -19,7 +19,7 @@ export default function Sessions() {
         console.warn("Received sessions message with no data");
         return;
       }
-      
+
       if (Array.isArray(payload)) {
         setSessions(payload);
       } else {
@@ -33,12 +33,15 @@ export default function Sessions() {
 
   return (
     <div className="flex flex-col w-full animate-in fade-in duration-500">
-      
       {/* Section Header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="relative flex h-3 w-3">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-rose opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-rose"></span>
+          <span
+            className={`animate-ping absolute inline-flex h-full w-full rounded-full ${sessions.length == 0 ? "bg-brand-rose" : "bg-brand-emerald"} opacity-75`}
+          ></span>
+          <span
+            className={`relative inline-flex rounded-full h-3 w-3 ${sessions.length == 0 ? "bg-brand-rose" : "bg-brand-emerald"}`}
+          ></span>
         </div>
         <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
           {t("sessions.active_streams", "Active Streams")}
@@ -50,12 +53,8 @@ export default function Sessions() {
           /* Empty State */
           <div className="w-full py-16 bg-surface/30 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-gray-500 shadow-inner">
             <MonitorPlay size={48} className="mb-4 opacity-20" />
-            <span className="font-bold text-lg tracking-wide text-gray-400">
-              {t("sessions.no_active", "No active sessions")}
-            </span>
-            <span className="text-sm mt-1">
-              {t("sessions.waiting", "Waiting for users to start playing media...")}
-            </span>
+            <span className="font-bold text-lg tracking-wide text-gray-400">{t("sessions.no_active", "No active sessions")}</span>
+            <span className="text-sm mt-1">{t("sessions.waiting", "Waiting for users to start playing media...")}</span>
           </div>
         ) : (
           /* Responsive Grid */

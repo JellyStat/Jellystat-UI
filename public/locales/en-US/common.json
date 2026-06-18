@@ -138,15 +138,15 @@
     "title": "Media"
   },
   "nav": {
-    "activity": "Aktivität",
-    "libraries": "Bibliotheken",
-    "live_sessions": "Live-Sitzungen",
+    "activity": "Activity",
+    "libraries": "Libraries",
+    "live_sessions": "Live Sessions",
     "logout": "Logout",
-    "overview": "Übersicht",
+    "overview": "Overview",
     "select_server": "Select a server...",
-    "settings": "Einstellungen",
-    "statistics": "Statistiken",
-    "users": "Benutzer"
+    "settings": "Settings",
+    "statistics": "Statistics",
+    "users": "Users"
   },
   "recently_added": {
     "fetching_latest": "Fetching latest media...",
@@ -302,7 +302,7 @@
     "zero_seconds": "0 Seconds"
   },
   "status": {
-    "connected": "WS VERBUNDEN",
+    "connected": "WS CONNECTED",
     "disconnected": "DISCONNECTED",
     "offline": "System Offline",
     "online": "System Online"

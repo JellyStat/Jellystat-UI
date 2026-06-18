@@ -2,13 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import { useTranslation } from "next-i18next/pages";
 import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
-import { 
-  BarChart3, Loader2, AlertCircle, TrendingUp, Clock 
-} from "lucide-react";
-import { 
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer, Legend 
-} from "recharts";
+import { BarChart3, Loader2, AlertCircle, TrendingUp, Clock } from "lucide-react";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 import client from "@/lib/api";
 import { ChartStats } from "@/lib/models/chartStats";
@@ -25,7 +20,7 @@ const chartColors = [
 
 export default function StatisticsPage() {
   const { t } = useTranslation("common");
-  
+
   const [stats, setStats] = useState<ChartStats[]>([]);
   const [metric, setMetric] = useState<keyof ChartStat>("count");
   const [loading, setLoading] = useState(true);
@@ -35,7 +30,7 @@ export default function StatisticsPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await client.Stats.getStatsByDay({ days: 31 });
+      const data = await client.Stats.getStatTrends({ days: 31 });
       setStats(data);
     } catch (err: any) {
       if (err?.name === "AbortError") return;
@@ -63,10 +58,10 @@ export default function StatisticsPage() {
       return row;
     });
 
-    const series = legends.map((l, i) => ({ 
-      name: l, 
-      dataKey: l, 
-      color: chartColors[i % chartColors.length] 
+    const series = legends.map((l, i) => ({
+      name: l,
+      dataKey: l,
+      color: chartColors[i % chartColors.length],
     }));
 
     return { data, series };
@@ -90,18 +85,15 @@ export default function StatisticsPage() {
       </Head>
 
       <div className="space-y-8 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12">
-        
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-border/50 pb-6">
           <div className="flex items-center gap-4">
             <div className="p-3.5 bg-brand-purple/10 rounded-2xl border border-brand-purple/20 shadow-inner shrink-0">
               <BarChart3 size={28} className="text-brand-purple" />
             </div>
             <div>
-              <h1 className="text-3xl font-black text-white tracking-tight">
-                {t("nav.statistics", "Statistics")}
-              </h1>
+              <h1 className="text-3xl font-black text-white tracking-tight">{t("nav.statistics", "Statistics")}</h1>
               <p className="text-sm text-gray-400 mt-1 font-medium">
-                {t("statistics.playback_trends", "31-Day global playback trends")} 
+                {t("statistics.playback_trends", "31-Day global playback trends")}
               </p>
             </div>
           </div>
@@ -117,22 +109,33 @@ export default function StatisticsPage() {
               className="w-full bg-surface/80 backdrop-blur-md border border-border hover:border-gray-500 rounded-xl py-2.5 pl-10 pr-8 text-sm font-bold text-gray-200 focus:outline-none focus:ring-1 focus:border-brand-cyan focus:ring-brand-cyan appearance-none transition-all cursor-pointer shadow-sm"
               disabled={loading}
             >
-              <option value="count" className="bg-background text-gray-100">{t("statistics.play_count", "Play Count")}</option>
-              <option value="playDuration" className="bg-background text-gray-100">{t("statistics.play_duration", "Play Duration")}</option>
+              <option value="count" className="bg-background text-gray-100">
+                {t("statistics.play_count", "Play Count")}
+              </option>
+              <option value="playDuration" className="bg-background text-gray-100">
+                {t("statistics.play_duration", "Play Duration")}
+              </option>
             </select>
             <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
+              <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                <path
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                  fillRule="evenodd"
+                ></path>
+              </svg>
             </div>
           </div>
         </div>
 
         {/* Content Area */}
         <div className="bg-surface/40 backdrop-blur-sm border border-border rounded-3xl shadow-xl shadow-black/20 overflow-hidden flex flex-col p-6 sm:p-8">
-          
           {loading ? (
             <div className="w-full h-[400px] flex flex-col items-center justify-center">
               <Loader2 size={40} className="text-brand-purple animate-spin mb-4" />
-              <span className="text-gray-400 font-medium tracking-wide">{t("statistics.compiling", "Compiling 31-day statistics...")}</span>
+              <span className="text-gray-400 font-medium tracking-wide">
+                {t("statistics.compiling", "Compiling 31-day statistics...")}
+              </span>
             </div>
           ) : error ? (
             <div className="w-full h-[400px] flex items-center justify-center">
@@ -147,70 +150,77 @@ export default function StatisticsPage() {
           ) : chartData.length === 0 ? (
             <div className="w-full h-[400px] border-2 border-dashed border-border rounded-2xl flex flex-col items-center justify-center text-gray-500">
               <BarChart3 size={48} className="mb-4 opacity-20" />
-              <span className="font-bold text-lg tracking-wide text-gray-400">{t("statistics.no_data", "No Data Available")}</span>
-              <span className="text-sm mt-1">{t("statistics.no_data_desc", "There is no playback history for the last 31 days.")}</span>
+              <span className="font-bold text-lg tracking-wide text-gray-400">
+                {t("statistics.no_data", "No Data Available")}
+              </span>
+              <span className="text-sm mt-1">
+                {t("statistics.no_data_desc", "There is no playback history for the last 31 days.")}
+              </span>
             </div>
           ) : (
             <div className="w-full h-full min-h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minHeight={400}>
                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                   <defs>
                     {/* Dynamically generate SVG gradients for every series */}
                     {chartSeries.map((series) => (
                       <linearGradient key={`color-${series.dataKey}`} id={`color-${series.dataKey}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={series.color} stopOpacity={0.6}/>
-                        <stop offset="95%" stopColor={series.color} stopOpacity={0}/>
+                        <stop offset="5%" stopColor={series.color} stopOpacity={0.6} />
+                        <stop offset="95%" stopColor={series.color} stopOpacity={0} />
                       </linearGradient>
                     ))}
                   </defs>
-                  
+
                   <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
-                  
-                  <XAxis 
-                    dataKey="key" 
-                    stroke="#71717a" 
-                    fontSize={11} 
-                    tickLine={false} 
-                    axisLine={false} 
+
+                  <XAxis
+                    dataKey="key"
+                    stroke="#71717a"
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={false}
                     tickMargin={12}
                     // Format "YYYY-MM-DD" down to just "MMM DD" for cleaner UI
                     tickFormatter={(val) => {
                       try {
                         const d = new Date(val);
-                        return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+                        return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
                       } catch {
                         return val;
                       }
                     }}
                   />
-                  
-                  <YAxis 
-                    stroke="#71717a" 
-                    fontSize={11} 
-                    tickLine={false} 
-                    axisLine={false} 
+
+                  <YAxis
+                    stroke="#71717a"
+                    fontSize={11}
+                    tickLine={false}
+                    axisLine={false}
                     tickMargin={12}
                     tickFormatter={(val) => {
                       if (val === 0) return "0";
                       if (metric === "playDuration") return `${Math.round(val / 3600)}h`; // Rough hours for Y-axis scaling
-                      return val > 999 ? `${(val/1000).toFixed(1)}k` : val; // Compact numbers
+                      return val > 999 ? `${(val / 1000).toFixed(1)}k` : val; // Compact numbers
                     }}
                   />
-                  
-                  <Tooltip content={<CustomTooltip formatValue={formatValue} metricType={metric} />} cursor={{ stroke: '#3f3f46', strokeWidth: 1, strokeDasharray: '4 4' }} />
-                  
+
+                  <Tooltip
+                    content={<CustomTooltip formatValue={formatValue} metricType={metric} />}
+                    cursor={{ stroke: "#3f3f46", strokeWidth: 1, strokeDasharray: "4 4" }}
+                  />
+
                   <Legend content={<CustomLegend />} verticalAlign="top" height={60} />
-                  
+
                   {chartSeries.map((series) => (
-                    <Area 
+                    <Area
                       key={series.dataKey}
-                      type="monotone" 
-                      dataKey={series.dataKey} 
-                      name={series.name} 
-                      stroke={series.color} 
-                      strokeWidth={3} 
-                      fillOpacity={1} 
-                      fill={`url(#color-${series.dataKey})`} 
+                      type="monotone"
+                      dataKey={series.dataKey}
+                      name={series.name}
+                      stroke={series.color}
+                      strokeWidth={3}
+                      fillOpacity={1}
+                      fill={`url(#color-${series.dataKey})`}
                       stackId="1" // Stacks them on top of each other!
                     />
                   ))}
@@ -218,7 +228,6 @@ export default function StatisticsPage() {
               </ResponsiveContainer>
             </div>
           )}
-
         </div>
       </div>
     </>
@@ -230,8 +239,10 @@ const CustomTooltip = ({ active, payload, label, formatValue, metricType }: any)
     // Format the date label cleanly
     let displayLabel = label;
     try {
-      displayLabel = new Date(label).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-    } catch { /* ignore */ }
+      displayLabel = new Date(label).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+    } catch {
+      /* ignore */
+    }
 
     // Calculate total for the specific day
     const total = payload.reduce((sum: number, entry: any) => sum + (entry.value || 0), 0);
@@ -251,9 +262,7 @@ const CustomTooltip = ({ active, payload, label, formatValue, metricType }: any)
                   <span className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: entry.color }}></span>
                   <span className="text-gray-400">{entry.name}</span>
                 </div>
-                <span className="text-white font-mono font-bold tracking-tight">
-                  {formatValue(entry.value)}
-                </span>
+                <span className="text-white font-mono font-bold tracking-tight">{formatValue(entry.value)}</span>
               </div>
             );
           })}
@@ -268,7 +277,10 @@ const CustomLegend = ({ payload }: any) => {
   return (
     <div className="flex justify-end gap-x-6 gap-y-3 mb-6 flex-wrap pr-4">
       {payload.map((entry: any, index: number) => (
-        <div key={`item-${index}`} className="flex items-center gap-2 text-xs font-bold text-gray-300 transition-colors hover:text-white cursor-default">
+        <div
+          key={`item-${index}`}
+          className="flex items-center gap-2 text-xs font-bold text-gray-300 transition-colors hover:text-white cursor-default"
+        >
           <span className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: entry.color }}></span>
           {entry.value}
         </div>

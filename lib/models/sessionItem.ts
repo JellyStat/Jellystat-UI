@@ -21,6 +21,7 @@ export interface SessionItem {
   ipAddress?: string | null;
   lastPausedDate?: string | null;
   playState?: PlayState | null;
+  deviceIconUrl?: string | null;
 }
 
 export default SessionItem;
