@@ -198,9 +198,9 @@ export default function TasksPage() {
                       <td className="p-4 pr-6 text-right">
                         <button
                           onClick={executeTask}
-                          disabled={!taskSetting.enabled || isRunning || isQueued}
+                          disabled={isRunning || isQueued}
                           title={`Run ${taskSetting.task} now`}
-                          className="p-2 rounded-lg bg-background hover:bg-brand-emerald/20 text-gray-400 hover:text-brand-emerald border border-border hover:border-brand-emerald/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 ml-auto flex"
+                          className="p-2 rounded-lg bg-background hover:bg-brand-emerald/20 text-gray-400 hover:text-brand-emerald border border-border hover:border-brand-emerald/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 ml-auto flex cursor-pointer"
                         >
                           <Play size={16} className={isRunning || isQueued ? "opacity-50" : "opacity-100"} />
                         </button>

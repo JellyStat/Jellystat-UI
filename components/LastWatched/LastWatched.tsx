@@ -7,12 +7,14 @@ import client from "@/lib/api";
 import { ItemsWithStats } from "@/lib/models/itemsWithStats";
 import ActivityItemCards from "../ActivityItemsCards/ActivityItemCards";
 import NotFound from "../ErrorCards/NotFound";
+import { Items } from "@/lib/models/items";
+import ItemTypes from "@/lib/models/enums/ItemTypes";
 
 type Props = {
   gridify?: GridifyQueryBuilder;
 };
 
-const LastWatched: React.FC<Props> = ({ gridify }) => {
+export default function LastWatched({ gridify }: Props) {
   const { t } = useTranslation("common");
 
   const [items, setItems] = useState<ItemsWithStats[]>([]);
@@ -28,11 +30,43 @@ const LastWatched: React.FC<Props> = ({ gridify }) => {
     try {
       const query: GridifyQueryBuilder = gridify ? new GridifyQueryBuilder({ from: gridify }) : new GridifyQueryBuilder();
 
-      query.and().addCondition("latestActivity", op.NotEqual, "null").addOrderBy("LatestActivityDate", true);
+      query.addOrderBy("DateCreated", true);
       const builtQuery = query.build();
 
-      const res = await client.Api.getLibraryItems(builtQuery);
-      if (!isCancelledRef.current) setItems(res?.data ?? []);
+      const res = await client.History.activity.get(builtQuery);
+      const activityItems = res?.data ?? [];
+
+      var transformedItems: ItemsWithStats[] = activityItems.map(
+        (activity) =>
+          ({
+            id: activity.item?.id,
+            serverId: activity.serverId,
+            name: activity.item?.name,
+            libraryId: activity.item?.libraryId,
+            dateCreated: activity.dateCreated,
+            meddiaStreams: activity.item?.mediaStreams,
+            duration: activity.item?.duration,
+            type: activity.item?.type,
+            imageTag: activity.item?.imageTag,
+            imageHash: activity.item?.imageHash,
+            genres: activity.item?.genres,
+            path: activity.item?.path,
+            size: activity.item?.size,
+            bitrate: activity.item?.bitrate,
+            parentId: activity.item?.parentId,
+            parentIndex: activity.item?.parentIndex,
+            index: activity.item?.index,
+            archived: activity.item?.archived ?? false,
+            latestActivity: activity,
+            latestActivityDate: activity.dateCreated,
+            parent: {
+              id: activity.item?.type === ItemTypes.Episode ? activity.seriesId : null,
+              name: activity.seriesName,
+            } as Items,
+          }) as ItemsWithStats,
+      );
+
+      if (!isCancelledRef.current) setItems(transformedItems);
     } catch (err: any) {
       if (!isCancelledRef.current) setError(err?.message ?? String(err));
     } finally {
@@ -90,6 +124,4 @@ const LastWatched: React.FC<Props> = ({ gridify }) => {
       )}
     </div>
   );
-};
-
-export default LastWatched;
+}

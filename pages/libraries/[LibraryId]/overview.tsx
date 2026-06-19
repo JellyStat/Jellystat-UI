@@ -33,15 +33,7 @@ export default function LibraryOverView({ library }: Props) {
 
   const lastWatchedQuery = useMemo(() => {
     if (!library) return undefined;
-    return new GridifyQueryBuilder()
-      .addCondition("LibraryId", op.Equal, library.id)
-      .and()
-      .addCondition("Type", op.NotEqual, ItemTypes.Season.toString())
-      .and()
-      .addCondition("Type", op.NotEqual, ItemTypes.Series.toString())
-      .and()
-      .addCondition("LatestActivityDate", op.NotEqual, "null")
-      .addOrderBy("LatestActivityDate", true);
+    return new GridifyQueryBuilder().addCondition("LibraryId", op.Equal, library.id);
   }, [library]);
 
   if (!library) return null;

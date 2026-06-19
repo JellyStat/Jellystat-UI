@@ -11,7 +11,6 @@ import StatsCard from "@/components/StatsCard/StatsCard";
 import LastWatched from "@/components/LastWatched/LastWatched";
 import GenreStatsCard from "@/components/GenreStatCards/GenreStats";
 import { Users } from "@/lib/models/users";
-import { UserLastWatched } from "@/components/UserLastWatched/UserLastWatched";
 
 type Props = {
   user: Users | null;
@@ -43,7 +42,7 @@ export default function UserOverView({ user }: Props) {
 
       {/* Last Watched Section */}
       <div className="w-full">
-        <UserLastWatched gridify={lastWatchedQuery} />
+        <LastWatched gridify={lastWatchedQuery} />
       </div>
     </div>
   );
