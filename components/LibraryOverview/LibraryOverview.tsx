@@ -19,7 +19,10 @@ export default function LibraryOverview() {
     setError(null);
     try {
       const res = await client.Api.getLibraries();
-      if (!isCancelledRef.current) setLibraries(res?.data ?? []);
+      if (!isCancelledRef.current) {
+        setLibraries(res?.data ?? []);
+        console.log("Fetched libraries:", res?.data ?? []);
+      }
     } catch (err: any) {
       if (!isCancelledRef.current) setError(err?.message ?? t("library.failed_to_load", "Failed to load libraries"));
     } finally {

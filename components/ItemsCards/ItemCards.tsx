@@ -8,14 +8,9 @@ type Props = {
 
 export const ItemCards: React.FC<Props> = ({ items }) => {
   return (
-    <div 
-      className="flex flex-nowrap gap-4 overflow-x-auto custom-scrollbar pb-4 -mx-2 px-2 snap-x snap-mandatory items-stretch"
-    >
+    <div className="flex flex-nowrap gap-4 overflow-x-auto custom-scrollbar pb-4 -mx-2 px-2 snap-x snap-mandatory items-stretch">
       {items.map((it) => (
-        <div 
-          key={`${it.serverId || ""}-${it.id}`} 
-          className="flex-none w-[140px] sm:w-[160px] snap-start"
-        >
+        <div key={`${it.serverId || ""}-${it.id}`} className="flex-none flex items-stretch snap-start">
           <ItemCard item={it} />
         </div>
       ))}

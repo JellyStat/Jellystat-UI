@@ -14,11 +14,11 @@ type Props = {
 
 const LastWatched: React.FC<Props> = ({ gridify }) => {
   const { t } = useTranslation("common");
-  
+
   const [items, setItems] = useState<ItemsWithStats[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const isCancelledRef = useRef(false);
 
   const fetchItems = async () => {
@@ -27,10 +27,10 @@ const LastWatched: React.FC<Props> = ({ gridify }) => {
     setError(null);
     try {
       const query: GridifyQueryBuilder = gridify ? new GridifyQueryBuilder({ from: gridify }) : new GridifyQueryBuilder();
-      
+
       query.and().addCondition("latestActivity", op.NotEqual, "null").addOrderBy("LatestActivityDate", true);
       const builtQuery = query.build();
-      
+
       const res = await client.Api.getLibraryItems(builtQuery);
       if (!isCancelledRef.current) setItems(res?.data ?? []);
     } catch (err: any) {
@@ -50,13 +50,10 @@ const LastWatched: React.FC<Props> = ({ gridify }) => {
 
   return (
     <div className="flex flex-col items-start w-full animate-in fade-in duration-500">
-      
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <History className="text-brand-purple" size={28} />
-        <h2 className="text-2xl font-black text-white tracking-tight">
-          {t("last_watched.title", "Last Watched")}
-        </h2>
+        <h2 className="text-2xl font-black text-white tracking-tight">{t("last_watched.title", "Last Watched")}</h2>
       </div>
 
       {/* Loading State */}
@@ -77,10 +74,10 @@ const LastWatched: React.FC<Props> = ({ gridify }) => {
       {/* Empty State */}
       {!loading && !error && items.length === 0 && (
         <div className="w-full">
-          <NotFound 
-            title={t("last_watched.no_activity_title", "No Activity Found")} 
-            message={t("last_watched.no_activity_message", "No items in your watch history.")} 
-            enableGoBack={false} 
+          <NotFound
+            title={t("last_watched.no_activity_title", "No Activity Found")}
+            message={t("last_watched.no_activity_message", "No items in your watch history.")}
+            enableGoBack={false}
           />
         </div>
       )}
@@ -91,7 +88,6 @@ const LastWatched: React.FC<Props> = ({ gridify }) => {
           <ActivityItemCards items={items} />
         </div>
       )}
-      
     </div>
   );
 };

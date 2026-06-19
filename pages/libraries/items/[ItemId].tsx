@@ -130,15 +130,11 @@ export default function ItemPage() {
                   <ItemImage
                     imageUrl={imageUrl}
                     imageHash={item.imageHash}
+                    archived={item.archived}
                     width={200}
                     height={300}
                     borderRadius={[16, 16, 16, 16]}
                   />
-                  {item.archived && (
-                    <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md p-1.5 rounded-lg border border-white/10 shadow-lg">
-                      <Lock size={16} className="text-brand-amber" />
-                    </div>
-                  )}
                 </div>
 
                 {/* Details */}
@@ -201,13 +197,13 @@ export default function ItemPage() {
                     )}
 
                     <div className="flex items-center gap-6 mt-1">
-                      {item.duration && (
+                      {item.duration != undefined && (
                         <p className="text-xs font-mono text-gray-400">
                           <span className="font-bold mr-2 uppercase tracking-wider">{t("item.runtime", "Runtime:")}</span>
                           <span className="text-gray-200">{item.duration.ticksToDurationString?.() || "-"}</span>
                         </p>
                       )}
-                      {item.size && (
+                      {item.size != undefined && (
                         <p className="text-xs font-mono text-gray-400">
                           <span className="font-bold mr-2 uppercase tracking-wider">{t("item.size", "Size:")}</span>
                           <span className="text-gray-200">{item.size.formatBytes?.() || "-"}</span>
