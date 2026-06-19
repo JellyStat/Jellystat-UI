@@ -202,7 +202,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
         {loading && (
           <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
             <Loader2 size={40} className="text-brand-cyan animate-spin mb-3" />
-            <span className="text-sm font-bold text-gray-300">{t("activity.syncing", "Syncing activity...")}</span>
+            <span className="text-sm font-bold text-gray-300">{t("common.loading", "Loading")}</span>
           </div>
         )}
 
