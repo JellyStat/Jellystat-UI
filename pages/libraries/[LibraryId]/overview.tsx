@@ -28,6 +28,8 @@ export default function LibraryOverView({ library }: Props) {
       .addCondition("Type", op.NotEqual, ItemTypes.Season.toString())
       .and()
       .addCondition("Type", op.NotEqual, ItemTypes.Series.toString())
+      .and()
+      .addCondition("Type", op.NotEqual, ItemTypes.Unknown.toString())
       .build();
   }, [library]);
 

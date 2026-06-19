@@ -110,8 +110,9 @@ export default function LastWatched({ gridify }: Props) {
       {!loading && !error && items.length === 0 && (
         <div className="w-full">
           <NoData
-            title={t("last_watched.no_activity_title", "No Activity Found")}
-            message={t("last_watched.no_activity_message", "No items in your watch history.")}
+            title={t("common.no_activity_title", "No Activity Found")}
+            message={t("common.no_activity_message", "No items in your watch history")}
+            Icon={History}
           />
         </div>
       )}

@@ -71,8 +71,9 @@ const RecentlyAdded: React.FC<Props> = ({ gridify, cardWidth }) => {
         {!loading && !error && items.length === 0 && (
           <div className="w-full">
             <NoData
-              title={t("last_watched.no_activity_title", "No Activity Found")}
-              message={t("last_watched.no_activity_message", "No items in your watch history.")}
+              title={t("common.no_items_title", "No Items Found")}
+              message={t("common.no_items_message", "No items in your library")}
+              Icon={Sparkles}
             />
           </div>
         )}

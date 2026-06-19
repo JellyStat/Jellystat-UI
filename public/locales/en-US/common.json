@@ -39,12 +39,17 @@
     "logout": "Logout"
   },
   "common": {
-    "loading": "Loading"
+    "loading": "Loading",
+    "no_activity_message": "No items in your watch history",
+    "no_activity_title": "No Activity Found"
   },
   "error_cards": {
     "go_back": "Go Back",
     "not_found_message": "The requested resource could not be found.",
-    "not_found_title": "Not Found"
+    "not_found_title": "Not Found",
+    "no_data_message": "No data available",
+    "no_data_title": "No Data Found",
+    "no_genre_data_message": "No genre statistics found for this item"
   },
   "filter": {
     "clear": "Clear",
@@ -68,8 +73,6 @@
     "tab_overview": "Overview"
   },
   "last_watched": {
-    "no_activity_message": "No items in your watch history",
-    "no_activity_title": "No Activity Found",
     "title": "Last Watched"
   },
   "libraries": {

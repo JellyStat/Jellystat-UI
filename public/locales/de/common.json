@@ -39,12 +39,17 @@
     "logout": "Logout"
   },
   "common": {
-    "loading": "Wird geladen"
+    "loading": "Wird geladen",
+    "no_activity_message": "Keine Elemente in deinem Verlauf",
+    "no_activity_title": "Keine Aktivität gefunden"
   },
   "error_cards": {
     "go_back": "Zurück",
     "not_found_message": "Die angeforderte Ressource konnte nicht gefunden werden.",
-    "not_found_title": "Nicht gefunden"
+    "not_found_title": "Nicht gefunden",
+    "no_data_message": "Keine Daten verfügbar",
+    "no_data_title": "Keine Daten gefunden",
+    "no_genre_data_message": "Keine Genre-Statistiken für dieses Element gefunden"
   },
   "filter": {
     "clear": "Leeren",
@@ -68,8 +73,6 @@
     "tab_overview": "Übersicht"
   },
   "last_watched": {
-    "no_activity_message": "Keine Elemente in deinem Verlauf",
-    "no_activity_title": "Keine Aktivität gefunden",
     "title": "Zuletzt angesehen"
   },
   "libraries": {
