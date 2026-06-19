@@ -158,7 +158,7 @@ export default function StatsCard({ type, id }: Props) {
                     key={p.key} 
                     className="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-hover cursor-pointer transition-colors group"
                   >
-                    <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                    <div onClick={() => toggleDays(p.days)} className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
                       isChecked ? "bg-brand-purple border-brand-purple" : "bg-background border-border group-hover:border-gray-500"
                     }`}>
                       {isChecked && <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}
