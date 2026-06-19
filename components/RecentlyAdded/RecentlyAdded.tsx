@@ -6,6 +6,7 @@ import { Sparkles, Loader2, AlertCircle } from "lucide-react";
 import client from "@/lib/api";
 import type ItemsWithParentData from "@/lib/models/itemsWithParentData";
 import ItemCards from "../ItemsCards/ItemCards";
+import NoData from "../ErrorCards/NoData";
 
 type Props = {
   gridify?: IGridifyQuery;
@@ -68,8 +69,11 @@ const RecentlyAdded: React.FC<Props> = ({ gridify, cardWidth }) => {
         {!loading && !error && items.length > 0 && <ItemCards items={items} />}
 
         {!loading && !error && items.length === 0 && (
-          <div className="w-full h-48 bg-surface/30 border border-border border-dashed rounded-2xl flex flex-col items-center justify-center text-gray-500 shadow-inner">
-            <span className="font-medium">{t("recently_added.no_recent_items", "No recent items found")}</span>
+          <div className="w-full">
+            <NoData
+              title={t("last_watched.no_activity_title", "No Activity Found")}
+              message={t("last_watched.no_activity_message", "No items in your watch history.")}
+            />
           </div>
         )}
       </div>

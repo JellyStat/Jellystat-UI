@@ -9,6 +9,7 @@ import ActivityItemCards from "../ActivityItemsCards/ActivityItemCards";
 import NotFound from "../ErrorCards/NotFound";
 import { Items } from "@/lib/models/items";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
+import NoData from "../ErrorCards/NoData";
 
 type Props = {
   gridify?: GridifyQueryBuilder;
@@ -108,10 +109,9 @@ export default function LastWatched({ gridify }: Props) {
       {/* Empty State */}
       {!loading && !error && items.length === 0 && (
         <div className="w-full">
-          <NotFound
+          <NoData
             title={t("last_watched.no_activity_title", "No Activity Found")}
             message={t("last_watched.no_activity_message", "No items in your watch history.")}
-            enableGoBack={false}
           />
         </div>
       )}

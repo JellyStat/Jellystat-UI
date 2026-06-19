@@ -7,6 +7,7 @@ import client from "@/lib/api";
 import { GenreStats } from "@/lib/models/genreStats";
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart, Tooltip } from "recharts";
 import GenreStatCard from "./GenreStatCard";
+import NoData from "../ErrorCards/NoData";
 type Props = {
   gridify?: IGridifyQuery;
 };
@@ -52,10 +53,11 @@ export default function GenreStatsCard({ gridify }: Props) {
 
       {/* Main Grid */}
       {!loading && !hasData ? (
-        <div className="bg-surface/50 border-2 border-border rounded-3xl p-16 flex flex-col items-center justify-center text-center">
-          <Activity size={48} className="text-gray-500 opacity-30 mb-4" />
-          <h3 className="text-xl font-bold text-gray-300">{t("stat_cards.no_data", "No Data Found")}</h3>
-          <p className="text-sm text-gray-500">{t("stat_cards.no_data_desc", "No genre statistics found for this item")}</p>
+        <div className="w-full">
+          <NoData
+            title={t("stat_cards.no_data", "No Data Found")}
+            message={t("stat_cards.no_data_desc", "No genre statistics found for this item")}
+          />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in duration-500 space-between">
