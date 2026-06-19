@@ -1,15 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "next-i18next/pages";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
-import { 
-  Search, 
-  ArrowDownWideNarrow, 
-  ArrowUpNarrowWide, 
-  Loader2, 
-  AlertCircle, 
-  Film, 
-  ChevronDown 
-} from "lucide-react";
+import { Search, ArrowDownWideNarrow, ArrowUpNarrowWide, Loader2, AlertCircle, Film, ChevronDown } from "lucide-react";
 
 import client from "@/lib/api";
 import type { ItemsWithStats } from "@/lib/models/itemsWithStats";
@@ -22,12 +14,7 @@ type Props = {
   showSort?: boolean;
 };
 
-const MediaGrid: React.FC<Props> = ({ 
-  gridify, 
-  defaultOrderBy, 
-  defaultOrderDesc, 
-  showSort = true 
-}) => {
+const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc, showSort = true }) => {
   const { t } = useTranslation("common");
 
   // --- STATE ---
@@ -58,17 +45,17 @@ const MediaGrid: React.FC<Props> = ({
 
         const query: GridifyQueryBuilder = gridify ? new GridifyQueryBuilder({ from: gridify }) : new GridifyQueryBuilder();
         query.setPage(pageToLoad);
-        
+
         if (filter && filter.trim() !== "") {
           query.and().addCondition("Name", op.Contains, filter.trim(), false);
         }
-        
+
         if (sortField) query.addOrderBy(sortField, sortDesc);
-        
+
         if (archivedFilter !== null) {
           query.and().addCondition("Archived", op.Equal, archivedFilter.toString());
         }
-        
+
         const builtQuery = query.build();
 
         const res = await client.Api.getLibraryItems(builtQuery);
@@ -85,7 +72,7 @@ const MediaGrid: React.FC<Props> = ({
         setLoading(false);
       }
     },
-    [filter, gridify, sortDesc, sortField, archivedFilter]
+    [filter, gridify, sortDesc, sortField, archivedFilter],
   );
 
   // Initial load & when filter or sort changes
@@ -125,17 +112,14 @@ const MediaGrid: React.FC<Props> = ({
 
   return (
     <div className="w-full animate-in fade-in duration-500">
-      
       {/* Header & Controls */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
-        
         <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3 shrink-0">
           <Film className="text-brand-cyan" size={28} />
           {t("media_grid.title", "Media")}
         </h2>
 
         <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
-          
           {/* Archived Filter */}
           <div className="relative group min-w-[140px]">
             <select
@@ -197,13 +181,11 @@ const MediaGrid: React.FC<Props> = ({
               className="w-full bg-background/50 border border-border hover:border-gray-500 rounded-xl py-2 pl-9 pr-4 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:border-brand-cyan focus:ring-brand-cyan transition-all shadow-inner"
             />
           </div>
-
         </div>
       </div>
 
       {/* Grid Container */}
       <div className="bg-surface/30 border border-border rounded-2xl p-4 md:p-6 shadow-xl shadow-black/20 min-h-[400px] flex flex-col relative">
-        
         {/* Error Overlay */}
         {error && (
           <div className="p-4 mb-4 rounded-xl bg-brand-rose/10 border border-brand-rose/20 flex items-start gap-3">
@@ -213,10 +195,10 @@ const MediaGrid: React.FC<Props> = ({
         )}
 
         {/* Media Items Grid */}
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
+        <div className="grid auto-rows-fr grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
           {items.map((it: ItemsWithStats) => (
-            <div key={`${it.serverId || ""}-${it.id}`} className="w-full">
-              <ItemCard item={it} />
+            <div key={`${it.serverId || ""}-${it.id}`} className="w-full h-full">
+              <ItemCard item={it} width="100%" />
             </div>
           ))}
         </div>
@@ -224,7 +206,7 @@ const MediaGrid: React.FC<Props> = ({
         {/* Sentinel & Loading Status */}
         <div ref={sentinelRef} className="w-full h-20 flex items-center justify-center mt-4">
           {loading && <Loader2 size={32} className="text-brand-cyan animate-spin" />}
-          
+
           {!loading && items.length === 0 && !error && (
             <div className="flex flex-col items-center justify-center text-gray-500 opacity-60 absolute inset-0">
               <Search size={48} className="mb-4" />
@@ -232,7 +214,6 @@ const MediaGrid: React.FC<Props> = ({
             </div>
           )}
         </div>
-
       </div>
     </div>
   );

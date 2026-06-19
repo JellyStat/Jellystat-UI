@@ -36,7 +36,7 @@ export const ItemCard: React.FC<Props> = ({ item, width = 160, height = 240 }) =
 
   return (
     <div
-      className="bg-surface/60 backdrop-blur-md border border-border rounded-2xl overflow-hidden flex flex-col group transition-all duration-300 hover:border-brand-purple/50 shadow-lg hover:shadow-brand-purple/10"
+      className="bg-surface/60 backdrop-blur-md border border-border rounded-2xl overflow-hidden flex flex-col h-full group transition-all duration-300 hover:border-brand-purple/50 shadow-lg hover:shadow-brand-purple/10"
       style={{ width }}
     >
       {/* Image Container */}
