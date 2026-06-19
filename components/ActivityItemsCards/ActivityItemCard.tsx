@@ -62,7 +62,12 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 160, height = 
 
           <span className="flex items-center gap-1 text-[12px] font-bold text-gray-400 bg-background/80 rounded border border-border/50 truncate max-w-[80px] shadow-inner">
             <User size={12} className="shrink-0" />
-            <span className="truncate">{item.latestActivity?.userName ?? t("activity_item_card.na", "N/A")}</span>
+            <span
+              className="truncate hover:text-brand-purple transition-colors cursor-pointer"
+              onClick={() => router.push(`/users/${encodeURIComponent(item.latestActivity?.userId ?? "")}`)}
+            >
+              {item.latestActivity?.userName ?? t("activity_item_card.na", "N/A")}
+            </span>
           </span>
         </div>
 

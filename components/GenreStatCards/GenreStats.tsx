@@ -24,9 +24,7 @@ export default function GenreStatsCard({ gridify }: Props) {
     setLoading(true);
 
     // Reusable Queries
-    const genericQuery =
-      gridify ??
-      new GridifyQueryBuilder().addCondition("playCount", op.GreaterThan, 0).addOrderBy("playCount", true).setPageSize(5).build();
+    const genericQuery = gridify ?? new GridifyQueryBuilder().addCondition("playCount", op.GreaterThan, 0).build();
 
     try {
       const res = await client.Stats.getGenreStats(genericQuery);
@@ -43,17 +41,6 @@ export default function GenreStatsCard({ gridify }: Props) {
   }, [fetchAllStats]);
 
   const hasData = data.length > 0;
-
-  //     <div className="w-full">
-  //     <div className="flex items-center gap-3 mb-6">
-  //       <PieChart className="text-brand-emerald" size={28} />
-  //       <h2 className="text-2xl font-black text-white tracking-tight">{t("library.genres", "Genres")}</h2>
-  //     </div>
-
-  //     <div className="bg-surface/30 border-2 border-dashed border-border rounded-3xl h-[340px] flex flex-col items-center justify-center text-center shadow-inner">
-  //       <GenreStatsCard gridify={gridify} />
-  //     </div>
-  //   </div>
 
   return (
     <div className="flex flex-col w-full animate-in fade-in duration-500">

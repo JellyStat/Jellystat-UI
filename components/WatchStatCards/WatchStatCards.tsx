@@ -112,7 +112,7 @@ export default function WatchStatCards() {
           navLink: `/libraries/${m.id}`,
         })),
         clients: extract(results[5], (m) => ({ id: m.clientName, name: m.clientName, value: m.playCount ?? 0 })),
-        users: extract(results[6], (m) => ({ id: m.id, name: m.username, value: m.playCount ?? 0 })),
+        users: extract(results[6], (m) => ({ id: m.id, name: m.username, value: m.playCount ?? 0, navLink: `/users/${m.id}` })),
         streams: extract(results[7], (m) => ({ id: m.name, name: m.name, value: m.playCount ?? 0 })),
       });
     } catch (err) {

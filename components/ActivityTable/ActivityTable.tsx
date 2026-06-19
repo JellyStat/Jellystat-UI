@@ -2,10 +2,19 @@ import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "next-i18next/pages";
 import { GridifyQueryBuilder } from "gridify-client";
-import { 
-  ActivityIcon, ChevronDown, ChevronRight, ArrowUpDown, 
-  ArrowUp, ArrowDown, Search, Loader2, Cpu, CheckCircle2, AlertCircle,
-  MonitorPlay
+import {
+  ActivityIcon,
+  ChevronDown,
+  ChevronRight,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  Search,
+  Loader2,
+  Cpu,
+  CheckCircle2,
+  AlertCircle,
+  MonitorPlay,
 } from "lucide-react";
 
 import Activity from "@/lib/models/activity";
@@ -30,7 +39,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
   const [activityData, setActivityData] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Pagination & Sorting
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
@@ -56,13 +65,13 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
         const query: GridifyQueryBuilder = gridify ? new GridifyQueryBuilder({ from: gridify }) : new GridifyQueryBuilder();
         query.setPage(pageToLoad);
         query.setPageSize(recordsPerPage);
-        
+
         applyFiltersToQuery(query);
         query.addOrderBy(sortStatus.columnAccessor, sortStatus.direction === "desc");
-        
+
         const builtQuery = query.build();
         const res = await client.History.activity.get(builtQuery, { GroupResults: GroupResults });
-        
+
         setActivityData(res?.data ?? []);
         setPageCount(res?.count ?? 0);
       } catch (err: any) {
@@ -73,7 +82,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [gridify, sortStatus, filter, GroupResults]
+    [gridify, sortStatus, filter, GroupResults],
   );
 
   useEffect(() => {
@@ -98,9 +107,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
   };
 
   const toggleRow = (id: string) => {
-    setExpandedActivityIds((prev) => 
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
+    setExpandedActivityIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
 
   // --- RENDER HELPERS ---
@@ -113,16 +120,17 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
 
   const formatTranscode = (activity: Activity) => {
     const transcodingInfo = activity.transcodingInfo as BaseTranscodingInfo;
-    if (!transcodingInfo) return (
-      <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-cyan bg-brand-cyan/10 border border-brand-cyan/20 px-2 py-0.5 rounded shadow-inner">
-        <CheckCircle2 size={10} className="mr-1" /> {t("activity.direct", "Direct")}
-      </span>
-    );
-    
+    if (!transcodingInfo)
+      return (
+        <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-cyan bg-brand-cyan/10 border border-brand-cyan/20 px-2 py-0.5 rounded shadow-inner">
+          <CheckCircle2 size={10} className="mr-1" /> {t("activity.direct", "Direct")}
+        </span>
+      );
+
     let display = t("activity.transcoding", "Transcoding");
     if (transcodingInfo.isVideoDirect === false) display += " (V)";
     if (transcodingInfo.isAudioDirect === false) display += " (A)";
-    
+
     return (
       <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-amber bg-brand-amber/10 border border-brand-amber/20 px-2 py-0.5 rounded shadow-inner">
         <Cpu size={10} className="mr-1" /> {display}
@@ -136,14 +144,14 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
     const fullTitle = formatTitle(activity);
 
     return (
-      <tr 
-        key={activity.id} 
-        className={`border-b border-border transition-colors hover:bg-surface-hover ${isSubRow ? 'bg-background/40' : 'bg-transparent'}`}
+      <tr
+        key={activity.id}
+        className={`border-b border-border transition-colors hover:bg-surface-hover ${isSubRow ? "bg-background/40" : "bg-transparent"}`}
       >
         {!isSubRow && (
           <td className="p-3 w-12 text-center">
             {hasGroup ? (
-              <button 
+              <button
                 onClick={() => toggleRow(activity.id ?? "")}
                 className="p-1 rounded hover:bg-surface border border-transparent hover:border-border text-gray-400 hover:text-white transition-all cursor-pointer"
               >
@@ -153,11 +161,19 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
           </td>
         )}
 
-        <td className="p-3 text-sm font-bold text-gray-200">{activity.userName}</td>
-        <td className="p-3 text-xs font-mono text-gray-500">{activity.ipAddress}</td>
-        
         <td className="p-3 whitespace-normal min-w-[200px] max-w-[320px]">
-          <Link 
+          <Link
+            href={`/users/${activity.userId}`}
+            className="text-sm font-bold text-gray-200 hover:text-brand-cyan transition-colors line-clamp-2 leading-tight"
+            title={activity.userName}
+          >
+            {activity.userName}
+          </Link>
+        </td>
+        <td className="p-3 text-xs font-mono text-gray-500">{activity.ipAddress}</td>
+
+        <td className="p-3 whitespace-normal min-w-[200px] max-w-[320px]">
+          <Link
             href={`/libraries/items/${activity.itemId}`}
             className="text-sm font-bold text-gray-200 hover:text-brand-cyan transition-colors line-clamp-2 leading-tight"
             title={fullTitle}
@@ -165,19 +181,17 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
             {fullTitle}
           </Link>
         </td>
-        
+
         <td className="p-3 text-xs text-gray-400">{activity.client}</td>
         <td className="p-3">{formatTranscode(activity)}</td>
         <td className="p-3 text-xs text-gray-400">{activity.device}</td>
-        
+
         <td className="p-3 text-xs text-gray-400 font-mono">
           {activity.dateCreated ? new Date(activity.dateCreated).toLocaleString() : "-"}
         </td>
-        
-        <td className="p-3 text-center text-sm font-bold text-gray-200">
-          {activity.playCount || 0}
-        </td>
-        
+
+        <td className="p-3 text-center text-sm font-bold text-gray-200">{activity.playCount || 0}</td>
+
         <td className="p-3 text-right text-xs font-mono text-gray-400">
           {activity.playDuration?.secondsToDurationString?.() || "-"}
         </td>
@@ -187,7 +201,6 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-black text-gray-200 tracking-tight flex items-center gap-3">
@@ -198,7 +211,6 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
 
       {/* Main Table Container */}
       <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col relative min-h-[400px]">
-        
         {loading && (
           <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
             <Loader2 size={40} className="text-brand-cyan animate-spin mb-3" />
@@ -219,47 +231,109 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
             <thead>
               <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
                 <th className="p-3 w-12"></th>
-                <SortableHeader label={t("activity.user", "User")} accessor="userName" currentSort={sortStatus} onSort={handleSort} />
-                <SortableHeader label={t("activity.ip", "IP Address")} accessor="ipAddress" currentSort={sortStatus} onSort={handleSort} />
-                <SortableHeader label={t("activity.title_col", "Title")} accessor="name" currentSort={sortStatus} onSort={handleSort} />
-                <SortableHeader label={t("activity.client", "Client")} accessor="client" currentSort={sortStatus} onSort={handleSort} />
+                <SortableHeader
+                  label={t("activity.user", "User")}
+                  accessor="userName"
+                  currentSort={sortStatus}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  label={t("activity.ip", "IP Address")}
+                  accessor="ipAddress"
+                  currentSort={sortStatus}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  label={t("activity.title_col", "Title")}
+                  accessor="name"
+                  currentSort={sortStatus}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  label={t("activity.client", "Client")}
+                  accessor="client"
+                  currentSort={sortStatus}
+                  onSort={handleSort}
+                />
                 <th className="p-3 cursor-default">{t("activity.transcode", "Transcode")}</th>
-                <SortableHeader label={t("activity.device", "Device")} accessor="device" currentSort={sortStatus} onSort={handleSort} />
-                <SortableHeader label={t("activity.date_created", "Date Created")} accessor="dateCreated" currentSort={sortStatus} onSort={handleSort} />
-                <SortableHeader label={t("activity.plays", "Plays")} accessor="playCount" currentSort={sortStatus} onSort={handleSort} align="center" />
-                <SortableHeader label={t("activity.total_playback", "Total Playback")} accessor="playDuration" currentSort={sortStatus} onSort={handleSort} align="right" />
+                <SortableHeader
+                  label={t("activity.device", "Device")}
+                  accessor="device"
+                  currentSort={sortStatus}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  label={t("activity.date_created", "Date Created")}
+                  accessor="dateCreated"
+                  currentSort={sortStatus}
+                  onSort={handleSort}
+                />
+                <SortableHeader
+                  label={t("activity.plays", "Plays")}
+                  accessor="playCount"
+                  currentSort={sortStatus}
+                  onSort={handleSort}
+                  align="center"
+                />
+                <SortableHeader
+                  label={t("activity.total_playback", "Total Playback")}
+                  accessor="playDuration"
+                  currentSort={sortStatus}
+                  onSort={handleSort}
+                  align="right"
+                />
               </tr>
-              
+
               {/* Filter Row */}
               <tr className="bg-background/40 border-b border-border shadow-inner">
                 <th className="p-2 border-r border-border/50"></th>
-                
+
                 <th className="p-2 border-r border-border/50 font-normal relative group">
-                  <FilterInput placeholder={t("activity.filter", "Filter...")} val={getFilterValueOrDefault("userName", "")} onFilter={(v) => v ? addOrReplaceFilter({ key: "userName", value: v }) : removeFilter("userName")} />
+                  <FilterInput
+                    placeholder={t("activity.filter", "Filter...")}
+                    val={getFilterValueOrDefault("userName", "")}
+                    onFilter={(v) => (v ? addOrReplaceFilter({ key: "userName", value: v }) : removeFilter("userName"))}
+                  />
                 </th>
-                
+
                 <th className="p-2 border-r border-border/50 font-normal relative group">
-                  <FilterInput placeholder={t("activity.filter", "Filter...")} val={getFilterValueOrDefault("ipAddress", "")} onFilter={(v) => v ? addOrReplaceFilter({ key: "ipAddress", value: v }) : removeFilter("ipAddress")} />
+                  <FilterInput
+                    placeholder={t("activity.filter", "Filter...")}
+                    val={getFilterValueOrDefault("ipAddress", "")}
+                    onFilter={(v) => (v ? addOrReplaceFilter({ key: "ipAddress", value: v }) : removeFilter("ipAddress"))}
+                  />
                 </th>
-                
+
                 <th className="p-2 border-r border-border/50 font-normal relative group">
-                  <FilterInput placeholder={t("activity.filter", "Filter...")} val={getFilterValueOrDefault("name", "")} onFilter={(v) => v ? addOrReplaceFilter({ key: "name", value: v }) : removeFilter("name")} />
+                  <FilterInput
+                    placeholder={t("activity.filter", "Filter...")}
+                    val={getFilterValueOrDefault("name", "")}
+                    onFilter={(v) => (v ? addOrReplaceFilter({ key: "name", value: v }) : removeFilter("name"))}
+                  />
                 </th>
-                
+
                 <th className="p-2 border-r border-border/50 font-normal relative group">
-                  <FilterInput placeholder={t("activity.filter", "Filter...")} val={getFilterValueOrDefault("client", "")} onFilter={(v) => v ? addOrReplaceFilter({ key: "client", value: v }) : removeFilter("client")} />
+                  <FilterInput
+                    placeholder={t("activity.filter", "Filter...")}
+                    val={getFilterValueOrDefault("client", "")}
+                    onFilter={(v) => (v ? addOrReplaceFilter({ key: "client", value: v }) : removeFilter("client"))}
+                  />
                 </th>
-                
+
                 <th className="p-2 border-r border-border/50"></th>
-                
+
                 <th className="p-2 border-r border-border/50 font-normal relative group">
-                  <FilterInput placeholder={t("activity.filter", "Filter...")} val={getFilterValueOrDefault("device", "")} onFilter={(v) => v ? addOrReplaceFilter({ key: "device", value: v }) : removeFilter("device")} />
+                  <FilterInput
+                    placeholder={t("activity.filter", "Filter...")}
+                    val={getFilterValueOrDefault("device", "")}
+                    onFilter={(v) => (v ? addOrReplaceFilter({ key: "device", value: v }) : removeFilter("device"))}
+                  />
                 </th>
-                
+
                 <th colSpan={3} className="p-2"></th>
               </tr>
             </thead>
-            
+
             <tbody>
               {!loading && activityData.length === 0 ? (
                 <tr>
@@ -277,9 +351,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
                         <td colSpan={10} className="p-0">
                           <div className="pl-12 py-3 pr-3 bg-black/20 border-l-4 border-brand-purple">
                             <table className="w-full text-left border-collapse whitespace-nowrap">
-                              <tbody>
-                                {activity.groupedResults.map((subAct) => renderRow(subAct, true))}
-                              </tbody>
+                              <tbody>{activity.groupedResults.map((subAct) => renderRow(subAct, true))}</tbody>
                             </table>
                           </div>
                         </td>
@@ -302,15 +374,15 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
               {t("activity.page_of", "Page {{page}} of {{totalPages}}", { page: page, totalPages: totalPages })}
             </span>
             <div className="flex gap-2">
-              <button 
-                onClick={() => setPage(p => Math.max(1, p - 1))}
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
               >
                 {t("activity.prev", "Prev")}
               </button>
-              <button 
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
               >
@@ -319,7 +391,6 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
@@ -329,11 +400,13 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
 
 function SortableHeader({ label, accessor, currentSort, onSort, align = "left" }: any) {
   return (
-    <th 
+    <th
       className={`p-3 group cursor-pointer hover:bg-surface-hover transition-colors text-${align}`}
       onClick={() => onSort(accessor)}
     >
-      <div className={`flex items-center gap-2 ${align === "right" ? "justify-end" : align === "center" ? "justify-center" : ""}`}>
+      <div
+        className={`flex items-center gap-2 ${align === "right" ? "justify-end" : align === "center" ? "justify-center" : ""}`}
+      >
         {label}
         {currentSort.columnAccessor !== accessor ? (
           <ArrowUpDown size={14} className="opacity-30 group-hover:opacity-100 transition-opacity" />
@@ -347,16 +420,16 @@ function SortableHeader({ label, accessor, currentSort, onSort, align = "left" }
   );
 }
 
-function FilterInput({ val, onFilter, placeholder }: { val: any, onFilter: (v: string) => void, placeholder: string }) {
+function FilterInput({ val, onFilter, placeholder }: { val: any; onFilter: (v: string) => void; placeholder: string }) {
   return (
     <>
       <div className="absolute inset-y-0 left-2 flex items-center pointer-events-none text-gray-600 group-focus-within:text-brand-cyan">
         <Search size={12} />
       </div>
-      <input 
+      <input
         type="text"
         placeholder={placeholder}
-        value={val as string || ""}
+        value={(val as string) || ""}
         onChange={(e) => onFilter(e.target.value)}
         className="w-full bg-background/50 border border-transparent hover:border-border focus:border-brand-cyan rounded py-1 pl-7 pr-2 text-xs text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-cyan transition-all"
       />

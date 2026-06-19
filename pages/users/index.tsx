@@ -263,7 +263,14 @@ export default function UsersPage() {
                         </div>
                       </td>
 
-                      <td className="p-3 text-sm font-bold text-gray-200">{user.username}</td>
+                      <td className="p-3 text-sm font-bold text-gray-200">
+                        <Link
+                          href={`/users/${user.id}`}
+                          className="text-sm font-bold text-gray-100 hover:text-brand-cyan transition-colors"
+                        >
+                          {user.username}
+                        </Link>
+                      </td>
 
                       {/* Tracked Toggle Switch */}
                       <td className="p-3">
