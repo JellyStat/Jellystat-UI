@@ -59,8 +59,8 @@ const configManager = {
     return fetchAndStore();
   },
 
-  async getTaskSettings(): Promise<TaskSettings[]> {
-    const cfg = await this.getActiveConfig();
+  async getTaskSettings(refresh = false): Promise<TaskSettings[]> {
+    const cfg = await this.getActiveConfig(refresh);
     return cfg?.taskSettings ?? [];
   },
 

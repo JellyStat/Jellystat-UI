@@ -20,7 +20,7 @@ export default function TasksPage() {
   const [tasks, setTasks] = useState<TaskSettings[]>([]);
   const [taskStatus, setTaskStatus] = useState<TaskQueueUpdate>({ enqueuedTasks: [], currentTask: null });
   const [loading, setLoading] = useState(true);
-  
+
   const eventTag = WebSocketMessageTypes.TaskUpdate.toString();
 
   // --- WEBSOCKET SUBSCRIPTION ---
@@ -41,7 +41,7 @@ export default function TasksPage() {
     const fetchTasks = async () => {
       try {
         setLoading(true);
-        const taskSettings = await configManager.getTaskSettings();
+        const taskSettings = await configManager.getTaskSettings(true);
         if (isMounted) setTasks(taskSettings || []);
       } catch (error) {
         console.error("Failed to fetch task settings:", error);
@@ -51,51 +51,80 @@ export default function TasksPage() {
       }
     };
     fetchTasks();
-    
-    return () => { isMounted = false; };
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
+
+  async function toggleTaskEnabled(task: TaskSettings) {
+    const updatedTask = { ...task, enabled: !task.enabled };
+    setLoading(true);
+    await client.Tasks.updateTask(updatedTask)
+      .then((success) => {
+        if (success) {
+          setTasks((prevTasks) => prevTasks.map((t) => (t.task === updatedTask.task ? updatedTask : t)));
+          toast.success(`Task "${updatedTask.task}" ${updatedTask.enabled ? "enabled" : "disabled"}`);
+        } else {
+          toast.error(`Failed to update task "${updatedTask.task}"`);
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to update task:", error);
+        toast.error(`Failed to update task "${updatedTask.task}"`);
+      });
+    setLoading(false);
+  }
 
   // --- UI HELPERS ---
   const getTaskBadge = (taskName: string) => {
     switch (taskName) {
       case "Backup":
-        return <span className="bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">Backup</span>;
+        return (
+          <span className="bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">
+            Backup
+          </span>
+        );
       case "FullSync":
-        return <span className="bg-brand-emerald/10 text-brand-emerald border border-brand-emerald/20 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">Full Sync</span>;
+        return (
+          <span className="bg-brand-emerald/10 text-brand-emerald border border-brand-emerald/20 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">
+            Full Sync
+          </span>
+        );
       case "PartialSync":
-        return <span className="bg-brand-amber/10 text-brand-amber border border-brand-amber/20 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">Partial Sync</span>;
+        return (
+          <span className="bg-brand-amber/10 text-brand-amber border border-brand-amber/20 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">
+            Partial Sync
+          </span>
+        );
       default:
-        return <span className="bg-surface text-gray-300 border border-border px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">{taskName}</span>;
+        return (
+          <span className="bg-surface text-gray-300 border border-border px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">
+            {taskName}
+          </span>
+        );
     }
   };
 
   return (
-      <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 p-6">
-
-
+    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 p-6">
       {/* Header Container */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6">
-        
         <div className="flex items-center gap-4">
           <div className="p-3.5 bg-brand-purple/10 rounded-2xl border border-brand-purple/20 shadow-inner shrink-0">
             <ServerCog className="text-brand-purple" size={28} />
           </div>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-black text-white tracking-tight">
-                Background Tasks
-              </h1>
+              <h1 className="text-3xl font-black text-white tracking-tight">Background Tasks</h1>
             </div>
-            <p className="text-sm text-gray-400 mt-1 font-medium">
-             Manage and execute scheduled system operations
-            </p>
+            <p className="text-sm text-gray-400 mt-1 font-medium">Manage and execute scheduled system operations</p>
           </div>
         </div>
       </div>
 
       {/* Task Table Card */}
       <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col">
-        
         <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -108,7 +137,6 @@ export default function TasksPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              
               {loading && tasks.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="p-8 text-center">
@@ -126,9 +154,10 @@ export default function TasksPage() {
                 tasks.map((taskSetting) => {
                   const isRunning = taskStatus.currentTask?.task === taskSetting.task;
                   const isQueued = taskStatus.enqueuedTasks.some((t) => t.task === taskSetting.task);
-                  
-                  const intervalLabel = taskOptions.find((opt) => opt.value === taskSetting.intervalMinutes)?.label 
-                                        ?? `${taskSetting.intervalMinutes || 0} Minutes`;
+
+                  const intervalLabel =
+                    taskOptions.find((opt) => opt.value === taskSetting.intervalMinutes)?.label ??
+                    `${taskSetting.intervalMinutes || 0} Minutes`;
 
                   const executeTask = async () => {
                     toast.loading(`Starting ${taskSetting.task}...`, { id: taskSetting.task });
@@ -150,11 +179,8 @@ export default function TasksPage() {
 
                   return (
                     <tr key={taskSetting.task} className="hover:bg-surface-hover transition-colors group">
-                      
                       {/* Task Name */}
-                      <td className="p-4 pl-6">
-                        {getTaskBadge(taskSetting.task)}
-                      </td>
+                      <td className="p-4 pl-6">{getTaskBadge(taskSetting.task)}</td>
 
                       {/* Interval */}
                       <td className="p-4">
@@ -166,15 +192,22 @@ export default function TasksPage() {
 
                       {/* Enabled Status */}
                       <td className="p-4">
-                        {taskSetting.enabled ? (
-                          <div className="flex items-center text-xs font-bold text-emerald-400">
-                            <CheckCircle2 size={14} className="mr-1.5" /> Yes
-                          </div>
-                        ) : (
-                          <div className="flex items-center text-xs font-bold text-gray-500">
-                            <CircleDashed size={14} className="mr-1.5" /> No
-                          </div>
-                        )}
+                        <button
+                          onClick={() => toggleTaskEnabled(taskSetting)}
+                          disabled={isRunning || isQueued}
+                          title={`${taskSetting.enabled ? "Disable" : "Enable"} task "${taskSetting.task}"`}
+                          className={`p-2 rounded-lg bg-background text-gray-400  border border-border ${taskSetting.enabled ? "hover:bg-brand-rose/20 hover:border-brand-rose/50 hover:text-brand-rose" : "hover:bg-brand-emerald/20 hover:border-brand-emerald/50 hover:text-brand-emerald"}  transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer`}
+                        >
+                          {taskSetting.enabled ? (
+                            <div className="flex items-center text-xs font-bold text-emerald-400">
+                              <CheckCircle2 size={14} className="mr-1.5" /> Yes
+                            </div>
+                          ) : (
+                            <div className="flex items-center text-xs font-bold text-gray-500">
+                              <CircleDashed size={14} className="mr-1.5" /> No
+                            </div>
+                          )}
+                        </button>
                       </td>
 
                       {/* Live WebSocket Status */}

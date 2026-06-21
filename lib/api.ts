@@ -22,6 +22,7 @@ import { ChartStats } from "./models/chartStats";
 import StatMetric from "./models/enums/statMetric";
 import { GenreStats } from "./models/genreStats";
 import { CountModel } from "./models/countModel";
+import { TaskSettings } from "./models/taskSettings";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5020/";
 
@@ -477,6 +478,9 @@ const startPartialSync = async () =>
     .then(() => true)
     .catch(() => false);
 
+const updateTask = async (payload: TaskSettings): Promise<boolean> =>
+  apiFetch<boolean>(`/Tasks/UpdateTask${await buildQuery()}`, { method: "POST", body: JSON.stringify(payload) });
+
 // Grouped exports by parent path
 export const Api = {
   addServer,
@@ -531,6 +535,7 @@ export const System = {
 export const Tasks = {
   startSync,
   startPartialSync,
+  updateTask,
 };
 
 export default {
