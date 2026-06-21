@@ -156,7 +156,7 @@ const CustomLegend = ({ payload }: any) => {
         >
           <span className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: entry.color }}></span>
           {entry.value}
-          <span>({((entry.payload.count / totalCount) * 100).toFixed(1)}%)</span>
+          <span className="text-gray-400">({((entry.payload.count / totalCount) * 100).toFixed(1)}%)</span>
         </div>
       ))}
     </div>
