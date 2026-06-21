@@ -6,6 +6,7 @@ import { Image as ImageIcon } from "lucide-react";
 import { API_BASE } from "@/lib/api";
 import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
 import { TrackedLibraries } from "@/lib/models/trackedLibraries";
+import Badge from "../Core/Badge";
 
 export default function LibraryTrackingCard({
   lib,
@@ -29,9 +30,8 @@ export default function LibraryTrackingCard({
 
   return (
     <div className="bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-lg shadow-black/20 overflow-hidden flex flex-col transition-all hover:border-gray-600 hover:shadow-black/40 group relative">
-      
       {/* Image Container */}
-      <div 
+      <div
         className="h-48 md:h-56 relative cursor-pointer overflow-hidden bg-black/40"
         onClick={() => router.push(`/libraries/${encodeURIComponent(lib.id)}`)}
       >
@@ -56,43 +56,31 @@ export default function LibraryTrackingCard({
 
       {/* Details Footer */}
       <div className="p-5 flex flex-col flex-1 gap-4 relative z-10 -mt-2 bg-gradient-to-b from-transparent to-surface/80">
-        
         {/* Header: Name and Type Badge */}
         <div className="flex items-start justify-between gap-3 w-full">
-          <h3 className="text-lg font-bold text-gray-100 leading-tight line-clamp-2">
-            {lib.name}
-          </h3>
-          
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-cyan/10 border border-brand-cyan/20 shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-brand-cyan animate-pulse"></span>
-            <span className="text-[10px] font-black uppercase tracking-wider text-brand-cyan">
-              {lib.type}
-            </span>
-          </div>
+          <h3 className="text-lg font-bold text-gray-100 leading-tight line-clamp-2">{lib.name}</h3>
+          <Badge value={lib.type} shape="square" />
         </div>
 
         <div className="flex-1"></div>
 
         {/* Tracking Toggle */}
         <div className="flex items-center justify-between pt-3 border-t border-border/50">
-          <span className="text-sm font-medium text-gray-400">
-            {t("library.tracked", "Tracked")}
-          </span>
+          <span className="text-sm font-medium text-gray-400">{t("library.tracked", "Tracked")}</span>
           <button
             onClick={() => toggleLibraryTracking(lib.id, !lib.tracked)}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:ring-offset-2 focus:ring-offset-background ${
-              lib.tracked ? 'bg-brand-emerald' : 'bg-background border border-border shadow-inner'
+              lib.tracked ? "bg-brand-emerald" : "bg-background border border-border shadow-inner"
             }`}
           >
             <span
               className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                lib.tracked ? 'translate-x-6 shadow-md' : 'translate-x-1 opacity-70'
+                lib.tracked ? "translate-x-6 shadow-md" : "translate-x-1 opacity-70"
               }`}
             />
           </button>
         </div>
       </div>
-      
     </div>
   );
 }

@@ -21,6 +21,7 @@ import { Token } from "./models/token";
 import { ChartStats } from "./models/chartStats";
 import StatMetric from "./models/enums/statMetric";
 import { GenreStats } from "./models/genreStats";
+import { CountModel } from "./models/countModel";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5020/";
 
@@ -455,7 +456,12 @@ const getTranscodeStats = async (
 const getStatTrends = async (params?: { days?: number; metric?: StatMetric }) =>
   apiFetch<ChartStats[]>(`/Stats/StatTrends${await buildQuery(undefined, params as Record<string, any>)}`);
 
-const getGenreStats = async (gridify?: IGridifyQuery) => apiFetch<GenreStats[]>(`/Stats/GenreStats${await buildQuery(gridify)}`);
+const getGenreStats = async () => apiFetch<GenreStats[]>(`/Stats/GenreStats${await buildQuery()}`);
+
+const getCodecStats = async () => apiFetch<CountModel[]>(`/Stats/CodecStats${await buildQuery()}`);
+
+const getResolutionStats = async (gridify?: IGridifyQuery) =>
+  apiFetch<CountModel[]>(`/Stats/ResolutionStats${await buildQuery(gridify)}`);
 
 // History
 const getSystemInfo = async (): Promise<SystemInfo> => apiFetch(`/System/Info`);
@@ -494,6 +500,8 @@ export const Stats = {
   getTranscodeStats,
   getStatTrends,
   getGenreStats,
+  getCodecStats,
+  getResolutionStats,
 };
 
 export const History = {
