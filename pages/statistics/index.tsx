@@ -34,8 +34,10 @@ export default function StatisticsPage() {
         {/* <div className="bg-surface/40 backdrop-blur-sm border border-border rounded-3xl shadow-xl shadow-black/20 overflow-hidden flex flex-col p-6 sm:p-8"></div> */}
         <div className="flex flex-col gap-6">
           <WatchTrendsCard />
-          <CodecStatsCard />
-          <ResolutionStatsCard />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <CodecStatsCard />
+            <ResolutionStatsCard />
+          </div>
         </div>
       </div>
     </>
