@@ -4,6 +4,7 @@ import { serverSideTranslations } from "next-i18next/pages/serverSideTranslation
 import { BarChart3 } from "lucide-react";
 import WatchTrendsCard from "@/components/StatsCard/WatchTrendsCard";
 import CodecStatsCard from "@/components/StatsCard/CodecStatsCard";
+import ResolutionStatsCard from "@/components/StatsCard/ResolutionStatsCard";
 
 export default function StatisticsPage() {
   const { t } = useTranslation("common");
@@ -34,6 +35,7 @@ export default function StatisticsPage() {
         <div className="flex flex-col gap-6">
           <WatchTrendsCard />
           <CodecStatsCard />
+          <ResolutionStatsCard />
         </div>
       </div>
     </>

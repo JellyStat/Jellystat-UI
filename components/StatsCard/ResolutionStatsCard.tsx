@@ -19,7 +19,7 @@ const chartColors = [
   "#f43f5e", // brand-rose
 ];
 
-export default function CodecStatsCard() {
+export default function ResolutionStatsCard() {
   const { t } = useTranslation("common");
 
   const [stats, setStats] = useState<CountModel[]>([]);
@@ -30,12 +30,12 @@ export default function CodecStatsCard() {
     setLoading(true);
     setError(null);
     try {
-      const data = await client.Stats.getCodecStats();
+      const data = await client.Stats.getResolutionStats();
       const filteredData = data.filter((item) => item.name !== null && item.name !== undefined);
       for (let i = 0; i < filteredData.length; i++) {
         filteredData[i].fill = chartColors[i % chartColors.length];
         if (filteredData[i].name === "") {
-          filteredData[i].name = t("statistics.codec_unknown", "Unknown");
+          filteredData[i].name = t("statistics.resolution_unknown", "Unknown");
         }
       }
       setStats(filteredData);
@@ -59,7 +59,9 @@ export default function CodecStatsCard() {
         <div className="flex justify-between gap-3 mb-6">
           <div className="flex items-center gap-3">
             <PieChartIcon size={28} className="text-brand-purple" />
-            <h2 className="text-2xl font-black text-white tracking-tight">{t("stats.codec_stats", "Codec Statistics")}</h2>
+            <h2 className="text-2xl font-black text-white tracking-tight">
+              {t("stats.resolution_stats", "Resolution Statistics")}
+            </h2>
           </div>
         </div>
 
