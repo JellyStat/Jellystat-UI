@@ -30,6 +30,7 @@ export interface Activity extends BaseStats {
   libraryId?: string;
   item?: Items | null;
   groupedResults?: Activity[] | null;
+  fullName?: string | null;
 }
 
 export default Activity;

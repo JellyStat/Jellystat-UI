@@ -114,13 +114,6 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
   };
 
   // --- RENDER HELPERS ---
-  const formatTitle = (activity: Activity) => {
-    const name = activity.name ?? t("activity.unknown", "Unknown");
-    const seriesName = activity.seriesName;
-    const episodeIndex = `S${activity.item?.parentIndex?.toString().padStart(2, "0") ?? "??"}E${activity.item?.index?.toString().padStart(2, "0") ?? "??"}`;
-    return seriesName ? `${seriesName} : ${episodeIndex} - ${name}` : name;
-  };
-
   const formatTranscode = (activity: Activity) => {
     const transcodingInfo = activity.transcodingInfo as BaseTranscodingInfo;
     if (!transcodingInfo)
@@ -144,7 +137,6 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
   const renderRow = (activity: Activity, isSubRow = false) => {
     const hasGroup = !isSubRow && activity.groupedResults && activity.groupedResults.length > 1;
     const isExpanded = expandedActivityIds.includes(activity.id ?? "");
-    const fullTitle = formatTitle(activity);
 
     return (
       <tr
@@ -179,9 +171,9 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
           <Link
             href={`/libraries/items/${activity.itemId}`}
             className="text-sm font-bold text-gray-200 hover:text-brand-cyan transition-colors line-clamp-2 leading-tight"
-            title={fullTitle}
+            title={activity.fullName || activity.name}
           >
-            {fullTitle}
+            {activity.fullName || activity.name}
           </Link>
         </td>
 
@@ -248,7 +240,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
                 />
                 <SortableHeader
                   label={t("activity.title_col", "Title")}
-                  accessor="name"
+                  accessor="fullName"
                   currentSort={sortStatus}
                   onSort={handleSort}
                 />
@@ -309,9 +301,9 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
 
                 <th className="p-2 border-r border-border/50 font-normal relative group">
                   <TextFilter
-                    keyName="name"
-                    value={getFilterValueOrDefault("name", "") as string}
-                    onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("name"))}
+                    keyName="fullName"
+                    value={getFilterValueOrDefault("fullName", "") as string}
+                    onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("fullName"))}
                   />
                 </th>
 
