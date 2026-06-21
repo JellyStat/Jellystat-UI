@@ -21,6 +21,9 @@ import Activity from "@/lib/models/activity";
 import client from "@/lib/api";
 import { BaseTranscodingInfo } from "@/lib/models/baseTranscodingInfo";
 import useFilters from "../DataTableFilters/useFilters";
+import TextFilter from "../DataTableFilters/TextFilter";
+import DateFilter from "../DataTableFilters/DateFilter";
+import { DatesRangeValue } from "../DataTableFilters/FilterItem";
 
 interface SortStatus {
   columnAccessor: string;
@@ -289,48 +292,56 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
                 <th className="p-2 border-r border-border/50"></th>
 
                 <th className="p-2 border-r border-border/50 font-normal relative group">
-                  <FilterInput
-                    placeholder={t("activity.filter", "Filter...")}
-                    val={getFilterValueOrDefault("userName", "")}
-                    onFilter={(v) => (v ? addOrReplaceFilter({ key: "userName", value: v }) : removeFilter("userName"))}
+                  <TextFilter
+                    keyName="userName"
+                    value={getFilterValueOrDefault("userName", "") as string}
+                    onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("userName"))}
                   />
                 </th>
 
                 <th className="p-2 border-r border-border/50 font-normal relative group">
-                  <FilterInput
-                    placeholder={t("activity.filter", "Filter...")}
-                    val={getFilterValueOrDefault("ipAddress", "")}
-                    onFilter={(v) => (v ? addOrReplaceFilter({ key: "ipAddress", value: v }) : removeFilter("ipAddress"))}
+                  <TextFilter
+                    keyName="ipAddress"
+                    value={getFilterValueOrDefault("ipAddress", "") as string}
+                    onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("ipAddress"))}
                   />
                 </th>
 
                 <th className="p-2 border-r border-border/50 font-normal relative group">
-                  <FilterInput
-                    placeholder={t("activity.filter", "Filter...")}
-                    val={getFilterValueOrDefault("name", "")}
-                    onFilter={(v) => (v ? addOrReplaceFilter({ key: "name", value: v }) : removeFilter("name"))}
+                  <TextFilter
+                    keyName="name"
+                    value={getFilterValueOrDefault("name", "") as string}
+                    onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("name"))}
                   />
                 </th>
 
                 <th className="p-2 border-r border-border/50 font-normal relative group">
-                  <FilterInput
-                    placeholder={t("activity.filter", "Filter...")}
-                    val={getFilterValueOrDefault("client", "")}
-                    onFilter={(v) => (v ? addOrReplaceFilter({ key: "client", value: v }) : removeFilter("client"))}
+                  <TextFilter
+                    keyName="client"
+                    value={getFilterValueOrDefault("client", "") as string}
+                    onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("client"))}
                   />
                 </th>
 
                 <th className="p-2 border-r border-border/50"></th>
 
                 <th className="p-2 border-r border-border/50 font-normal relative group">
-                  <FilterInput
-                    placeholder={t("activity.filter", "Filter...")}
-                    val={getFilterValueOrDefault("device", "")}
-                    onFilter={(v) => (v ? addOrReplaceFilter({ key: "device", value: v }) : removeFilter("device"))}
+                  <TextFilter
+                    keyName="device"
+                    value={getFilterValueOrDefault("device", "") as string}
+                    onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("device"))}
                   />
                 </th>
 
-                <th colSpan={3} className="p-2"></th>
+                <th className="p-2 border-r border-border/50 font-normal relative group">
+                  <DateFilter
+                    keyName="dateCreated"
+                    value={getFilterValueOrDefault("dateCreated", [null, null]) as DatesRangeValue}
+                    onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("dateCreated"))}
+                  />
+                </th>
+                <th className="p-2 border-r border-border/50"></th>
+                <th className="p-2 border-r border-border/50"></th>
               </tr>
             </thead>
 
@@ -417,22 +428,5 @@ function SortableHeader({ label, accessor, currentSort, onSort, align = "left" }
         )}
       </div>
     </th>
-  );
-}
-
-function FilterInput({ val, onFilter, placeholder }: { val: any; onFilter: (v: string) => void; placeholder: string }) {
-  return (
-    <>
-      <div className="absolute inset-y-0 left-2 flex items-center pointer-events-none text-gray-600 group-focus-within:text-brand-cyan">
-        <Search size={12} />
-      </div>
-      <input
-        type="text"
-        placeholder={placeholder}
-        value={(val as string) || ""}
-        onChange={(e) => onFilter(e.target.value)}
-        className="w-full bg-background/50 border border-transparent hover:border-border focus:border-brand-cyan rounded py-1 pl-7 pr-2 text-xs text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-cyan transition-all"
-      />
-    </>
   );
 }

@@ -16,7 +16,7 @@ export default function BooleanFilter({
 }) {
   const [query, setQuery] = useState<boolean | null>(value);
   
-  const debounced = useDebounce(query, 200); 
+  const debounced = useDebounce(query, 100); 
 
   useEffect(() => {
     if (debounced === value) return;
