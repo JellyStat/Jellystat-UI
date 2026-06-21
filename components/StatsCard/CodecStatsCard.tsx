@@ -31,9 +31,12 @@ export default function CodecStatsCard() {
     setError(null);
     try {
       const data = await client.Stats.getCodecStats();
-      const filteredData = data.filter((item) => item.name !== null && item.name !== undefined && item.name !== "");
+      const filteredData = data.filter((item) => item.name !== null && item.name !== undefined);
       for (let i = 0; i < filteredData.length; i++) {
         filteredData[i].fill = chartColors[i % chartColors.length];
+        if (filteredData[i].name === "") {
+          filteredData[i].name = t("statistics.codec_unknown", "Unknown");
+        }
       }
       setStats(filteredData);
     } catch (err: any) {
