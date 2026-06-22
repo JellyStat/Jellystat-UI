@@ -17,6 +17,7 @@ import client from "@/lib/api";
 import { wsClient } from "@/lib/wsClient";
 import permissionsManager from "@/lib/permissionsManager";
 import { setToken } from "@/lib/helpers/tokenHelper";
+import { Server } from "@/lib/models/server";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -56,12 +57,12 @@ export default function LoginPage() {
     setLoadingServers(true);
     setServerError(null);
     try {
-      const config: any = await client.Auth.getConfig(); 
+      const config: Server[] = await client.Auth.getConfig(); 
       
-      const servers = Array.isArray(config) ? config : (config?.servers || []);
+      const servers = Array.isArray(config) ? config : [];
       
       setServerOptions(
-        servers.map((s: any) => ({
+        servers.filter((s) => s.allowRemoteAuth == true).map((s: any) => ({
           value: s.Id || s.id,
           label: s.Name || s.name,
         }))
