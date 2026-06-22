@@ -298,6 +298,9 @@ const getMatchingItems = async (name?: string, gridify?: IGridifyQuery): Promise
 const setLocalUserServer = (payload: { userId: string; serverId: string }): Promise<void> =>
   apiFetch<void>("/Api/SetLocalUserServer", { method: "POST", body: JSON.stringify(payload) });
 
+const toggleAllowRemoteAuth = async (serverId?: string): Promise<Boolean> =>
+  apiFetch<Boolean>(`/Api/AllowRemoteAuth${await buildQuery(undefined, { ServerId: serverId })}`);
+
 // Auth
 // Interface/type definitions have been moved to ./models/
 
@@ -493,6 +496,7 @@ export const Api = {
   getMatchingItems,
   // insertActivity,
   setLocalUserServer,
+  toggleAllowRemoteAuth,
 };
 
 export const Stats = {

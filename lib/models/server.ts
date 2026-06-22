@@ -8,4 +8,5 @@ export interface Server {
   name: string;
   type?: ServerType;
   taskSettings?: TaskSettings[];
+  allowRemoteAuth?: boolean;
 }
