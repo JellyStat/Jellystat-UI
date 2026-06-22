@@ -23,9 +23,11 @@ export default function Sessions() {
       }
 
       if (Array.isArray(payload)) {
-        setSessions(payload);
+        const sorted = payload.sort((a, b) => a.userName!.localeCompare(b.userName!));
+        setSessions(sorted);
       } else {
-        setSessions((prev) => [payload as any, ...prev]);
+        const sorted = [payload as SessionItem, ...sessions].sort((a, b) => a.userName!.localeCompare(b.userName!));
+        setSessions(sorted);
       }
     };
 
