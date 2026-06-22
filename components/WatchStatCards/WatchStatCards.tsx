@@ -20,7 +20,18 @@ export default function WatchStatCards() {
 
   // --- STATE ---
   const [days, setDays] = useState<number>(30);
-  const [loading, setLoading] = useState(true);
+
+  // individual loading states so each card shows its loader until its api call resolves
+  const [loadingStates, setLoadingStates] = useState({
+    viewedMovies: true,
+    popularMovies: true,
+    viewedShows: true,
+    popularShows: true,
+    libraries: true,
+    clients: true,
+    users: true,
+    streams: true,
+  });
 
   const [data, setData] = useState({
     viewedMovies: [] as WatchStatItem[],
@@ -34,21 +45,49 @@ export default function WatchStatCards() {
   });
 
   // --- DATA FETCHING ---
-  const fetchAllStats = useCallback(async () => {
-    setLoading(true);
+  const fetchAllStats = useCallback(() => {
+    // mark all loaders true and clear previous data while new fetch starts
+    setLoadingStates({
+      viewedMovies: true,
+      popularMovies: true,
+      viewedShows: true,
+      popularShows: true,
+      libraries: true,
+      clients: true,
+      users: true,
+      streams: true,
+    });
+    setData({
+      viewedMovies: [],
+      popularMovies: [],
+      viewedShows: [],
+      popularShows: [],
+      libraries: [],
+      clients: [],
+      users: [],
+      streams: [],
+    });
 
     // Reusable Queries
     const movieQuery = new GridifyQueryBuilder()
-      .addCondition("type", op.Equal, ItemTypes.Movie.toString())
-      .and()
       .addCondition("playCount", op.GreaterThan, 0)
+      .and()
+      .addCondition("type", op.Equal, ItemTypes.Movie.toString())
       .addOrderBy("playCount", true)
+      .addOrderBy("LatestActivityDate", true)
       .setPageSize(5)
       .build();
 
     const seriesQuery = new GridifyQueryBuilder()
-      .addCondition("type", op.Equal, ItemTypes.Series.toString())
+      .addCondition("playCount", op.GreaterThan, 0)
       .and()
+      .addCondition("type", op.Equal, ItemTypes.Series.toString())
+      .addOrderBy("playCount", true)
+      .addOrderBy("LatestActivityDate", true)
+      .setPageSize(5)
+      .build();
+
+    const transcodeQuery = new GridifyQueryBuilder()
       .addCondition("playCount", op.GreaterThan, 0)
       .addOrderBy("playCount", true)
       .setPageSize(5)
@@ -57,74 +96,128 @@ export default function WatchStatCards() {
     const genericQuery = new GridifyQueryBuilder()
       .addCondition("playCount", op.GreaterThan, 0)
       .addOrderBy("playCount", true)
+      .addOrderBy("LatestActivityDate", true)
       .setPageSize(5)
       .build();
 
-    try {
-      const results = await Promise.allSettled([
-        client.Stats.getItemStats({ days }, movieQuery),
-        client.Stats.getMostPopularItems({ days }, movieQuery),
-        client.Stats.getItemStats({ days }, seriesQuery),
-        client.Stats.getMostPopularItems({ days }, seriesQuery),
-        client.Stats.getLibraryStats({ days }, genericQuery),
-        client.Stats.getMostUsedClients({ days }, genericQuery),
-        client.Stats.getUserStats({ days }, genericQuery),
-        client.Stats.getTranscodeStats({ days }, genericQuery),
-      ]);
+    // Fire all requests concurrently and update each card as it completes
+    client.Stats.getItemStats({ days }, movieQuery)
+      .then((res) => {
+        const items = Array.isArray(res?.data) ? res!.data : [];
+        setData((prev) => ({
+          ...prev,
+          viewedMovies: items.map((m: any) => ({
+            id: m.id,
+            name: m.name,
+            value: m.playCount ?? 0,
+            navLink: `/libraries/items/${m.id}`,
+            serverId: m.serverId,
+          })),
+        }));
+      })
+      .catch((err) => console.error("Failed to load viewed movies", err))
+      .finally(() => setLoadingStates((s) => ({ ...s, viewedMovies: false })));
 
-      // Helper to safely extract data from settled promises
-      const extract = (res: PromiseSettledResult<any>, mapper: (m: any) => WatchStatItem) => {
-        if (res.status === "fulfilled" && res.value?.data) {
-          return res.value.data.map(mapper);
-        }
-        return [];
-      };
+    client.Stats.getMostPopularItems({ days }, movieQuery)
+      .then((res) => {
+        const items = Array.isArray(res?.data) ? res!.data : [];
+        setData((prev) => ({
+          ...prev,
+          popularMovies: items.map((m: any) => ({
+            id: m.id,
+            name: m.name,
+            value: m.playCount ?? 0,
+            navLink: `/libraries/items/${m.id}`,
+            serverId: m.serverId,
+          })),
+        }));
+      })
+      .catch((err) => console.error("Failed to load popular movies", err))
+      .finally(() => setLoadingStates((s) => ({ ...s, popularMovies: false })));
 
-      setData({
-        viewedMovies: extract(results[0], (m) => ({
-          id: m.id,
-          name: m.name,
-          value: m.playCount ?? 0,
-          navLink: `/libraries/items/${m.id}`,
-          serverId: m.serverId,
-        })),
-        popularMovies: extract(results[1], (m) => ({
-          id: m.id,
-          name: m.name,
-          value: m.playCount ?? 0,
-          navLink: `/libraries/items/${m.id}`,
-          serverId: m.serverId,
-        })),
-        viewedShows: extract(results[2], (m) => ({
-          id: m.id,
-          name: m.name,
-          value: m.playCount ?? 0,
-          navLink: `/libraries/items/${m.id}`,
-          serverId: m.serverId,
-        })),
-        popularShows: extract(results[3], (m) => ({
-          id: m.id,
-          name: m.name,
-          value: m.playCount ?? 0,
-          navLink: `/libraries/items/${m.id}`,
-          serverId: m.serverId,
-        })),
-        libraries: extract(results[4], (m) => ({
-          id: m.id,
-          name: m.name,
-          value: m.playCount ?? 0,
-          navLink: `/libraries/${m.id}`,
-          serverId: m.serverId,
-        })),
-        clients: extract(results[5], (m) => ({ id: m.clientName, name: m.clientName, value: m.playCount ?? 0 })),
-        users: extract(results[6], (m) => ({ id: m.id, name: m.username, value: m.playCount ?? 0, navLink: `/users/${m.id}` })),
-        streams: extract(results[7], (m) => ({ id: m.name, name: m.name, value: m.playCount ?? 0 })),
-      });
-    } catch (err) {
-      console.error("Failed to load watch stats", err);
-    } finally {
-      setLoading(false);
-    }
+    client.Stats.getItemStats({ days }, seriesQuery)
+      .then((res) => {
+        const items = Array.isArray(res?.data) ? res!.data : [];
+        setData((prev) => ({
+          ...prev,
+          viewedShows: items.map((m: any) => ({
+            id: m.id,
+            name: m.name,
+            value: m.playCount ?? 0,
+            navLink: `/libraries/items/${m.id}`,
+            serverId: m.serverId,
+          })),
+        }));
+      })
+      .catch((err) => console.error("Failed to load viewed shows", err))
+      .finally(() => setLoadingStates((s) => ({ ...s, viewedShows: false })));
+
+    client.Stats.getMostPopularItems({ days }, seriesQuery)
+      .then((res) => {
+        const items = Array.isArray(res?.data) ? res!.data : [];
+        setData((prev) => ({
+          ...prev,
+          popularShows: items.map((m: any) => ({
+            id: m.id,
+            name: m.name,
+            value: m.playCount ?? 0,
+            navLink: `/libraries/items/${m.id}`,
+            serverId: m.serverId,
+          })),
+        }));
+      })
+      .catch((err) => console.error("Failed to load popular shows", err))
+      .finally(() => setLoadingStates((s) => ({ ...s, popularShows: false })));
+
+    client.Stats.getLibraryStats({ days }, genericQuery)
+      .then((res) => {
+        const items = Array.isArray(res?.data) ? res!.data : [];
+        setData((prev) => ({
+          ...prev,
+          libraries: items.map((m: any) => ({
+            id: m.id,
+            name: m.name,
+            value: m.playCount ?? 0,
+            navLink: `/libraries/${m.id}`,
+            serverId: m.serverId,
+          })),
+        }));
+      })
+      .catch((err) => console.error("Failed to load libraries", err))
+      .finally(() => setLoadingStates((s) => ({ ...s, libraries: false })));
+
+    client.Stats.getMostUsedClients({ days }, genericQuery)
+      .then((res) => {
+        const items = Array.isArray(res?.data) ? res!.data : [];
+        setData((prev) => ({
+          ...prev,
+          clients: items.map((m: any) => ({ id: m.clientName, name: m.clientName, value: m.playCount ?? 0 })),
+        }));
+      })
+      .catch((err) => console.error("Failed to load clients", err))
+      .finally(() => setLoadingStates((s) => ({ ...s, clients: false })));
+
+    client.Stats.getUserStats({ days }, genericQuery)
+      .then((res) => {
+        const items = Array.isArray(res?.data) ? res!.data : [];
+        setData((prev) => ({
+          ...prev,
+          users: items.map((m: any) => ({ id: m.id, name: m.username, value: m.playCount ?? 0, navLink: `/users/${m.id}` })),
+        }));
+      })
+      .catch((err) => console.error("Failed to load users", err))
+      .finally(() => setLoadingStates((s) => ({ ...s, users: false })));
+
+    client.Stats.getTranscodeStats({ days }, transcodeQuery)
+      .then((res) => {
+        const items = Array.isArray(res?.data) ? res!.data : [];
+        setData((prev) => ({
+          ...prev,
+          streams: items.map((m: any) => ({ id: m.name, name: m.name, value: m.playCount ?? 0 })),
+        }));
+      })
+      .catch((err) => console.error("Failed to load streams", err))
+      .finally(() => setLoadingStates((s) => ({ ...s, streams: false })));
   }, [days]);
 
   useEffect(() => {
@@ -163,7 +256,7 @@ export default function WatchStatCards() {
       </div>
 
       {/* Main Grid */}
-      {!loading && !hasData ? (
+      {Object.values(loadingStates).every((v) => !v) && !hasData ? (
         <div className="bg-surface/50 border-2 border-dashed border-border rounded-3xl p-16 flex flex-col items-center justify-center text-center">
           <Activity size={48} className="text-gray-500 opacity-30 mb-4" />
           <h3 className="text-xl font-bold text-gray-300">{t("watch_stat_cards.no_data", "No Data Found")}</h3>
@@ -178,56 +271,56 @@ export default function WatchStatCards() {
             unit={t("watch_stat_cards.unit_plays", "Plays")}
             items={data.viewedMovies}
             icon={Film}
-            loading={loading}
+            loading={loadingStates.viewedMovies}
           />
           <LeaderboardCard
             title={t("watch_stat_cards.popular_movies", "Most Popular Movies")}
             unit={t("watch_stat_cards.unit_users", "Users")}
             items={data.popularMovies}
             icon={Users}
-            loading={loading}
+            loading={loadingStates.popularMovies}
           />
           <LeaderboardCard
             title={t("watch_stat_cards.viewed_shows", "Most Viewed Shows")}
             unit={t("watch_stat_cards.unit_plays", "Plays")}
             items={data.viewedShows}
             icon={Tv}
-            loading={loading}
+            loading={loadingStates.viewedShows}
           />
           <LeaderboardCard
             title={t("watch_stat_cards.popular_shows", "Most Popular Shows")}
             unit={t("watch_stat_cards.unit_users", "Users")}
             items={data.popularShows}
             icon={Users}
-            loading={loading}
+            loading={loadingStates.popularShows}
           />
           <LeaderboardCard
             title={t("watch_stat_cards.viewed_libraries", "Most Viewed Libraries")}
             unit={t("watch_stat_cards.unit_plays", "Plays")}
             items={data.libraries}
             icon={Library}
-            loading={loading}
+            loading={loadingStates.libraries}
           />
           <LeaderboardCard
             title={t("watch_stat_cards.used_clients", "Most Used Clients")}
             unit={t("watch_stat_cards.unit_plays", "Plays")}
             items={data.clients}
             icon={MonitorPlay}
-            loading={loading}
+            loading={loadingStates.clients}
           />
           <LeaderboardCard
             title={t("watch_stat_cards.active_users", "Most Active Users")}
             unit={t("watch_stat_cards.unit_plays", "Plays")}
             items={data.users}
             icon={Users}
-            loading={loading}
+            loading={loadingStates.users}
           />
           <LeaderboardCard
             title={t("watch_stat_cards.concurrent_streams", "Concurrent Streams")}
             unit={t("watch_stat_cards.unit_streams", "Streams")}
             items={data.streams}
             icon={Activity}
-            loading={loading}
+            loading={loadingStates.streams}
           />
         </div>
       )}
