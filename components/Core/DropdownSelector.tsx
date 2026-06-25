@@ -1,4 +1,4 @@
-import { ChevronDownIcon, LucideIcon } from "lucide-react";
+import { ChevronDownIcon, Loader2, LucideIcon } from "lucide-react";
 import { Fragment, useRef, useState, useEffect } from "react";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from "@headlessui/react";
 
@@ -8,6 +8,9 @@ export type Props<T> = {
   labelFn: (value: T) => string;
   onChange?: (value: T) => void;
   disabled?: boolean;
+  placeholder?: string;
+  leftIcon?: LucideIcon;
+  loading?: boolean;
 };
 
 export type DropdownOption<T> = {
@@ -15,7 +18,16 @@ export type DropdownOption<T> = {
   Icon?: LucideIcon;
 };
 
-export default function DropdownSelector<T>({ data, value, onChange, disabled, labelFn }: Props<T>) {
+export default function DropdownSelector<T>({
+  data,
+  value,
+  onChange,
+  disabled,
+  labelFn,
+  placeholder,
+  leftIcon,
+  loading = false,
+}: Props<T>) {
   const selectedOption: DropdownOption<T> | undefined = value !== undefined ? data.find((d) => d.value === value) : undefined;
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const [buttonWidth, setButtonWidth] = useState<number | undefined>(undefined);
@@ -49,11 +61,12 @@ export default function DropdownSelector<T>({ data, value, onChange, disabled, l
           >
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
               {(() => {
-                const Icon = selectedOption?.Icon;
+                if (loading) return <Loader2 size={16} className="animate-spin" />;
+                const Icon = selectedOption?.Icon ?? leftIcon;
                 return Icon ? <Icon size={16} /> : null;
               })()}
             </div>
-            <span className="flex-1 text-left">{selectedOption ? labelFn(selectedOption.value) : "Select"}</span>
+            <span className="flex-1 text-left">{selectedOption ? labelFn(selectedOption.value) : (placeholder ?? "Select")}</span>
             <ChevronDownIcon
               className="group pointer-events-none absolute top-3 right-2.5 size-4 text-gray-500"
               aria-hidden="true"
@@ -66,6 +79,7 @@ export default function DropdownSelector<T>({ data, value, onChange, disabled, l
               className="[--anchor-gap:8px] [--anchor-padding:16px] absolute mx-0.5 bg-surface border border-border rounded-lg shadow-lg max-h-60 overflow-auto z-50 py-1"
               style={buttonWidth ? { width: `${buttonWidth}px` } : undefined}
             >
+              {data.length === 0 && <div className="px-3 py-2 text-sm text-gray-400">No options available</div>}
               {data.map((item, idx) => (
                 <ListboxOption
                   key={idx}

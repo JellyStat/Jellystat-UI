@@ -3,21 +3,14 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { useTranslation } from "next-i18next/pages";
 import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
-import { 
-  Activity, 
-  Lock, 
-  User, 
-  Server as ServerIcon, 
-  ChevronRight, 
-  Loader2, 
-  AlertCircle 
-} from "lucide-react";
+import { Activity, Lock, User, Server as ServerIcon, ChevronRight, Loader2, AlertCircle } from "lucide-react";
 
 import client from "@/lib/api";
 import { wsClient } from "@/lib/wsClient";
 import permissionsManager from "@/lib/permissionsManager";
 import { setToken } from "@/lib/helpers/tokenHelper";
 import { Server } from "@/lib/models/server";
+import DropdownSelector from "@/components/Core/DropdownSelector";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -29,10 +22,10 @@ export default function LoginPage() {
   const [showServerPicker, setShowServerPicker] = useState(false);
   const [serverOptions, setServerOptions] = useState<{ value: string; label: string }[]>([]);
   const [selectedServer, setSelectedServer] = useState<string | null>(null);
-  
+
   const [loading, setLoading] = useState(false);
   const [loadingServers, setLoadingServers] = useState(false);
-  
+
   const [error, setError] = useState<string | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
   const [usernameError, setUsernameError] = useState<string | null>(null);
@@ -57,15 +50,17 @@ export default function LoginPage() {
     setLoadingServers(true);
     setServerError(null);
     try {
-      const config: Server[] = await client.Auth.getConfig(); 
-      
+      const config: Server[] = await client.Auth.getConfig();
+
       const servers = Array.isArray(config) ? config : [];
-      
+
       setServerOptions(
-        servers.filter((s) => s.allowRemoteAuth == true).map((s: any) => ({
-          value: s.Id || s.id,
-          label: s.Name || s.name,
-        }))
+        servers
+          .filter((s) => s.allowRemoteAuth == true)
+          .map((s: any) => ({
+            value: s.Id || s.id,
+            label: s.Name || s.name,
+          })),
       );
     } catch (err: any) {
       setServerError(t("login.error_fetch_servers", "Failed to load servers. Please check your connection."));
@@ -92,16 +87,25 @@ export default function LoginPage() {
     setServerValidationError(null);
 
     let hasError = false;
-    if (!username.trim()) { setUsernameError(t("login.error_username_required", "Username is required")); hasError = true; }
-    if (!password.trim()) { setPasswordError(t("login.error_password_required", "Password is required")); hasError = true; }
-    if (showServerPicker && !selectedServer) { setServerValidationError(t("login.error_server_required", "Please select a server")); hasError = true; }
+    if (!username.trim()) {
+      setUsernameError(t("login.error_username_required", "Username is required"));
+      hasError = true;
+    }
+    if (!password.trim()) {
+      setPasswordError(t("login.error_password_required", "Password is required"));
+      hasError = true;
+    }
+    if (showServerPicker && !selectedServer) {
+      setServerValidationError(t("login.error_server_required", "Please select a server"));
+      hasError = true;
+    }
     if (hasError) return;
 
     setLoading(true);
 
     try {
       const activeServerId = showServerPicker && selectedServer ? selectedServer : undefined;
-      
+
       const payload = {
         username,
         password,
@@ -110,10 +114,10 @@ export default function LoginPage() {
 
       const res = await client.Auth.login(payload);
       await setToken(res, activeServerId);
-      
+
       // Force permissions manager to read from the newly set JWT token
       permissionsManager.clearCache();
-      
+
       try {
         wsClient.init();
       } catch (wsErr) {
@@ -135,19 +139,21 @@ export default function LoginPage() {
       </Head>
 
       <div className="min-h-screen w-full bg-background flex items-center justify-center relative overflow-hidden font-sans selection:bg-brand-cyan/30">
-        
         {/* Ambient Background Glows */}
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-cyan/10 blur-[120px] rounded-full pointer-events-none"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-brand-purple/10 blur-[120px] rounded-full pointer-events-none"></div>
 
         {/* Login Card */}
         <div className="w-full max-w-md p-8 sm:p-10 bg-surface/80 backdrop-blur-2xl border border-border rounded-3xl shadow-2xl shadow-black/60 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out m-4">
-          
           {/* Logo & Header */}
           <div className="flex flex-col items-center text-center mb-10">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-cyan to-brand-purple p-[1px] shadow-lg shadow-brand-cyan/20 mb-6">
               <div className="w-full h-full bg-surface rounded-[15px] flex items-center justify-center">
-                <Activity size={32} className="text-transparent bg-clip-text bg-gradient-to-br from-brand-cyan to-brand-purple" style={{ stroke: 'url(#gradient)' }} />
+                <Activity
+                  size={32}
+                  className="text-transparent bg-clip-text bg-gradient-to-br from-brand-cyan to-brand-purple"
+                  style={{ stroke: "url(#gradient)" }}
+                />
                 <svg width="0" height="0">
                   <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop stopColor="var(--color-brand-cyan)" offset="0%" />
@@ -156,19 +162,16 @@ export default function LoginPage() {
                 </svg>
               </div>
             </div>
-            <h1 className="text-3xl font-black text-white tracking-tight mb-2">
-              {t("login.welcome_back", "Welcome Back")}
-            </h1>
+            <h1 className="text-3xl font-black text-white tracking-tight mb-2">{t("login.welcome_back", "Welcome Back")}</h1>
             <p className="text-sm text-gray-400 font-medium">
-              {showServerPicker 
-                ? t("login.subtitle_server", "Authenticate via Jellyfin Server") 
+              {showServerPicker
+                ? t("login.subtitle_server", "Authenticate via Jellyfin Server")
                 : t("login.subtitle_local", "Sign in to your local account")}
             </p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
-            
             {/* Global Error Banner */}
             {(error || serverError) && (
               <div className="p-4 rounded-xl bg-brand-rose/10 border border-brand-rose/20 flex items-start gap-3 animate-in fade-in zoom-in-95">
@@ -189,9 +192,9 @@ export default function LoginPage() {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder={t("login.username_placeholder", "Username")}
                   className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-100 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all ${
-                    usernameError 
-                      ? 'border-brand-rose/50 focus:border-brand-rose focus:ring-brand-rose' 
-                      : 'border-border focus:border-brand-cyan focus:ring-brand-cyan'
+                    usernameError
+                      ? "border-brand-rose/50 focus:border-brand-rose focus:ring-brand-rose"
+                      : "border-border focus:border-brand-cyan focus:ring-brand-cyan"
                   }`}
                   disabled={loading}
                 />
@@ -202,7 +205,7 @@ export default function LoginPage() {
             {/* Password Input */}
             <div className="space-y-1.5">
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-brand-purple transition-colors">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-brand-cyan transition-colors">
                   <Lock size={18} />
                 </div>
                 <input
@@ -211,9 +214,9 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t("login.password_placeholder", "Password")}
                   className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-100 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all ${
-                    passwordError 
-                      ? 'border-brand-rose/50 focus:border-brand-rose focus:ring-brand-rose' 
-                      : 'border-border focus:border-brand-purple focus:ring-brand-purple'
+                    passwordError
+                      ? "border-brand-rose/50 focus:border-brand-rose focus:ring-brand-rose"
+                      : "border-border focus:border-brand-cyan focus:ring-brand-cyan"
                   }`}
                   disabled={loading}
                 />
@@ -222,35 +225,20 @@ export default function LoginPage() {
             </div>
 
             {/* Server Picker (Conditional) */}
+
             {showServerPicker && (
               <div className="space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-300">
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-brand-emerald transition-colors">
-                    {loadingServers ? <Loader2 size={18} className="animate-spin text-brand-emerald" /> : <ServerIcon size={18} />}
-                  </div>
-                  <select
-                    value={selectedServer || ""}
-                    onChange={(e) => setSelectedServer(e.target.value)}
-                    className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-10 text-gray-100 focus:outline-none focus:ring-1 appearance-none transition-all ${
-                      serverValidationError 
-                        ? 'border-brand-rose/50 focus:border-brand-rose focus:ring-brand-rose' 
-                        : 'border-border focus:border-brand-emerald focus:ring-brand-emerald'
-                    }`}
-                    disabled={loading || loadingServers}
-                  >
-                    <option value="" disabled className="bg-surface text-gray-500">
-                      {t("login.select_server", "Select a server...")}
-                    </option>
-                    {serverOptions.map((opt) => (
-                      <option key={opt.value} value={opt.value} className="bg-surface text-gray-100">
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500">
-                    <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
-                  </div>
-                </div>
+                <DropdownSelector<string | null>
+                  data={serverOptions.map((opt) => ({ value: opt.value, Icon: loadingServers ? Loader2 : ServerIcon }))}
+                  value={selectedServer}
+                  onChange={setSelectedServer}
+                  labelFn={(val) =>
+                    serverOptions.find((opt) => opt.value === val)?.label ?? t("login.select_server", "Select a server...")
+                  }
+                  placeholder={t("login.select_server", "Select a server...")}
+                  leftIcon={ServerIcon}
+                  loading={loadingServers}
+                />
                 {serverValidationError && <p className="text-xs text-brand-rose font-medium pl-1">{serverValidationError}</p>}
               </div>
             )}
@@ -268,9 +256,7 @@ export default function LoginPage() {
                     <Loader2 size={20} className="animate-spin text-white" />
                   ) : (
                     <>
-                      <span className="font-bold text-white tracking-wide">
-                        {t("login.submit_button", "Sign In")}
-                      </span>
+                      <span className="font-bold text-white tracking-wide">{t("login.submit_button", "Sign In")}</span>
                       <ChevronRight size={18} className="text-white ml-2 group-hover:translate-x-1 transition-transform" />
                     </>
                   )}
@@ -281,17 +267,16 @@ export default function LoginPage() {
 
           {/* Toggle Login Mode */}
           <div className="mt-8 text-center border-t border-border/50 pt-6">
-            <button 
+            <button
               onClick={toggleServerPicker}
               type="button"
               className="text-sm font-bold text-gray-400 hover:text-white transition-colors cursor-pointer"
             >
-              {showServerPicker 
-                ? t("login.switch_local", "Switch to Local Account Login") 
+              {showServerPicker
+                ? t("login.switch_local", "Switch to Local Account Login")
                 : t("login.switch_server", "Login via Jellyfin/Emby")}
             </button>
           </div>
-
         </div>
       </div>
     </>
