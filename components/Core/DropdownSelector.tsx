@@ -34,8 +34,8 @@ export default function DropdownSelector<T>({
 
   useEffect(() => {
     function updateWidth() {
-      const w = buttonRef.current?.offsetWidth;
-      if (w) setButtonWidth(w);
+      const w = (buttonRef.current?.offsetWidth ?? 0) - 4;
+      if (w && w > 0) setButtonWidth(w);
     }
     updateWidth();
 
