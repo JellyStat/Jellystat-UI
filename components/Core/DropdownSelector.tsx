@@ -84,7 +84,7 @@ export default function DropdownSelector<T>({
                 <ListboxOption
                   key={idx}
                   value={item}
-                  className="cursor-pointer select-none relative py-2 px-3 flex items-center gap-2 text-sm text-gray-200 hover:bg-brand-purple/40 "
+                  className="cursor-pointer select-none relative py-2 px-3 m-2 rounded-lg flex items-center gap-2 text-sm text-gray-200 hover:bg-brand-purple/40 "
                 >
                   {item.Icon ? <item.Icon size={16} /> : null}
                   <span>{labelFn(item.value)}</span>
