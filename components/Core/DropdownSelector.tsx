@@ -55,7 +55,7 @@ export default function DropdownSelector<T>({ data, value, onChange, disabled, l
             </div>
             <span className="flex-1 text-left">{selectedOption ? labelFn(selectedOption.value) : "Select"}</span>
             <ChevronDownIcon
-              className="group pointer-events-none absolute top-3.5 right-2.5 size-4 fill-white/60"
+              className="group pointer-events-none absolute top-3 right-2.5 size-4 text-gray-500"
               aria-hidden="true"
             />
           </ListboxButton>
