@@ -108,19 +108,19 @@ export default function SideNav() {
   const activeItems = [...navItems, ...(isAdmin ? adminItems : [])];
 
   return (
-    <aside className="w-64 bg-surface border-r border-border flex flex-col z-20 shrink-0 shadow-2xl shadow-black/50 transition-all duration-300">
+    <aside className="w-64 h-dvh max-h-dvh bg-surface border-r border-border flex flex-col z-20 shrink-0 shadow-2xl shadow-black/50 transition-all duration-300">
       {/* Brand Header */}
-      <div className="h-20 flex items-center px-6 border-b border-border bg-background/50 shrink-0">
-        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-brand-cyan to-brand-purple shadow-lg shadow-brand-purple/20 mr-3">
+      <div className="h-20 flex-none flex items-center px-6 border-b border-border bg-background/50">
+        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-linear-to-br from-brand-cyan to-brand-purple shadow-lg shadow-brand-purple/20 mr-3">
           <Activity className="text-white" size={24} />
         </div>
-        <span className="text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-gray-100 to-gray-400">
+        <span className="text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-linear-to-r from-gray-100 to-gray-400">
           Jellystat
         </span>
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 py-6 px-4 space-y-1.5 overflow-y-auto custom-scrollbar">
+      <nav className="flex-1 min-h-0 py-6 px-4 space-y-1.5 overflow-y-auto custom-scrollbar">
         {activeItems.map((item) => {
           const isActive = currentPath === item.path || (item.path !== "/" && currentPath.startsWith(item.path));
           const Icon = item.icon;
@@ -157,7 +157,7 @@ export default function SideNav() {
       </nav>
 
       {/* Footer: Live Status & Server Switcher */}
-      <div className="p-5 border-t border-border bg-background/30 flex flex-col shrink-0 gap-4">
+      <div className="p-5 border-t border-border bg-background/30 flex-none flex flex-col gap-4">
         {/* Dynamic Status Indicator */}
         <div className="flex items-center gap-3">
           <StatusIndicator color={isConnected ? "bg-brand-emerald" : "bg-brand-rose"} />
