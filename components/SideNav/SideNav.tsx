@@ -10,6 +10,7 @@ import configManager from "@/lib/configManager";
 import { Server } from "@/lib/models/server";
 import { wsClient } from "@/lib/wsClient";
 import StatusIndicator from "../Core/StatusIndicator";
+import DropdownSelector from "../Core/DropdownSelector";
 
 export default function SideNav() {
   const router = useRouter();
@@ -62,8 +63,9 @@ export default function SideNav() {
   }, []);
 
   // --- HANDLERS ---
-  const handleServerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newServerId = e.target.value;
+
+  const handleServerChange = (value: string | null) => {
+    const newServerId = value;
     try {
       if (newServerId) {
         localStorage.setItem("jellystat_serverId", newServerId);
@@ -173,35 +175,14 @@ export default function SideNav() {
 
         {/* Admin Server Switcher */}
         {isAdmin && serverOptions.length > 0 && (
-          <div className="relative group">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500 group-focus-within:text-brand-cyan transition-colors">
-              <ServerIcon size={14} />
-            </div>
-            <select
-              value={selectedServer || ""}
-              onChange={handleServerChange}
-              className="w-full bg-surface/50 border border-border hover:border-gray-600 rounded-lg py-2 pl-9 pr-8 text-xs text-gray-200 focus:outline-none focus:ring-1 focus:border-brand-cyan focus:ring-brand-cyan appearance-none transition-all cursor-pointer"
-            >
-              <option value="" disabled className="bg-background text-gray-500">
-                {t("nav.select_server", "Select a server...")}
-              </option>
-              {serverOptions.map((opt) => (
-                <option key={opt.value} value={opt.value} className="bg-background text-gray-100">
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-            {/* Custom Select Chevron */}
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
-              <svg className="w-3 h-3 fill-current" viewBox="0 0 20 20">
-                <path
-                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                  fillRule="evenodd"
-                ></path>
-              </svg>
-            </div>
-          </div>
+          <DropdownSelector<string | null>
+            data={serverOptions.map((opt) => ({ value: opt.value, Icon: ServerIcon }))}
+            value={selectedServer}
+            onChange={handleServerChange}
+            labelFn={(val) =>
+              serverOptions.find((opt) => opt.value === val)?.label ?? t("nav.select_server", "Select a server...")
+            }
+          />
         )}
       </div>
     </aside>

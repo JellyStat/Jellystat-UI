@@ -1,5 +1,6 @@
-import { LucideIcon } from "lucide-react";
-import { useState, useEffect, type ChangeEvent } from "react";
+import { ChevronDownIcon, LucideIcon } from "lucide-react";
+import { Fragment, useRef, useState, useEffect } from "react";
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from "@headlessui/react";
 
 export type Props<T> = {
   data: DropdownOption<T>[];
@@ -15,54 +16,70 @@ export type DropdownOption<T> = {
 };
 
 export default function DropdownSelector<T>({ data, value, onChange, disabled, labelFn }: Props<T>) {
-  const initialIndex = value !== undefined ? data.findIndex((item) => item.value === value) : -1;
-  const [selectedIndex, setSelectedIndex] = useState<number>(initialIndex);
-
-  const selectedOption = selectedIndex >= 0 && data[selectedIndex] ? data[selectedIndex] : undefined;
+  const selectedOption: DropdownOption<T> | undefined = value !== undefined ? data.find((d) => d.value === value) : undefined;
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const [buttonWidth, setButtonWidth] = useState<number | undefined>(undefined);
 
   useEffect(() => {
-    const idx = value !== undefined ? data.findIndex((item) => item.value === value) : -1;
-    setSelectedIndex(idx);
-  }, [value, data]);
-
-  function handleChange(event: ChangeEvent<HTMLSelectElement>) {
-    const idx = Number(event.target.value);
-    if (Number.isNaN(idx) || idx < 0 || idx >= data.length) {
-      setSelectedIndex(-1);
-      return;
+    function updateWidth() {
+      const w = buttonRef.current?.offsetWidth;
+      if (w) setButtonWidth(w);
     }
-    setSelectedIndex(idx);
-    onChange?.(data[idx].value);
-  }
+    updateWidth();
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined" && buttonRef.current) {
+      ro = new ResizeObserver(updateWidth);
+      ro.observe(buttonRef.current);
+    }
+    window.addEventListener("resize", updateWidth);
+    return () => {
+      window.removeEventListener("resize", updateWidth);
+      if (ro) ro.disconnect();
+    };
+  }, []);
+
   return (
-    <div className="relative group min-w-[200px]">
-      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500 group-focus-within:text-brand-cyan transition-colors z-10">
-        {(() => {
-          const Icon = selectedOption?.Icon;
-          return Icon ? <Icon size={16} /> : null;
-        })()}
-      </div>
-      <select
-        value={selectedIndex >= 0 ? String(selectedIndex) : ""}
-        onChange={handleChange}
-        className="w-full bg-surface/80 backdrop-blur-md border border-border hover:border-gray-500 rounded-xl py-2.5 pl-10 pr-8 text-sm font-bold text-gray-200 focus:outline-none focus:ring-1 focus:border-brand-cyan focus:ring-brand-cyan appearance-none transition-all cursor-pointer shadow-sm"
-        disabled={disabled}
-      >
-        {data.map((item, idx) => (
-          <option key={idx} value={String(idx)} className="bg-background text-gray-100">
-            {labelFn(item.value)}
-          </option>
-        ))}
-      </select>
-      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
-        <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-          <path
-            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-            clipRule="evenodd"
-            fillRule="evenodd"
-          ></path>
-        </svg>
-      </div>
+    <div className="relative min-w-[200px]">
+      <Listbox value={selectedOption} onChange={(opt: DropdownOption<T>) => onChange?.(opt.value)} disabled={disabled}>
+        <div className="relative">
+          <ListboxButton
+            ref={buttonRef as any}
+            className="w-full bg-surface/80 backdrop-blur-md border border-border hover:border-gray-500 rounded-xl py-2.5 pl-10 pr-8 text-sm font-bold text-gray-200 appearance-none transition-all cursor-pointer shadow-sm flex items-center"
+          >
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+              {(() => {
+                const Icon = selectedOption?.Icon;
+                return Icon ? <Icon size={16} /> : null;
+              })()}
+            </div>
+            <span className="flex-1 text-left">{selectedOption ? labelFn(selectedOption.value) : "Select"}</span>
+            <ChevronDownIcon
+              className="group pointer-events-none absolute top-3.5 right-2.5 size-4 fill-white/60"
+              aria-hidden="true"
+            />
+          </ListboxButton>
+
+          <Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
+            <ListboxOptions
+              anchor="bottom start"
+              className="[--anchor-gap:8px] [--anchor-padding:16px] absolute mx-0.5 bg-surface border border-border rounded-lg shadow-lg max-h-60 overflow-auto z-50 py-1"
+              style={buttonWidth ? { width: `${buttonWidth}px` } : undefined}
+            >
+              {data.map((item, idx) => (
+                <ListboxOption
+                  key={idx}
+                  value={item}
+                  className="cursor-pointer select-none relative py-2 px-3 flex items-center gap-2 text-sm text-gray-200 hover:bg-brand-purple/40 "
+                >
+                  {item.Icon ? <item.Icon size={16} /> : null}
+                  <span>{labelFn(item.value)}</span>
+                </ListboxOption>
+              ))}
+            </ListboxOptions>
+          </Transition>
+        </div>
+      </Listbox>
     </div>
   );
 }
