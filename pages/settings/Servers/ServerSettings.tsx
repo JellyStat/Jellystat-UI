@@ -117,7 +117,7 @@ export default function ServerSettingsPage() {
                           {server.type || "Jellyfin"}
                         </span>
                       </h3>
-                      <div className="flex items-center gap-4 mt-2 text-xs text-gray-400 font-mono">
+                      <div className="flex items-center flex-wrap gap-4 mt-2 text-xs text-gray-400 font-mono">
                         <span className="flex items-center gap-1.5">
                           <Globe size={12} /> {server.url}
                         </span>
