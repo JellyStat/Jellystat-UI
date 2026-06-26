@@ -5,6 +5,7 @@ import FilterItem, { DatesRangeValue } from "./FilterItem";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import DateRangePicker from "../Core/DateRangePicker";
 import { DateRange } from "react-day-picker";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 
 interface DateFilterProps {
   keyName: string;
@@ -33,15 +34,7 @@ export default function DateFilter({ keyName, value, onChange }: DateFilterProps
 
   // Local state matches the DateRangeValue signature
   const [query, setQuery] = useState<DatesRangeValue>(value);
-  const [debounced, setDebounced] = useState<DatesRangeValue>(value);
-
-  // --- DEBOUNCE EFFECT ---
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebounced(query);
-    }, 500);
-    return () => clearTimeout(handler);
-  }, [query]);
+  const debounced = useDebounce(query, 500);
 
   // --- FILTER TRIGGER EFFECT ---
   useEffect(() => {

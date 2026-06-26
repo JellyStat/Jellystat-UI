@@ -6,6 +6,7 @@ import { Search, ArrowDownWideNarrow, ArrowUpNarrowWide, Loader2, AlertCircle, F
 import client from "@/lib/api";
 import type { ItemsWithStats } from "@/lib/models/itemsWithStats";
 import ItemCard from "../ItemsCards/ItemCard";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 
 type Props = {
   gridify?: GridifyQueryBuilder;
@@ -24,8 +25,8 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [filter, setFilter] = useState("");
   const [input, setInput] = useState("");
+  const debounced = useDebounce(input, 500);
   const [sortField, setSortField] = useState<string>(defaultOrderBy ?? "dateCreated");
   const [sortDesc, setSortDesc] = useState<boolean>(defaultOrderDesc ?? true);
   const [archivedFilter, setArchivedFilter] = useState<boolean | null>(null);
@@ -46,8 +47,8 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
         const query: GridifyQueryBuilder = gridify ? new GridifyQueryBuilder({ from: gridify }) : new GridifyQueryBuilder();
         query.setPage(pageToLoad);
 
-        if (filter && filter.trim() !== "") {
-          query.and().addCondition("Name", op.Contains, filter.trim(), false);
+        if (debounced && debounced.trim() !== "") {
+          query.and().addCondition("Name", op.Contains, debounced.trim(), false);
         }
 
         if (sortField) query.addOrderBy(sortField, sortDesc);
@@ -72,7 +73,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
         setLoading(false);
       }
     },
-    [filter, gridify, sortDesc, sortField, archivedFilter],
+    [debounced, gridify, sortDesc, sortField, archivedFilter],
   );
 
   // Initial load & when filter or sort changes
@@ -82,15 +83,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
     setPage(1);
     fetchPage(1, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, sortField, sortDesc, archivedFilter]);
-
-  // Debounce input -> set filter
-  useEffect(() => {
-    const t = setTimeout(() => {
-      setFilter(input.trim());
-    }, 300);
-    return () => clearTimeout(t);
-  }, [input]);
+  }, [debounced, sortField, sortDesc, archivedFilter]);
 
   // Infinite scroll using intersection observer
   useEffect(() => {
@@ -170,7 +163,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
 
           {/* Search Input */}
           <div className="relative group w-full sm:max-w-xs shrink-0 flex-1 sm:flex-none">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500 group-focus-within:text-brand-cyan transition-colors">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500 transition-colors">
               <Search size={16} />
             </div>
             <input
@@ -178,7 +171,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
               placeholder={t("media_grid.search_placeholder", "Search media...")}
               value={input}
               onChange={(e) => setInput(e.currentTarget.value)}
-              className="w-full bg-background/50 border border-border hover:border-gray-500 rounded-xl py-2 pl-9 pr-4 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:border-brand-cyan focus:ring-brand-cyan transition-all shadow-inner"
+              className="w-full bg-background/50 border border-border hover:border-gray-500 rounded-xl py-2 pl-9 pr-4 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none transition-all shadow-inner"
             />
           </div>
         </div>
