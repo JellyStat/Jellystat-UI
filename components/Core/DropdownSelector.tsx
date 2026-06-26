@@ -57,7 +57,7 @@ export default function DropdownSelector<T>({
         <div className="relative">
           <ListboxButton
             ref={buttonRef as any}
-            className="w-full bg-surface/80 backdrop-blur-md border border-border hover:border-gray-500 rounded-xl py-2.5 pl-10 pr-8 text-sm font-bold text-gray-200 appearance-none transition-all cursor-pointer shadow-sm flex items-center"
+            className="w-full bg-surface/80 backdrop-blur-md border border-border focus:outline-none hover:border-gray-500 rounded-xl py-2.5 pl-10 pr-8 text-sm font-bold text-gray-200 appearance-none transition-all cursor-pointer shadow-sm flex items-center"
           >
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
               {(() => {
@@ -76,7 +76,7 @@ export default function DropdownSelector<T>({
           <Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
             <ListboxOptions
               anchor="bottom start"
-              className="[--anchor-gap:8px] [--anchor-padding:16px] absolute mx-0.5 bg-surface border border-border rounded-lg shadow-lg max-h-60 overflow-auto z-50 py-1"
+              className="[--anchor-gap:8px] [--anchor-padding:16px] focus:outline-none absolute mx-0.5 bg-surface border border-border rounded-lg shadow-lg max-h-60 overflow-auto z-50 py-1"
               style={buttonWidth ? { width: `${buttonWidth}px` } : undefined}
             >
               {data.length === 0 && <div className="px-3 py-2 text-sm text-gray-400">No options available</div>}
