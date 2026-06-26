@@ -6,20 +6,21 @@
   --color-brand-emerald: #34d399;
   --color-brand-rose: #f43f5e;
   --color-brand-amber: #fbbf24;
-  
-  --color-background: #09090b; 
-  --color-surface: #121214;    
+
+  --color-background: #09090b;
+  --color-surface: #121214;
   --color-surface-hover: #1e1e24;
   --color-border: #27272a;
 }
 
 @layer base {
-  html, body {
+  html,
+  body {
     @apply bg-background text-gray-100 antialiased h-screen w-screen overflow-hidden;
     margin: 0;
     padding: 0;
   }
-  
+
   #__next {
     @apply h-full w-full flex;
   }
@@ -38,4 +39,9 @@
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-zinc-600;
   }
+}
+.rdp-root {
+  --rdp-accent-color: var(--color-brand-cyan) !important; /* Change the accent color to indigo. */
+  --rdp-accent-background-color: var(--color-border) !important; /* Change the accent background color. */
+  /* Add more CSS variables here. */
 }

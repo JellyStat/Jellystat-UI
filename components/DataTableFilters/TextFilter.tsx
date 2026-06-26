@@ -43,7 +43,7 @@ export default function TextFilter({
   return (
     <div className="relative flex items-center w-full group min-w-[100px]">
       {/* Left Search Icon */}
-      <div className="absolute left-2.5 text-gray-500 group-focus-within:text-brand-cyan transition-colors pointer-events-none">
+      <div className="absolute left-2.5 text-gray-500 transition-colors pointer-events-none">
         <Search size={14} />
       </div>
 
@@ -53,7 +53,7 @@ export default function TextFilter({
         placeholder={t("activity.filter", "Filter...")}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="w-full bg-surface/80 border border-transparent hover:border-border focus:border-brand-cyan rounded py-1.5 pl-8 pr-8 text-xs text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-brand-cyan transition-all shadow-inner"
+        className="w-full bg-surface/80 border border-transparent hover:border-border rounded py-1.5 pl-8 pr-8 text-xs text-gray-200 placeholder:text-gray-600 focus:outline-none transition-all shadow-inner"
       />
 
       {/* Right Clear Icon (Only visible when there is text) */}

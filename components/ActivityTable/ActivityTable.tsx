@@ -143,18 +143,20 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
         key={activity.id}
         className={`border-b border-border transition-colors hover:bg-surface-hover ${isSubRow ? "bg-background/40" : "bg-transparent"}`}
       >
-        {!isSubRow && (
-          <td className="p-3 w-12 text-center">
-            {hasGroup ? (
-              <button
-                onClick={() => toggleRow(activity.id ?? "")}
-                className="p-1 rounded hover:bg-surface border border-transparent hover:border-border text-gray-400 hover:text-white transition-all cursor-pointer"
-              >
-                {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-              </button>
-            ) : null}
-          </td>
-        )}
+        <td className={`w-12 ${isSubRow ? "text-left" : "text-center"}`}>
+          {!isSubRow && hasGroup ? (
+            <button
+              onClick={() => toggleRow(activity.id ?? "")}
+              className="p-1 rounded hover:bg-surface border border-transparent hover:border-border text-gray-400 hover:text-white transition-all cursor-pointer"
+            >
+              {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+            </button>
+          ) : isSubRow ? (
+            <div className="flex items-center justify-start ml-4">
+              <span className="inline-block w-1 h-10  bg-brand-purple rounded" />
+            </div>
+          ) : null}
+        </td>
 
         <td className="p-3 whitespace-normal min-w-[200px] max-w-[320px]">
           <Link
@@ -349,17 +351,9 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
                 activityData.map((activity) => (
                   <React.Fragment key={activity.id}>
                     {renderRow(activity)}
-                    {expandedActivityIds.includes(activity.id ?? "") && activity.groupedResults ? (
-                      <tr className="bg-background shadow-inner border-b border-border">
-                        <td colSpan={10} className="p-0">
-                          <div className="pl-12 py-3 pr-3 bg-black/20 border-l-4 border-brand-purple">
-                            <table className="w-full text-left border-collapse whitespace-nowrap">
-                              <tbody>{activity.groupedResults.map((subAct) => renderRow(subAct, true))}</tbody>
-                            </table>
-                          </div>
-                        </td>
-                      </tr>
-                    ) : null}
+                    {expandedActivityIds.includes(activity.id ?? "") && activity.groupedResults
+                      ? activity.groupedResults.map((subAct) => renderRow(subAct, true))
+                      : null}
                   </React.Fragment>
                 ))
               )}
