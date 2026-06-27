@@ -150,10 +150,10 @@ export default function SessionCard({ session }: SessionCardProps) {
   // Images
   const imageUrl =
     (item?.seriesId ?? item?.id)
-      ? `${API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(item?.seriesId ?? item?.id ?? "")}&Width=160&ServerId=${encodeURIComponent(session.serverId ?? "")}`
+      ? `${API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(item?.seriesId ?? item?.id ?? "")}&Width=160&ServerId=${encodeURIComponent(session.serverId ?? "")}`
       : "";
-  const backgroundImage = `${API_BASE}Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(item?.seriesId ?? item?.id ?? "")}&Width=600&Quality=80&ServerId=${encodeURIComponent(session.serverId ?? "")}`;
-  const userImage = `${API_BASE}Proxy/Images/User/Primary?ServerId=${encodeURIComponent(session.serverId ?? "")}&Id=${encodeURIComponent(session.userId ?? "")}&Width=80`;
+  const backgroundImage = `${API_BASE}/Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(item?.seriesId ?? item?.id ?? "")}&Width=600&Quality=80&ServerId=${encodeURIComponent(session.serverId ?? "")}`;
+  const userImage = `${API_BASE}/Proxy/Images/User/Primary?ServerId=${encodeURIComponent(session.serverId ?? "")}&Id=${encodeURIComponent(session.userId ?? "")}&Width=80`;
 
   // Telemetry strings
   const container = getContainer(session);
@@ -212,7 +212,7 @@ export default function SessionCard({ session }: SessionCardProps) {
                 deviceName={session.deviceName ?? ""}
                 deviceIconUrl={
                   session.deviceIconUrl
-                    ? `${API_BASE}Proxy/Images/Devices?ServerId=${encodeURIComponent(session.serverId ?? "")}&iconUrl=${encodeURIComponent(session.deviceIconUrl)}`
+                    ? `${API_BASE}/Proxy/Images/Devices?ServerId=${encodeURIComponent(session.serverId ?? "")}&iconUrl=${encodeURIComponent(session.deviceIconUrl)}`
                     : ""
                 }
                 className="w-6 h-6 drop-shadow-lg"

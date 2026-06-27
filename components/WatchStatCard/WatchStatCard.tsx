@@ -46,8 +46,8 @@
 //   }
 
 //   const topItem = display[0];
-//   const imageUrl = `${API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(topItem.id)}&Width=600&ServerId=${encodeURIComponent(topItem.serverId)}`;
-//   const backgroundImage = `${API_BASE}Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(topItem.id)}&Width=300&Quality=80&ServerId=${encodeURIComponent(topItem.serverId)}`;
+//   const imageUrl = `${API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(topItem.id)}&Width=600&ServerId=${encodeURIComponent(topItem.serverId)}`;
+//   const backgroundImage = `${API_BASE}/Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(topItem.id)}&Width=300&Quality=80&ServerId=${encodeURIComponent(topItem.serverId)}`;
 
 //   const Icon = topItem.icon ?? ImageIcon;
 

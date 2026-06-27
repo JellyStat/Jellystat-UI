@@ -250,7 +250,7 @@ export default function UsersPage() {
                         <div className="w-10 h-10 mx-auto rounded-full bg-surface border border-border shadow-inner overflow-hidden flex items-center justify-center shrink-0">
                           {user.imageTag ? (
                             <img
-                              src={`${API_BASE}Proxy/Images/User/Primary?ServerId=${encodeURIComponent(user.serverId ?? "")}&Id=${encodeURIComponent(user.id)}&Width=80`}
+                              src={`${API_BASE}/Proxy/Images/User/Primary?ServerId=${encodeURIComponent(user.serverId ?? "")}&Id=${encodeURIComponent(user.id)}&Width=80`}
                               alt={user.username}
                               className="w-full h-full object-cover"
                               onError={(e) => {

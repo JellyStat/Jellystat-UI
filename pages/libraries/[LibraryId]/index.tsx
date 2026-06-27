@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { useTranslation } from "next-i18next/pages";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import { GridifyQueryBuilder } from "gridify-client";
 import { Loader2, AlertCircle, Image as ImageIcon, Info, Film, Activity as ActivityIcon, Settings } from "lucide-react";
 
@@ -171,10 +170,4 @@ export default function LibraryPage() {
   );
 }
 
-export async function getServerSideProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || "en", ["common"])),
-    },
-  };
-}
+// Note: This page is client-side rendered only to support `next export`.

@@ -19,12 +19,9 @@ export default function LibraryTrackingCard({
   const { t } = useTranslation("common");
   const [imageError, setImageError] = useState(false);
 
-  const imgUrl = new URL(
-    `/Proxy/Images/Items/Primary?Id=${encodeURIComponent(lib.id)}&Width=600&Quality=90&Blur=0&ServerId=${encodeURIComponent(
-      lib.serverId,
-    )}`,
-    API_BASE,
-  ).toString();
+  const imgUrl = `${API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(lib.id)}&Width=600&Quality=90&Blur=0&ServerId=${encodeURIComponent(
+    lib.serverId,
+  )}`;
 
   const Icon = LibraryTypeIcons[lib.type] ?? ImageIcon;
 

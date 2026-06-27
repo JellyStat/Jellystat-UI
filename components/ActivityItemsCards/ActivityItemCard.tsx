@@ -21,7 +21,7 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 160, height = 
   const serverId = item.serverId;
 
   // Build the image URL safely
-  const imageUrl = `${API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(imageId)}&Width=600&ServerId=${encodeURIComponent(serverId || "")}`;
+  const imageUrl = `${API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(imageId)}&Width=600&ServerId=${encodeURIComponent(serverId || "")}`;
 
   // Formatting strings
   const isValidParent = item.parent && item.parent.id && item.parent.id !== item.id;

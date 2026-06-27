@@ -1,0 +1,54 @@
+name: Tailwind - Build and Release UI
+
+on:
+  push:
+    branches: ["tailwind"]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout UI Repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "25.2.1"
+          cache: "npm"
+
+      # Extract version from package.json and short SHA from Git
+      - name: Set Version Environment Variables
+        id: vars
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          TAG_NAME="jellystat-ui-v${PACKAGE_VERSION}-${SHORT_SHA}"
+
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Install and Build UI
+        run: |
+          npm ci
+          npm run build
+
+      # Zip the output using your dynamic tag name
+      - name: Zip Build Output
+        run: |
+          cd out && zip -r ../${{ env.TAG_NAME }}-tailwind.zip .
+
+      # Create a dedicated GitHub Release named after the version + SHA string
+      - name: Create Versioned Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG_NAME }}-tailwind
+          name: UI Build ${{ env.TAG_NAME }}-tailwind
+          files: ${{ env.TAG_NAME }}-tailwind.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

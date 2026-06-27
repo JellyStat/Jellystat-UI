@@ -24,7 +24,7 @@ import { GenreStats } from "./models/genreStats";
 import { CountModel } from "./models/countModel";
 import { TaskSettings } from "./models/taskSettings";
 
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5020/";
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
 class ApiError extends Error {
   status: number;
@@ -65,8 +65,8 @@ function logoutAndRedirect(): void {
 }
 
 async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
-  const url = new URL(path, API_BASE).toString();
   // Include stored auth token (when available in browser) and allow callers to override headers
+  const url = API_BASE + path;
   let authHeader: string | undefined;
   if (typeof window !== "undefined") {
     try {
@@ -142,8 +142,8 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
 
 // raw fetch for binary/image endpoints and where we must control headers
 async function apiFetchRaw(path: string, options?: RequestInit): Promise<Response> {
-  const url = new URL(path, API_BASE).toString();
   // For raw fetches (images/binaries) also include Authorization when available
+  const url = API_BASE + path;
   let authHeader: string | undefined;
   if (typeof window !== "undefined") {
     try {
@@ -319,7 +319,8 @@ const createUser = (payload: LocalUser): Promise<void> =>
 // Refresh auth (no body expected)
 const refreshToken = async (): Promise<void> => {
   console.log("Attempting token refresh");
-  const url = new URL("/Auth/Refresh", API_BASE).toString();
+  const path = "/Auth/Refresh";
+  const url = API_BASE + path;
 
   let refresh: string | null = null;
   if (typeof window !== "undefined") {
@@ -460,7 +461,7 @@ const getTranscodeStats = async (
 const getStatTrends = async (params?: { days?: number; metric?: StatMetric }) =>
   apiFetch<ChartStats[]>(`/Stats/StatTrends${await buildQuery(undefined, params as Record<string, any>)}`);
 
-const getGenreStats = async () => apiFetch<GenreStats[]>(`/Stats/GenreStats${await buildQuery()}`);
+const getGenreStats = async (gridify?: IGridifyQuery) => apiFetch<GenreStats[]>(`/Stats/GenreStats${await buildQuery(gridify)}`);
 
 const getCodecStats = async () => apiFetch<CountModel[]>(`/Stats/CodecStats${await buildQuery()}`);
 

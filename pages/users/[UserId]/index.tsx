@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { useTranslation } from "next-i18next/pages";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import { Loader2, AlertCircle, Image as ImageIcon, Info, Film, Activity as ActivityIcon, Settings, UserIcon } from "lucide-react";
 
@@ -103,7 +102,7 @@ export default function LibraryPage() {
               <div className="relative w-24 h-24 rounded-2xl bg-background border border-border flex items-center justify-center shadow-inner shrink-0 group">
                 {user.imageTag ? (
                   <img
-                    src={`${API_BASE}Proxy/Images/User/Primary?ServerId=${encodeURIComponent(user.serverId ?? "")}&Id=${encodeURIComponent(user.id)}&Width=80`}
+                    src={`${API_BASE}/Proxy/Images/User/Primary?ServerId=${encodeURIComponent(user.serverId ?? "")}&Id=${encodeURIComponent(user.id)}&Width=80`}
                     alt={user.username}
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -168,10 +167,4 @@ export default function LibraryPage() {
   );
 }
 
-export async function getServerSideProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || "en", ["common"])),
-    },
-  };
-}
+// Note: This page is client-side rendered only to support `next export`.

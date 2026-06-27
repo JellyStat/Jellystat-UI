@@ -1,4 +1,3 @@
-import { API_BASE } from "@/lib/api";
 import { Globe, Tv, Smartphone, Tablet, Monitor, Gamepad2, Cast } from "lucide-react";
 
 interface DeviceIconProps {

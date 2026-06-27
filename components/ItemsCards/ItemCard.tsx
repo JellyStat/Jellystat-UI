@@ -18,7 +18,7 @@ export const ItemCard: React.FC<Props> = ({ item, width = 160, height = 240 }) =
   const isValidParent = item.parent && item.parent.id && item.parent.id !== item.id;
   const id = isValidParent ? item.parent!.id : item.id;
   const serverId = item.serverId;
-  const imageUrl = `${API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(id)}&Width=400&ServerId=${encodeURIComponent(serverId)}`;
+  const imageUrl = `${API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(id)}&Width=400&ServerId=${encodeURIComponent(serverId)}`;
 
   // Formatting
   const indexString =

@@ -33,7 +33,7 @@ export function LeaderboardCard({
 
   const topItem = items.length > 0 ? items[0] : null;
   const bgUrl = topItem
-    ? `${API_BASE}Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(topItem.id)}&Blur=1&Width=300&Quality=80&ServerId=${encodeURIComponent(topItem.serverId ?? "")}`
+    ? `${API_BASE}/Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(topItem.id)}&Blur=1&Width=300&Quality=80&ServerId=${encodeURIComponent(topItem.serverId ?? "")}`
     : "";
 
   return (

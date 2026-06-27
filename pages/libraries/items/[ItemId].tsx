@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { useTranslation } from "next-i18next/pages";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import { GridifyQueryBuilder } from "gridify-client";
 import { ExternalLink, Lock, Loader2, AlertCircle, Info, Film, Activity as ActivityIcon, ChevronLeft } from "lucide-react";
 
@@ -78,8 +77,8 @@ export default function ItemPage() {
   const parentIndexUnit = isValidParent && item.type === ItemTypes.Episode ? t("item.season", "Season") : null;
   const indexUnit = item?.type === ItemTypes.Episode ? t("item.episode", "Episode") : null;
 
-  const imageUrl = `${client.API_BASE}Proxy/Images/Items/Primary?Id=${encodeURIComponent(item?.parent?.id ?? item?.id ?? "")}&Width=600&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
-  const backgroundImage = `${client.API_BASE}Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(item?.parent?.id ?? item?.id ?? "")}&Width=1920&Quality=90&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
+  const imageUrl = `${client.API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(item?.parent?.id ?? item?.id ?? "")}&Width=600&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
+  const backgroundImage = `${client.API_BASE}/Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(item?.parent?.id ?? item?.id ?? "")}&Width=1920&Quality=90&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
 
   // Tabs Configuration
   const showMediaTab = item && [ItemTypes.Season, ItemTypes.Series].includes(item.type);
@@ -269,10 +268,4 @@ export default function ItemPage() {
   );
 }
 
-export async function getServerSideProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || "en", ["common"])),
-    },
-  };
-}
+// Note: This page is client-side rendered only to support `next export`.

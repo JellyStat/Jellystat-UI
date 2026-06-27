@@ -107,7 +107,7 @@ export default function LibrariesPage() {
 export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await serverSideTranslations(locale || "en-US", ["common"])),
     },
   };
 }
