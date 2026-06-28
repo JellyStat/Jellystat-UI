@@ -24,6 +24,7 @@ import { GenreStats } from "./models/genreStats";
 import { CountModel } from "./models/countModel";
 import { TaskSettings } from "./models/taskSettings";
 import { Tasks as TaskTypes } from "./models/enums/Tasks";
+import { LogsModel } from "./models/LogsModel";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
@@ -302,6 +303,9 @@ const setLocalUserServer = (payload: { userId: string; serverId: string }): Prom
 const toggleAllowRemoteAuth = async (serverId?: string): Promise<Boolean> =>
   apiFetch<Boolean>(`/Api/AllowRemoteAuth${await buildQuery(undefined, { ServerId: serverId })}`);
 
+const getTaskLogs = async (gridify?: IGridifyQuery): Promise<PagingResponse<LogsModel>> =>
+  apiFetch<PagingResponse<LogsModel>>(`/Api/Logs${await buildQuery(gridify)}`);
+
 // Auth
 // Interface/type definitions have been moved to ./models/
 
@@ -494,6 +498,7 @@ export const Api = {
   // insertActivity,
   setLocalUserServer,
   toggleAllowRemoteAuth,
+  getTaskLogs,
 };
 
 export const Stats = {
