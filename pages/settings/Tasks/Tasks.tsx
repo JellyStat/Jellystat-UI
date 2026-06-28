@@ -162,15 +162,7 @@ export default function TasksPage() {
                   const executeTask = async () => {
                     toast.loading(`Starting ${taskSetting.task}...`, { id: taskSetting.task });
                     try {
-                      switch (taskSetting.task) {
-                        case "Backup":
-                        case "FullSync":
-                          await client.Tasks.startSync();
-                          break;
-                        case "PartialSync":
-                          await client.Tasks.startPartialSync();
-                          break;
-                      }
+                      await client.Tasks.startTask(taskSetting.task);
                       toast.success(`${taskSetting.task} queued successfully`, { id: taskSetting.task });
                     } catch (error) {
                       toast.error(`Failed to start ${taskSetting.task}`, { id: taskSetting.task });

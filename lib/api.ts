@@ -23,6 +23,7 @@ import StatMetric from "./models/enums/statMetric";
 import { GenreStats } from "./models/genreStats";
 import { CountModel } from "./models/countModel";
 import { TaskSettings } from "./models/taskSettings";
+import { Tasks as TaskTypes } from "./models/enums/Tasks";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
@@ -472,13 +473,8 @@ const getResolutionStats = async (gridify?: IGridifyQuery) =>
 const getSystemInfo = async (): Promise<SystemInfo> => apiFetch(`/System/Info`);
 
 //Tasks
-const startSync = async () =>
-  apiFetchRaw(`/Tasks/StartSync${await buildQuery()}`)
-    .then(() => true)
-    .catch(() => false);
-
-const startPartialSync = async () =>
-  apiFetchRaw(`/Tasks/StartPartialSync${await buildQuery()}`)
+const startTask = async (task: TaskTypes) =>
+  apiFetchRaw(`/Tasks/StartTask${await buildQuery(undefined, { task })}`)
     .then(() => true)
     .catch(() => false);
 
@@ -538,8 +534,7 @@ export const System = {
 };
 
 export const Tasks = {
-  startSync,
-  startPartialSync,
+  startTask,
   updateTask,
 };
 
