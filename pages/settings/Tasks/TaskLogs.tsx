@@ -120,7 +120,7 @@ export default function TasksLogsPage() {
         <td className="p-4">
           <div className="flex items-center text-sm text-gray-300 font-medium">
             {log.success == null ? (
-              <span className="flex items-center gap-2 text-brand-yellow">
+              <span className="flex items-center gap-2 text-brand-cyan">
                 <CircleDashed size={14} /> In Progress
               </span>
             ) : log.success ? (
@@ -128,7 +128,7 @@ export default function TasksLogsPage() {
                 <CheckCircle2 size={14} /> Success
               </span>
             ) : (
-              <span className="flex items-center gap-2 text-brand-red">
+              <span className="flex items-center gap-2 text-brand-rose">
                 <XCircle size={14} /> Failed
               </span>
             )}
