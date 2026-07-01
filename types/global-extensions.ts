@@ -88,7 +88,8 @@ Number.prototype.secondsToDurationString = function (): string | null {
 
   // Compose a human-readable unit-prefixed string, e.g. "1 Month 6 Days 21 Hours"
   const parts: string[] = [];
-  const u = (value: number, singular: string, plural: string) => (value ? `${value} ${value === 1 ? singular : plural}` : null);
+  const u = (value: number, singular: string, plural: string) =>
+    value ? `${Number.isInteger(value) ? value.toString() : value.toFixed(2)} ${value === 1 ? singular : plural}` : null;
 
   const yearPart = u(years, "Year", "Years");
   const monthPart = u(months, "Month", "Months");
