@@ -16,6 +16,7 @@ import ItemActivity from "./activity";
 import ItemMedia from "./media";
 import NotFound from "@/components/ErrorCards/NotFound";
 import ItemImage from "@/components/ItemImage/ItemImage";
+import Link from "next/link";
 
 export default function ItemPage() {
   const router = useRouter();
@@ -149,9 +150,9 @@ export default function ItemPage() {
                   <div className="flex items-start gap-4 mb-2">
                     <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-md">
                       {item.parentId ? (
-                        <a href={`/libraries/items/${item.parentId}`} className="hover:text-brand-cyan transition-colors">
+                        <Link href={`/libraries/items/${item.parentId}`} className="hover:text-brand-cyan transition-colors">
                           {title}
-                        </a>
+                        </Link>
                       ) : (
                         title
                       )}
@@ -173,9 +174,9 @@ export default function ItemPage() {
                   {isValidParent && (
                     <div className="flex flex-wrap items-center gap-2 text-lg font-bold text-gray-300 mb-4 drop-shadow">
                       {parentIndexUnit && (
-                        <a href={`/libraries/items/${item.parentId}`} className="hover:text-brand-purple transition-colors">
+                        <Link href={`/libraries/items/${item.parentId}`} className="hover:text-brand-purple transition-colors">
                           {parentIndexUnit} {item.parentIndex}
-                        </a>
+                        </Link>
                       )}
                       {indexUnit && (
                         <span>

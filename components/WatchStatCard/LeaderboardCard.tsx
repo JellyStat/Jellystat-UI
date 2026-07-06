@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { AlertCircle, Loader2, Trophy } from "lucide-react";
 import { WatchStatItem } from "../WatchStatCards/WatchStatCards";
 import { API_BASE } from "@/lib/api";
+import Link from "next/link";
 
 export function LeaderboardCard({
   title,
@@ -78,9 +79,9 @@ export function LeaderboardCard({
                     </div>
 
                     {item.navLink ? (
-                      <a href={item.navLink} className="text text-gray-200 hover:text-brand-cyan transition-colors truncate">
+                      <Link href={item.navLink} className="text text-gray-200 hover:text-brand-cyan transition-colors truncate">
                         {item.name}
-                      </a>
+                      </Link>
                     ) : (
                       <span className="text text-gray-200 truncate">{item.name}</span>
                     )}
