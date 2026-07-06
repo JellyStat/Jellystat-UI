@@ -468,7 +468,7 @@ const getStatTrends = async (params?: { days?: number; metric?: StatMetric }) =>
 
 const getGenreStats = async (gridify?: IGridifyQuery) => apiFetch<GenreStats[]>(`/Stats/GenreStats${await buildQuery(gridify)}`);
 
-const getCodecStats = async () => apiFetch<CountModel[]>(`/Stats/CodecStats${await buildQuery()}`);
+const getCodecStats = async (gridify?: IGridifyQuery) => apiFetch<CountModel[]>(`/Stats/CodecStats${await buildQuery(gridify)}`);
 
 const getResolutionStats = async (gridify?: IGridifyQuery) =>
   apiFetch<CountModel[]>(`/Stats/ResolutionStats${await buildQuery(gridify)}`);

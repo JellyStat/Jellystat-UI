@@ -5,6 +5,7 @@ import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import { API_BASE } from "@/lib/api";
 import { Image as ImageIcon, Film, Tv, Music, Folders, HardDrive, PlaySquare, Clock, Timer, History } from "lucide-react";
 import Badge from "../Core/Badge";
+import LibraryTypes from "@/lib/models/enums/LibraryTypes";
 
 export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
   const router = useRouter();
@@ -22,17 +23,17 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
     border: "border-brand-cyan/30",
   };
 
-  const typeStr = lib.type?.toLowerCase() || "";
-  if (typeStr === "movies") {
+  const typeStr: LibraryTypes = lib.type;
+  if (typeStr === LibraryTypes.Movies) {
     FallbackIcon = Film;
     colorClasses = { text: "text-brand-purple", bg: "bg-brand-purple/20", border: "border-brand-purple/30" };
-  } else if (typeStr === "tvshows") {
+  } else if (typeStr === LibraryTypes.Series) {
     FallbackIcon = Tv;
     colorClasses = { text: "text-brand-emerald", bg: "bg-brand-emerald/20", border: "border-brand-emerald/30" };
-  } else if (typeStr === "music") {
+  } else if (typeStr === LibraryTypes.Music) {
     FallbackIcon = Music;
     colorClasses = { text: "text-brand-amber", bg: "bg-brand-amber/20", border: "border-brand-amber/30" };
-  } else if (typeStr === "homevideos" || typeStr === "photos") {
+  } else if (typeStr === LibraryTypes.HomeVideos) {
     FallbackIcon = ImageIcon;
     colorClasses = { text: "text-brand-rose", bg: "bg-brand-rose/20", border: "border-brand-rose/30" };
   }

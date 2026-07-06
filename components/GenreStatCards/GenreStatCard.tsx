@@ -28,7 +28,7 @@ export default function GenreStatCard({ data, dataKey }: Props) {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full flex items-center justify-center [&_svg]:overflow-visible">
       <RadarChart
         style={{ width: "100%", height: "100%", maxWidth: "500px", maxHeight: "80vh", aspectRatio: 1 }}
         responsive

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "next-i18next/pages";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
-import { PieChart } from "lucide-react";
+import { Clapperboard, HardDrive, PieChart } from "lucide-react";
 
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
@@ -11,6 +11,11 @@ import RecentlyAdded from "@/components/RecentlyAdded/RecentlyAdded";
 import StatsCard from "@/components/StatsCard/StatsCard";
 import LastWatched from "@/components/LastWatched/LastWatched";
 import GenreStatsCard from "@/components/GenreStatCards/GenreStats";
+import ResolutionStatsCard from "@/components/StatsCard/ResolutionStatsCard";
+import CodecStatsCard from "@/components/StatsCard/CodecStatsCard";
+import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
+import ItemTypeIcons from "@/lib/declarations/itemIcons";
+import LibraryInfoOverviewCard from "@/components/LibraryOverview/LibraryInfoOverviewCard";
 
 type Props = {
   library: LibrariesWithStats | null;
@@ -33,6 +38,16 @@ export default function LibraryOverView({ library }: Props) {
       .build();
   }, [library]);
 
+  const codecQuery = useMemo(() => {
+    if (!library) return undefined;
+    return new GridifyQueryBuilder().addCondition("LibraryId", op.Equal, library.id).build();
+  }, [library]);
+
+  const resolutionQuery = useMemo(() => {
+    if (!library) return undefined;
+    return new GridifyQueryBuilder().addCondition("LibraryId", op.Equal, library.id).build();
+  }, [library]);
+
   const lastWatchedQuery = useMemo(() => {
     if (!library) return undefined;
     return new GridifyQueryBuilder().addCondition("LibraryId", op.Equal, library.id);
@@ -44,6 +59,11 @@ export default function LibraryOverView({ library }: Props) {
 
   return (
     <div className="space-y-12 animate-in fade-in duration-500 pt-6">
+      {/* Library Type Counts */}
+      <div className="w-full">
+        <LibraryInfoOverviewCard library={library} />
+      </div>
+
       {/* Library Stats */}
       <div className="w-full">
         <StatsCard type={StatType.Library} id={library.id ?? ""} />
@@ -52,6 +72,14 @@ export default function LibraryOverView({ library }: Props) {
       {/* Genres Chart */}
       <div className="w-full">
         <GenreStatsCard gridify={gridify} />
+      </div>
+
+      {/* Codec and Resolution Stats */}
+      <div className="w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+          <CodecStatsCard gridify={codecQuery} />
+          <ResolutionStatsCard gridify={resolutionQuery} />
+        </div>
       </div>
 
       {/* Recently Added Section */}

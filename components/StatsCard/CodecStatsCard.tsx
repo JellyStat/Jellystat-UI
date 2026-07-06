@@ -7,8 +7,13 @@ import NoData from "@/components/ErrorCards/NoData";
 import { CountModel } from "@/lib/models/countModel";
 import JPieChart from "../Core/PieChart";
 import ErrorCard from "../ErrorCards/ErrorCard";
+import { IGridifyQuery } from "gridify-client";
 
-export default function CodecStatsCard() {
+type Props = {
+  gridify?: IGridifyQuery;
+};
+
+export default function CodecStatsCard({ gridify }: Props) {
   const { t } = useTranslation("common");
 
   const [stats, setStats] = useState<CountModel[]>([]);
@@ -19,7 +24,7 @@ export default function CodecStatsCard() {
     setLoading(true);
     setError(null);
     try {
-      const data = await client.Stats.getCodecStats();
+      const data = await client.Stats.getCodecStats(gridify);
       const filteredData = data.filter((item) => item.name !== null && item.name !== undefined);
       for (let i = 0; i < filteredData.length; i++) {
         if (filteredData[i].name === "") {
