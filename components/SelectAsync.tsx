@@ -48,6 +48,10 @@ export function SelectAsync<T>({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    setValue(initialValue?.id ?? null);
+  }, [initialValue]);
+
   const handleToggle = () => {
     const nextState = !isOpen;
     setIsOpen(nextState);

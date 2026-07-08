@@ -11,6 +11,7 @@ export type Props<T> = {
   placeholder?: string;
   leftIcon?: LucideIcon;
   loading?: boolean;
+  emptyDataMessage?: string;
 };
 
 export type DropdownOption<T> = {
@@ -27,6 +28,7 @@ export default function DropdownSelector<T>({
   placeholder,
   leftIcon,
   loading = false,
+  emptyDataMessage = "No options available",
 }: Props<T>) {
   const selectedOption: DropdownOption<T> | undefined = value !== undefined ? data.find((d) => d.value === value) : undefined;
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -51,22 +53,30 @@ export default function DropdownSelector<T>({
     };
   }, []);
 
+  const hasLeftIcon = loading == true || (selectedOption?.Icon ?? leftIcon) != null;
+
   return (
     <div className="relative min-w-[200px]">
       <Listbox value={selectedOption} onChange={(opt: DropdownOption<T>) => onChange?.(opt.value)} disabled={disabled}>
         <div className="relative">
           <ListboxButton
             ref={buttonRef as any}
-            className="w-full bg-surface/80 backdrop-blur-md border border-border focus:outline-none hover:border-gray-500 rounded-xl py-2.5 pl-10 pr-8 text-sm font-bold text-gray-200 appearance-none transition-all cursor-pointer shadow-sm flex items-center"
+            className={`w-full bg-surface/80 backdrop-blur-md border border-border focus:outline-none hover:border-gray-500 rounded-xl py-2.5 ${hasLeftIcon ? "pl-10" : "pl-4"} pr-8 text-sm font-bold text-gray-200 appearance-none transition-all cursor-pointer shadow-sm flex items-center`}
           >
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
-              {(() => {
-                if (loading) return <Loader2 size={16} className="animate-spin" />;
-                const Icon = selectedOption?.Icon ?? leftIcon;
-                return Icon ? <Icon size={16} /> : null;
-              })()}
-            </div>
-            <span className="flex-1 text-left">{selectedOption ? labelFn(selectedOption.value) : (placeholder ?? "Select")}</span>
+            {hasLeftIcon && (
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                {(() => {
+                  if (loading) return <Loader2 size={16} className="animate-spin" />;
+                  const Icon = selectedOption?.Icon ?? leftIcon;
+                  return Icon ? <Icon size={16} /> : null;
+                })()}
+              </div>
+            )}
+            <span
+              className={`min-w-0 flex-1 overflow-hidden text-left text-ellipsis whitespace-nowrap ${selectedOption ? "" : "text-gray-500 font-normal"}`}
+            >
+              {selectedOption ? labelFn(selectedOption.value) : (placeholder ?? "Select")}
+            </span>
             <ChevronDownIcon
               className="group pointer-events-none absolute top-3 right-2.5 size-4 text-gray-500"
               aria-hidden="true"
@@ -79,7 +89,9 @@ export default function DropdownSelector<T>({
               className="[--anchor-gap:8px] [--anchor-padding:16px] focus:outline-none absolute mx-0.5 bg-surface border border-border rounded-lg shadow-lg max-h-60 overflow-auto z-50 py-1"
               style={buttonWidth ? { width: `${buttonWidth}px` } : undefined}
             >
-              {data.length === 0 && <div className="px-3 py-2 text-sm text-gray-400">No options available</div>}
+              {(loading != null ? loading == true : true) && data.length === 0 && (
+                <div className="px-3 py-2 text-sm text-gray-400">{emptyDataMessage}</div>
+              )}
               {data.map((item, idx) => (
                 <ListboxOption
                   key={idx}
