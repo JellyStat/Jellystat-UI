@@ -2,20 +2,21 @@ import React from "react";
 import { API_BASE } from "@/lib/api";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next/pages";
-import { ItemsWithStats } from "@/lib/models/itemsWithStats";
+import type { RecentlyAdded } from "@/lib/models/RecentlyAdded";
 import ItemImage from "../ItemImage/ItemImage";
 
 type Props = {
-  item: ItemsWithStats;
+  item: RecentlyAdded;
   width?: number | string;
   height?: number | string;
 };
 
-export const ItemCard: React.FC<Props> = ({ item, width = 160, height = 240 }) => {
+export default function ItemCard({ item, width = 160, height = 240 }: Props) {
   const router = useRouter();
   const { t, i18n } = useTranslation("common");
 
   const isValidParent = item.parent && item.parent.id && item.parent.id !== item.id;
+  const hasGroupedItems = item.grouped && item.grouped.length > 0;
   const id = isValidParent ? item.parent!.id : item.id;
   const serverId = item.serverId;
   const imageUrl = `${API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(id)}&Width=400&ServerId=${encodeURIComponent(serverId)}`;
@@ -33,6 +34,9 @@ export const ItemCard: React.FC<Props> = ({ item, width = 160, height = 240 }) =
         year: "numeric",
       })
     : "";
+  const episodeCount = item.grouped?.length ?? 0;
+  const episodesTemplate = t("recently_added.episodes", "{{episodeCount}} Episodes");
+  const episodesLabel = `${episodeCount} Episodes`;
 
   return (
     <div
@@ -72,9 +76,8 @@ export const ItemCard: React.FC<Props> = ({ item, width = 160, height = 240 }) =
           </p>
         )}
         {isValidParent && <p className="text-[11px] text-gray-400 tracking-wider uppercase mt-auto pt-1">{indexString}</p>}
+        {hasGroupedItems && <p className="text-[11px] text-gray-400 tracking-wider uppercase mt-auto pt-1">{episodesLabel}</p>}
       </div>
     </div>
   );
-};
-
-export default ItemCard;
+}

@@ -25,6 +25,7 @@ import { CountModel } from "./models/countModel";
 import { TaskSettings } from "./models/taskSettings";
 import { Tasks as TaskTypes } from "./models/enums/Tasks";
 import { LogsModel } from "./models/LogsModel";
+import { RecentlyAdded } from "./models/RecentlyAdded";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
@@ -259,9 +260,9 @@ async function buildQuery(gridify?: IGridifyQuery | null, params?: Record<string
   return out ? `?${out}` : "";
 }
 
-const getRecentlyAdded = async (gridify?: IGridifyQuery): Promise<PagingResponse<ItemsWithParentData>> => {
-  const path = `/Api/RecentlyAdded${await buildQuery(gridify)}`;
-  return apiFetch<PagingResponse<ItemsWithParentData>>(path);
+const getRecentlyAdded = async (gridify?: IGridifyQuery, grouped?: boolean): Promise<PagingResponse<RecentlyAdded>> => {
+  const path = `/Api/RecentlyAdded${await buildQuery(gridify, { Grouped: grouped })}`;
+  return apiFetch<PagingResponse<RecentlyAdded>>(path);
 };
 
 // Minimal typed models for common endpoints (subset of schema)

@@ -24,6 +24,7 @@ import useFilters from "../DataTableFilters/useFilters";
 import TextFilter from "../DataTableFilters/TextFilter";
 import DateFilter from "../DataTableFilters/DateFilter";
 import { DatesRangeValue } from "../DataTableFilters/FilterItem";
+import { IpLookupModal } from "./IpLookUpModal";
 
 interface SortStatus {
   columnAccessor: string;
@@ -167,7 +168,13 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
             {activity.userName}
           </Link>
         </td>
-        <td className="p-3 text-xs font-mono text-gray-500">{activity.ipAddress}</td>
+        <td className="p-3 text-xs font-mono text-gray-500">
+          {activity.ipAddress && isRemoteSession(activity.ipAddress) ? (
+            <IpLookupModal ip={activity.ipAddress} />
+          ) : (
+            activity.ipAddress
+          )}
+        </td>
 
         <td className="p-3 whitespace-normal min-w-[200px] max-w-[320px]">
           <Link
@@ -194,6 +201,18 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
         </td>
       </tr>
     );
+  };
+
+  const ipv4Regex = new RegExp(
+    /\b(?!(10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168))(?:(?:2(?:[0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9])\.){3}(?:(?:2([0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9]))\b/,
+  );
+
+  const isRemoteSession = (ipAddress: string) => {
+    ipv4Regex.lastIndex = 0;
+    if (ipv4Regex.test(ipAddress)) {
+      return true;
+    }
+    return false;
   };
 
   return (

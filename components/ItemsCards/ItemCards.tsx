@@ -1,12 +1,12 @@
 import React from "react";
 import ItemCard from "./ItemCard";
-import type ItemsWithParentData from "@/lib/models/itemsWithParentData";
+import type { RecentlyAdded } from "@/lib/models/RecentlyAdded";
 
 type Props = {
-  items: ItemsWithParentData[];
+  items: RecentlyAdded[];
 };
 
-export const ItemCards: React.FC<Props> = ({ items }) => {
+export default function ItemCards({ items }: Props) {
   return (
     <div className="flex flex-nowrap gap-4 overflow-x-auto custom-scrollbar pb-4 -mx-2 px-2 snap-x snap-mandatory items-stretch">
       {items.map((it) => (
@@ -16,6 +16,4 @@ export const ItemCards: React.FC<Props> = ({ items }) => {
       ))}
     </div>
   );
-};
-
-export default ItemCards;
+}

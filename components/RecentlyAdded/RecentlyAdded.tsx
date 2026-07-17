@@ -4,19 +4,19 @@ import type { IGridifyQuery } from "gridify-client";
 import { Sparkles, Loader2, AlertCircle } from "lucide-react";
 
 import client from "@/lib/api";
-import type ItemsWithParentData from "@/lib/models/itemsWithParentData";
+import type { RecentlyAdded } from "@/lib/models/RecentlyAdded";
 import ItemCards from "../ItemsCards/ItemCards";
 import NoData from "../ErrorCards/NoData";
 
 type Props = {
   gridify?: IGridifyQuery;
-  cardWidth?: number | string;
+  grouped?: boolean;
 };
 
-const RecentlyAdded: React.FC<Props> = ({ gridify, cardWidth }) => {
+export default function RecentlyAdded({ gridify, grouped = true }: Props) {
   const { t } = useTranslation("common");
 
-  const [items, setItems] = useState<ItemsWithParentData[]>([]);
+  const [items, setItems] = useState<RecentlyAdded[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const isCancelledRef = useRef(false);
@@ -26,7 +26,7 @@ const RecentlyAdded: React.FC<Props> = ({ gridify, cardWidth }) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await client.Api.getRecentlyAdded(gridify);
+      const res = await client.Api.getRecentlyAdded(gridify, grouped);
       if (!isCancelledRef.current) setItems(res?.data ?? []);
     } catch (err: any) {
       if (!isCancelledRef.current) setError(err?.message ?? String(err));
@@ -80,6 +80,4 @@ const RecentlyAdded: React.FC<Props> = ({ gridify, cardWidth }) => {
       </div>
     </div>
   );
-};
-
-export default RecentlyAdded;
+}
