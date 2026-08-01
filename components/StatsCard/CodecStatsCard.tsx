@@ -8,6 +8,8 @@ import { CountModel } from "@/lib/models/countModel";
 import JPieChart from "../Core/PieChart";
 import ErrorCard from "../ErrorCards/ErrorCard";
 import { IGridifyQuery } from "gridify-client";
+import { CountModelWithSize } from "@/lib/models/countModelWithSize";
+import StatSizeListCard from "./StatSizeList";
 
 type Props = {
   gridify?: IGridifyQuery;
@@ -16,7 +18,7 @@ type Props = {
 export default function CodecStatsCard({ gridify }: Props) {
   const { t } = useTranslation("common");
 
-  const [stats, setStats] = useState<CountModel[]>([]);
+  const [stats, setStats] = useState<CountModelWithSize[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +33,8 @@ export default function CodecStatsCard({ gridify }: Props) {
           filteredData[i].name = t("statistics.codec_unknown", "Unknown");
         }
       }
-      setStats(filteredData);
+      const sortedData = filteredData.sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
+      setStats(sortedData);
     } catch (err: any) {
       if (err?.name === "AbortError") return;
       console.error(err);
@@ -68,7 +71,10 @@ export default function CodecStatsCard({ gridify }: Props) {
         ) : error ? (
           <ErrorCard message={error} />
         ) : (
-          <JPieChart data={stats} />
+          <div>
+            <JPieChart data={stats} />
+            <StatSizeListCard data={stats} />
+          </div>
         )}
       </div>
     );

@@ -26,6 +26,7 @@ import { TaskSettings } from "./models/taskSettings";
 import { Tasks as TaskTypes } from "./models/enums/Tasks";
 import { LogsModel } from "./models/LogsModel";
 import { RecentlyAdded } from "./models/RecentlyAdded";
+import { CountModelWithSize } from "./models/countModelWithSize";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
@@ -469,10 +470,11 @@ const getStatTrends = async (params?: { days?: number; metric?: StatMetric }) =>
 
 const getGenreStats = async (gridify?: IGridifyQuery) => apiFetch<GenreStats[]>(`/Stats/GenreStats${await buildQuery(gridify)}`);
 
-const getCodecStats = async (gridify?: IGridifyQuery) => apiFetch<CountModel[]>(`/Stats/CodecStats${await buildQuery(gridify)}`);
+const getCodecStats = async (gridify?: IGridifyQuery) =>
+  apiFetch<CountModelWithSize[]>(`/Stats/CodecStats${await buildQuery(gridify)}`);
 
 const getResolutionStats = async (gridify?: IGridifyQuery) =>
-  apiFetch<CountModel[]>(`/Stats/ResolutionStats${await buildQuery(gridify)}`);
+  apiFetch<CountModelWithSize[]>(`/Stats/ResolutionStats${await buildQuery(gridify)}`);
 
 // History
 const getSystemInfo = async (): Promise<SystemInfo> => apiFetch(`/System/Info`);
