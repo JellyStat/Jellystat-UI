@@ -1,12 +1,22 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "next-i18next/pages";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
-import { Search, ArrowDownWideNarrow, ArrowUpNarrowWide, Loader2, AlertCircle, Film, ChevronDown } from "lucide-react";
+import {
+  Search,
+  ArrowDownWideNarrow,
+  ArrowUpNarrowWide,
+  Loader2,
+  AlertCircle,
+  Film,
+  ChevronDown,
+  ArchiveIcon,
+} from "lucide-react";
 
 import client from "@/lib/api";
 import type { ItemsWithStats } from "@/lib/models/itemsWithStats";
 import ItemCard from "../ItemsCards/ItemCard";
 import { useDebounce } from "@/lib/hooks/useDebounce";
+import DropdownSelector from "../Core/DropdownSelector";
 
 type Props = {
   gridify?: GridifyQueryBuilder;
@@ -114,46 +124,40 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
 
         <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
           {/* Archived Filter */}
-          <div className="relative group min-w-[140px]">
-            <select
-              value={archivedFilter === null ? "null" : archivedFilter ? "true" : "false"}
-              onChange={(e) => {
-                const v = e.target.value;
-                setArchivedFilter(v === "true" ? true : v === "false" ? false : null);
-              }}
-              className="w-full bg-surface/80 border border-border hover:border-gray-500 rounded-xl py-2 pl-3 pr-8 text-sm font-bold text-gray-200 focus:outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan appearance-none transition-all cursor-pointer shadow-inner"
-            >
-              <option value="null">{t("media_grid.filter_all", "All Media")}</option>
-              <option value="true">{t("media_grid.filter_archived", "Archived")}</option>
-              <option value="false">{t("media_grid.filter_not_archived", "Active")}</option>
-            </select>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
-              <ChevronDown size={14} />
-            </div>
-          </div>
+
+          <DropdownSelector
+            data={[{ value: "null" }, { value: "true" }, { value: "false" }]}
+            value={archivedFilter === null ? "null" : archivedFilter ? "true" : "false"}
+            onChange={(val) => setArchivedFilter(val === "true" ? true : val === "false" ? false : null)}
+            labelFn={(val) => {
+              if (val === "null") return t("media_grid.filter_all", "All Media");
+              if (val === "true") return t("media_grid.filter_archived", "Archived");
+              if (val === "false") return t("media_grid.filter_not_archived", "Active");
+              return "";
+            }}
+            disabled={loading}
+          />
 
           {/* Sort Controls */}
           {showSort && (
             <div className="flex items-center gap-2">
-              <div className="relative group min-w-[140px]">
-                <select
-                  value={sortField}
-                  onChange={(e) => setSortField(e.target.value)}
-                  className="w-full bg-surface/80 border border-border hover:border-gray-500 rounded-xl py-2 pl-3 pr-8 text-sm font-bold text-gray-200 focus:outline-none focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan appearance-none transition-all cursor-pointer shadow-inner"
-                >
-                  <option value="name">{t("media_grid.sort_title", "Title")}</option>
-                  <option value="dateCreated">{t("media_grid.sort_date_added", "Date Added")}</option>
-                  <option value="playCount">{t("media_grid.sort_views", "Views")}</option>
-                  <option value="size">{t("media_grid.sort_size", "Size")}</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-500">
-                  <ChevronDown size={14} />
-                </div>
-              </div>
+              <DropdownSelector
+                data={[{ value: "name" }, { value: "dateCreated" }, { value: "playCount" }, { value: "size" }]}
+                value={sortField}
+                onChange={(val) => setSortField(val)}
+                labelFn={(val) => {
+                  if (val === "name") return t("media_grid.sort_title", "Title");
+                  if (val === "dateCreated") return t("media_grid.sort_date_added", "Date Added");
+                  if (val === "playCount") return t("media_grid.sort_views", "Views");
+                  if (val === "size") return t("media_grid.sort_size", "Size");
+                  return "";
+                }}
+                disabled={loading}
+              />
 
               <button
                 onClick={() => setSortDesc((s) => !s)}
-                className="flex items-center justify-center p-2 rounded-xl bg-surface/80 border border-border hover:border-brand-cyan text-gray-400 hover:text-brand-cyan transition-colors shadow-inner focus:outline-none focus:ring-1 focus:ring-brand-cyan cursor-pointer"
+                className="flex items-center justify-center p-2 py-2.5 rounded-xl bg-surface/80 border border-border hover:border-gray-500 text-gray-400 transition-colors shadow-inner focus:outline-none cursor-pointer"
                 aria-label="Toggle Sort Direction"
               >
                 {sortDesc ? <ArrowDownWideNarrow size={18} /> : <ArrowUpNarrowWide size={18} />}
