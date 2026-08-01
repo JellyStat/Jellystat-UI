@@ -50,7 +50,7 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
   return (
     <div
       onClick={() => router.push(`/libraries/${encodeURIComponent(lib.id)}`)}
-      className="group flex flex-col bg-surface/50 backdrop-blur-md border border-border rounded-2xl overflow-hidden hover:border-gray-500 transition-all duration-300 shadow-xl shadow-black/20 hover:-translate-y-1 hover:shadow-2xl cursor-pointer min-h-[380px]"
+      className="group flex flex-col bg-surface/50 backdrop-blur-md border border-border rounded-2xl overflow-hidden hover:border-gray-500 transition-all duration-300 shadow-xl shadow-black/20 hover:-translate-y-1 hover:shadow-2xl cursor-pointer min-h-95"
     >
       {/* Header & Image Banner */}
       <div className="relative h-40 w-full overflow-hidden bg-background shrink-0">
@@ -71,7 +71,13 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
         )}
 
         {/* Gradient Blending Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/80 to-transparent"></div>
+        <div className="absolute inset-0 bg-linear-to-t from-surface via-surface/80 to-transparent"></div>
+
+        {lib.archived && (
+          <div className="absolute top-2 right-2 z-20 bg-black/80 backdrop-blur-md text-[10px] font-bold text-gray-300 px-2 py-1 rounded-md border border-white/10 uppercase tracking-widest shadow-lg">
+            {t("item.archived", "Archived")}
+          </div>
+        )}
 
         {/* Title Overlay */}
         <div className="absolute bottom-0 left-0 w-full p-5 flex justify-between items-end">

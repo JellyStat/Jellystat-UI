@@ -90,7 +90,7 @@ export default function ItemImage({
 
         {/* Archived Badge (if applicable) */}
         {archived && (
-          <div className="absolute top-2 right-2 bg-black/80 backdrop-blur-md text-[10px] font-bold text-gray-300 px-2 py-1 rounded-md border border-white/10 uppercase tracking-widest shadow-lg">
+          <div className="absolute top-2 right-2 z-20 bg-black/80 backdrop-blur-md text-[10px] font-bold text-gray-300 px-2 py-1 rounded-md border border-white/10 uppercase tracking-widest shadow-lg">
             {t("item.archived", "Archived")}
           </div>
         )}
