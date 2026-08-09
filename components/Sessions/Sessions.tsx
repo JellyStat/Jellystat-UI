@@ -55,7 +55,7 @@ export default function Sessions() {
           />
         ) : (
           /* Responsive Grid */
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 3xl:grid-cols-3 gap-6">
             {sessions.map((s: SessionItem) => (
               <SessionCard key={s.id} session={s} />
             ))}

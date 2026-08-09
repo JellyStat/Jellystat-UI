@@ -165,7 +165,8 @@ export default function SessionCard({ session }: SessionCardProps) {
 
   // Time & Progress
   const TICKS_PER_MS = 10000;
-  const etaDate = new Date(Date.now() + Math.round((item?.runtimeTicks ?? 0) / TICKS_PER_MS));
+  const remainingTicks = (item?.runtimeTicks ?? 0) - (session.playState?.positionTicks ?? 0);
+  const etaDate = new Date(Date.now() + remainingTicks / TICKS_PER_MS);
   const eta = etaDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   const progressVal = ((session.playState?.positionTicks ?? 0) / (item?.runtimeTicks ?? 1)) * 100;
 
@@ -185,7 +186,7 @@ export default function SessionCard({ session }: SessionCardProps) {
       {/* Top Section: Media Cover + Telemetry Data */}
       <div className="relative z-10 flex h-[240px]">
         {/* Left: Poster */}
-        <div className="w-[160px] shrink-0 h-full border-r border-white/5">
+        <div className="hidden xl:block shrink-0 h-full border-r border-white/5">
           <ItemImage
             imageUrl={imageUrl}
             imageHash={item.imageHash}
