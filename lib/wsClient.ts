@@ -3,7 +3,7 @@
    - Attaches token as `token` query parameter (from localStorage)
    - Exposes `init`, `send`, `close`, `on`, `off`, and `isConnected`
 */
-import { API_BASE } from "./api";
+import { API_BASE, Auth } from "./api";
 import { WebsocketMessage } from "./models/WebsocketMessage";
 import { toast } from "sonner";
 
@@ -16,6 +16,8 @@ class WebSocketClient {
   private shouldReconnect = true;
   private handlers: Map<string, Set<Handler>> = new Map();
   private isReconnecting = false;
+  private isRefreshingAuth = false;
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
   private buildUrl(): string {
     // Prefer explicit env var
@@ -57,13 +59,19 @@ class WebSocketClient {
 
     try {
       const token = (() => {
-        try { return localStorage.getItem("jellystat_token"); } 
-        catch { return null; }
+        try {
+          return localStorage.getItem("jellystat_token");
+        } catch {
+          return null;
+        }
       })();
 
       const serverId = (() => {
-        try { return localStorage.getItem("jellystat_serverId"); } 
-        catch { return null; }
+        try {
+          return localStorage.getItem("jellystat_serverId");
+        } catch {
+          return null;
+        }
       })();
 
       if (!token || !serverId) {
@@ -89,10 +97,10 @@ class WebSocketClient {
     this.ws.onopen = () => {
       this.reconnectDelay = 1000;
       this.emit("open", null);
-      
+
       // If we successfully reconnected, update the loading toast to success
       if (this.isReconnecting) {
-        toast.success("Connection re-established", { 
+        toast.success("Connection re-established", {
           id: "ws-status",
           duration: 3000,
         });
@@ -111,7 +119,7 @@ class WebSocketClient {
         } else if (ev.data && typeof ev.data === "object") {
           parsed = ev.data;
         } else {
-          return; 
+          return;
         }
 
         if (!parsed || typeof parsed !== "object") return;
@@ -127,7 +135,12 @@ class WebSocketClient {
 
     this.ws.onclose = (ev) => {
       this.emit("close", ev);
-      if (this.shouldReconnect) this.scheduleReconnect();
+      if (!this.shouldReconnect) return;
+      if (this.shouldRefreshOnDisconnect(ev)) {
+        void this.refreshAndReconnect();
+        return;
+      }
+      this.scheduleReconnect();
     };
 
     this.ws.onerror = (ev) => {
@@ -135,20 +148,75 @@ class WebSocketClient {
     };
   }
 
-  private scheduleReconnect() {
-    setTimeout(() => {
+  private isAuthExpiredClose(ev: CloseEvent): boolean {
+    const reason = (ev.reason ?? "").toLowerCase();
+    return (
+      ev.code === 4401 ||
+      ev.code === 4403 ||
+      ev.code === 1008 ||
+      reason.includes("auth") ||
+      reason.includes("token") ||
+      reason.includes("expired") ||
+      reason.includes("unauthor")
+    );
+  }
+
+  private shouldRefreshOnDisconnect(ev: CloseEvent): boolean {
+    if (!this.hasRefreshToken()) return false;
+    return this.isAuthExpiredClose(ev) || (ev.code !== 1000 && ev.code !== 1001);
+  }
+
+  private hasRefreshToken(): boolean {
+    try {
+      return typeof window !== "undefined" && !!localStorage.getItem("jellystat_refreshToken");
+    } catch {
+      return false;
+    }
+  }
+
+  private async refreshAndReconnect() {
+    if (this.isRefreshingAuth || !this.shouldReconnect) return;
+
+    this.isRefreshingAuth = true;
+    if (!this.isReconnecting) {
+      this.isReconnecting = true;
+      toast.loading("Connection lost. Reconnecting...", {
+        id: "ws-status",
+      });
+    }
+
+    try {
+      await Auth.refreshToken();
       if (!this.shouldReconnect) return;
-      
+      this.reconnectDelay = 1000;
+      this.connect();
+    } catch {
+      if (this.shouldReconnect) this.scheduleReconnect();
+    } finally {
+      this.isRefreshingAuth = false;
+    }
+  }
+
+  private scheduleReconnect() {
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+
+    this.reconnectTimer = setTimeout(() => {
+      if (!this.shouldReconnect) return;
+
       // Trigger the loading toast if it hasn't been triggered yet
       if (!this.isReconnecting) {
         this.isReconnecting = true;
-        toast.loading("Connection lost. Reconnecting...", { 
-          id: "ws-status" 
+        toast.loading("Connection lost. Reconnecting...", {
+          id: "ws-status",
         });
       }
-      
+
       this.reconnectDelay = Math.min(this.reconnectDelay * 1.5, this.maxDelay);
       this.connect();
+      this.reconnectTimer = null;
     }, this.reconnectDelay);
   }
 
@@ -165,6 +233,11 @@ class WebSocketClient {
 
   close() {
     this.shouldReconnect = false;
+    this.isRefreshingAuth = false;
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
     try {
       this.ws?.close();
     } catch {
