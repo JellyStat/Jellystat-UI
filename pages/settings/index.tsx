@@ -4,14 +4,14 @@ import { Settings, Library, ArrowLeftRight, Terminal, Server } from "lucide-reac
 import { useTranslation } from "next-i18next/pages";
 import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 
-import ActivityMigrationPage from "./ActivityMigration/ActivityMIgration";
+import ActivityMigrationPage from "./ActivityMigration/ActivityMigration";
 import TasksPage from "./Tasks/Tasks";
 import LibrarySettingsPage from "./Library/LibrarySettings";
 import ServerSettingsPage from "./Servers/ServerSettings";
 
 export default function SettingsPage() {
   const { t } = useTranslation("common");
-  
+
   const [activeTab, setActiveTab] = useState<string>("settings");
 
   const tabs = [
@@ -27,19 +27,17 @@ export default function SettingsPage() {
       <Head>
         <title>{t("nav.settings", "Settings")} | Jellystat</title>
       </Head>
-      
+
       <div className="w-full min-h-screen">
-        
         {/* Top Navigation Bar */}
         <div className="max-w-[1600px] mx-auto px-6 pt-6 animate-in slide-in-from-top-4 duration-500">
           <div className="flex overflow-x-auto custom-scrollbar pb-4">
-            
             {/* Glassmorphic Tab Container */}
             <div className="flex items-center p-1.5 bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-inner w-max">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
-                
+
                 return (
                   <button
                     key={tab.id}
@@ -50,22 +48,20 @@ export default function SettingsPage() {
                         : "text-gray-400 hover:text-white hover:bg-surface-hover"
                     }`}
                   >
-                    <Icon 
-                      size={18} 
-                      className={`transition-colors ${isActive ? "text-black" : "text-gray-500 group-hover:text-gray-300"}`} 
+                    <Icon
+                      size={18}
+                      className={`transition-colors ${isActive ? "text-black" : "text-gray-500 group-hover:text-gray-300"}`}
                     />
                     {tab.label}
                   </button>
                 );
               })}
             </div>
-            
           </div>
         </div>
 
         {/* Active Tab Panel */}
         <div className="w-full transition-opacity duration-300">
-          
           {activeTab === "settings" && (
             <div className="max-w-[1600px] mx-auto p-6 animate-in fade-in duration-500">
               <div className="bg-surface/30 border-2 border-dashed border-border rounded-3xl p-16 flex flex-col items-center justify-center text-center shadow-inner">
@@ -74,7 +70,10 @@ export default function SettingsPage() {
                   {t("settings.general_title", "General Settings")}
                 </h3>
                 <p className="mt-2 text-sm text-gray-500 font-medium max-w-sm">
-                  {t("settings.general_desc", "System configuration, backups, and global UI preferences will be available here in a future update.")}
+                  {t(
+                    "settings.general_desc",
+                    "System configuration, backups, and global UI preferences will be available here in a future update.",
+                  )}
                 </p>
               </div>
             </div>
@@ -84,7 +83,6 @@ export default function SettingsPage() {
           {activeTab === "librarySettings" && <LibrarySettingsPage />}
           {activeTab === "migrations" && <ActivityMigrationPage />}
           {activeTab === "tasks" && <TasksPage />}
-          
         </div>
       </div>
     </>

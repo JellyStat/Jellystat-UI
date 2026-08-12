@@ -43,11 +43,37 @@ export default function ActivityMigrationPage() {
   // --- MIGRATION LOGIC ---
   function updateMigrationSeries(activity: Activity, item: ItemsWithParentData) {
     if (activity.seriesId === item.parent?.id) return;
-    setMigrations((prev) => prev.map((m) => (m.activity.seriesId === activity.seriesId ? m.copyWith({ seriesItem: item }) : m)));
+    let migration: ActivityMigrationModel | undefined = migrations.find((m) => m.activity.id === activity.id);
+    if (!migration) {
+      migration = new ActivityMigrationModel({ activity: activity, seriesItem: item });
+    } else {
+      migration = migration.copyWith({ seriesItem: item });
+    }
+    setMigrations((prev) => {
+      const exists = prev.some((m) => m.activity.id === activity.id);
+      if (exists) {
+        return prev.map((m) => (m.activity.id === activity.id ? migration : m));
+      } else {
+        return [...prev, migration!];
+      }
+    });
   }
 
   function updateMigrationItem(activityId: string, item: ItemsWithParentData) {
-    setMigrations((prev) => prev.map((m) => (m.activity.id === activityId ? m.copyWith({ item: item }) : m)));
+    let migration: ActivityMigrationModel | undefined = migrations.find((m) => m.activity.id === activityId);
+    if (!migration) {
+      migration = new ActivityMigrationModel({ activity: activityData.find((a) => a.id === activityId)!, item: item });
+    } else {
+      migration = migration.copyWith({ item: item });
+    }
+    setMigrations((prev) => {
+      const exists = prev.some((m) => m.activity.id === activityId);
+      if (exists) {
+        return prev.map((m) => (m.activity.id === activityId ? migration : m));
+      } else {
+        return [...prev, migration!];
+      }
+    });
   }
 
   function addOrUpdateMigrations(migrations: ActivityMigrationModel[]) {
@@ -236,6 +262,8 @@ export default function ActivityMigrationPage() {
 
     setIsSearchDialogOpen(true);
   };
+
+  console.log("ActivityMigrationPage render", { activityData, migrations, selected, migrateableCount });
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 p-6">

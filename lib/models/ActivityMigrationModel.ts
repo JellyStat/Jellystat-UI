@@ -49,12 +49,12 @@ export class ActivityMigrationModel {
   }
 
   isValid(): boolean {
-    if (this.activity.seriesId && (!this.seriesItem || !this.item)) {
-      return false;
+    const isSeries = this.activity.seriesId != null;
+
+    if (isSeries) {
+      return this.seriesItem != null && this.item != null;
     }
-    if (!this.activity.seriesId && !this.item) {
-      return false;
-    }
-    return true;
+
+    return this.item != null;
   }
 }
