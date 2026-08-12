@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Head from "next/head";
-import { Settings, Library, ArrowLeftRight, Terminal, Server } from "lucide-react";
+import { Settings, Library, ArrowLeftRight, Terminal, Server, Users } from "lucide-react";
 import { useTranslation } from "next-i18next/pages";
 import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 
@@ -8,6 +8,7 @@ import ActivityMigrationPage from "./ActivityMigration/ActivityMigration";
 import TasksPage from "./Tasks/Tasks";
 import LibrarySettingsPage from "./Library/LibrarySettings";
 import ServerSettingsPage from "./Servers/ServerSettings";
+import UsersSettingsPage from "./Users";
 
 export default function SettingsPage() {
   const { t } = useTranslation("common");
@@ -17,6 +18,7 @@ export default function SettingsPage() {
   const tabs = [
     { id: "settings", label: t("settings.tab_general", "General Settings"), icon: Settings },
     { id: "servers", label: t("settings.tab_servers", "Servers & Auth"), icon: Server },
+    { id: "users", label: t("settings.tab_users", "Users"), icon: Users },
     { id: "librarySettings", label: t("settings.tab_library", "Library Settings"), icon: Library },
     { id: "migrations", label: t("settings.tab_migrations", "Activity Migration"), icon: ArrowLeftRight },
     { id: "tasks", label: t("settings.tab_tasks", "Background Tasks"), icon: Terminal },
@@ -80,6 +82,7 @@ export default function SettingsPage() {
           )}
 
           {activeTab === "servers" && <ServerSettingsPage />}
+          {activeTab === "users" && <UsersSettingsPage />}
           {activeTab === "librarySettings" && <LibrarySettingsPage />}
           {activeTab === "migrations" && <ActivityMigrationPage />}
           {activeTab === "tasks" && <TasksPage />}

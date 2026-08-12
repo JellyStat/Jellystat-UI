@@ -84,7 +84,7 @@ export default function ServerSettingsPage() {
             </button>
           </div>
 
-          <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden relative min-h-[200px]">
+          <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden relative">
             {loading && (
               <div className="absolute inset-0 z-20 bg-surface/80 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
                 <Loader2 size={32} className="text-brand-cyan animate-spin mb-3" />
@@ -186,34 +186,6 @@ export default function ServerSettingsPage() {
                   </p>
                 </div>
               )}
-            </div>
-          </div>
-
-          {/* Local Users Placeholder */}
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <Users size={20} className="text-brand-purple" />
-                {t("settings.local_users", "Local Users")}
-              </h2>
-              <button className="flex items-center justify-center w-8 h-8 bg-surface hover:bg-surface-hover border border-border hover:border-brand-purple transition-colors rounded-xl shadow-inner group">
-                <Plus size={16} className="text-gray-400 group-hover:text-brand-purple" />
-              </button>
-            </div>
-
-            <div className="bg-surface border border-border rounded-2xl p-5 shadow-xl shadow-black/20 text-center">
-              <Key size={32} className="mx-auto mb-3 text-gray-500 opacity-30" />
-              <p className="text-sm font-bold text-gray-300 mb-1">{t("settings.local_administrators", "Local Administrators")}</p>
-              <p className="text-xs text-gray-500 mb-4">
-                {t(
-                  "settings.local_administrators_desc",
-                  "Manage accounts created directly within Jellystat bypassing media server authentication.",
-                )}
-              </p>
-
-              <button className="w-full py-2 bg-background border border-border hover:border-brand-purple text-gray-300 hover:text-white rounded-xl text-xs font-bold transition-all shadow-inner">
-                {t("settings.manage_local_users", "Manage Local Accounts")}
-              </button>
             </div>
           </div>
         </div>

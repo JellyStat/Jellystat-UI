@@ -288,6 +288,9 @@ const postTrackedLibraries = async (payload: TrackedLibraries[]): Promise<Tracke
 const getUsers = async (gridify?: IGridifyQuery): Promise<PagingResponse<Users>> =>
   apiFetch<PagingResponse<Users>>(`/Api/Users${await buildQuery(gridify)}`);
 
+const getLocalUsers = async (gridify?: IGridifyQuery): Promise<PagingResponse<Users>> =>
+  apiFetch<PagingResponse<Users>>(`/Api/LocalUsers${await buildQuery(gridify)}`);
+
 const getLibraries = async (gridify?: IGridifyQuery): Promise<PagingResponse<LibrariesWithStats>> =>
   apiFetch<PagingResponse<LibrariesWithStats>>(`/Api/Libraries${await buildQuery(gridify)}`);
 
@@ -499,6 +502,7 @@ export const Api = {
   trackedUsers: { get: getTrackedUsers, post: postTrackedUsers },
   trackedLibraries: { get: getTrackedLibraries, post: postTrackedLibraries },
   getUsers,
+  getLocalUsers,
   getLibraries,
   getLibraryItems,
   getMatchingItems,
