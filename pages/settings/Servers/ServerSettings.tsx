@@ -15,6 +15,8 @@ export default function ServerSettingsPage() {
   const [error, setError] = useState<string | null>(null);
   const [remoteAuthEnabled, setRemoteAuthEnabled] = useState(false);
 
+  const [isAddServerOpen, setIsAddServerOpen] = useState(false);
+
   // --- DATA FETCHING ---
   const fetchServers = useCallback(async () => {
     setLoading(true);
@@ -78,7 +80,10 @@ export default function ServerSettingsPage() {
               <Database size={20} className="text-brand-cyan" />
               {t("settings.connected_servers", "Connected Servers")}
             </h2>
-            <button className="flex items-center gap-2 bg-surface hover:bg-surface-hover border border-border hover:border-brand-cyan transition-colors px-4 py-2 rounded-xl text-sm font-bold shadow-inner">
+            <button
+              onClick={() => setIsAddServerOpen(true)}
+              className="flex items-center gap-2 bg-surface hover:bg-surface-hover border border-border hover:border-brand-cyan transition-colors px-4 py-2 rounded-xl text-sm font-bold shadow-inner"
+            >
               <Plus size={16} className="text-brand-cyan" />
               {t("settings.add_server", "Add Server")}
             </button>
@@ -190,9 +195,18 @@ export default function ServerSettingsPage() {
           </div>
         </div>
       </div>
+      <Dialog open={isAddServerOpen} onClose={setIsAddServerOpen} className="relative z-50 focus:outline-none">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
+
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <AddServerModal onClose={() => setIsAddServerOpen(false)} onCreated={fetchServers} />
+        </div>
+      </Dialog>
     </div>
   );
 }
 
 import { Database } from "lucide-react";
 import configManager from "@/lib/configManager";
+import { Dialog } from "@headlessui/react";
+import AddServerModal from "./AddServer";

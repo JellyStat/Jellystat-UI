@@ -90,7 +90,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   let res = await fetch(url, { ...options, headers: mergedHeaders });
 
   // If unauthorized and we had a token, attempt one refresh+retry using the long-lived refresh token
-  if (res.status === 401) {
+  if (res.status === 401 && path !== "/Auth/Refresh" && path !== "/Auth/Login") {
     if (!authHeader) {
       // No auth header, so this is likely a public endpoint that doesn't require auth. Don't attempt refresh.
       logoutAndRedirect();

@@ -2,10 +2,13 @@ import { useTranslation } from "react-i18next";
 import { useCallback, useState, useEffect } from "react";
 import { Users } from "@/lib/models/users";
 import { GridifyQueryBuilder } from "gridify-client";
+import { Dialog } from "@headlessui/react";
 import client from "@/lib/api";
 import { AlertCircle, Loader2, Plus, UserIcon, Users as UsersIcon } from "lucide-react";
 import configManager from "@/lib/configManager";
 import { Server } from "@/lib/models/server";
+
+import AddUserModal from "./AddUser";
 
 export default function UsersSettingsPage() {
   const { t } = useTranslation("common");
@@ -15,6 +18,7 @@ export default function UsersSettingsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [serverData, setServerData] = useState<Server[]>([]);
+  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
 
   // --- DATA FETCHING ---
   const fetchPage = useCallback(async () => {
@@ -76,7 +80,10 @@ export default function UsersSettingsPage() {
               <UsersIcon size={20} className="text-brand-purple" />
               {t("settings.local_users", "Local Users")}
             </h2>
-            <button className="flex items-center gap-2 bg-surface hover:bg-surface-hover border border-border hover:border-brand-purple transition-colors px-4 py-2 rounded-xl text-sm font-bold shadow-inner">
+            <button
+              onClick={() => setIsAddUserOpen(true)}
+              className="flex items-center gap-2 bg-surface hover:bg-surface-hover border border-border hover:border-brand-purple transition-colors px-4 py-2 rounded-xl text-sm font-bold shadow-inner"
+            >
               <Plus size={16} className="text-brand-purple" />
               {t("settings.add_user", "Add User")}
             </button>
@@ -131,6 +138,14 @@ export default function UsersSettingsPage() {
           </div>
         </div>
       </div>
+
+      <Dialog open={isAddUserOpen} onClose={setIsAddUserOpen} className="relative z-50 focus:outline-none">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
+
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <AddUserModal onClose={() => setIsAddUserOpen(false)} onCreated={fetchPage} />
+        </div>
+      </Dialog>
     </div>
   );
 }
