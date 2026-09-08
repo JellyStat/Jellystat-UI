@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "next-i18next/pages";
-import { BarChart3, Loader2, AlertCircle, TrendingUp, Clock } from "lucide-react";
+import { BarChart3, Loader2, AlertCircle, TrendingUp, Clock, Calendar, Calendar1 } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 import client from "@/lib/api";
@@ -9,6 +9,10 @@ import { ChartStat } from "@/lib/models/chartStat";
 import NoData from "@/components/ErrorCards/NoData";
 import DropdownSelector from "@/components/Core/DropdownSelector";
 import ErrorCard from "../ErrorCards/ErrorCard";
+import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
+import { DateRange } from "react-day-picker";
+import DateRangePickerButton from "../Core/DateRangePickerButton";
+import StatMetric from "@/lib/models/enums/statMetric";
 
 // --- THEME COLORS FOR CHART SERIES ---
 const chartColors = [
@@ -24,14 +28,42 @@ export default function WatchTrendsCard() {
 
   const [stats, setStats] = useState<ChartStats[]>([]);
   const [metric, setMetric] = useState<keyof ChartStat>("count");
+  const [timeGranularity, setTimeGranularity] = useState<StatMetric>(StatMetric.Date);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const getDefaultStartDate = () => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const start = new Date(now);
+    start.setDate(now.getDate() - 31);
+    return start;
+  };
+
+  const getDefaultEndDate = () => {
+    const now = new Date();
+    now.setHours(23, 59, 59, 999);
+    return now;
+  };
+
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({ from: getDefaultStartDate(), to: getDefaultEndDate() });
+
   const fetchPage = useCallback(async () => {
+    if (!dateRange || !dateRange.from || !dateRange.to) return;
     setLoading(true);
     setError(null);
     try {
-      const data = await client.Stats.getStatTrends({ days: 31 });
+      const query = new GridifyQueryBuilder();
+      query.setPage(1);
+      query.setPageSize(200);
+
+      query.startGroup();
+      query.addCondition("DateCreated", op.GreaterThanOrEqual, dateRange!.from!.toISOString());
+      query.and();
+      query.addCondition("DateCreated", op.LessThanOrEqual, dateRange!.to!.toISOString());
+      query.endGroup();
+      const builtQuery = query.build();
+      const data = await client.Stats.getStatTrends(builtQuery, { metric: timeGranularity });
       setStats(data);
     } catch (err: any) {
       if (err?.name === "AbortError") return;
@@ -40,22 +72,24 @@ export default function WatchTrendsCard() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [dateRange, timeGranularity]);
 
   useEffect(() => {
     fetchPage();
-  }, [fetchPage]);
+  }, [fetchPage, dateRange, timeGranularity]);
 
   // --- DATA TRANSFORMATION ---
   // Transform row-oriented ChartStats[] into Recharts shape
   function buildChartFromRows(rows: ChartStats[], activeMetric: keyof ChartStat) {
     const legends = Array.from(new Set(rows.flatMap((r) => r.stats.map((s) => s.legend))));
+    console.log("Legends:", legends);
 
     const data = rows.map((r) => {
       const row: Record<string, any> = { key: r.key };
-      for (const s of r.stats) row[s.legend] = s[activeMetric] ?? 0;
-      // ensure all legends exist on row
-      for (const l of legends) if (row[l] === undefined) row[l] = 0;
+      // initialize all legends to 0 so missing series render as zero, not gaps
+      for (const l of legends) row[l] = 0;
+      // sum instead of assign, in case a row has multiple stats for the same legend
+      for (const s of r.stats) row[s.legend] += s[activeMetric] ?? 0;
       return row;
     });
 
@@ -79,6 +113,13 @@ export default function WatchTrendsCard() {
     return `${val}`;
   };
 
+  const handleDateRange = (range: DateRange | undefined) => {
+    if (!range) {
+      range = { from: getDefaultStartDate(), to: getDefaultEndDate() };
+    }
+    setDateRange(range);
+  };
+
   return (
     <>
       <div className="flex flex-col w-full animate-in fade-in duration-500">
@@ -88,18 +129,38 @@ export default function WatchTrendsCard() {
             <BarChart3 size={28} className="text-brand-purple" />
             <h2 className="text-2xl font-black text-white tracking-tight">{t("stats.watch_trends", "Watch Trends")}</h2>
           </div>
-          <DropdownSelector
-            data={[
-              { value: "count", Icon: TrendingUp },
-              { value: "playDuration", Icon: Clock },
-            ]}
-            value={metric}
-            onChange={(val) => setMetric((val as keyof ChartStat) ?? "count")}
-            labelFn={(val) =>
-              val === "count" ? t("statistics.play_count", "Play Count") : t("statistics.play_duration", "Play Duration")
-            }
-            disabled={loading}
-          />
+          <div className="flex items-end gap-3">
+            {/* <DateRangePickerButton value={dateRange} onChange={handleDateRange} /> */}
+            <DropdownSelector
+              data={[
+                { value: StatMetric.Date, Icon: Calendar },
+                { value: StatMetric.Day, Icon: Calendar1 },
+                { value: StatMetric.Hour, Icon: Clock },
+              ]}
+              value={timeGranularity}
+              onChange={(val) => setTimeGranularity((val as StatMetric) ?? StatMetric.Date)}
+              labelFn={(val) =>
+                val === StatMetric.Date
+                  ? t("statistics.by_date", "By Date")
+                  : val === StatMetric.Day
+                    ? t("statistics.by_day", "By Day")
+                    : t("statistics.by_hour", "By Hour")
+              }
+              disabled={loading}
+            />
+            <DropdownSelector
+              data={[
+                { value: "count", Icon: TrendingUp },
+                { value: "playDuration", Icon: Clock },
+              ]}
+              value={metric}
+              onChange={(val) => setMetric((val as keyof ChartStat) ?? "count")}
+              labelFn={(val) =>
+                val === "count" ? t("statistics.play_count", "Play Count") : t("statistics.play_duration", "Play Duration")
+              }
+              disabled={loading}
+            />
+          </div>
         </div>
 
         {/* Main Grid */}
@@ -114,9 +175,7 @@ export default function WatchTrendsCard() {
             {loading ? (
               <div className="w-full h-[400px] flex flex-col items-center justify-center">
                 <Loader2 size={40} className="text-brand-purple animate-spin mb-4" />
-                <span className="text-gray-400 font-medium tracking-wide">
-                  {t("statistics.compiling", "Compiling 31-day statistics...")}
-                </span>
+                <span className="text-gray-400 font-medium tracking-wide">{t("common.loading", "Loading")}</span>
               </div>
             ) : error ? (
               <ErrorCard message={error} />
@@ -153,6 +212,9 @@ export default function WatchTrendsCard() {
                       // Format "YYYY-MM-DD" down to just "MMM DD" for cleaner UI
                       tickFormatter={(val) => {
                         try {
+                          if (timeGranularity === StatMetric.Day || timeGranularity === StatMetric.Hour) {
+                            return val;
+                          }
                           const d = new Date(val);
                           return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
                         } catch {
@@ -175,7 +237,7 @@ export default function WatchTrendsCard() {
                     />
 
                     <Tooltip
-                      content={<CustomTooltip formatValue={formatValue} metricType={metric} />}
+                      content={<CustomTooltip formatValue={formatValue} metricType={metric} timeGranularity={timeGranularity} />}
                       cursor={{ stroke: "#3f3f46", strokeWidth: 1, strokeDasharray: "4 4" }}
                     />
 
@@ -191,7 +253,6 @@ export default function WatchTrendsCard() {
                         strokeWidth={3}
                         fillOpacity={1}
                         fill={`url(#color-${series.dataKey})`}
-                        stackId="1" // Stacks them on top of each other!
                       />
                     ))}
                   </AreaChart>
@@ -205,12 +266,14 @@ export default function WatchTrendsCard() {
   );
 }
 
-const CustomTooltip = ({ active, payload, label, formatValue, metricType }: any) => {
+const CustomTooltip = ({ active, payload, label, formatValue, metricType, timeGranularity }: any) => {
   if (active && payload && payload.length) {
     // Format the date label cleanly
     let displayLabel = label;
     try {
-      displayLabel = new Date(label).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+      if (timeGranularity === StatMetric.Date) {
+        displayLabel = new Date(label).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+      }
     } catch {
       /* ignore */
     }

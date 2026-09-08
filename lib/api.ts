@@ -472,8 +472,8 @@ const getTranscodeStats = async (
   gridify?: IGridifyQuery,
 ) => apiFetch<PagingResponse<TranscodeStats>>(`/Stats/TranscodeStats${await buildQuery(gridify, params as Record<string, any>)}`);
 
-const getStatTrends = async (params?: { days?: number; metric?: StatMetric }) =>
-  apiFetch<ChartStats[]>(`/Stats/StatTrends${await buildQuery(undefined, params as Record<string, any>)}`);
+const getStatTrends = async (gridify?: IGridifyQuery, params?: { metric?: StatMetric }) =>
+  apiFetch<ChartStats[]>(`/Stats/StatTrends${await buildQuery(gridify, params as Record<string, any>)}`);
 
 const getGenreStats = async (gridify?: IGridifyQuery) => apiFetch<GenreStats[]>(`/Stats/GenreStats${await buildQuery(gridify)}`);
 
