@@ -284,8 +284,6 @@
     "plays": "Wiedergaben"
   },
   "statistics": {
-    "compiling": "31-Tage-Statistiken werden erstellt...",
-    "no_data": "Keine Daten verfügbar",
     "no_data_desc": "Es gibt keinen Wiedergabeverlauf für die letzten 31 Tage.",
     "play_count": "Wiedergabeanzahl",
     "play_duration": "Wiedergabedauer",

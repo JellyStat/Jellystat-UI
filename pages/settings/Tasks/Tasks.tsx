@@ -1,22 +1,5 @@
-import { useEffect, useState } from "react";
-import { Play, ServerCog, Loader2, Clock, CheckCircle2, CircleDashed } from "lucide-react";
-import { toast } from "sonner";
-
-import configManager from "@/lib/configManager";
-import { TaskSettings } from "@/lib/models/taskSettings";
-import client from "@/lib/api";
-import WebSocketMessageTypes from "@/lib/models/enums/WebSocketMessageTypes";
-import { WebsocketMessage } from "@/lib/models/WebsocketMessage";
-import wsClient from "@/lib/wsClient";
-import { TaskQueueUpdate } from "@/lib/models/taskQueueUpdate";
 import TasksLogsPage from "./TaskLogs";
 import TaskActionsPage from "./TaskActions";
-
-const taskOptions = [
-  { value: 60, label: "1 Hour" },
-  { value: 1440, label: "1 Day" },
-  { value: 720, label: "12 Hours" },
-];
 
 // --- UI HELPERS ---
 export const getTaskBadge = (taskName: string) => {
@@ -37,6 +20,12 @@ export const getTaskBadge = (taskName: string) => {
       return (
         <span className="bg-brand-amber/10 text-brand-amber border border-brand-amber/20 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">
           Partial Sync
+        </span>
+      );
+    case "Restore":
+      return (
+        <span className="bg-brand-red/10 text-brand-purple border border-brand-purple/20 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">
+          Restore
         </span>
       );
     default:

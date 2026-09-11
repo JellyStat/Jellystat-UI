@@ -44,7 +44,9 @@ export default function TaskActionsPage() {
       try {
         setLoading(true);
         const taskSettings = await configManager.getTaskSettings(true);
+        const globalTasks = await client.Tasks.getGlobalTasks();
         if (isMounted) setTasks(taskSettings || []);
+        if (isMounted) setTasks((prevTasks) => [...prevTasks, ...(globalTasks || [])]);
       } catch (error) {
         console.error("Failed to fetch task settings:", error);
         toast.error("Failed to load tasks");
@@ -128,6 +130,8 @@ export default function TaskActionsPage() {
                   const isRunning = taskStatus.currentTask?.task === taskSetting.task;
                   const isQueued = taskStatus.enqueuedTasks.some((t) => t.task === taskSetting.task);
 
+                  const interval = taskSetting.intervalMinutes || 0;
+
                   const intervalLabel =
                     taskOptions.find((opt) => opt.value === taskSetting.intervalMinutes)?.label ??
                     `${taskSetting.intervalMinutes || 0} Minutes`;
@@ -135,8 +139,12 @@ export default function TaskActionsPage() {
                   const executeTask = async () => {
                     toast.loading(`Starting ${taskSetting.task}...`, { id: taskSetting.task });
                     try {
-                      await client.Tasks.startTask(taskSetting.task);
-                      toast.success(`${taskSetting.task} queued successfully`, { id: taskSetting.task });
+                      const success = await client.Tasks.startTask(taskSetting.task);
+                      if (success) {
+                        toast.success(`${taskSetting.task} queued successfully`, { id: taskSetting.task });
+                      } else {
+                        toast.error(`Failed to start ${taskSetting.task}`, { id: taskSetting.task });
+                      }
                     } catch (error) {
                       toast.error(`Failed to start ${taskSetting.task}`, { id: taskSetting.task });
                     }
@@ -151,8 +159,12 @@ export default function TaskActionsPage() {
                       {/* Interval */}
                       <td className="p-4">
                         <div className="flex items-center text-sm text-gray-300 font-medium">
-                          <Clock size={14} className="mr-2 text-gray-500" />
-                          {intervalLabel}
+                          {interval > 0 ? (
+                            <>
+                              <Clock size={14} className="mr-2 text-gray-500" />
+                              {intervalLabel}
+                            </>
+                          ) : null}
                         </div>
                       </td>
 
@@ -160,7 +172,7 @@ export default function TaskActionsPage() {
                       <td className="p-4">
                         <button
                           onClick={() => toggleTaskEnabled(taskSetting)}
-                          disabled={isRunning || isQueued}
+                          disabled={isRunning || isQueued || taskSetting.intervalMinutes <= 0}
                           title={`${taskSetting.enabled ? "Disable" : "Enable"} task "${taskSetting.task}"`}
                           className={`p-2 rounded-lg bg-background text-gray-400  border border-border ${taskSetting.enabled ? "hover:bg-brand-rose/20 hover:border-brand-rose/50 hover:text-brand-rose" : "hover:bg-brand-emerald/20 hover:border-brand-emerald/50 hover:text-brand-emerald"}  transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer`}
                         >
@@ -197,7 +209,7 @@ export default function TaskActionsPage() {
                       <td className="p-4 pr-6 text-right">
                         <button
                           onClick={executeTask}
-                          disabled={isRunning || isQueued}
+                          disabled={isRunning || isQueued || taskSetting.intervalMinutes <= 0}
                           title={`Run ${taskSetting.task} now`}
                           className="p-2 rounded-lg bg-background hover:bg-brand-emerald/20 text-gray-400 hover:text-brand-emerald border border-border hover:border-brand-emerald/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 ml-auto flex cursor-pointer"
                         >

@@ -285,8 +285,6 @@
     "plays": "Plays"
   },
   "statistics": {
-    "compiling": "Compiling 31-day statistics...",
-    "no_data": "No Data Available",
     "no_data_desc": "There is no playback history for the last 31 days.",
     "play_count": "Play Count",
     "play_duration": "Play Duration",

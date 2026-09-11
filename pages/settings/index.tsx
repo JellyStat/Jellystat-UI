@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Head from "next/head";
-import { Settings, Library, ArrowLeftRight, Terminal, Server, Users } from "lucide-react";
+import { Settings, Library, ArrowLeftRight, Terminal, Server, Users, Archive } from "lucide-react";
 import { useTranslation } from "next-i18next/pages";
 import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 
@@ -9,6 +9,7 @@ import TasksPage from "./Tasks/Tasks";
 import LibrarySettingsPage from "./Library/LibrarySettings";
 import ServerSettingsPage from "./Servers/ServerSettings";
 import UsersSettingsPage from "./Users";
+import BackupsPage from "./Backups/BackupsPage";
 
 export default function SettingsPage() {
   const { t } = useTranslation("common");
@@ -21,6 +22,7 @@ export default function SettingsPage() {
     { id: "users", label: t("settings.tab_users", "Users"), icon: Users },
     { id: "librarySettings", label: t("settings.tab_library", "Library Settings"), icon: Library },
     { id: "migrations", label: t("settings.tab_migrations", "Activity Migration"), icon: ArrowLeftRight },
+    { id: "backups", label: t("settings.tab_backups", "Backups"), icon: Archive },
     { id: "tasks", label: t("settings.tab_tasks", "Background Tasks"), icon: Terminal },
   ];
 
@@ -85,6 +87,7 @@ export default function SettingsPage() {
           {activeTab === "users" && <UsersSettingsPage />}
           {activeTab === "librarySettings" && <LibrarySettingsPage />}
           {activeTab === "migrations" && <ActivityMigrationPage />}
+          {activeTab === "backups" && <BackupsPage />}
           {activeTab === "tasks" && <TasksPage />}
         </div>
       </div>

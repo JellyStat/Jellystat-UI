@@ -68,7 +68,7 @@ function logoutAndRedirect(): void {
   }
 }
 
-async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+async function apiFetch<T>(path: string, options?: RequestInit, contentType: string | null = "application/json"): Promise<T> {
   // Include stored auth token (when available in browser) and allow callers to override headers
   const url = API_BASE + path;
   let authHeader: string | undefined;
@@ -82,7 +82,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   }
 
   const mergedHeaders: Record<string, string> = {
-    "Content-Type": "application/json",
+    ...(contentType ? { "Content-Type": contentType } : {}),
     ...(authHeader ? { Authorization: authHeader } : {}),
     ...(options && (options.headers as Record<string, string>)),
   };
@@ -315,6 +315,10 @@ const toggleAllowRemoteAuth = async (serverId?: string): Promise<Boolean> =>
 const getTaskLogs = async (gridify?: IGridifyQuery): Promise<PagingResponse<LogsModel>> =>
   apiFetch<PagingResponse<LogsModel>>(`/Api/Logs${await buildQuery(gridify)}`);
 
+const getBackups = async (): Promise<string[]> => apiFetch<string[]>(`/Api/Backups`);
+const deleteBackups = async (params: { FileName: string }): Promise<void> =>
+  apiFetch<void>(`/Api/Backups${await buildQuery(undefined, params as Record<string, any>)}`, { method: "DELETE" });
+
 // Auth
 // Interface/type definitions have been moved to ./models/
 
@@ -495,6 +499,20 @@ const startTask = async (task: TaskTypes) =>
 const updateTask = async (payload: TaskSettings): Promise<boolean> =>
   apiFetch<boolean>(`/Tasks/UpdateTask${await buildQuery()}`, { method: "POST", body: JSON.stringify(payload) });
 
+const restoreTask = async (params: { FileName: string }) =>
+  apiFetch(`/Tasks/RestoreTask${await buildQuery(undefined, params as Record<string, any>)}`);
+
+const uploadBackup = async (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return apiFetch(`/Tasks/UploadBackup`, { method: "POST", body: formData }, null);
+};
+
+const downloadBackup = async (params: { FileName: string }): Promise<boolean> =>
+  apiFetch<boolean>(`/Tasks/DownloadBackup${await buildQuery(undefined, params as Record<string, any>)}`);
+
+const getGlobalTasks = async (): Promise<TaskSettings[]> => apiFetch<TaskSettings[]>(`/Tasks/GlobalTasks`);
+
 // Grouped exports by parent path
 export const Api = {
   addServer,
@@ -510,6 +528,8 @@ export const Api = {
   setLocalUserServer,
   toggleAllowRemoteAuth,
   getTaskLogs,
+  getBackups,
+  deleteBackups,
 };
 
 export const Stats = {
@@ -552,6 +572,10 @@ export const System = {
 export const Tasks = {
   startTask,
   updateTask,
+  restoreTask,
+  uploadBackup,
+  downloadBackup,
+  getGlobalTasks,
 };
 
 export default {
