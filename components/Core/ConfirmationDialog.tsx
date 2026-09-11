@@ -10,6 +10,7 @@ interface Props {
   YesText: string;
   NoText: string;
   DialogIcon?: LucideIcon;
+  IconColor?: "text-brand-rose" | "text-brand-cyan" | "text-brand-purple" | "text-brand-emerald";
 }
 
 export default function ConfirmationDialog({
@@ -20,6 +21,7 @@ export default function ConfirmationDialog({
   YesText,
   NoText,
   DialogIcon = AlertCircle,
+  IconColor = "text-brand-rose",
 }: Props) {
   const { t } = useTranslation("common");
   YesText ??= t("common.yes", "Yes");
@@ -38,18 +40,18 @@ export default function ConfirmationDialog({
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <DialogPanel
           transition
-          className="w-full h-full m-50 rounded-2xl border border-border bg-surface p-5 shadow-2xl shadow-black/40 duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
+          className="w-full m-50 rounded-2xl border border-border bg-surface p-5 shadow-2xl shadow-black/40 duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
         >
           <DialogTitle className="text-lg font-black text-white">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
               <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3 shrink-0">
-                <DialogIcon className="text-brand-cyan overflow-hidden text-ellipsis " size={28} />
+                <DialogIcon className={`${IconColor} overflow-hidden text-ellipsis`} size={28} />
                 {Title}
               </h2>
             </div>
           </DialogTitle>
 
-          <p className="text-sm text-gray-400">{Description}</p>
+          <p className="text-md text-gray-400">{Description}</p>
           <div className="mt-6 flex justify-end gap-4">
             <Button
               onClick={() => onSubmit(true)}

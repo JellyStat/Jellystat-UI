@@ -101,6 +101,7 @@ export default function BackupsPage() {
     try {
       await client.Tasks.uploadBackup(file);
       toast.success(`File uploaded successfully`);
+      await fetchBackups();
     } catch (err: any) {
       console.error(err);
       setError(err?.message ?? String(err));
@@ -195,7 +196,7 @@ export default function BackupsPage() {
                     <tr key={backup} className={`border-b border-border transition-colors hover:bg-surface-hover`}>
                       {/* File*/}
                       <td className="p-3 text-sm font-bold text-gray-200">
-                        <span className="text-gray-600 font-normal italic">{backup}</span>
+                        <span className="p-3 text-sm font-bold text-gray-200">{backup}</span>
                       </td>
 
                       {/* Actions */}
