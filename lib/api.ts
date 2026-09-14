@@ -236,14 +236,18 @@ function gridifyToApiParams(grid?: IGridifyQuery | null): Record<string, any> {
   return out;
 }
 
-async function buildQuery(gridify?: IGridifyQuery | null, params?: Record<string, any>): Promise<string> {
+async function buildQuery(
+  gridify?: IGridifyQuery | null,
+  params?: Record<string, any>,
+  allowServerIdFallback = true,
+): Promise<string> {
   const fromGrid = gridifyToApiParams(gridify ?? null);
   // explicit params should override gridify-derived values
   const merged = { ...fromGrid, ...(params ?? {}) } as Record<string, any>;
 
   // If no ServerId was provided explicitly, try to pick it up from localStorage (browser only).
   // This allows callers to omit ServerId and rely on the user's selected server stored in localStorage.
-  if (merged.ServerId == null || merged.ServerId === "") {
+  if (allowServerIdFallback && (merged.ServerId == null || merged.ServerId === "")) {
     try {
       const ServerId = getServerId();
       if (ServerId) merged.ServerId = ServerId;
@@ -512,6 +516,10 @@ const downloadBackup = async (params: { FileName: string }): Promise<boolean> =>
   apiFetch<boolean>(`/Tasks/DownloadBackup${await buildQuery(undefined, params as Record<string, any>)}`);
 
 const getGlobalTasks = async (): Promise<TaskSettings[]> => apiFetch<TaskSettings[]>(`/Tasks/GlobalTasks`);
+const stopRunningTask = async (params: { Task: TaskTypes; ServerId: string | null }) =>
+  apiFetchRaw(`/Tasks/StopTask${await buildQuery(undefined, params, false)}`)
+    .then(() => true)
+    .catch(() => false);
 
 // Grouped exports by parent path
 export const Api = {
@@ -576,6 +584,7 @@ export const Tasks = {
   uploadBackup,
   downloadBackup,
   getGlobalTasks,
+  stopRunningTask,
 };
 
 export default {

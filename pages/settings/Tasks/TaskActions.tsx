@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Play, ServerCog, Loader2, Clock, CheckCircle2, CircleDashed } from "lucide-react";
+import { Play, ServerCog, Loader2, Clock, CheckCircle2, CircleDashed, Square } from "lucide-react";
 import { toast } from "sonner";
 
 import configManager from "@/lib/configManager";
@@ -11,6 +11,7 @@ import wsClient from "@/lib/wsClient";
 import { TaskQueueUpdate } from "@/lib/models/taskQueueUpdate";
 import TasksLogsPage from "./TaskLogs";
 import { getTaskBadge } from "./Tasks";
+import Tasks from "@/lib/models/enums/Tasks";
 
 const taskOptions = [
   { value: 60, label: "1 Hour" },
@@ -130,6 +131,8 @@ export default function TaskActionsPage() {
                   const isRunning = taskStatus.currentTask?.task === taskSetting.task;
                   const isQueued = taskStatus.enqueuedTasks.some((t) => t.task === taskSetting.task);
 
+                  console.log(`${taskSetting.task} is currently ${isRunning ? "running" : isQueued ? "queued" : "idle"}`);
+
                   const interval = taskSetting.intervalMinutes || 0;
 
                   const intervalLabel =
@@ -147,6 +150,24 @@ export default function TaskActionsPage() {
                       }
                     } catch (error) {
                       toast.error(`Failed to start ${taskSetting.task}`, { id: taskSetting.task });
+                    }
+                  };
+
+                  const stopTask = async () => {
+                    try {
+                      const serverId = client.getServerId();
+                      const isGlobalTask = taskSetting.task == Tasks.Backup || taskSetting.task == Tasks.RestoreTask;
+                      const success = await client.Tasks.stopRunningTask({
+                        Task: taskSetting.task,
+                        ServerId: isGlobalTask ? null : serverId,
+                      });
+                      if (success) {
+                        toast.success(`${taskSetting.task} stopped requested successfully`, { id: taskSetting.task });
+                      } else {
+                        toast.error(`Failed to request stop for ${taskSetting.task}`, { id: taskSetting.task });
+                      }
+                    } catch (error) {
+                      toast.error(`Failed to request stop for ${taskSetting.task}`, { id: taskSetting.task });
                     }
                   };
 
@@ -208,12 +229,16 @@ export default function TaskActionsPage() {
                       {/* Action Button */}
                       <td className="p-4 pr-6 text-right">
                         <button
-                          onClick={executeTask}
-                          disabled={isRunning || isQueued || taskSetting.intervalMinutes <= 0}
+                          onClick={isRunning ? stopTask : executeTask}
+                          disabled={isQueued || taskSetting.intervalMinutes <= 0}
                           title={`Run ${taskSetting.task} now`}
-                          className="p-2 rounded-lg bg-background hover:bg-brand-emerald/20 text-gray-400 hover:text-brand-emerald border border-border hover:border-brand-emerald/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 ml-auto flex cursor-pointer"
+                          className={`p-2 rounded-lg bg-background hover:bg-brand-emerald/20 text-gray-400 hover:${isRunning ? "text-brand-rose" : "text-brand-emerald"} border border-border hover:${isRunning ? "border-brand-rose/50" : "border-brand-emerald/50"} transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 ml-auto flex cursor-pointer`}
                         >
-                          <Play size={16} className={isRunning || isQueued ? "opacity-50" : "opacity-100"} />
+                          {isRunning ? (
+                            <Square size={16} className="opacity-100 text-brand-rose" />
+                          ) : (
+                            <Play size={16} className={(isQueued ? "opacity-50" : "opacity-100") + " text-brand-emerald"} />
+                          )}
                         </button>
                       </td>
                     </tr>
