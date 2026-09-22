@@ -3,6 +3,10 @@ export type NumberRangeValue = {
   min: number | null;
   max: number | null;
 };
+export enum NumberFilterType {
+  SINGLE = "single",
+  RANGE = "range",
+}
 
 export default class FilterItem {
   key: string;

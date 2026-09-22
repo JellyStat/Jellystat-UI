@@ -23,7 +23,7 @@ import { BaseTranscodingInfo } from "@/lib/models/baseTranscodingInfo";
 import useFilters from "../DataTableFilters/useFilters";
 import TextFilter from "../DataTableFilters/TextFilter";
 import DateFilter from "../DataTableFilters/DateFilter";
-import { DatesRangeValue, NumberRangeValue } from "../DataTableFilters/FilterItem";
+import { DatesRangeValue, NumberFilterType, NumberRangeValue } from "../DataTableFilters/FilterItem";
 import { IpLookupModal } from "./IpLookUpModal";
 import BooleanFilter from "../DataTableFilters/BooleanFilter";
 import NumberFilter from "../DataTableFilters/NumberFilter";
@@ -379,7 +379,14 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
                     onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("playCount"))}
                   />
                 </th>
-                <th className="p-2 border-r border-border/50"></th>
+                <th className="p-2 border-r border-border/50">
+                  <NumberFilter
+                    keyName="playDuration"
+                    filterType={NumberFilterType.RANGE}
+                    value={getFilterValueOrDefault("playDuration", null) as number | NumberRangeValue | null}
+                    onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("playDuration"))}
+                  />
+                </th>
               </tr>
             </thead>
 

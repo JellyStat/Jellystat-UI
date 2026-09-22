@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "next-i18next/pages";
 import { Hash, X } from "lucide-react";
-import FilterItem, { NumberRangeValue } from "./FilterItem";
+import FilterItem, { NumberFilterType, NumberRangeValue } from "./FilterItem";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import DropdownSelector from "../Core/DropdownSelector";
@@ -10,20 +10,16 @@ import NumberField from "../Core/NumberField";
 interface NumberFilterProps {
   keyName: string;
   value: number | null | NumberRangeValue;
+  filterType?: NumberFilterType;
   onChange: (value: FilterItem | null) => void;
 }
 
-enum NumberFilterType {
-  SINGLE = "single",
-  RANGE = "range",
-}
-
-export default function NumberFilter({ keyName, value, onChange }: NumberFilterProps) {
+export default function NumberFilter({ keyName, value, filterType, onChange }: NumberFilterProps) {
   const { t } = useTranslation("common");
 
   // Local state matches the DateRangeValue signature
   const [query, setQuery] = useState<number | null | NumberRangeValue>(value);
-  const [type, setType] = useState<NumberFilterType>(NumberFilterType.RANGE);
+  const [type, setType] = useState<NumberFilterType>(filterType ?? NumberFilterType.RANGE);
   const debounced = useDebounce(query, 500);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
@@ -113,19 +109,21 @@ export default function NumberFilter({ keyName, value, onChange }: NumberFilterP
           <div className="p-4 border border-border rounded-lg max-w-sm bg-surface shadow-sm">
             <div>
               {/* Number filter inputs go here */}
-              <div className="mb-4 flex flex-row items-center gap-2">
-                <div>{t("filter.number_type", "Type")}</div>
-                <DropdownSelector
-                  data={[{ value: NumberFilterType.SINGLE }, { value: NumberFilterType.RANGE }]}
-                  value={type}
-                  onChange={(val) => setType(val as NumberFilterType)}
-                  labelFn={(val) => {
-                    if (val === NumberFilterType.SINGLE) return t("filter.single_number", "Exact");
-                    if (val === NumberFilterType.RANGE) return t("filter.number_range", "Range");
-                    return "";
-                  }}
-                />
-              </div>
+              {!filterType && (
+                <div className="mb-4 flex flex-row items-center gap-2">
+                  <div>{t("filter.number_type", "Type")}</div>
+                  <DropdownSelector
+                    data={[{ value: NumberFilterType.SINGLE }, { value: NumberFilterType.RANGE }]}
+                    value={type}
+                    onChange={(val) => setType(val as NumberFilterType)}
+                    labelFn={(val) => {
+                      if (val === NumberFilterType.SINGLE) return t("filter.single_number", "Exact");
+                      if (val === NumberFilterType.RANGE) return t("filter.number_range", "Range");
+                      return "";
+                    }}
+                  />
+                </div>
+              )}
               <div className="">
                 {type === NumberFilterType.SINGLE && (
                   <div className="flex flex-col gap-2">
