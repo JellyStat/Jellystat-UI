@@ -323,6 +323,9 @@ const getBackups = async (): Promise<string[]> => apiFetch<string[]>(`/Api/Backu
 const deleteBackups = async (params: { FileName: string }): Promise<void> =>
   apiFetch<void>(`/Api/Backups${await buildQuery(undefined, params as Record<string, any>)}`, { method: "DELETE" });
 
+const deleteArchived = async (params: { Id: string; serverId?: string }): Promise<void> =>
+  apiFetch<void>(`/Api/Archived${await buildQuery(undefined, params as Record<string, any>)}`, { method: "DELETE" });
+
 // Auth
 // Interface/type definitions have been moved to ./models/
 
@@ -538,6 +541,7 @@ export const Api = {
   getTaskLogs,
   getBackups,
   deleteBackups,
+  deleteArchived,
 };
 
 export const Stats = {
