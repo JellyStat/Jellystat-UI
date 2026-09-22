@@ -23,8 +23,10 @@ import { BaseTranscodingInfo } from "@/lib/models/baseTranscodingInfo";
 import useFilters from "../DataTableFilters/useFilters";
 import TextFilter from "../DataTableFilters/TextFilter";
 import DateFilter from "../DataTableFilters/DateFilter";
-import { DatesRangeValue } from "../DataTableFilters/FilterItem";
+import { DatesRangeValue, NumberRangeValue } from "../DataTableFilters/FilterItem";
 import { IpLookupModal } from "./IpLookUpModal";
+import BooleanFilter from "../DataTableFilters/BooleanFilter";
+import NumberFilter from "../DataTableFilters/NumberFilter";
 
 interface SortStatus {
   columnAccessor: string;
@@ -117,12 +119,21 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
   // --- RENDER HELPERS ---
   const formatTranscode = (activity: Activity) => {
     const transcodingInfo = activity.transcodingInfo as BaseTranscodingInfo;
-    if (!transcodingInfo)
+    const isTranscoding = activity.directPlay === false;
+    if (!transcodingInfo) {
+      if (isTranscoding) {
+        return (
+          <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-amber bg-brand-amber/10 border border-brand-amber/20 px-2 py-0.5 rounded shadow-inner">
+            <Cpu size={10} className="mr-1" /> {t("activity.transcoding", "Transcoding")}
+          </span>
+        );
+      }
       return (
         <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-cyan bg-brand-cyan/10 border border-brand-cyan/20 px-2 py-0.5 rounded shadow-inner">
           <CheckCircle2 size={10} className="mr-1" /> {t("activity.direct", "Direct")}
         </span>
       );
+    }
 
     let display = t("activity.transcoding", "Transcoding");
     if (transcodingInfo.isVideoDirect === false) display += " (V)";
@@ -336,7 +347,15 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
                   />
                 </th>
 
-                <th className="p-2 border-r border-border/50"></th>
+                <th className="p-2 border-r border-border/50">
+                  <BooleanFilter
+                    keyName="directPlay"
+                    label=""
+                    isInverted={true}
+                    value={getFilterValueOrDefault("directPlay", null) as boolean | null}
+                    onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("directPlay"))}
+                  />
+                </th>
 
                 <th className="p-2 border-r border-border/50 font-normal relative group">
                   <TextFilter
@@ -353,7 +372,13 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
                     onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("dateCreated"))}
                   />
                 </th>
-                <th className="p-2 border-r border-border/50"></th>
+                <th className="p-2 border-r border-border/50">
+                  <NumberFilter
+                    keyName="playCount"
+                    value={getFilterValueOrDefault("playCount", null) as number | NumberRangeValue | null}
+                    onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("playCount"))}
+                  />
+                </th>
                 <th className="p-2 border-r border-border/50"></th>
               </tr>
             </thead>

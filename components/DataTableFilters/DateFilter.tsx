@@ -39,8 +39,6 @@ export default function DateFilter({ keyName, value, onChange }: DateFilterProps
   // --- FILTER TRIGGER EFFECT ---
   useEffect(() => {
     if (!debounced || !Array.isArray(debounced)) return;
-    console.log("DateFilter: debounced value changed", debounced);
-
     const [start, end] = debounced;
 
     // If the debounced value is equal to the current prop value, do nothing

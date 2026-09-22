@@ -6,6 +6,7 @@ import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import client from "@/lib/api";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
 import { LeaderboardCard } from "../WatchStatCard/LeaderboardCard";
+import NumberField from "../Core/NumberField";
 
 export type WatchStatItem = {
   id: string;
@@ -244,13 +245,20 @@ export default function WatchStatCards() {
           <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-2">
             {t("watch_stat_cards.days", "Days")}:
           </label>
-          <input
+          {/* <input
             type="number"
             min={1}
             max={999}
             value={days}
             onChange={(e) => setDays(Number(e.target.value) || 1)}
             className="w-20 bg-background border border-transparent hover:border-gray-500 focus:border-brand-purple rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-brand-purple transition-all"
+          /> */}
+          <NumberField
+            value={days}
+            min={1}
+            max={999}
+            onChange={(value) => setDays(value ?? 1)}
+            className="w-20 appearance-none bg-background border border-transparent hover:border-gray-500 focus:border-brand-purple rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-brand-purple "
           />
         </div>
       </div>

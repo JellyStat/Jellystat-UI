@@ -39,6 +39,17 @@
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-zinc-600;
   }
+
+  input[type="number"].no-spinner {
+    -moz-appearance: textfield !important;
+  }
+
+  input[type="number"].no-spinner::-webkit-inner-spin-button,
+  input[type="number"].no-spinner::-webkit-outer-spin-button {
+    -webkit-appearance: none !important;
+    display: none !important;
+    margin: 0;
+  }
 }
 .rdp-root {
   --rdp-accent-color: var(--color-brand-cyan) !important; /* Change the accent color to indigo. */

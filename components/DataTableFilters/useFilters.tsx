@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import FilterItem, { DatesRangeValue } from "./FilterItem";
+import FilterItem, { DatesRangeValue, NumberRangeValue } from "./FilterItem";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 
 export default function useFilters(initial: FilterItem[] = []) {
@@ -24,7 +24,7 @@ export default function useFilters(initial: FilterItem[] = []) {
   }, []);
 
   const getFilterValueOrDefault = useCallback(
-    (key: string, defaultValue: string | number | boolean | Date | DatesRangeValue | null) => {
+    (key: string, defaultValue: string | number | boolean | Date | DatesRangeValue | NumberRangeValue | null) => {
       const filterItem = filter.find((f) => f.key === key);
       return filterItem?.value ?? defaultValue;
     },
@@ -36,14 +36,18 @@ export default function useFilters(initial: FilterItem[] = []) {
   const applyFiltersToQuery = useCallback(
     (query: GridifyQueryBuilder) => {
       if (filter.length > 0) {
-        console.log("Applying filters to query:", filter);
         filter.forEach((f) => {
           const val = f.value as any;
           const isDateRange = Array.isArray(val) && val.length === 2;
-          if (f.value == null || (isDateRange && val.some((v) => v == null))) return;
-          console.log(`Adding filter to query - Key: ${f.key}, Value: ${f.value}`);
+          const isNumberRange = typeof val === "object" && val !== null && "min" in val && "max" in val;
+          if (
+            f.value == null ||
+            (isDateRange && val.some((v) => v == null)) ||
+            (isNumberRange && (val.min == null || val.max == null))
+          )
+            return;
+
           if (query.build().filter != "") {
-            console.log("Adding AND operator to query");
             query.and();
           }
           if (isDateRange) {
@@ -57,10 +61,21 @@ export default function useFilters(initial: FilterItem[] = []) {
             query.and();
             query.addCondition(f.key, op.LessThanOrEqual, endDate);
             query.endGroup();
-          } else if (typeof val === "string" || typeof val === "number") {
+          } else if (isNumberRange) {
+            const numberRange = val as NumberRangeValue;
+            query.startGroup();
+            query.addCondition(f.key, op.GreaterThanOrEqual, numberRange.min!.toString());
+            query.and();
+            query.addCondition(f.key, op.LessThanOrEqual, numberRange.max!.toString());
+            query.endGroup();
+          } else if (typeof val === "string") {
             query.addCondition(f.key, op.Contains, val.toString(), false);
           } else if (typeof val === "boolean") {
             query.addCondition(f.key, op.Equal, val.toString());
+          } else if (typeof val === "number") {
+            query.addCondition(f.key, op.Equal, val.toString());
+          } else {
+            console.warn(`Unsupported filter value type for key: ${f.key}, value: ${f.value}`);
           }
         });
       }

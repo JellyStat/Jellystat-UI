@@ -7,24 +7,27 @@ export default function BooleanFilter({
   keyName,
   label,
   value,
+  isInverted = false,
   onChange,
 }: {
   keyName: string;
   label: string;
   value: boolean | null;
+  isInverted?: boolean;
   onChange: (value: FilterItem | null) => void;
 }) {
-  const [query, setQuery] = useState<boolean | null>(value);
-  
-  const debounced = useDebounce(query, 100); 
+  const [query, setQuery] = useState<boolean | null>(isInverted == true ? (value != null ? value == false : value) : value);
+
+  const debounced = useDebounce(query, 100);
 
   useEffect(() => {
-    if (debounced === value) return;
+    const filterValue = debounced == null ? null : isInverted == true ? debounced == false : debounced;
+    if (filterValue === value) return;
 
-    if (debounced == null) {
+    if (filterValue == null) {
       onChange(null);
     } else {
-      onChange(new FilterItem(keyName, debounced));
+      onChange(new FilterItem(keyName, filterValue));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debounced]);
@@ -32,10 +35,14 @@ export default function BooleanFilter({
   function cycleValue() {
     setQuery((prev) => {
       switch (prev) {
-        case null: return true;
-        case true: return false;
-        case false: return null;
-        default: return null;
+        case null:
+          return true;
+        case true:
+          return false;
+        case false:
+          return null;
+        default:
+          return null;
       }
     });
   }
@@ -50,9 +57,7 @@ export default function BooleanFilter({
 
   return (
     <div className="flex items-center gap-3">
-      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-        {label}
-      </span>
+      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">{label}</span>
       <button
         onClick={cycleValue}
         className={`w-6 h-6 flex items-center justify-center rounded border transition-all duration-300 shadow-inner ${stateStyles[currentState as keyof typeof stateStyles]}`}
