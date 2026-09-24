@@ -3,7 +3,17 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { useTranslation } from "next-i18next/pages";
 import { GridifyQueryBuilder } from "gridify-client";
-import { ExternalLink, Lock, Loader2, AlertCircle, Info, Film, Activity as ActivityIcon, ChevronLeft } from "lucide-react";
+import {
+  ExternalLink,
+  Lock,
+  Loader2,
+  AlertCircle,
+  Info,
+  Film,
+  Activity as ActivityIcon,
+  ChevronLeft,
+  Settings,
+} from "lucide-react";
 
 import client from "@/lib/api";
 import { ItemsWithStats } from "@/lib/models/itemsWithStats";
@@ -17,6 +27,7 @@ import ItemMedia from "./media";
 import NotFound from "@/components/ErrorCards/NotFound";
 import ItemImage from "@/components/ItemImage/ItemImage";
 import Link from "next/link";
+import ItemOptions from "./options";
 
 export default function ItemPage() {
   const router = useRouter();
@@ -83,10 +94,12 @@ export default function ItemPage() {
 
   // Tabs Configuration
   const showMediaTab = item && [ItemTypes.Season, ItemTypes.Series].includes(item.type);
+  const showOptionsTab = item && item.archived === true;
   const tabs = [
     { id: "overview", label: t("item.tab_overview", "Overview"), icon: Info },
     ...(showMediaTab ? [{ id: "media", label: t("item.tab_media", "Media"), icon: Film }] : []),
     { id: "activity", label: t("item.tab_activity", "Activity"), icon: ActivityIcon },
+    ...(showOptionsTab ? [{ id: "options", label: t("item.tab_options", "Options"), icon: Settings }] : []),
   ];
 
   return (
@@ -260,6 +273,12 @@ export default function ItemPage() {
                 <div className={activeTab === "activity" ? "block animate-in fade-in slide-in-from-bottom-2" : "hidden"}>
                   <ItemActivity item={item} />
                 </div>
+
+                {showOptionsTab && (
+                  <div className={activeTab === "options" ? "block animate-in fade-in slide-in-from-bottom-2" : "hidden"}>
+                    <ItemOptions item={item} />
+                  </div>
+                )}
               </div>
             </div>
           </div>

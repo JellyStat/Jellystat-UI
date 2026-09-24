@@ -11,6 +11,7 @@ interface Props {
   NoText: string;
   DialogIcon?: LucideIcon;
   IconColor?: "text-brand-rose" | "text-brand-cyan" | "text-brand-purple" | "text-brand-emerald";
+  ActionColor?: "bg-brand-rose" | "bg-brand-cyan" | "bg-brand-purple" | "bg-brand-emerald";
 }
 
 export default function ConfirmationDialog({
@@ -22,6 +23,7 @@ export default function ConfirmationDialog({
   NoText,
   DialogIcon = AlertCircle,
   IconColor = "text-brand-rose",
+  ActionColor = "bg-brand-cyan",
 }: Props) {
   const { t } = useTranslation("common");
   YesText ??= t("common.yes", "Yes");
@@ -55,13 +57,13 @@ export default function ConfirmationDialog({
           <div className="mt-6 flex justify-end gap-4">
             <Button
               onClick={() => onSubmit(true)}
-              className="px-4 py-2 rounded-lg bg-brand-cyan text-white hover:bg-brand-cyan/90 transition-all"
+              className={`px-4 py-2 rounded-lg ${ActionColor} text-white hover:${ActionColor}/90 transition-all cursor-pointer`}
             >
               {YesText}
             </Button>
             <Button
               onClick={() => onSubmit(false)}
-              className="px-4 py-2 rounded-lg bg-background border border-border text-gray-200 hover:text-white hover:border-gray-500 transition-all"
+              className="px-4 py-2 rounded-lg bg-background border border-border text-gray-200 hover:text-white hover:border-gray-500 transition-all cursor-pointer"
             >
               {NoText}
             </Button>

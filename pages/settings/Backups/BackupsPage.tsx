@@ -3,9 +3,9 @@ import { Archive, Loader2, AlertCircle, Download, Delete, Trash, Clock, Upload }
 import { useTranslation } from "next-i18next/pages";
 
 import client from "@/lib/api";
-import ConfirmationDialog from "@/components/Core/ConfirmationDialog";
 import { toast } from "sonner";
 import Tasks from "@/lib/models/enums/Tasks";
+import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
 
 export default function BackupsPage() {
   const { t } = useTranslation("common");
@@ -16,7 +16,6 @@ export default function BackupsPage() {
   const [error, setError] = useState<string | null>(null);
   const [backups, setBackups] = useState<string[]>([]);
 
-  const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [backupToDelete, setBackupToDelete] = useState<string | null>(null);
 
   async function deleteBackup() {
@@ -61,11 +60,6 @@ export default function BackupsPage() {
   }, [fetchBackups]);
 
   // --- RENDER ---
-
-  const showConfirmationDialog = (backup: string) => {
-    setBackupToDelete(backup);
-    setConfirmationDialogOpen(true);
-  };
 
   const downloadBackup = async (backup: string) => {
     setLoading(true);
@@ -218,13 +212,18 @@ export default function BackupsPage() {
                               <Download size={16} />
                             </button>
 
-                            <button
-                              onClick={() => showConfirmationDialog(backup)}
-                              className="p-2 rounded-lg bg-background hover:bg-brand-cyan/20 text-gray-400 hover:text-brand-cyan border border-border hover:border-brand-cyan/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer"
-                              disabled={loading}
-                            >
-                              <Trash size={16} />
-                            </button>
+                            <ConfirmationDialogButton
+                              buttonElement={<Trash size={16} />}
+                              dialogTitle={t("settings.backups_confirm_delete_title", "Confirm Delete")}
+                              description={t(
+                                "settings.backups_confirm_delete_desc",
+                                "Are you sure you want to delete this backup?",
+                              )}
+                              confirmText={t("common.yes", "Yes")}
+                              cancelText={t("common.no", "No")}
+                              onClick={() => setBackupToDelete(backup)}
+                              onConfirm={deleteBackup}
+                            />
                           </div>
                         }
                       </td>
@@ -236,20 +235,6 @@ export default function BackupsPage() {
           </table>
         </div>
       </div>
-
-      <ConfirmationDialog
-        open={confirmationDialogOpen}
-        onSubmit={(confirmed) => {
-          setConfirmationDialogOpen(false);
-          if (confirmed) {
-            deleteBackup();
-          }
-        }}
-        Title={t("settings.backups_confirm_delete_title", "Confirm Delete")}
-        Description={t("settings.backups_confirm_delete_desc", "Are you sure you want to delete this backup?")}
-        YesText={t("common.yes", "Yes")}
-        NoText={t("common.no", "No")}
-      />
     </div>
   );
 }

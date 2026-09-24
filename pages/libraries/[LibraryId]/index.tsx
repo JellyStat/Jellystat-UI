@@ -13,6 +13,7 @@ import LibraryOverView from "./overview";
 import LibraryMedia from "./media";
 import LibraryActivity from "./activity";
 import NotFound from "@/components/ErrorCards/NotFound";
+import LibraryOptions from "./options";
 
 export default function LibraryPage() {
   const router = useRouter();
@@ -116,6 +117,8 @@ export default function LibraryPage() {
                       const Icon = tab.icon;
                       const isActive = activeTab === tab.id;
 
+                      if (tab.id == "options" && lib.archived == false) return null;
+
                       return (
                         <button
                           key={tab.id}
@@ -154,13 +157,7 @@ export default function LibraryPage() {
               </div>
 
               <div className={activeTab === "options" ? "block animate-in fade-in slide-in-from-bottom-2" : "hidden"}>
-                <div className="bg-surface/30 border-2 border-dashed border-border rounded-3xl p-16 flex flex-col items-center justify-center text-center mt-4">
-                  <Settings size={48} className="text-gray-500 opacity-30 mb-4 animate-[spin_10s_linear_infinite]" />
-                  <h3 className="text-2xl font-black text-gray-300 tracking-tight">{t("library.options_title", "Options")}</h3>
-                  <p className="mt-2 text-sm text-gray-500 font-medium max-w-sm">
-                    {t("library.options_desc", "Library options and settings go here.")}
-                  </p>
-                </div>
+                <LibraryOptions library={lib} />
               </div>
             </div>
           </div>

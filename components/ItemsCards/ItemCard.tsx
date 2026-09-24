@@ -62,7 +62,7 @@ export default function ItemCard({ item, width = 160, height = 240 }: Props) {
 
         <h4
           className="text-sm font-black text-gray-200 leading-tight line-clamp-2 hover:text-brand-purple transition-colors cursor-pointer"
-          onClick={() => router.push(`/libraries/items/${encodeURIComponent(item.parent?.id ?? "")}`)}
+          onClick={() => router.push(`/libraries/items/${encodeURIComponent(item.parent?.id ?? item.id ?? "")}`)}
         >
           {title}
         </h4>
