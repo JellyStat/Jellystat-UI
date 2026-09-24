@@ -99,7 +99,7 @@ export default function ItemPage() {
     { id: "overview", label: t("item.tab_overview", "Overview"), icon: Info },
     ...(showMediaTab ? [{ id: "media", label: t("item.tab_media", "Media"), icon: Film }] : []),
     { id: "activity", label: t("item.tab_activity", "Activity"), icon: ActivityIcon },
-    ...(showOptionsTab ? [{ id: "options", label: t("item.tab_options", "Options"), icon: Settings }] : []),
+    ...(showOptionsTab ? [{ id: "options", label: t("common.tab_options", "Options"), icon: Settings }] : []),
   ];
 
   return (

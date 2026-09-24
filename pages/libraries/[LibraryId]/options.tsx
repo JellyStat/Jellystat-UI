@@ -7,14 +7,12 @@ import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton
 import { toast } from "sonner";
 
 type Props = {
-  library: LibrariesWithStats | null;
+  library: LibrariesWithStats;
 };
 
 export default function LibraryOptions({ library }: Props) {
   const { t } = useTranslation("common");
   const [loading, setLoading] = useState(false);
-
-  if (!library || library.archived === false) return null;
 
   const deleteArchivedLibrary = async () => {
     setLoading(true);
@@ -47,34 +45,82 @@ export default function LibraryOptions({ library }: Props) {
           </div>
         </div>
 
-        <div className="space-y-0 px-5 py-3">
-          <div className="flex items-center justify-between gap-6 py-4">
-            <div className="min-w-0 flex-1">
-              <h5 className="text-2xl font-black tracking-tight text-gray-200">
-                {t("library.deleteArchivedLibrary", "Delete Archived Library")}
-              </h5>
-              <p className="mt-1 max-w-2xl text-sm text-gray-400">
-                {t(
-                  "library.confirmDeleteArchivedLibraryDescription",
-                  "Delete this archived library and its contents. This action cannot be rolled back.",
-                )}
-              </p>
-            </div>
+        {library.archived == true && (
+          <div className="space-y-0 px-5 py-3">
+            <div className="flex items-center justify-between gap-6 py-4">
+              <div className="min-w-0 flex-1">
+                <h5 className="text-2xl font-black tracking-tight text-gray-200">
+                  {t("library.deleteArchivedLibrary", "Delete Archived Library")}
+                </h5>
+                <p className="mt-1 max-w-2xl text-sm text-gray-400">
+                  {t(
+                    "library.confirmDeleteArchivedLibraryDescription",
+                    "Delete this archived library and its contents. This action cannot be rolled back.",
+                  )}
+                </p>
+              </div>
 
-            <ConfirmationDialogButton
-              disabled={loading}
-              buttonElement={
-                loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <div>{t("library.deleteLibrary", "Delete Library")}</div>
-              }
-              dialogTitle={t("library.deleteArchivedLibrary", "Delete Archived Library")}
-              description={t("library.confirmDeleteArchivedLibrary", "Are you sure you want to delete this archived library?")}
-              confirmText={t("common.yes", "Yes")}
-              cancelText={t("common.no", "No")}
-              onConfirm={deleteArchivedLibrary}
-              className="inline-flex items-center justify-center rounded-xl border border-brand-rose/60 bg-brand-rose px-4 py-3 text-base font-semibold text-white transition hover:bg-rose-600"
-            />
+              <ConfirmationDialogButton
+                disabled={loading}
+                buttonElement={
+                  loading ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <div>{t("library.deleteLibrary", "Delete Library")}</div>
+                  )
+                }
+                dialogTitle={t("library.deleteArchivedLibrary", "Delete Archived Library")}
+                description={t("library.confirmDeleteArchivedLibrary", "Are you sure you want to delete this archived library?")}
+                confirmText={t("common.yes", "Yes")}
+                cancelText={t("common.no", "No")}
+                onConfirm={deleteArchivedLibrary}
+                actionColor="bg-brand-rose"
+                className="inline-flex items-center justify-center rounded-xl border border-brand-rose/60 bg-brand-rose px-4 py-3 text-base font-semibold text-white transition hover:bg-rose-600"
+              />
+            </div>
           </div>
-        </div>
+        )}
+
+        {library.archived == true && library.hasArchivedItems == true && <div className="border-t border-brand-rose/35" />}
+
+        {library.hasArchivedItems == true && (
+          <div className="space-y-0 px-5 py-3">
+            <div className="flex items-center justify-between gap-6 py-4">
+              <div className="min-w-0 flex-1">
+                <h5 className="text-2xl font-black tracking-tight text-gray-200">
+                  {t("library.deleteArchivedItems", "Delete Archived Items")}
+                </h5>
+                <p className="mt-1 max-w-2xl text-sm text-gray-400">
+                  {t(
+                    "library.confirmDeleteArchivedItemsDescription",
+                    "Delete all archived items in this library. This action cannot be rolled back.",
+                  )}
+                </p>
+              </div>
+
+              <ConfirmationDialogButton
+                disabled={loading}
+                buttonElement={
+                  loading ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <div>{t("library.deleteLibraryItems", "Delete Items")}</div>
+                  )
+                }
+                dialogTitle={t("library.deleteArchivedItems", "Delete Archived Items")}
+                description={t(
+                  "library.confirmDeleteArchivedItems",
+                  "Are you sure you want to delete all archived items in this library?",
+                )}
+                confirmText={t("common.yes", "Yes")}
+                cancelText={t("common.no", "No")}
+                onConfirm={deleteArchivedLibrary}
+                actionColor="bg-brand-rose"
+                className="inline-flex items-center justify-center rounded-xl border border-brand-rose/60 bg-brand-rose px-4 py-3 text-base font-semibold text-white transition hover:bg-rose-600"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

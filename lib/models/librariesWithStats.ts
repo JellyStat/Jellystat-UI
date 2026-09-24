@@ -13,4 +13,5 @@ export interface LibrariesWithStats extends Libraries, BaseStatsWithActivity {
   playbackDuration?: number | null;
   size?: number | null;
   typeCounts?: TypeCountModel[];
+  hasArchivedItems?: boolean | null;
 }

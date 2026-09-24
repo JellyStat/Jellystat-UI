@@ -61,12 +61,12 @@ export default function LibraryPage() {
       />
     );
   }
-
+  const showOptionsTab = lib && (lib.archived === true || lib.hasArchivedItems === true);
   const tabs = [
     { id: "overview", label: t("library.tab_overview", "Overview"), icon: Info },
     { id: "media", label: t("library.tab_media", "Media"), icon: Film },
     { id: "activity", label: t("library.tab_activity", "Activity"), icon: ActivityIcon },
-    { id: "options", label: t("library.tab_options", "Options"), icon: Settings },
+    ...(showOptionsTab ? [{ id: "options", label: t("common.tab_options", "Options"), icon: Settings }] : []),
   ];
 
   const LibraryIcon = LibraryTypeIcons[lib?.type ?? ""] ?? ImageIcon;
@@ -116,8 +116,6 @@ export default function LibraryPage() {
                     {tabs.map((tab) => {
                       const Icon = tab.icon;
                       const isActive = activeTab === tab.id;
-
-                      if (tab.id == "options" && lib.archived == false) return null;
 
                       return (
                         <button
