@@ -160,7 +160,7 @@ export default function UsersSettingsPage() {
                       <ConfirmationDialogButton
                         disabled={loading}
                         buttonElement={
-                          loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <div>{t("user.deleteUser", "Delete")}</div>
+                          loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <div>{t("common.delete", "Delete")}</div>
                         }
                         dialogTitle={t("user.deleteUser", "Delete User {{username}}", { username: user.username })}
                         description={t("user.confirmDeleteUser", "Are you sure you want to delete user {{username}}?", {
