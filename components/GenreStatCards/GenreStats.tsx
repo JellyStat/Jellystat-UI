@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Film, Tv, Library, MonitorPlay, Users, Activity, Trophy, Loader2, AlertCircle, PieChart } from "lucide-react";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { GridifyQueryBuilder, IGridifyQuery, ConditionalOperator as op } from "gridify-client";
 
 import client from "@/lib/api";

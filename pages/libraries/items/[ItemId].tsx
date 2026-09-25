@@ -1,7 +1,7 @@
 import { act, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { GridifyQueryBuilder } from "gridify-client";
 import {
   ExternalLink,
@@ -112,9 +112,9 @@ export default function ItemPage() {
   }
 
   const tabs = [
-    { id: "overview", label: t("item.tab_overview", "Overview"), icon: Info },
-    ...(showMediaTab ? [{ id: "media", label: t("item.tab_media", "Media"), icon: Film }] : []),
-    { id: "activity", label: t("item.tab_activity", "Activity"), icon: ActivityIcon },
+    { id: "overview", label: t("nav.overview", "Overview"), icon: Info },
+    ...(showMediaTab ? [{ id: "media", label: t("common.media", "Media"), icon: Film }] : []),
+    { id: "activity", label: t("nav.activity", "Activity"), icon: ActivityIcon },
     ...(showOptionsTab ? [{ id: "options", label: t("common.tab_options", "Options"), icon: Settings }] : []),
   ];
 

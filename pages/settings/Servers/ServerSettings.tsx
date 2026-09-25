@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Server, ShieldAlert, Users, Plus, Loader2, AlertCircle, Globe, Key, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 
 import client from "@/lib/api";
 import { Server as ServerModel } from "@/lib/models/server";

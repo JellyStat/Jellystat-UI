@@ -1,6 +1,5 @@
 import Head from "next/head";
-import { useTranslation } from "next-i18next/pages";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { useTranslation } from "react-i18next";
 import WatchStatCards from "@/components/WatchStatCards/WatchStatCards";
 import Sessions from "@/components/Sessions/Sessions";
 import RecentlyAdded from "@/components/RecentlyAdded/RecentlyAdded";
@@ -43,12 +42,4 @@ export default function HomePage() {
       </div>
     </>
   );
-}
-
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || "en", ["common"])),
-    },
-  };
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { Hash, X } from "lucide-react";
 import FilterItem, { NumberFilterType, NumberRangeValue } from "./FilterItem";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
@@ -127,7 +127,7 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
               <div className="">
                 {type === NumberFilterType.SINGLE && (
                   <div className="flex flex-col gap-2">
-                    <div>{t("filter.value", "Value")}</div>
+                    <div>{t("common.value", "Value")}</div>
                     <NumberField
                       value={query as number | undefined}
                       onChange={(val) => handleSingleChange(val)}
@@ -138,7 +138,7 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
                 {type === NumberFilterType.RANGE && (
                   <div className="flex flex-col gap-2">
                     <div className="flex flex-col gap-2">
-                      <div>{t("filter.min", "Min")}</div>
+                      <div>{t("common.min", "Min")}</div>
                       <NumberField
                         value={(query as NumberRangeValue)?.min ?? undefined}
                         onChange={(val) => handleRangeChange(val as number | null, true)}
@@ -146,7 +146,7 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
                       />
                     </div>
                     <div className="flex flex-col gap-2">
-                      <div>{t("filter.max", "Max")}</div>
+                      <div>{t("common.max", "Max")}</div>
                       <NumberField
                         value={(query as NumberRangeValue)?.max ?? undefined}
                         onChange={(val) => handleRangeChange(val as number | null, false)}

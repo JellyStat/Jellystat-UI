@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { Calendar, X } from "lucide-react";
 import FilterItem, { DatesRangeValue } from "./FilterItem";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";

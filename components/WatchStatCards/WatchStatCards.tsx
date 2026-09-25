@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Film, Tv, Library, MonitorPlay, Users, Activity, Trophy, Loader2, AlertCircle } from "lucide-react";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 
 import client from "@/lib/api";
@@ -245,14 +245,6 @@ export default function WatchStatCards() {
           <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-2">
             {t("watch_stat_cards.days", "Days")}:
           </label>
-          {/* <input
-            type="number"
-            min={1}
-            max={999}
-            value={days}
-            onChange={(e) => setDays(Number(e.target.value) || 1)}
-            className="w-20 bg-background border border-transparent hover:border-gray-500 focus:border-brand-purple rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-brand-purple transition-all"
-          /> */}
           <NumberField
             value={days}
             min={1}
@@ -267,7 +259,7 @@ export default function WatchStatCards() {
       {Object.values(loadingStates).every((v) => !v) && !hasData ? (
         <div className="bg-surface/50 border-2 border-dashed border-border rounded-3xl p-16 flex flex-col items-center justify-center text-center">
           <Activity size={48} className="text-gray-500 opacity-30 mb-4" />
-          <h3 className="text-xl font-bold text-gray-300">{t("watch_stat_cards.no_data", "No Data Found")}</h3>
+          <h3 className="text-xl font-bold text-gray-300">{t("common.no_data", "No Data")}</h3>
           <p className="text-sm text-gray-500">
             {t("watch_stat_cards.no_data_desc", "No watch statistics found for the selected period.")}
           </p>
@@ -276,56 +268,56 @@ export default function WatchStatCards() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
           <LeaderboardCard
             title={t("watch_stat_cards.viewed_movies", "Most Viewed Movies")}
-            unit={t("watch_stat_cards.unit_plays", "Plays")}
+            unit={t("common.unit.plays", "Plays")}
             items={data.viewedMovies}
             icon={Film}
             loading={loadingStates.viewedMovies}
           />
           <LeaderboardCard
             title={t("watch_stat_cards.popular_movies", "Most Popular Movies")}
-            unit={t("watch_stat_cards.unit_users", "Users")}
+            unit={t("common.unit.users", "Users")}
             items={data.popularMovies}
             icon={Users}
             loading={loadingStates.popularMovies}
           />
           <LeaderboardCard
             title={t("watch_stat_cards.viewed_shows", "Most Viewed Shows")}
-            unit={t("watch_stat_cards.unit_plays", "Plays")}
+            unit={t("common.unit.plays", "Plays")}
             items={data.viewedShows}
             icon={Tv}
             loading={loadingStates.viewedShows}
           />
           <LeaderboardCard
             title={t("watch_stat_cards.popular_shows", "Most Popular Shows")}
-            unit={t("watch_stat_cards.unit_users", "Users")}
+            unit={t("common.unit.users", "Users")}
             items={data.popularShows}
             icon={Users}
             loading={loadingStates.popularShows}
           />
           <LeaderboardCard
             title={t("watch_stat_cards.viewed_libraries", "Most Viewed Libraries")}
-            unit={t("watch_stat_cards.unit_plays", "Plays")}
+            unit={t("common.unit.plays", "Plays")}
             items={data.libraries}
             icon={Library}
             loading={loadingStates.libraries}
           />
           <LeaderboardCard
             title={t("watch_stat_cards.used_clients", "Most Used Clients")}
-            unit={t("watch_stat_cards.unit_plays", "Plays")}
+            unit={t("common.unit.plays", "Plays")}
             items={data.clients}
             icon={MonitorPlay}
             loading={loadingStates.clients}
           />
           <LeaderboardCard
             title={t("watch_stat_cards.active_users", "Most Active Users")}
-            unit={t("watch_stat_cards.unit_plays", "Plays")}
+            unit={t("common.unit.plays", "Plays")}
             items={data.users}
             icon={Users}
             loading={loadingStates.users}
           />
           <LeaderboardCard
             title={t("watch_stat_cards.concurrent_streams", "Concurrent Streams")}
-            unit={t("watch_stat_cards.unit_streams", "Streams")}
+            unit={t("common.unit.streams", "Streams")}
             items={data.streams}
             icon={Activity}
             loading={loadingStates.streams}

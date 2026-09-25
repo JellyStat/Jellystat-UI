@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { GridifyQueryBuilder } from "gridify-client";
 import {
   ActivityIcon,
@@ -82,7 +82,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
         setPageCount(res?.count ?? 0);
       } catch (err: any) {
         if (err?.name === "AbortError") return;
-        setError(err?.message ?? t("activity.failed_to_load", "Failed to load activity data"));
+        setError(err?.message ?? t("error_cards.failed_to_load_desc", "Failed to load data"));
       } finally {
         setLoading(false);
       }
@@ -124,7 +124,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
       if (isTranscoding) {
         return (
           <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-amber bg-brand-amber/10 border border-brand-amber/20 px-2 py-0.5 rounded shadow-inner">
-            <Cpu size={10} className="mr-1" /> {t("activity.transcoding", "Transcoding")}
+            <Cpu size={10} className="mr-1" /> {t("activity.transcode", "Transcode")}
           </span>
         );
       }
@@ -135,7 +135,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
       );
     }
 
-    let display = t("activity.transcoding", "Transcoding");
+    let display = t("activity.transcode", "Transcode");
     if (transcodingInfo.isVideoDirect === false) display += " (V)";
     if (transcodingInfo.isAudioDirect === false) display += " (A)";
 
@@ -248,7 +248,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
         {error && (
           <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in p-6">
             <AlertCircle size={40} className="text-brand-rose mb-3" />
-            <span className="text-lg font-bold text-brand-rose mb-1">{t("activity.failed", "Failed to load data")}</span>
+            <span className="text-lg font-bold text-brand-rose mb-1">{t("error_cards.failed_to_load", "Failed to load")}</span>
             <span className="text-sm text-gray-400 text-center max-w-md">{error}</span>
           </div>
         )}
@@ -259,7 +259,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
               <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
                 <th className="p-3 w-12"></th>
                 <SortableHeader
-                  label={t("activity.user", "User")}
+                  label={t("common.user", "User")}
                   accessor="userName"
                   currentSort={sortStatus}
                   onSort={handleSort}
@@ -277,7 +277,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
                   onSort={handleSort}
                 />
                 <SortableHeader
-                  label={t("activity.client", "Client")}
+                  label={t("common.client", "Client")}
                   accessor="client"
                   currentSort={sortStatus}
                   onSort={handleSort}
@@ -290,13 +290,13 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
                   onSort={handleSort}
                 />
                 <SortableHeader
-                  label={t("activity.date_created", "Date Created")}
+                  label={t("common.date_created", "Date Created")}
                   accessor="dateCreated"
                   currentSort={sortStatus}
                   onSort={handleSort}
                 />
                 <SortableHeader
-                  label={t("activity.plays", "Plays")}
+                  label={t("common.unit.plays", "Plays")}
                   accessor="playCount"
                   currentSort={sortStatus}
                   onSort={handleSort}
@@ -419,7 +419,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
           </span>
           <div className="flex items-center gap-4">
             <span className="text-xs font-mono text-gray-400">
-              {t("activity.page_of", "Page {{page}} of {{totalPages}}", { page: page, totalPages: totalPages })}
+              {t("common.page_info", "Page {{page}} of {{totalPages}}", { page: page, totalPages: totalPages })}
             </span>
             <div className="flex gap-2">
               <button
@@ -427,14 +427,14 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
                 disabled={page === 1}
                 className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
               >
-                {t("activity.prev", "Prev")}
+                {t("common.prev", "Prev")}
               </button>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
               >
-                {t("activity.next", "Next")}
+                {t("common.next", "Next")}
               </button>
             </div>
           </div>

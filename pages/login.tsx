@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { useTranslation } from "next-i18next/pages";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { useTranslation } from "react-i18next";
 import { Activity, Lock, User, Server as ServerIcon, ChevronRight, Loader2, AlertCircle } from "lucide-react";
 
 import client from "@/lib/api";
@@ -88,11 +87,11 @@ export default function LoginPage() {
 
     let hasError = false;
     if (!username.trim()) {
-      setUsernameError(t("login.error_username_required", "Username is required"));
+      setUsernameError(t("common.error_username_required", "Username is required"));
       hasError = true;
     }
     if (!password.trim()) {
-      setPasswordError(t("login.error_password_required", "Password is required"));
+      setPasswordError(t("common.error_password_required", "Password is required"));
       hasError = true;
     }
     if (showServerPicker && !selectedServer) {
@@ -233,9 +232,9 @@ export default function LoginPage() {
                   value={selectedServer}
                   onChange={setSelectedServer}
                   labelFn={(val) =>
-                    serverOptions.find((opt) => opt.value === val)?.label ?? t("login.select_server", "Select a server...")
+                    serverOptions.find((opt) => opt.value === val)?.label ?? t("common.select_server", "Select a server...")
                   }
-                  placeholder={t("login.select_server", "Select a server...")}
+                  placeholder={t("common.select_server", "Select a server...")}
                   leftIcon={ServerIcon}
                   loading={loadingServers}
                 />
@@ -281,12 +280,4 @@ export default function LoginPage() {
       </div>
     </>
   );
-}
-
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || "en", ["common"])),
-    },
-  };
 }

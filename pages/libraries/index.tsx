@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import { useTranslation } from "next-i18next/pages";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { useTranslation } from "react-i18next";
 import { Database, Loader2, AlertCircle } from "lucide-react";
 
 import client from "@/lib/api";
@@ -83,11 +82,9 @@ export default function LibrariesPage() {
           <div className="w-full py-24 bg-surface/30 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-gray-500">
             <Database size={48} className="mb-4 opacity-20" />
             <span className="font-bold text-lg tracking-wide text-gray-400">
-              {t("libraries.no_libraries", "No libraries found")}
+              {t("common.no_libraries_found", "No libraries found")}
             </span>
-            <span className="text-sm mt-1">
-              {t("libraries.no_libraries_desc", "Make sure your server is connected and synced.")}
-            </span>
+            <span className="text-sm mt-1">{t("common.no_libraries_found", "No libraries found")}</span>
           </div>
         )}
 
@@ -102,12 +99,4 @@ export default function LibrariesPage() {
       </div>
     </>
   );
-}
-
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || "en-US", ["common"])),
-    },
-  };
 }

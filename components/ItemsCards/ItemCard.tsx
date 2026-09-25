@@ -1,7 +1,7 @@
 import React from "react";
 import { API_BASE } from "@/lib/api";
 import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import type { RecentlyAdded } from "@/lib/models/RecentlyAdded";
 import ItemImage from "../ItemImage/ItemImage";
 
@@ -35,8 +35,7 @@ export default function ItemCard({ item, width = 160, height = 240 }: Props) {
       })
     : "";
   const episodeCount = item.grouped?.length ?? 0;
-  const episodesTemplate = t("recently_added.episodes", "{{episodeCount}} Episodes");
-  const episodesLabel = `${episodeCount} Episodes`;
+  const episodesLabel = t("item.episodes", "{{episodeCount}} Episodes", { episodeCount });
 
   return (
     <div

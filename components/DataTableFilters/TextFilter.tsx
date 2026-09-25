@@ -50,7 +50,7 @@ export default function TextFilter({
       {/* Tailwind Input */}
       <input
         type="text"
-        placeholder={t("activity.filter", "Filter...")}
+        placeholder={t("common.filter", "Filter")}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="w-full bg-surface/80 border border-transparent hover:border-border rounded py-1.5 pl-8 pr-8 text-xs text-gray-200 placeholder:text-gray-600 focus:outline-none transition-all shadow-inner"

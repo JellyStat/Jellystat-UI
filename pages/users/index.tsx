@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { useTranslation } from "next-i18next/pages";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { useTranslation } from "react-i18next";
 import { Users, ArrowUpDown, ArrowUp, ArrowDown, User as UserIcon, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { GridifyQueryBuilder } from "gridify-client";
@@ -60,7 +59,7 @@ export default function UsersPage() {
         setPageCount(res?.count ?? 0);
       } catch (err: any) {
         if (err?.name === "AbortError") return;
-        setError(err?.message ?? "Failed to load users");
+        setError(err?.message ?? t("settings.error_load_users", "Failed to load users"));
       } finally {
         setLoading(false);
       }
@@ -157,7 +156,7 @@ export default function UsersPage() {
           {loading && (
             <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
               <Loader2 size={40} className="text-brand-cyan animate-spin mb-3" />
-              <span className="text-sm font-bold text-gray-300">{t("users.syncing_users", "Syncing users...")}</span>
+              <span className="text-sm font-bold text-gray-300">{t("common.loading", "Loading")}</span>
             </div>
           )}
 
@@ -165,7 +164,7 @@ export default function UsersPage() {
           {error && (
             <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in p-6">
               <AlertCircle size={40} className="text-brand-rose mb-3" />
-              <span className="text-lg font-bold text-brand-rose mb-1">{t("users.failed_data", "Failed to load data")}</span>
+              <span className="text-lg font-bold text-brand-rose mb-1">{t("common.failed_to_load", "Failed to load")}</span>
               <span className="text-sm text-gray-400 text-center max-w-md">{error}</span>
             </div>
           )}
@@ -176,21 +175,21 @@ export default function UsersPage() {
                 <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
                   <th className="p-3 w-16 text-center">{t("users.avatar", "Avatar")}</th>
                   <SortableHeader
-                    label={t("users.user", "User")}
+                    label={t("common.user", "User")}
                     accessor="username"
                     currentSort={sortStatus}
                     onSort={handleSort}
                   />
                   <SortableHeader
-                    label={t("users.tracked", "Tracked")}
+                    label={t("common.tracked", "Tracked")}
                     accessor="tracked"
                     currentSort={sortStatus}
                     onSort={handleSort}
                   />
                   <th className="p-3 cursor-default">{t("users.last_watched", "Last Watched")}</th>
-                  <th className="p-3 cursor-default">{t("users.client", "Client")}</th>
+                  <th className="p-3 cursor-default">{t("common.client", "Client")}</th>
                   <SortableHeader
-                    label={t("users.plays", "Plays")}
+                    label={t("common.unit.plays", "Plays")}
                     accessor="playCount"
                     currentSort={sortStatus}
                     onSort={handleSort}
@@ -332,14 +331,14 @@ export default function UsersPage() {
                   disabled={page === 1}
                   className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
                 >
-                  {t("users.prev", "Prev")}
+                  {t("common.prev", "Prev")}
                 </button>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
                   className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
                 >
-                  {t("users.next", "Next")}
+                  {t("common.next", "Next")}
                 </button>
               </div>
             </div>
@@ -371,12 +370,4 @@ function SortableHeader({ label, accessor, currentSort, onSort, align = "left" }
       </div>
     </th>
   );
-}
-
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || "en", ["common"])),
-    },
-  };
 }

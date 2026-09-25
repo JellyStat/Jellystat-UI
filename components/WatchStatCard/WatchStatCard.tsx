@@ -37,7 +37,7 @@
 
 //   // Resolve defaults here so translations hook can catch them
 //   const resolvedTitle = title || t("stat_card.most_viewed", "Most Viewed");
-//   const resolvedUnit = unit || t("stat_card.plays", "Plays");
+//   const resolvedUnit = unit || t("common.unit.plays", "Plays");
 
 //   const display = items.slice(0, maxItems);
 

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { AlertCircle, Eye, EyeOff, Loader2, Lock, User, UserPlus } from "lucide-react";
 import { DialogPanel, DialogTitle } from "@headlessui/react";
 import { toast } from "sonner";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 
 import client from "@/lib/api";
 import ServerType from "@/lib/models/enums/serverTypes";
@@ -34,10 +34,10 @@ export default function AddServerModal({ onClose, onCreated }: Props) {
 
     const nextFieldErrors: typeof fieldErrors = {};
     if (!Url.trim()) {
-      nextFieldErrors.Url = t("settings.error_url_required", "URL is required");
+      nextFieldErrors.Url = t("common.error_url_required", "URL is required");
     }
     if (!ApiKey.trim()) {
-      nextFieldErrors.ApiKey = t("settings.error_api_key_required", "API Key is required");
+      nextFieldErrors.ApiKey = t("common.error_api_key_required", "API Key is required");
     }
 
     if (Object.keys(nextFieldErrors).length > 0) {
@@ -76,7 +76,7 @@ export default function AddServerModal({ onClose, onCreated }: Props) {
               <div className="p-2.5 rounded-xl bg-brand-cyan/10 border border-brand-cyan/20">
                 <UserPlus size={22} className="text-brand-cyan" />
               </div>
-              <h2 className="text-2xl font-black text-white tracking-tight">{t("settings.add_server_title", "Add Server")}</h2>
+              <h2 className="text-2xl font-black text-white tracking-tight">{t("settings.add_server", "Add Server")}</h2>
             </div>
             <p className="mt-2 text-sm text-gray-400 font-medium">
               {t("settings.add_server_desc", "Add a new Jellyfin or Emby server to monitor.")}
@@ -87,9 +87,7 @@ export default function AddServerModal({ onClose, onCreated }: Props) {
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
-            {t("settings.label_url", "URL")}
-          </label>
+          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">{t("common.url", "URL")}</label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-500 group-focus-within:text-brand-cyan transition-colors">
               <User size={18} />
@@ -136,7 +134,7 @@ export default function AddServerModal({ onClose, onCreated }: Props) {
 
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
-            {t("settings.label_api_key", "API Key")}
+            {t("common.api_key", "API Key")}
           </label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-500 group-focus-within:text-brand-cyan transition-colors">
@@ -214,7 +212,7 @@ export default function AddServerModal({ onClose, onCreated }: Props) {
             {loading ? (
               <>
                 <Loader2 size={18} className="animate-spin mr-2" />
-                {t("settings.adding_server", "Adding Server...")}
+                {t("settings.adding_server", "Adding Server")}
               </>
             ) : (
               t("settings.add_server", "Add Server")

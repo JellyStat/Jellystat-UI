@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import {
   Search,
@@ -119,7 +119,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
         <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3 shrink-0">
           <Film className="text-brand-cyan" size={28} />
-          {t("media_grid.title", "Media")}
+          {t("common.media", "Media")}
         </h2>
 
         <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
@@ -146,7 +146,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
                 value={sortField}
                 onChange={(val) => setSortField(val)}
                 labelFn={(val) => {
-                  if (val === "name") return t("media_grid.sort_title", "Title");
+                  if (val === "name") return t("common.title", "Title");
                   if (val === "dateCreated") return t("media_grid.sort_date_added", "Date Added");
                   if (val === "playCount") return t("media_grid.sort_views", "Views");
                   if (val === "size") return t("media_grid.sort_size", "Size");

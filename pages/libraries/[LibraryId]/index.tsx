@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { GridifyQueryBuilder } from "gridify-client";
 import { Loader2, AlertCircle, Image as ImageIcon, Info, Film, Activity as ActivityIcon, Settings } from "lucide-react";
 
@@ -74,9 +74,9 @@ export default function LibraryPage() {
   }
 
   const tabs = [
-    { id: "overview", label: t("library.tab_overview", "Overview"), icon: Info },
-    { id: "media", label: t("library.tab_media", "Media"), icon: Film },
-    { id: "activity", label: t("library.tab_activity", "Activity"), icon: ActivityIcon },
+    { id: "overview", label: t("nav.overview", "Overview"), icon: Info },
+    { id: "media", label: t("common.media", "Media"), icon: Film },
+    { id: "activity", label: t("nav.activity", "Activity"), icon: ActivityIcon },
     ...(showOptionsTab ? [{ id: "options", label: t("common.tab_options", "Options"), icon: Settings }] : []),
   ];
 

@@ -1,5 +1,5 @@
 import { PieChart } from "lucide-react";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 
 import { GenreStats } from "@/lib/models/genreStats";
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart, Tooltip, TooltipContentProps } from "recharts";
@@ -19,7 +19,7 @@ export default function GenreStatCard({ data, dataKey }: Props) {
           <p>
             {dataKey == "playDuration"
               ? (Number(payload[0].value ?? 0).secondsToDurationString?.() ?? "0")
-              : `${payload[0].value} ${t("UNITS.PLAYS", "plays")}`}
+              : `${payload[0].value} ${t("common.unit.plays", "Plays")}`}
           </p>
         </div>
       );

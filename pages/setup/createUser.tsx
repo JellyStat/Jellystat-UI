@@ -1,16 +1,7 @@
 import React, { useState } from "react";
-import { 
-  UserPlus, 
-  User, 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  AlertCircle, 
-  Loader2, 
-  ShieldCheck
-} from "lucide-react";
+import { UserPlus, User, Lock, Eye, EyeOff, AlertCircle, Loader2, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 
 import client from "@/lib/api";
 
@@ -22,33 +13,33 @@ export default function CreateUserPage({ onComplete }: Props) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  const [fieldErrors, setFieldErrors] = useState<{ 
-    username?: string; 
-    password?: string; 
-    passwordConfirmation?: string 
+
+  const [fieldErrors, setFieldErrors] = useState<{
+    username?: string;
+    password?: string;
+    passwordConfirmation?: string;
   }>({});
 
   async function handleSubmit(e?: React.FormEvent) {
     if (e) e.preventDefault();
-    
+
     setError(null);
     setFieldErrors({});
-    
+
     let hasError = false;
     const newFieldErrors: typeof fieldErrors = {};
 
     if (!username.trim()) {
-      newFieldErrors.username = t("setup.error_username_required", "Username is required");
+      newFieldErrors.username = t("common.error_username_required", "Username is required");
       hasError = true;
     }
-    
+
     if (!password.trim()) {
-      newFieldErrors.password = t("setup.error_password_required", "Password is required");
+      newFieldErrors.password = t("common.error_password_required", "Password is required");
       hasError = true;
     }
 
@@ -81,7 +72,6 @@ export default function CreateUserPage({ onComplete }: Props) {
 
   return (
     <div className="w-full max-w-md mx-auto animate-in zoom-in-95 fade-in duration-500">
-      
       {/* Header */}
       <div className="flex flex-col items-center text-center mb-8">
         <div className="w-16 h-16 bg-gradient-to-br from-brand-purple to-brand-emerald rounded-2xl flex items-center justify-center shadow-lg shadow-brand-purple/20 mb-6 border border-white/10">
@@ -97,15 +87,13 @@ export default function CreateUserPage({ onComplete }: Props) {
 
       {/* Form Card */}
       <div className="bg-surface/60 backdrop-blur-xl border border-border rounded-3xl shadow-2xl shadow-black/40 p-6 md:p-8 relative overflow-hidden">
-        
         {/* Ambient Glow */}
         <div className="absolute -top-24 -left-24 w-48 h-48 bg-brand-purple/10 blur-[80px] pointer-events-none rounded-full"></div>
 
         <form onSubmit={handleSubmit} className="relative z-10 space-y-5">
-          
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
-              {t("setup.label_username", "Username")}
+              {t("common.username", "Username")}
             </label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-500 group-focus-within:text-brand-cyan transition-colors">
@@ -118,16 +106,22 @@ export default function CreateUserPage({ onComplete }: Props) {
                 onChange={(e) => setUsername(e.target.value)}
                 disabled={loading}
                 className={`w-full bg-background border rounded-xl py-3 pl-11 pr-4 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all shadow-inner ${
-                  fieldErrors.username ? "border-brand-rose focus:border-brand-rose focus:ring-brand-rose/50" : "border-border hover:border-gray-500 focus:border-brand-cyan focus:ring-brand-cyan"
+                  fieldErrors.username
+                    ? "border-brand-rose focus:border-brand-rose focus:ring-brand-rose/50"
+                    : "border-border hover:border-gray-500 focus:border-brand-cyan focus:ring-brand-cyan"
                 }`}
               />
             </div>
-            {fieldErrors.username && <p className="text-[11px] font-bold text-brand-rose ml-1 flex items-center mt-1"><AlertCircle size={10} className="mr-1" /> {fieldErrors.username}</p>}
+            {fieldErrors.username && (
+              <p className="text-[11px] font-bold text-brand-rose ml-1 flex items-center mt-1">
+                <AlertCircle size={10} className="mr-1" /> {fieldErrors.username}
+              </p>
+            )}
           </div>
 
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
-              {t("setup.label_password", "Password")}
+              {t("common.password", "Password")}
             </label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-500 group-focus-within:text-brand-purple transition-colors">
@@ -140,7 +134,9 @@ export default function CreateUserPage({ onComplete }: Props) {
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
                 className={`w-full bg-background border rounded-xl py-3 pl-11 pr-12 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all shadow-inner ${
-                  fieldErrors.password ? "border-brand-rose focus:border-brand-rose focus:ring-brand-rose/50" : "border-border hover:border-gray-500 focus:border-brand-purple focus:ring-brand-purple"
+                  fieldErrors.password
+                    ? "border-brand-rose focus:border-brand-rose focus:ring-brand-rose/50"
+                    : "border-border hover:border-gray-500 focus:border-brand-purple focus:ring-brand-purple"
                 }`}
               />
               <button
@@ -152,7 +148,11 @@ export default function CreateUserPage({ onComplete }: Props) {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-            {fieldErrors.password && <p className="text-[11px] font-bold text-brand-rose ml-1 flex items-center mt-1"><AlertCircle size={10} className="mr-1" /> {fieldErrors.password}</p>}
+            {fieldErrors.password && (
+              <p className="text-[11px] font-bold text-brand-rose ml-1 flex items-center mt-1">
+                <AlertCircle size={10} className="mr-1" /> {fieldErrors.password}
+              </p>
+            )}
           </div>
 
           <div className="space-y-1.5">
@@ -170,11 +170,17 @@ export default function CreateUserPage({ onComplete }: Props) {
                 onChange={(e) => setPasswordConfirmation(e.target.value)}
                 disabled={loading}
                 className={`w-full bg-background border rounded-xl py-3 pl-11 pr-4 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all shadow-inner ${
-                  fieldErrors.passwordConfirmation ? "border-brand-rose focus:border-brand-rose focus:ring-brand-rose/50" : "border-border hover:border-gray-500 focus:border-brand-emerald focus:ring-brand-emerald"
+                  fieldErrors.passwordConfirmation
+                    ? "border-brand-rose focus:border-brand-rose focus:ring-brand-rose/50"
+                    : "border-border hover:border-gray-500 focus:border-brand-emerald focus:ring-brand-emerald"
                 }`}
               />
             </div>
-            {fieldErrors.passwordConfirmation && <p className="text-[11px] font-bold text-brand-rose ml-1 flex items-center mt-1"><AlertCircle size={10} className="mr-1" /> {fieldErrors.passwordConfirmation}</p>}
+            {fieldErrors.passwordConfirmation && (
+              <p className="text-[11px] font-bold text-brand-rose ml-1 flex items-center mt-1">
+                <AlertCircle size={10} className="mr-1" /> {fieldErrors.passwordConfirmation}
+              </p>
+            )}
           </div>
 
           {error && (
@@ -200,7 +206,6 @@ export default function CreateUserPage({ onComplete }: Props) {
               )}
             </button>
           </div>
-
         </form>
       </div>
     </div>

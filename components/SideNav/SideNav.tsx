@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { Activity, Film, Users, BarChart3, History, Settings, PlaySquare, LogOut, Server as ServerIcon } from "lucide-react";
 
@@ -180,7 +180,7 @@ export default function SideNav() {
             value={selectedServer}
             onChange={handleServerChange}
             labelFn={(val) =>
-              serverOptions.find((opt) => opt.value === val)?.label ?? t("nav.select_server", "Select a server...")
+              serverOptions.find((opt) => opt.value === val)?.label ?? t("common.select_server", "Select a server...")
             }
           />
         )}

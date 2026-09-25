@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { Play, Pause, Tv } from "lucide-react";
 
 import { API_BASE } from "@/lib/api";

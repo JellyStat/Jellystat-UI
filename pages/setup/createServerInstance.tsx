@@ -1,17 +1,7 @@
 import React, { useState } from "react";
-import { 
-  Server as ServerIcon, 
-  Link as LinkIcon, 
-  Globe, 
-  Key, 
-  Eye, 
-  EyeOff, 
-  AlertCircle, 
-  Loader2, 
-  Database
-} from "lucide-react";
+import { Server as ServerIcon, Link as LinkIcon, Globe, Key, Eye, EyeOff, AlertCircle, Loader2, Database } from "lucide-react";
 import { toast } from "sonner";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 
 import client from "@/lib/api";
 import { AddServer } from "@/lib/models/addServer";
@@ -37,20 +27,20 @@ export default function CreateServerPage({ onComplete }: Props) {
   // --- HANDLERS ---
   async function handleSubmit(e?: React.FormEvent) {
     if (e) e.preventDefault();
-    
+
     setError(null);
     setFieldErrors({});
-    
+
     let hasError = false;
     const newFieldErrors: { url?: string; apiKey?: string } = {};
 
     if (!url.trim()) {
-      newFieldErrors.url = t("setup.error_url_required", "Local URL is required");
+      newFieldErrors.url = t("common.error_url_required", "Local URL is required");
       hasError = true;
     }
 
     if (!apiKey.trim()) {
-      newFieldErrors.apiKey = t("setup.error_api_key_required", "API key is required");
+      newFieldErrors.apiKey = t("common.error_api_key_required", "API key is required");
       hasError = true;
     }
 
@@ -61,13 +51,13 @@ export default function CreateServerPage({ onComplete }: Props) {
 
     setLoading(true);
     try {
-      const serverPayload: AddServer = { 
-        url: url.trim(), 
-        externalURL: externalUrl.trim() || undefined, 
-        apiKey: apiKey.trim(), 
-        type: type 
+      const serverPayload: AddServer = {
+        url: url.trim(),
+        externalURL: externalUrl.trim() || undefined,
+        apiKey: apiKey.trim(),
+        type: type,
       };
-      
+
       const server = await client.Api.addServer(serverPayload);
       toast.success(t("setup.toast_server_connected", "Server connected successfully!"));
       onComplete?.({ server });
@@ -82,7 +72,6 @@ export default function CreateServerPage({ onComplete }: Props) {
 
   return (
     <div className="w-full max-w-md mx-auto animate-in zoom-in-95 fade-in duration-500">
-      
       {/* Header */}
       <div className="flex flex-col items-center text-center mb-8">
         <div className="w-16 h-16 bg-gradient-to-br from-brand-cyan to-brand-purple rounded-2xl flex items-center justify-center shadow-lg shadow-brand-purple/20 mb-6 border border-white/10">
@@ -98,12 +87,10 @@ export default function CreateServerPage({ onComplete }: Props) {
 
       {/* Form Card */}
       <div className="bg-surface/60 backdrop-blur-xl border border-border rounded-3xl shadow-2xl shadow-black/40 p-6 md:p-8 relative overflow-hidden">
-        
         {/* Ambient Glow */}
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-brand-cyan/10 blur-[80px] pointer-events-none rounded-full"></div>
 
         <form onSubmit={handleSubmit} className="relative z-10 space-y-5">
-          
           {/* Server Type Select */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
@@ -120,11 +107,19 @@ export default function CreateServerPage({ onComplete }: Props) {
                 disabled={loading}
               >
                 {Object.values(ServerType).map((t) => (
-                  <option key={t} value={t} className="bg-background text-gray-100">{t}</option>
+                  <option key={t} value={t} className="bg-background text-gray-100">
+                    {t}
+                  </option>
                 ))}
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-500">
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                  <path
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                    fillRule="evenodd"
+                  ></path>
+                </svg>
               </div>
             </div>
           </div>
@@ -145,17 +140,23 @@ export default function CreateServerPage({ onComplete }: Props) {
                 onChange={(e) => setUrl(e.target.value)}
                 disabled={loading}
                 className={`w-full bg-background border rounded-xl py-3 pl-11 pr-4 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all shadow-inner ${
-                  fieldErrors.url ? "border-brand-rose focus:border-brand-rose focus:ring-brand-rose/50" : "border-border hover:border-gray-500 focus:border-brand-cyan focus:ring-brand-cyan"
+                  fieldErrors.url
+                    ? "border-brand-rose focus:border-brand-rose focus:ring-brand-rose/50"
+                    : "border-border hover:border-gray-500 focus:border-brand-cyan focus:ring-brand-cyan"
                 }`}
               />
             </div>
-            {fieldErrors.url && <p className="text-[11px] font-bold text-brand-rose ml-1 flex items-center mt-1"><AlertCircle size={10} className="mr-1" /> {fieldErrors.url}</p>}
+            {fieldErrors.url && (
+              <p className="text-[11px] font-bold text-brand-rose ml-1 flex items-center mt-1">
+                <AlertCircle size={10} className="mr-1" /> {fieldErrors.url}
+              </p>
+            )}
           </div>
 
           {/* External URL */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1 flex items-center justify-between">
-              <span>{t("setup.label_external_url", "External URL")}</span>
+              <span>{t("settings.label_external_url", "External URL")}</span>
               <span className="text-gray-600 font-medium tracking-normal normal-case">
                 {t("setup.label_optional", "Optional")}
               </span>
@@ -178,7 +179,7 @@ export default function CreateServerPage({ onComplete }: Props) {
           {/* API Key */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
-              {t("setup.label_api_key", "API Key")}
+              {t("common.api_key", "API Key")}
             </label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-500 group-focus-within:text-brand-purple transition-colors">
@@ -191,7 +192,9 @@ export default function CreateServerPage({ onComplete }: Props) {
                 onChange={(e) => setApiKey(e.target.value)}
                 disabled={loading}
                 className={`w-full bg-background border rounded-xl py-3 pl-11 pr-12 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all shadow-inner ${
-                  fieldErrors.apiKey ? "border-brand-rose focus:border-brand-rose focus:ring-brand-rose/50" : "border-border hover:border-gray-500 focus:border-brand-purple focus:ring-brand-purple"
+                  fieldErrors.apiKey
+                    ? "border-brand-rose focus:border-brand-rose focus:ring-brand-rose/50"
+                    : "border-border hover:border-gray-500 focus:border-brand-purple focus:ring-brand-purple"
                 }`}
               />
               <button
@@ -203,7 +206,11 @@ export default function CreateServerPage({ onComplete }: Props) {
                 {showApiKey ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-            {fieldErrors.apiKey && <p className="text-[11px] font-bold text-brand-rose ml-1 flex items-center mt-1"><AlertCircle size={10} className="mr-1" /> {fieldErrors.apiKey}</p>}
+            {fieldErrors.apiKey && (
+              <p className="text-[11px] font-bold text-brand-rose ml-1 flex items-center mt-1">
+                <AlertCircle size={10} className="mr-1" /> {fieldErrors.apiKey}
+              </p>
+            )}
           </div>
 
           {/* Global Error Banner */}
@@ -231,7 +238,6 @@ export default function CreateServerPage({ onComplete }: Props) {
               )}
             </button>
           </div>
-
         </form>
       </div>
     </div>

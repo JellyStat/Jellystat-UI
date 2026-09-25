@@ -12,6 +12,7 @@ import {
   Logs,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 import client from "@/lib/api";
 import { LogsModel } from "@/lib/models/LogsModel";
@@ -21,6 +22,7 @@ import { WebsocketMessage } from "@/lib/models/WebsocketMessage";
 import { wsClient } from "@/lib/wsClient";
 
 export default function TasksLogsPage() {
+  const { t } = useTranslation("common");
   const [logs, setLogs] = useState<LogsModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedLogIds, setExpandedLogIds] = useState<string[]>([]);
@@ -39,7 +41,7 @@ export default function TasksLogsPage() {
         if (isMounted) setLogs(logs.data || []);
       } catch (error) {
         console.error("Failed to fetch task logs:", error);
-        toast.error("Failed to load logs. Please try again later.");
+        toast.error(t("tasks.logs_load_error", "Failed to load logs. Please try again later."));
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -97,8 +99,16 @@ export default function TasksLogsPage() {
         </td>
 
         {/* Task Name */}
-
-        <td className="p-4">{getTaskBadge(log.task)}</td>
+        {(() => {
+          const taskBadgeLabels: Record<string, string> = {
+            Backup: t("tasks.backup", "Backup"),
+            FullSync: t("tasks.full_sync", "Full Sync"),
+            PartialSync: t("tasks.partial_sync", "Partial Sync"),
+            Restore: t("common.restore", "Restore"),
+          };
+          const badgeLabel = taskBadgeLabels[log.task] ?? log.task;
+          return <td className="p-4">{getTaskBadge(log.task, badgeLabel)}</td>;
+        })()}
 
         {/* Date */}
         <td className="p-4">
@@ -121,15 +131,15 @@ export default function TasksLogsPage() {
           <div className="flex items-center text-sm text-gray-300 font-medium">
             {log.success == null ? (
               <span className="flex items-center gap-2 text-brand-cyan">
-                <CircleDashed size={14} /> In Progress
+                <CircleDashed size={14} /> {t("tasks.in_progress", "In Progress")}
               </span>
             ) : log.success ? (
               <span className="flex items-center gap-2 text-brand-emerald">
-                <CheckCircle2 size={14} /> Success
+                <CheckCircle2 size={14} /> {t("tasks.success", "Success")}
               </span>
             ) : (
               <span className="flex items-center gap-2 text-brand-rose">
-                <XCircle size={14} /> Failed
+                <XCircle size={14} /> {t("tasks.failed", "Failed")}
               </span>
             )}
           </div>
@@ -165,9 +175,9 @@ export default function TasksLogsPage() {
           </div>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-black text-white tracking-tight">Task Logs</h1>
+              <h1 className="text-3xl font-black text-white tracking-tight">{t("tasks.logs_title", "Task Logs")}</h1>
             </div>
-            <p className="text-sm text-gray-400 mt-1 font-medium">View task logs</p>
+            <p className="text-sm text-gray-400 mt-1 font-medium">{t("tasks.logs_subtitle", "View task logs")}</p>
           </div>
         </div>
       </div>
@@ -189,13 +199,13 @@ export default function TasksLogsPage() {
                 <tr>
                   <td colSpan={5} className="p-8 text-center">
                     <Loader2 size={24} className="animate-spin text-brand-purple mx-auto mb-2" />
-                    <span className="text-gray-500 text-sm font-medium">Loading logs...</span>
+                    <span className="text-gray-500 text-sm font-medium">{t("common.loading", "Loading logs...")}</span>
                   </td>
                 </tr>
               ) : logs.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="p-8 text-center text-gray-500 text-sm font-medium">
-                    No logs found.
+                    {t("tasks.no_logs", "No logs found.")}
                   </td>
                 </tr>
               ) : (

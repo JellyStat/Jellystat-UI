@@ -1,4 +1,4 @@
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { HardDrive, Clapperboard } from "lucide-react";
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import ItemTypeIcons from "@/lib/declarations/itemIcons";

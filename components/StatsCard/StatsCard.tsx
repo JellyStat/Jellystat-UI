@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { MoreVertical, Activity, Loader2, PlaySquare, Clock } from "lucide-react";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 
@@ -26,10 +26,14 @@ export default function StatsCard({ type, id }: Props) {
   // --- DERIVED TITLE ---
   const title = (() => {
     switch (type) {
-      case StatType.Library: return t("stats_card.library_stats", "Library Stats");
-      case StatType.Item: return t("stats_card.item_stats", "Item Stats");
-      case StatType.User: return t("stats_card.user_stats", "User Stats");
-      default: return t("stats_card.stats_title", "Stats");
+      case StatType.Library:
+        return t("stats_card.library_stats", "Library Stats");
+      case StatType.Item:
+        return t("stats_card.item_stats", "Item Stats");
+      case StatType.User:
+        return t("stats_card.user_stats", "User Stats");
+      default:
+        return t("stats_card.stats_title", "Stats");
     }
   })();
 
@@ -58,11 +62,11 @@ export default function StatsCard({ type, id }: Props) {
   // --- DATA FETCHING ---
   useEffect(() => {
     let mounted = true;
-    
+
     async function fetchFor(days: number) {
       setLoadingMap((m) => ({ ...m, [days]: true }));
       setError(null);
-      
+
       try {
         let res: any = null;
         const query = new GridifyQueryBuilder().addCondition("Id", op.Equal, id).build();
@@ -78,7 +82,7 @@ export default function StatsCard({ type, id }: Props) {
         const arr = res?.data ?? [];
         let plays = 0;
         let seconds = 0;
-        
+
         for (const it of arr) {
           plays += Number(it.playCount ?? 0) || 0;
           seconds += Number(it.playDuration ?? 0) || 0;
@@ -104,8 +108,10 @@ export default function StatsCard({ type, id }: Props) {
       }
     }
 
-    return () => { mounted = false; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      mounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected, type, id]);
 
   // --- HANDLERS ---
@@ -119,7 +125,7 @@ export default function StatsCard({ type, id }: Props) {
   }
 
   // --- RENDER HELPERS ---
-  const selectedPeriodsArray = PERIODS.filter(p => selected.has(p.days)).sort((a, b) => {
+  const selectedPeriodsArray = PERIODS.filter((p) => selected.has(p.days)).sort((a, b) => {
     if (a.days === 0) return 1;
     if (b.days === 0) return -1;
     return a.days - b.days;
@@ -127,7 +133,6 @@ export default function StatsCard({ type, id }: Props) {
 
   return (
     <div className="w-full animate-in fade-in duration-500">
-      
       {/* Header & Settings */}
       <div className="flex items-center justify-between mb-4 relative">
         <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
@@ -136,10 +141,12 @@ export default function StatsCard({ type, id }: Props) {
         </h2>
 
         <div ref={dropdownRef} className="relative">
-          <button 
+          <button
             onClick={() => setOpen((o) => !o)}
             className={`p-2 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-purple ${
-              open ? "bg-surface border-brand-purple text-white shadow-inner" : "bg-transparent border-transparent text-gray-400 hover:text-white hover:bg-surface-hover"
+              open
+                ? "bg-surface border-brand-purple text-white shadow-inner"
+                : "bg-transparent border-transparent text-gray-400 hover:text-white hover:bg-surface-hover"
             }`}
             aria-label="Toggle Stats Settings"
           >
@@ -154,16 +161,35 @@ export default function StatsCard({ type, id }: Props) {
               {PERIODS.map((p) => {
                 const isChecked = selected.has(p.days);
                 return (
-                  <label 
-                    key={p.key} 
+                  <label
+                    key={p.key}
                     className="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-hover cursor-pointer transition-colors group"
                   >
-                    <div onClick={() => toggleDays(p.days)} className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                      isChecked ? "bg-brand-purple border-brand-purple" : "bg-background border-border group-hover:border-gray-500"
-                    }`}>
-                      {isChecked && <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}
+                    <div
+                      onClick={() => toggleDays(p.days)}
+                      className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                        isChecked
+                          ? "bg-brand-purple border-brand-purple"
+                          : "bg-background border-border group-hover:border-gray-500"
+                      }`}
+                    >
+                      {isChecked && (
+                        <svg
+                          className="w-3 h-3 text-white"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      )}
                     </div>
-                    <span className={`text-sm font-medium ${isChecked ? "text-white" : "text-gray-400 group-hover:text-gray-200"}`}>
+                    <span
+                      className={`text-sm font-medium ${isChecked ? "text-white" : "text-gray-400 group-hover:text-gray-200"}`}
+                    >
                       {t(p.tKey, p.defaultLabel)}
                     </span>
                   </label>
@@ -188,8 +214,8 @@ export default function StatsCard({ type, id }: Props) {
           const isLoading = loadingMap[p.days] !== false; // treat undefined as loading initially
 
           return (
-            <div 
-              key={p.key} 
+            <div
+              key={p.key}
               className="bg-surface/60 backdrop-blur-md border border-border rounded-2xl p-5 shadow-xl shadow-black/20 flex flex-col relative overflow-hidden group hover:border-brand-purple/40 transition-colors"
             >
               {/* Subtle ambient background glow */}
@@ -205,17 +231,14 @@ export default function StatsCard({ type, id }: Props) {
                 </div>
               ) : (
                 <div className="flex flex-col gap-3 relative z-10">
-                  
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-brand-cyan/10 rounded-lg text-brand-cyan border border-brand-cyan/20">
                       <PlaySquare size={18} />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-2xl font-black text-white leading-none">
-                        {stat?.plays ?? 0}
-                      </span>
+                      <span className="text-2xl font-black text-white leading-none">{stat?.plays ?? 0}</span>
                       <span className="text-[10px] uppercase tracking-wider text-gray-500 mt-0.5">
-                        {t("stats_card.plays", "Plays")}
+                        {t("common.unit.plays", "Plays")}
                       </span>
                     </div>
                   </div>
@@ -226,24 +249,21 @@ export default function StatsCard({ type, id }: Props) {
                     </div>
                     <div className="flex flex-col">
                       <span className="text-sm font-bold text-gray-200 leading-none mt-1">
-                        {stat?.seconds 
-                          ? ((stat.seconds as any).secondsToDurationString?.() ?? `${stat.seconds} sec`) 
-                          : t("stats_card.zero_seconds", "0 Seconds")
-                        }
+                        {stat?.seconds
+                          ? ((stat.seconds as any).secondsToDurationString?.() ?? `${stat.seconds} sec`)
+                          : t("stats_card.zero_seconds", "0 Seconds")}
                       </span>
                       <span className="text-[10px] uppercase tracking-wider text-gray-500 mt-0.5">
                         {t("stats_card.duration", "Duration")}
                       </span>
                     </div>
                   </div>
-
                 </div>
               )}
             </div>
           );
         })}
       </div>
-      
     </div>
   );
 }

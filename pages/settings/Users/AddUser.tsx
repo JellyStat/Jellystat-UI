@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { AlertCircle, Eye, EyeOff, Loader2, Lock, User, UserPlus } from "lucide-react";
 import { DialogPanel, DialogTitle } from "@headlessui/react";
 import { toast } from "sonner";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 
 import client from "@/lib/api";
 
@@ -29,10 +29,10 @@ export default function AddUserModal({ onClose, onCreated }: Props) {
 
     const nextFieldErrors: typeof fieldErrors = {};
     if (!username.trim()) {
-      nextFieldErrors.username = t("settings.error_username_required", "Username is required");
+      nextFieldErrors.username = t("common.error_username_required", "Username is required");
     }
     if (!password.trim()) {
-      nextFieldErrors.password = t("settings.error_password_required", "Password is required");
+      nextFieldErrors.password = t("common.error_password_required", "Password is required");
     }
 
     if (Object.keys(nextFieldErrors).length > 0) {
@@ -67,7 +67,7 @@ export default function AddUserModal({ onClose, onCreated }: Props) {
               <div className="p-2.5 rounded-xl bg-brand-purple/10 border border-brand-purple/20">
                 <UserPlus size={22} className="text-brand-purple" />
               </div>
-              <h2 className="text-2xl font-black text-white tracking-tight">{t("settings.add_user_title", "Add User")}</h2>
+              <h2 className="text-2xl font-black text-white tracking-tight">{t("settings.add_user", "Add User")}</h2>
             </div>
             <p className="mt-2 text-sm text-gray-400 font-medium">
               {t("settings.add_user_desc", "Create a new local Jellystat user account.")}
@@ -79,7 +79,7 @@ export default function AddUserModal({ onClose, onCreated }: Props) {
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
-            {t("settings.label_username", "Username")}
+            {t("common.username", "Username")}
           </label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-500 group-focus-within:text-brand-cyan transition-colors">
@@ -108,7 +108,7 @@ export default function AddUserModal({ onClose, onCreated }: Props) {
 
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
-            {t("settings.label_password", "Password")}
+            {t("common.password", "Password")}
           </label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-500 group-focus-within:text-brand-purple transition-colors">

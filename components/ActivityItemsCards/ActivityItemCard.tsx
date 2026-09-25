@@ -1,6 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { Clock, User } from "lucide-react";
 
 import { API_BASE } from "@/lib/api";
@@ -66,7 +66,7 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 160, height = 
               className="truncate hover:text-brand-purple transition-colors cursor-pointer"
               onClick={() => router.push(`/users/${encodeURIComponent(item.latestActivity?.userId ?? "")}`)}
             >
-              {item.latestActivity?.userName ?? t("activity_item_card.na", "N/A")}
+              {item.latestActivity?.userName ?? t("common.na", "N/A")}
             </span>
           </span>
         </div>

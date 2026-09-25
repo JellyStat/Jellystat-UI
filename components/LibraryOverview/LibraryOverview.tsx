@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import client from "@/lib/api";
 import LibraryOverviewCard from "./LibraryOverviewCard";
 import { Database, Loader2, AlertCircle } from "lucide-react";
@@ -24,7 +24,7 @@ export default function LibraryOverview() {
         console.log("Fetched libraries:", res?.data ?? []);
       }
     } catch (err: any) {
-      if (!isCancelledRef.current) setError(err?.message ?? t("library.failed_to_load", "Failed to load libraries"));
+      if (!isCancelledRef.current) setError(err?.message ?? t("error_cards.failed_to_load_desc", "Failed to load data"));
     } finally {
       if (!isCancelledRef.current) setLoading(false);
     }
@@ -65,7 +65,7 @@ export default function LibraryOverview() {
 
         {!loading && !error && libraries.length === 0 && (
           <div className="w-full h-32 bg-surface/30 border border-border border-dashed rounded-2xl flex flex-col items-center justify-center text-gray-500 shadow-inner">
-            <span className="font-medium text-sm">{t("library.no_libraries", "No libraries found")}</span>
+            <span className="font-medium text-sm">{t("common.no_libraries_found", "No libraries found")}</span>
           </div>
         )}
       </div>

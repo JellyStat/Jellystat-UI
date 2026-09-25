@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { ArrowLeftRight, Trash2, Save, Loader2, AlertCircle, CheckSquare, Square, Search, Film } from "lucide-react";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 
 import client from "@/lib/api";
 import Activity from "@/lib/models/activity";
@@ -298,7 +298,7 @@ export default function ActivityMigrationPage() {
             className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-brand-rose/10 hover:bg-brand-rose text-brand-rose hover:text-white border border-brand-rose/20 hover:border-brand-rose py-2 px-4 rounded-xl font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-inner"
           >
             {deleteLoading ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-            {t("settings.migration_delete", "Delete")} {selected.length > 0 && `(${selected.length})`}
+            {t("common.delete", "Delete")} {selected.length > 0 && `(${selected.length})`}
           </button>
 
           <button
@@ -326,9 +326,7 @@ export default function ActivityMigrationPage() {
         {error && (
           <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in p-6">
             <AlertCircle size={40} className="text-brand-rose mb-3" />
-            <span className="text-lg font-bold text-brand-rose mb-1">
-              {t("settings.migration_error_load", "Failed to load data")}
-            </span>
+            <span className="text-lg font-bold text-brand-rose mb-1">{t("common.failed_to_load", "Failed to load data")}</span>
             <span className="text-sm text-gray-400 text-center max-w-md">{error}</span>
           </div>
         )}
@@ -347,7 +345,7 @@ export default function ActivityMigrationPage() {
                 </th>
                 <th className="p-3">{t("settings.migration_col_series", "Series")}</th>
                 <th className="p-3 w-64">{t("settings.migration_col_matched_series", "Matched Series")}</th>
-                <th className="p-3">{t("settings.migration_col_title", "Title")}</th>
+                <th className="p-3">{t("common.title", "Title")}</th>
                 <th className="p-3 w-64">{t("settings.migration_col_matched_title", "Matched Title")}</th>
               </tr>
             </thead>
@@ -482,7 +480,7 @@ export default function ActivityMigrationPage() {
           </span>
           <div className="flex items-center gap-4">
             <span className="text-xs font-mono text-gray-400">
-              {t("settings.pagination_page_info", "Page {{page}} of {{totalPages}}", { page, totalPages })}
+              {t("common.page_info", "Page {{page}} of {{totalPages}}", { page, totalPages })}
             </span>
             <div className="flex gap-2">
               <button
@@ -490,14 +488,14 @@ export default function ActivityMigrationPage() {
                 disabled={page === 1}
                 className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
               >
-                {t("settings.pagination_prev", "Prev")}
+                {t("common.prev", "Prev")}
               </button>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
               >
-                {t("settings.pagination_next", "Next")}
+                {t("common.next", "Next")}
               </button>
             </div>
           </div>
@@ -538,7 +536,7 @@ export default function ActivityMigrationPage() {
                 id={searchDialogContext.migration?.seriesItem?.id ?? searchDialogContext.migration?.item?.id ?? null}
               />
             ) : (
-              <div className="mt-4 text-sm text-gray-400">{t("settings.migration_loading", "Loading...")}</div>
+              <div className="mt-4 text-sm text-gray-400">{t("common.loading", "Loading")}</div>
             )}
 
             <div className="mt-6 flex justify-end">

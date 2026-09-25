@@ -1,6 +1,5 @@
 import Head from "next/head";
-import { useTranslation } from "next-i18next/pages";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { useTranslation } from "react-i18next";
 import { BarChart3 } from "lucide-react";
 import WatchTrendsCard from "@/components/StatsCard/WatchTrendsCard";
 import CodecStatsCard from "@/components/StatsCard/CodecStatsCard";
@@ -42,12 +41,4 @@ export default function StatisticsPage() {
       </div>
     </>
   );
-}
-
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || "en-US", ["common"])),
-    },
-  };
 }

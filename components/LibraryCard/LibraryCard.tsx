@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import { API_BASE } from "@/lib/api";
 import { Image as ImageIcon, Film, Tv, Music, Folders, HardDrive, PlaySquare, Clock, Timer, History } from "lucide-react";
@@ -45,7 +45,7 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
         day: "numeric",
         year: "numeric",
       })
-    : t("library.na", "N/A");
+    : t("common.na", "N/A");
 
   return (
     <div
@@ -75,7 +75,7 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
 
         {lib.archived && (
           <div className="absolute top-2 right-2 z-20 bg-black/80 backdrop-blur-md text-[10px] font-bold text-gray-300 px-2 py-1 rounded-md border border-white/10 uppercase tracking-widest shadow-lg">
-            {t("item.archived", "Archived")}
+            {t("common.archived", "Archived")}
           </div>
         )}
 

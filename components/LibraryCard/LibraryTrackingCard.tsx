@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { Image as ImageIcon } from "lucide-react";
 
 import { API_BASE } from "@/lib/api";
@@ -63,7 +63,7 @@ export default function LibraryTrackingCard({
 
         {/* Tracking Toggle */}
         <div className="flex items-center justify-between pt-3 border-t border-border/50">
-          <span className="text-sm font-medium text-gray-400">{t("library.tracked", "Tracked")}</span>
+          <span className="text-sm font-medium text-gray-400">{t("common.tracked", "Tracked")}</span>
           <button
             onClick={() => toggleLibraryTracking(lib.id, !lib.tracked)}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:ring-offset-2 focus:ring-offset-background ${

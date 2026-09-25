@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { BarChart3, Loader2, AlertCircle, TrendingUp, Clock, Calendar, Calendar1 } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
@@ -167,7 +167,7 @@ export default function WatchTrendsCard() {
         {!loading && !error && chartData.length === 0 ? (
           <NoData
             Icon={BarChart3}
-            title={t("statistics.no_data", "No Data Available")}
+            title={t("common.no_data", "No Data Available")}
             message={t("statistics.no_data_desc", "There is no playback history for the last 31 days.")}
           />
         ) : (

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Loader2, Check } from "lucide-react";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 
 export class DefaultSelectedItem {
   id: string;

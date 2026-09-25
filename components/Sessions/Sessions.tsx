@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { MonitorPlay } from "lucide-react";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { wsClient } from "@/lib/wsClient";
 import { WebsocketMessage } from "@/lib/models/WebsocketMessage";
 import WebSocketMessageTypes from "@/lib/models/enums/WebSocketMessageTypes";

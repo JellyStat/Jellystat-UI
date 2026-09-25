@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Archive, Loader2, AlertCircle, Download, Delete, Trash, Clock, Upload } from "lucide-react";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 
 import client from "@/lib/api";
 import { toast } from "sonner";
@@ -141,7 +141,7 @@ export default function BackupsPage() {
             className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-brand-cyan/10 hover:bg-brand-cyan text-brand-cyan hover:text-white border border-brand-cyan/20 hover:border-brand-cyan py-2 px-4 rounded-xl font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-inner"
           >
             {loading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
-            {t("settings.backups_upload", "Upload Backup")}
+            {t("common.upload", "Upload Backup")}
           </button>
         </div>
       </div>
@@ -171,10 +171,10 @@ export default function BackupsPage() {
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
               <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
-                <th className="p-3 w-32">{t("settings.backups_col_file", "File")}</th>
-                <th className="p-3 w-48">{t("settings.backups_col_date", "Date")}</th>
-                <th className="p-3 w-32">{t("settings.backups_col_size", "Size")}</th>
-                <th className="p-3 w-64">{t("settings.backups_col_actions", "Actions")}</th>
+                <th className="p-3 w-32">{t("common.title", "File")}</th>
+                <th className="p-3 w-48">{t("common.date", "Date")}</th>
+                <th className="p-3 w-32">{t("common.size", "Size")}</th>
+                <th className="p-3 w-64">{t("common.actions", "Actions")}</th>
               </tr>
             </thead>
 
@@ -211,7 +211,7 @@ export default function BackupsPage() {
                           <div className="flex items-end gap-2">
                             <button
                               onClick={() => restoreBackup(backup.fileName)}
-                              title={t("settings.backups_restore", "Restore backup")}
+                              title={t("common.restore", "Restore backup")}
                               className="p-2 rounded-lg bg-background hover:bg-brand-cyan/20 text-gray-400 hover:text-brand-cyan border border-border hover:border-brand-cyan/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer"
                               disabled={loading}
                             >
@@ -219,7 +219,7 @@ export default function BackupsPage() {
                             </button>
                             <button
                               onClick={() => downloadBackup(backup.fileName)}
-                              title={t("settings.backups_download", "Download backup")}
+                              title={t("common.download", "Download backup")}
                               className="p-2 rounded-lg bg-background hover:bg-brand-cyan/20 text-gray-400 hover:text-brand-cyan border border-border hover:border-brand-cyan/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer"
                               disabled={loading}
                             >
@@ -235,7 +235,7 @@ export default function BackupsPage() {
                               )}
                               confirmText={t("common.yes", "Yes")}
                               cancelText={t("common.no", "No")}
-                              tooltip={t("settings.backups_delete", "Delete backup")}
+                              tooltip={t("common.delete", "Delete backup")}
                               onClick={() => setBackupToDelete(backup.fileName)}
                               onConfirm={deleteBackup}
                             />

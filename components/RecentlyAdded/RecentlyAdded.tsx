@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import type { IGridifyQuery } from "gridify-client";
 import { Sparkles, Loader2, AlertCircle } from "lucide-react";
 
@@ -55,7 +55,7 @@ export default function RecentlyAdded({ gridify, grouped = true }: Props) {
         {loading && (
           <div className="w-full h-72 bg-surface/30 border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse shadow-inner">
             <Loader2 size={32} className="text-brand-cyan animate-spin mb-3" />
-            <span className="text-gray-500 font-medium">{t("recently_added.fetching_latest", "Fetching latest media...")}</span>
+            <span className="text-gray-500 font-medium">{t("common.loading", "Loading")}</span>
           </div>
         )}
 

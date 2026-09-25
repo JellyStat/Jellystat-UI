@@ -1,8 +1,7 @@
 import { useState } from "react";
 import Head from "next/head";
 import { Settings, Library, ArrowLeftRight, Terminal, Server, Users, Archive } from "lucide-react";
-import { useTranslation } from "next-i18next/pages";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { useTranslation } from "react-i18next";
 
 import ActivityMigrationPage from "./ActivityMigration/ActivityMigration";
 import TasksPage from "./Tasks/Tasks";
@@ -10,6 +9,7 @@ import LibrarySettingsPage from "./Library/LibrarySettings";
 import ServerSettingsPage from "./Servers/ServerSettings";
 import UsersSettingsPage from "./Users";
 import BackupsPage from "./Backups/BackupsPage";
+import LanguageSwitcher from "@/components/Core/LanguageSwitcher";
 
 export default function SettingsPage() {
   const { t } = useTranslation("common");
@@ -25,7 +25,7 @@ export default function SettingsPage() {
   const tabs = [
     { id: "settings", label: t("settings.tab_general", "General Settings"), icon: Settings },
     { id: "servers", label: t("settings.tab_servers", "Servers & Auth"), icon: Server },
-    { id: "users", label: t("settings.tab_users", "Users"), icon: Users },
+    { id: "users", label: t("nav.users", "Users"), icon: Users },
     { id: "librarySettings", label: t("settings.tab_library", "Library Settings"), icon: Library },
     { id: "migrations", label: t("settings.tab_migrations", "Activity Migration"), icon: ArrowLeftRight },
     { id: "backups", label: t("settings.tab_backups", "Backups"), icon: Archive },
@@ -74,17 +74,24 @@ export default function SettingsPage() {
         <div className="w-full transition-opacity duration-300">
           {activeTab === "settings" && (
             <div className="max-w-[1600px] mx-auto p-6 animate-in fade-in duration-500">
-              <div className="bg-surface/30 border-2 border-dashed border-border rounded-3xl p-16 flex flex-col items-center justify-center text-center shadow-inner">
-                <Settings size={48} className="text-gray-500 opacity-30 mb-4 animate-[spin_10s_linear_infinite]" />
-                <h3 className="text-2xl font-black text-gray-300 tracking-tight">
-                  {t("settings.general_title", "General Settings")}
-                </h3>
-                <p className="mt-2 text-sm text-gray-500 font-medium max-w-sm">
-                  {t(
-                    "settings.general_desc",
-                    "System configuration, backups, and global UI preferences will be available here in a future update.",
-                  )}
-                </p>
+              <div className="bg-surface/30 border border-border rounded-3xl p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <Settings size={24} className="text-brand-cyan" />
+                  <h3 className="text-xl font-black text-gray-200 tracking-tight">
+                    {t("settings.general_title", "General Settings")}
+                  </h3>
+                </div>
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between p-4 bg-surface-hover/50 rounded-2xl border border-border">
+                    <div>
+                      <h4 className="text-sm font-bold text-gray-200">{t("settings.language", "Language")}</h4>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {t("settings.language_desc", "Select your preferred display language")}
+                      </p>
+                    </div>
+                    <LanguageSwitcher />
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -99,12 +106,4 @@ export default function SettingsPage() {
       </div>
     </>
   );
-}
-
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || "en", ["common"])),
-    },
-  };
 }

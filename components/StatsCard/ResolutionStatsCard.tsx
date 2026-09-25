@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useTranslation } from "next-i18next/pages";
+import { useTranslation } from "react-i18next";
 import { Loader2, AlertCircle, PieChartIcon } from "lucide-react";
 
 import client from "@/lib/api";
@@ -52,7 +52,7 @@ export default function ResolutionStatsCard({ gridify }: Props) {
       return (
         <NoData
           Icon={PieChartIcon}
-          title={t("statistics.no_data", "No Data Available")}
+          title={t("common.no_data", "No Data Available")}
           message={t("statistics.no_data_desc", "There is no playback history for the last 31 days.")}
         />
       );
@@ -63,9 +63,7 @@ export default function ResolutionStatsCard({ gridify }: Props) {
         {loading ? (
           <div className="w-full h-[400px] flex flex-col items-center justify-center">
             <Loader2 size={40} className="text-brand-purple animate-spin mb-4" />
-            <span className="text-gray-400 font-medium tracking-wide">
-              {t("statistics.compiling", "Compiling 31-day statistics...")}
-            </span>
+            <span className="text-gray-400 font-medium tracking-wide">{t("common.loading", "Loading")}</span>
           </div>
         ) : error ? (
           <ErrorCard message={error} />
