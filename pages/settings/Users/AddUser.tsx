@@ -152,14 +152,6 @@ export default function AddUserModal({ onClose, onCreated }: Props) {
 
         <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-2">
           <button
-            type="button"
-            onClick={onClose}
-            disabled={loading}
-            className="px-4 py-2.5 rounded-xl bg-background border border-border text-gray-200 hover:text-white hover:border-gray-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {t("common.cancel", "Cancel")}
-          </button>
-          <button
             type="submit"
             disabled={loading || !username.trim() || !password.trim()}
             className="px-5 py-2.5 rounded-xl bg-brand-purple hover:bg-[#9a2cee] text-white font-black transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg shadow-brand-purple/20 active:scale-[0.98]"
@@ -167,11 +159,19 @@ export default function AddUserModal({ onClose, onCreated }: Props) {
             {loading ? (
               <>
                 <Loader2 size={18} className="animate-spin mr-2" />
-                {t("settings.creating_user", "Creating User...")}
+                {t("settings.creating_user", "Creating")}
               </>
             ) : (
-              t("settings.create_user", "Create User")
+              t("settings.create_user", "Create")
             )}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={loading}
+            className="px-4 py-2.5 rounded-xl bg-background border border-border text-gray-200 hover:text-white hover:border-gray-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {t("common.cancel", "Cancel")}
           </button>
         </div>
       </form>

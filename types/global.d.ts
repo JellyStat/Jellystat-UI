@@ -1,4 +1,8 @@
 declare global {
+  interface Array<T> {
+    FirstOrDefault(predicate?: (value: T, index: number, array: T[]) => unknown): T | undefined;
+  }
+
   interface Number {
     ticksToDurationString(): string | null;
     ticksToTimeString(): string | null;

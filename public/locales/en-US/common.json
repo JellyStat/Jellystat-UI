@@ -31,6 +31,8 @@
     "enable": "Enable",
     "error_api_key_required": "API key is required",
     "error_password_required": "Password is required",
+    "error_confirm_password_required": "Confirm password is required",
+    "error_password_mismatch": "Passwords do not match",
     "error_url_required": "URL is required",
     "error_username_required": "Username is required",
     "failed_to_load": "Failed to load",
@@ -51,6 +53,7 @@
     "not_found": "Not Found",
     "page_info": "Page {{page}} of {{totalPages}}",
     "password": "Password",
+    "confirm_password": "Confirm Password",
     "prev": "Prev",
     "restore": "Restore",
     "retry_connection": "Retry Connection",
@@ -233,8 +236,11 @@
     "backups_subtitle": "Manage your backups.",
     "backups_title": "Backups",
     "connected_servers": "Connected Servers",
-    "create_user": "Create User",
-    "creating_user": "Creating User",
+    "create_user": "Create",
+    "creating_user": "Creating",
+    "updating_user": "Updating",
+    "update_user": "Update",
+    "update_user_desc": "Update the local Jellystat user account.",
     "error_auth_update": "Failed to update authentication settings",
     "error_create_server": "Failed to create server",
     "error_create_user": "Failed to create user",
@@ -289,7 +295,8 @@
     "users_subtitle": "Manage user accounts and permissions.",
     "users_title": "User Settings",
     "language_desc": "Select your preferred language",
-    "language": "Language"
+    "language": "Language",
+    "toast_user_updated": "User updated successfully"
   },
   "setup": {
     "btn_add_server": "Add Server",
@@ -403,7 +410,9 @@
   "user": {
     "error_loading": "Error loading user",
     "not_found_message": "User with id {{id}} could not be found",
-    "not_found_title": "User Not Found"
+    "not_found_title": "User Not Found",
+    "deleteUser": "Delete User {{username}}",
+    "confirmDeleteUser": "Are you sure you want to delete user {{username}}?"
   },
   "users": {
     "avatar": "Avatar",

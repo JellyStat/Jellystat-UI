@@ -7,8 +7,8 @@ interface Props {
   onSubmit: (confirmed: boolean) => void;
   Title: string;
   Description: string;
-  YesText: string;
-  NoText: string;
+  YesText?: string;
+  NoText?: string;
   DialogIcon?: LucideIcon;
   IconColor?: "text-brand-rose" | "text-brand-cyan" | "text-brand-purple" | "text-brand-emerald";
   ActionColor?: "bg-brand-rose" | "bg-brand-cyan" | "bg-brand-purple" | "bg-brand-emerald";

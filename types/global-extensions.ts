@@ -2,6 +2,10 @@
 // Implement Number#ticksToDurationString so nullable numbers can use optional chaining:
 //   const s = item.duration?.ticksToDurationString();
 
+Array.prototype.FirstOrDefault = function <T>(predicate?: (value: T, index: number, array: T[]) => unknown): T | undefined {
+  return predicate ? this.find(predicate) : this[0];
+};
+
 Number.prototype.ticksToDurationString = function (): string | null {
   const ticks = Number(this.valueOf());
   if (!ticks) return null;

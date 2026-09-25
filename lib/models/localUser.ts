@@ -1,6 +1,6 @@
 export interface LocalUser {
-  oldUsername?: string | null;
+  id?: string | null;
   username: string;
-  oldPassword?: string | null;
   password?: string | null;
+  serverId?: string | null;
 }

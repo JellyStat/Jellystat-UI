@@ -7,8 +7,8 @@ type ConfirmationDialogButtonProps = {
   buttonElement: ReactNode;
   dialogTitle: string;
   description: string;
-  confirmText: string;
-  cancelText: string;
+  confirmText?: string;
+  cancelText?: string;
   onClick?: () => void;
   onConfirm: () => void;
   className?: string;

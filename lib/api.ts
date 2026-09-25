@@ -342,6 +342,9 @@ const updateUser = (payload: LocalUser): Promise<void> =>
 const createUser = (payload: LocalUser): Promise<void> =>
   apiFetch<void>("/Auth/CreateUser", { method: "POST", body: JSON.stringify(payload) });
 
+const deleteUser = async (payload: { Id: string }): Promise<void> =>
+  apiFetch<void>(`/Auth/DeleteUser${await buildQuery(undefined, payload as Record<string, any>)}`, { method: "DELETE" });
+
 // Refresh auth (no body expected)
 const refreshToken = async (): Promise<void> => {
   console.log("Attempting token refresh");
@@ -569,6 +572,7 @@ export const Auth = {
   getConfig,
   updateUser,
   createUser,
+  deleteUser,
   refreshToken,
 };
 

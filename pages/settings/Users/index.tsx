@@ -9,6 +9,8 @@ import configManager from "@/lib/configManager";
 import { Server } from "@/lib/models/server";
 
 import AddUserModal from "./AddUser";
+import UpdateUserModal from "./UpdateUser";
+import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
 
 export default function UsersSettingsPage() {
   const { t } = useTranslation("common");
@@ -19,6 +21,8 @@ export default function UsersSettingsPage() {
   const [error, setError] = useState<string | null>(null);
   const [serverData, setServerData] = useState<Server[]>([]);
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+  const [isUpdateUserOpen, setIsUpdateUserOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   // --- DATA FETCHING ---
   const fetchPage = useCallback(async () => {
@@ -53,6 +57,24 @@ export default function UsersSettingsPage() {
     if (!user.serverId && user.serverId == "") return null;
     const server = serverData.find((s) => s.id === user.serverId);
     return server ? server.name : null;
+  }
+
+  function handleUpdateUser(userId: string) {
+    setSelectedUserId(userId);
+    setIsUpdateUserOpen(true);
+  }
+
+  async function handleDeleteUser(userId: string) {
+    try {
+      setLoading(true);
+      await client.Auth.deleteUser({ Id: userId });
+      fetchPage();
+    } catch (err: any) {
+      console.error(err);
+      setError(err?.message ?? t("settings.error_delete_user", "Failed to delete user"));
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -126,10 +148,28 @@ export default function UsersSettingsPage() {
                         </span>
                       )}
                     </div>
+
                     <div className="flex items-center gap-2">
-                      <button className="px-3 py-1.5 text-xs font-bold text-gray-300 hover:text-white bg-background border border-border hover:border-gray-500 rounded-lg transition-all shadow-inner">
+                      <button
+                        onClick={() => handleUpdateUser(user.id)}
+                        className="px-3 py-1.5 text-xs font-bold text-gray-300 hover:text-white bg-background border border-border hover:border-gray-500 rounded-lg transition-all shadow-inner"
+                      >
                         Edit
                       </button>
+
+                      <ConfirmationDialogButton
+                        disabled={loading}
+                        buttonElement={
+                          loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <div>{t("user.deleteUser", "Delete")}</div>
+                        }
+                        dialogTitle={t("user.deleteUser", "Delete User {{username}}", { username: user.username })}
+                        description={t("user.confirmDeleteUser", "Are you sure you want to delete user {{username}}?", {
+                          username: user.username,
+                        })}
+                        onConfirm={() => handleDeleteUser(user.id)}
+                        actionColor="bg-brand-rose"
+                        className="px-3 py-1.5 text-xs font-bold text-brand-rose hover:text-white border-brand-rose/60 bg-brand-rose/10 border hover:bg-rose-600 rounded-lg transition-all shadow-inner"
+                      />
                     </div>
                   </div>
                 ))}
@@ -144,6 +184,14 @@ export default function UsersSettingsPage() {
 
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <AddUserModal onClose={() => setIsAddUserOpen(false)} onCreated={fetchPage} />
+        </div>
+      </Dialog>
+
+      <Dialog open={isUpdateUserOpen} onClose={setIsUpdateUserOpen} className="relative z-50 focus:outline-none">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
+
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <UpdateUserModal userId={selectedUserId!} onClose={() => setIsUpdateUserOpen(false)} onCreated={fetchPage} />
         </div>
       </Dialog>
     </div>
