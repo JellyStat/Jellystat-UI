@@ -8,14 +8,12 @@ import { toast } from "sonner";
 import { ItemsWithStats } from "@/lib/models/itemsWithStats";
 
 type Props = {
-  item: ItemsWithStats | null;
+  item: ItemsWithStats;
 };
 
 export default function ItemOptions({ item }: Props) {
   const { t } = useTranslation("common");
   const [loading, setLoading] = useState(false);
-
-  if (!item || item.archived === false) return null;
 
   const deleteArchivedItem = async () => {
     setLoading(true);

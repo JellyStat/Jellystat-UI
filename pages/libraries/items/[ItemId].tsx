@@ -94,7 +94,7 @@ export default function ItemPage() {
 
   // Tabs Configuration
   const showMediaTab = item && [ItemTypes.Season, ItemTypes.Series].includes(item.type);
-  const showOptionsTab = item && item.archived === true;
+  const showOptionsTab = item && (item.archived === true || item.hasArchivedItems === true);
   const tabs = [
     { id: "overview", label: t("item.tab_overview", "Overview"), icon: Info },
     ...(showMediaTab ? [{ id: "media", label: t("item.tab_media", "Media"), icon: Film }] : []),
