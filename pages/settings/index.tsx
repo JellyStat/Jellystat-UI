@@ -14,7 +14,13 @@ import BackupsPage from "./Backups/BackupsPage";
 export default function SettingsPage() {
   const { t } = useTranslation("common");
 
-  const [activeTab, setActiveTab] = useState<string>("settings");
+  const [activeTab, setActiveTab] = useState<string>(localStorage.getItem("PREF_SETTINGS_TAB") ?? "settings");
+
+  const setAndStoreActiveTab = (tab: string) => {
+    setActiveTab(tab);
+    localStorage.setItem("PREF_SETTINGS_TAB", tab);
+    // You can add additional logic here to store the active tab in local storage or elsewhere if needed
+  };
 
   const tabs = [
     { id: "settings", label: t("settings.tab_general", "General Settings"), icon: Settings },
@@ -45,7 +51,7 @@ export default function SettingsPage() {
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
+                    onClick={() => setAndStoreActiveTab(tab.id)}
                     className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 group ${
                       isActive
                         ? "bg-brand-cyan text-black shadow-md shadow-brand-cyan/20"

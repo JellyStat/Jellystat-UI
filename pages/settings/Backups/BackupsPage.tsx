@@ -6,15 +6,16 @@ import client from "@/lib/api";
 import { toast } from "sonner";
 import Tasks from "@/lib/models/enums/Tasks";
 import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
+import { BackupModel } from "@/lib/models/backupModel";
 
 export default function BackupsPage() {
-  const { t } = useTranslation("common");
+  const { t, i18n } = useTranslation("common");
 
   // --- STATE ---
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [backups, setBackups] = useState<string[]>([]);
+  const [backups, setBackups] = useState<BackupModel[]>([]);
 
   const [backupToDelete, setBackupToDelete] = useState<string | null>(null);
 
@@ -23,7 +24,7 @@ export default function BackupsPage() {
     setLoading(true);
     try {
       await client.Api.deleteBackups({ FileName: backupToDelete });
-      setBackups((prev) => prev.filter((b) => b !== backupToDelete));
+      setBackups((prev) => prev.filter((b) => b.fileName !== backupToDelete));
     } catch (err) {
       console.error(err);
     } finally {
@@ -40,7 +41,7 @@ export default function BackupsPage() {
       setError(null);
       try {
         const res = await client.Api.getBackups();
-        const data: string[] = res ?? [];
+        const data: BackupModel[] = res ?? [];
         setBackups(data);
       } catch (err: any) {
         if (err?.name === "AbortError") return;
@@ -170,7 +171,9 @@ export default function BackupsPage() {
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
               <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
-                <th className="p-3">{t("settings.backups_col_file", "File")}</th>
+                <th className="p-3 w-32">{t("settings.backups_col_file", "File")}</th>
+                <th className="p-3 w-48">{t("settings.backups_col_date", "Date")}</th>
+                <th className="p-3 w-32">{t("settings.backups_col_size", "Size")}</th>
                 <th className="p-3 w-64">{t("settings.backups_col_actions", "Actions")}</th>
               </tr>
             </thead>
@@ -186,26 +189,37 @@ export default function BackupsPage() {
                 </tr>
               ) : (
                 backups.map((backup) => {
+                  const formattedDate = backup.date
+                    ? new Date(backup.date).toLocaleDateString(i18n.language || undefined, {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      })
+                    : "";
                   return (
-                    <tr key={backup} className={`border-b border-border transition-colors hover:bg-surface-hover`}>
-                      {/* File*/}
-                      <td className="p-3 text-sm font-bold text-gray-200">
-                        <span className="p-3 text-sm font-bold text-gray-200">{backup}</span>
-                      </td>
+                    <tr key={backup.fileName} className={`border-b border-border transition-colors hover:bg-surface-hover`}>
+                      <td className="p-3 text-sm font-bold text-gray-200">{backup.fileName}</td>
+                      <td className="p-3 text-sm font-bold text-gray-200">{formattedDate}</td>
+                      <td className="p-3 text-sm font-bold text-gray-200">{backup.size.formatBytes()}</td>
 
                       {/* Actions */}
-                      <td className="p-3">
+                      <td className="p-3 text-sm font-bold text-gray-200">
                         {
                           <div className="flex items-end gap-2">
                             <button
-                              onClick={() => restoreBackup(backup)}
+                              onClick={() => restoreBackup(backup.fileName)}
+                              title={t("settings.backups_restore", "Restore backup")}
                               className="p-2 rounded-lg bg-background hover:bg-brand-cyan/20 text-gray-400 hover:text-brand-cyan border border-border hover:border-brand-cyan/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer"
                               disabled={loading}
                             >
                               <Clock size={16} />
                             </button>
                             <button
-                              onClick={() => downloadBackup(backup)}
+                              onClick={() => downloadBackup(backup.fileName)}
+                              title={t("settings.backups_download", "Download backup")}
                               className="p-2 rounded-lg bg-background hover:bg-brand-cyan/20 text-gray-400 hover:text-brand-cyan border border-border hover:border-brand-cyan/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer"
                               disabled={loading}
                             >
@@ -221,7 +235,8 @@ export default function BackupsPage() {
                               )}
                               confirmText={t("common.yes", "Yes")}
                               cancelText={t("common.no", "No")}
-                              onClick={() => setBackupToDelete(backup)}
+                              tooltip={t("settings.backups_delete", "Delete backup")}
+                              onClick={() => setBackupToDelete(backup.fileName)}
                               onConfirm={deleteBackup}
                             />
                           </div>

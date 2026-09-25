@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { act, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { useTranslation } from "next-i18next/pages";
@@ -37,9 +37,15 @@ export default function ItemPage() {
   const [item, setItem] = useState<ItemsWithStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<string>("overview");
+  const [activeTab, setActiveTab] = useState<string>(localStorage.getItem("PREF_ITEM_TAB") ?? "overview");
 
   const [config, setConfig] = useState<Server | null>(null);
+
+  const setAndStoreActiveTab = (tab: string) => {
+    setActiveTab(tab);
+    localStorage.setItem("PREF_ITEM_TAB", tab);
+    // You can add additional logic here to store the active tab in local storage or elsewhere if needed
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -94,7 +100,17 @@ export default function ItemPage() {
 
   // Tabs Configuration
   const showMediaTab = item && [ItemTypes.Season, ItemTypes.Series].includes(item.type);
+
+  if (item && !showMediaTab && activeTab === "media") {
+    setAndStoreActiveTab("overview");
+  }
+
   const showOptionsTab = item && (item.archived === true || item.hasArchivedItems === true);
+
+  if (item && !showOptionsTab && activeTab === "options") {
+    setAndStoreActiveTab("overview");
+  }
+
   const tabs = [
     { id: "overview", label: t("item.tab_overview", "Overview"), icon: Info },
     ...(showMediaTab ? [{ id: "media", label: t("item.tab_media", "Media"), icon: Film }] : []),
@@ -240,7 +256,7 @@ export default function ItemPage() {
                     return (
                       <button
                         key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
+                        onClick={() => setAndStoreActiveTab(tab.id)}
                         className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 group ${
                           isActive
                             ? "bg-brand-cyan text-black shadow-md shadow-brand-cyan/20"

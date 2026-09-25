@@ -23,7 +23,13 @@ export default function LibraryPage() {
   const [user, setUser] = useState<Users | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<string>("overview");
+  const [activeTab, setActiveTab] = useState<string>(localStorage.getItem("PREF_USER_TAB") ?? "overview");
+
+  const setAndStoreActiveTab = (tab: string) => {
+    setActiveTab(tab);
+    localStorage.setItem("PREF_USER_TAB", tab);
+    // You can add additional logic here to store the active tab in local storage or elsewhere if needed
+  };
 
   // --- DATA FETCHING ---
   useEffect(() => {
@@ -130,7 +136,7 @@ export default function LibraryPage() {
                       return (
                         <button
                           key={tab.id}
-                          onClick={() => setActiveTab(tab.id)}
+                          onClick={() => setAndStoreActiveTab(tab.id)}
                           className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 group ${
                             isActive
                               ? "bg-brand-cyan text-black shadow-md shadow-brand-cyan/20"

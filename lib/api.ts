@@ -27,6 +27,7 @@ import { Tasks as TaskTypes } from "./models/enums/Tasks";
 import { LogsModel } from "./models/LogsModel";
 import { RecentlyAdded } from "./models/RecentlyAdded";
 import { CountModelWithSize } from "./models/countModelWithSize";
+import { BackupModel } from "./models/backupModel";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
@@ -319,7 +320,7 @@ const toggleAllowRemoteAuth = async (serverId?: string): Promise<Boolean> =>
 const getTaskLogs = async (gridify?: IGridifyQuery): Promise<PagingResponse<LogsModel>> =>
   apiFetch<PagingResponse<LogsModel>>(`/Api/Logs${await buildQuery(gridify)}`);
 
-const getBackups = async (): Promise<string[]> => apiFetch<string[]>(`/Api/Backups`);
+const getBackups = async (): Promise<BackupModel[]> => apiFetch<BackupModel[]>(`/Api/Backups`);
 const deleteBackups = async (params: { FileName: string }): Promise<void> =>
   apiFetch<void>(`/Api/Backups${await buildQuery(undefined, params as Record<string, any>)}`, { method: "DELETE" });
 

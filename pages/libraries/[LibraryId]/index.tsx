@@ -24,7 +24,13 @@ export default function LibraryPage() {
   const [lib, setLib] = useState<LibrariesWithStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<string>("overview");
+  const [activeTab, setActiveTab] = useState<string>(localStorage.getItem("PREF_LIBRARY_TAB") ?? "overview");
+
+  const setAndStoreActiveTab = (tab: string) => {
+    setActiveTab(tab);
+    localStorage.setItem("PREF_LIBRARY_TAB", tab);
+    // You can add additional logic here to store the active tab in local storage or elsewhere if needed
+  };
 
   // --- DATA FETCHING ---
   useEffect(() => {
@@ -62,6 +68,11 @@ export default function LibraryPage() {
     );
   }
   const showOptionsTab = lib && (lib.archived === true || lib.hasArchivedItems === true);
+
+  if (lib && !showOptionsTab && activeTab === "options") {
+    setAndStoreActiveTab("overview");
+  }
+
   const tabs = [
     { id: "overview", label: t("library.tab_overview", "Overview"), icon: Info },
     { id: "media", label: t("library.tab_media", "Media"), icon: Film },
@@ -120,7 +131,7 @@ export default function LibraryPage() {
                       return (
                         <button
                           key={tab.id}
-                          onClick={() => setActiveTab(tab.id)}
+                          onClick={() => setAndStoreActiveTab(tab.id)}
                           className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 group ${
                             isActive
                               ? "bg-brand-cyan text-black shadow-md shadow-brand-cyan/20"

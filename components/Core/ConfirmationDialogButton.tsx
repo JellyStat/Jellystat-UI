@@ -13,6 +13,7 @@ type ConfirmationDialogButtonProps = {
   onConfirm: () => void;
   className?: string;
   disabled?: boolean;
+  tooltip?: string;
   actionColor?: "bg-brand-rose" | "bg-brand-cyan" | "bg-brand-purple" | "bg-brand-emerald";
 };
 
@@ -26,6 +27,7 @@ export default function ConfirmationDialogButton({
   onConfirm,
   className,
   disabled,
+  tooltip,
   actionColor,
 }: ConfirmationDialogButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,6 +48,7 @@ export default function ConfirmationDialogButton({
         }}
         className={compiledClassName}
         disabled={disabled}
+        title={tooltip}
       >
         {buttonElement}
       </button>
