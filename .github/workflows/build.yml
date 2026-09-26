@@ -39,7 +39,7 @@ jobs:
       #create empty tag file
       - name: Create Empty Tag File
         run: |
-          cd out && touch ${{ env.SHORT_SHA }}.emtag
+          cd out && touch $(git rev-parse --short HEAD).emtag
 
       # Zip the output using your dynamic tag name
       - name: Zip Build Output
