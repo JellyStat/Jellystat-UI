@@ -36,10 +36,20 @@ jobs:
           npm ci
           npm run build
 
+      #cd to out
+      - name: Change Directory to Out
+        run: |
+          cd out
+
+      #create empty tag file
+      - name: Create Empty Tag File
+        run: |
+          touch ${{ env.TAG_NAME }}.emtag
+
       # Zip the output using your dynamic tag name
       - name: Zip Build Output
         run: |
-          cd out && zip -r ../${{ env.TAG_NAME }}.zip .
+          zip -r ../${{ env.TAG_NAME }}.zip .
 
       # Create a dedicated GitHub Release named after the version + SHA string
       - name: Create Versioned Release
