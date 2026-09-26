@@ -94,7 +94,8 @@
         "singular": "Year",
         "plural": "Years"
       }
-    }
+    },
+    "unknown": "Unknown"
   },
   "error_cards": {
     "failed_to_load": "Failed to load",

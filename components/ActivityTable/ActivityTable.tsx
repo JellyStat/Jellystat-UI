@@ -27,6 +27,7 @@ import { DatesRangeValue, NumberFilterType, NumberRangeValue } from "../DataTabl
 import { IpLookupModal } from "./IpLookUpModal";
 import BooleanFilter from "../DataTableFilters/BooleanFilter";
 import NumberFilter from "../DataTableFilters/NumberFilter";
+import DropdownSelector from "../Core/DropdownSelector";
 
 interface SortStatus {
   columnAccessor: string;
@@ -49,13 +50,21 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
   // Pagination & Sorting
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
-  const recordsPerPage = 20;
+
+  const [recordsPerPage, setRecordsPerPage] = useState(
+    localStorage.getItem("jellystat_recordsPerPage")
+      ? parseInt(localStorage.getItem("jellystat_recordsPerPage") ?? "20", 10)
+      : 20,
+  );
+  // const recordsPerPage = 20;
   const totalPages = Math.ceil(pageCount / recordsPerPage) || 1;
 
   const [sortStatus, setSortStatus] = useState<SortStatus>({
     columnAccessor: "dateCreated",
     direction: "desc",
   });
+
+  const pageCountOptions = [10, 20, 50, 100];
 
   const [expandedActivityIds, setExpandedActivityIds] = useState<string[]>([]);
 
@@ -88,7 +97,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [gridify, sortStatus, filter, GroupResults],
+    [gridify, sortStatus, filter, GroupResults, recordsPerPage],
   );
 
   useEffect(() => {
@@ -418,6 +427,17 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
             {t("activity.total_records", "Total Records:")} <span className="text-white">{pageCount}</span>
           </span>
           <div className="flex items-center gap-4">
+            <DropdownSelector
+              data={pageCountOptions.map((option) => ({ value: option }))}
+              value={recordsPerPage}
+              onChange={(value) => {
+                setRecordsPerPage(value);
+                localStorage.setItem("jellystat_recordsPerPage", value.toString());
+                setPage(1);
+              }}
+              labelFn={(option) => option.toString()}
+              widthPx={80}
+            />
             <span className="text-xs font-mono text-gray-400">
               {t("common.page_info", "Page {{page}} of {{totalPages}}", { page: page, totalPages: totalPages })}
             </span>

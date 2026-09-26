@@ -12,6 +12,7 @@ export type Props<T> = {
   leftIcon?: LucideIcon;
   loading?: boolean;
   emptyDataMessage?: string;
+  widthPx?: number;
 };
 
 export type DropdownOption<T> = {
@@ -29,6 +30,7 @@ export default function DropdownSelector<T>({
   leftIcon,
   loading = false,
   emptyDataMessage = "No options available",
+  widthPx = 200,
 }: Props<T>) {
   const selectedOption: DropdownOption<T> | undefined = value !== undefined ? data.find((d) => d.value === value) : undefined;
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -56,7 +58,7 @@ export default function DropdownSelector<T>({
   const hasLeftIcon = loading == true || (selectedOption?.Icon ?? leftIcon) != null;
 
   return (
-    <div className="relative min-w-[200px]">
+    <div className="relative" style={{ minWidth: `${widthPx}px` }}>
       <Listbox value={selectedOption} onChange={(opt: DropdownOption<T>) => onChange?.(opt.value)} disabled={disabled}>
         <div className="relative">
           <ListboxButton

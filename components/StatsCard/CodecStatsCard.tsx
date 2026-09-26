@@ -30,7 +30,7 @@ export default function CodecStatsCard({ gridify }: Props) {
       const filteredData = data.filter((item) => item.name !== null && item.name !== undefined);
       for (let i = 0; i < filteredData.length; i++) {
         if (filteredData[i].name === "") {
-          filteredData[i].name = t("statistics.codec_unknown", "Unknown");
+          filteredData[i].name = t("common.unknown", "Unknown");
         }
       }
       const sortedData = filteredData.sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
