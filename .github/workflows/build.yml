@@ -39,7 +39,7 @@ jobs:
       #create empty tag file
       - name: Create Empty Tag File
         run: |
-          cd out && touch ${{ env.TAG_NAME }}.emtag
+          cd out && touch ${SHORT_SHA}.emtag
 
       # Zip the output using your dynamic tag name
       - name: Zip Build Output
