@@ -64,7 +64,7 @@ jobs:
             --arg id "${{ env.SHORT_SHA }}" \
             --arg hash "$ZIP_HASH" \
             --arg link "$RELEASE_LINK" \
-            '{id: $id, hash: $hash, link: $link}' > release-info.json
+            '{id: $id, hash: $hash, link: $link}' > release.json
 
       - name: Commit and Push JSON
         run: |
@@ -72,7 +72,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add release-info.json
+          git add release.json
 
           # Commit with [skip ci] to prevent infinite workflow loops
           git commit -m "chore: update release info for ${{ env.TAG_NAME }} [skip ci]"
