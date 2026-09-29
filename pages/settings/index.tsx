@@ -1,6 +1,18 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
-import { Settings, Library, ArrowLeftRight, Terminal, Server, Users, Archive } from "lucide-react";
+import {
+  Settings,
+  Library,
+  ArrowLeftRight,
+  Terminal,
+  Server,
+  Users,
+  Archive,
+  Info,
+  RefreshCw,
+  Check,
+  AlertCircle,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import ActivityMigrationPage from "./ActivityMigration/ActivityMigration";
@@ -10,9 +22,27 @@ import ServerSettingsPage from "./Servers/ServerSettings";
 import UsersSettingsPage from "./Users";
 import BackupsPage from "./Backups/BackupsPage";
 import LanguageSwitcher from "@/components/Core/LanguageSwitcher";
+import { VersionInfo } from "@/lib/models/VersionInfo";
+import versionManager from "@/lib/versionManager";
+import client from "@/lib/api";
 
 export default function SettingsPage() {
   const { t } = useTranslation("common");
+  const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
+  const [isUpdatingUI, setIsUpdatingUI] = useState(false);
+
+  const fetchVersionInfo = useCallback(async () => {
+    try {
+      const data = await versionManager.getInfo(true);
+      setVersionInfo(data ?? null);
+    } catch (err: any) {
+      console.error(err);
+    }
+  }, [t]);
+
+  useEffect(() => {
+    fetchVersionInfo();
+  }, [fetchVersionInfo]);
 
   const [activeTab, setActiveTab] = useState<string>(localStorage.getItem("PREF_SETTINGS_TAB") ?? "settings");
 
@@ -31,6 +61,20 @@ export default function SettingsPage() {
     { id: "backups", label: t("settings.tab_backups", "Backups"), icon: Archive },
     { id: "tasks", label: t("settings.tab_tasks", "Background Tasks"), icon: Terminal },
   ];
+
+  const updateUI = useCallback(async () => {
+    try {
+      setIsUpdatingUI(true);
+      await client.Api.updateUI();
+      await fetchVersionInfo();
+      //reload page
+      window.location.reload();
+    } catch (err: any) {
+      console.error(err);
+    } finally {
+      setIsUpdatingUI(false);
+    }
+  }, [fetchVersionInfo]);
 
   return (
     <>
@@ -73,24 +117,91 @@ export default function SettingsPage() {
         {/* Active Tab Panel */}
         <div className="w-full transition-opacity duration-300">
           {activeTab === "settings" && (
-            <div className="max-w-[1600px] mx-auto p-6 animate-in fade-in duration-500">
-              <div className="bg-surface/30 border border-border rounded-3xl p-8">
+            <div className="max-w-[1600px] mx-auto p-6 animate-in fade-in duration-500 flex flex-col gap-3">
+              <div className="mb-6">
                 <div className="flex items-center gap-3 mb-6">
                   <Settings size={24} className="text-brand-cyan" />
                   <h3 className="text-xl font-black text-gray-200 tracking-tight">
                     {t("settings.general_title", "General Settings")}
                   </h3>
                 </div>
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between p-4 bg-surface-hover/50 rounded-2xl border border-border">
-                    <div>
-                      <h4 className="text-sm font-bold text-gray-200">{t("settings.language", "Language")}</h4>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {t("settings.language_desc", "Select your preferred display language")}
-                      </p>
-                    </div>
-                    <LanguageSwitcher />
+                <div className="flex items-center justify-between p-4 bg-surface-hover/50 rounded-2xl border border-border">
+                  <div>
+                    <h4 className="text-sm font-bold text-gray-200">{t("settings.language", "Language")}</h4>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {t("settings.language_desc", "Select your preferred display language")}
+                    </p>
                   </div>
+                  <LanguageSwitcher />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <Info size={24} className="text-brand-cyan" />
+                  <h3 className="text-xl font-black text-gray-200 tracking-tight">
+                    {t("settings.version_title", "Version Info")}
+                  </h3>
+                </div>
+                <div className="overflow-x-auto rounded-2xl border border-border bg-surface-hover/50">
+                  <table className="w-full table-fixed text-left">
+                    <colgroup>
+                      <col />
+                      <col className="w-30" />
+                      <col className="w-40" />
+                    </colgroup>
+                    <tbody className="divide-y divide-border">
+                      <tr>
+                        <td className="p-4 text-sm font-bold text-gray-200">{t("settings.version", "Version")}</td>
+                        <td className="p-4 text-sm text-gray-200">{versionInfo?.apiVersion ?? "-"}</td>
+                        <td className="whitespace-nowrap p-4">
+                          {!versionInfo ? (
+                            <span className="text-sm text-gray-500">-</span>
+                          ) : versionInfo.uiHasUpdate ? (
+                            <span
+                              title={t("settings.update_available", "Update Available")}
+                              className="inline-flex items-center gap-2 rounded-xl border border-brand-amber bg-brand-amber/10 px-4 py-2 text-sm font-bold text-brand-amber shadow-inner"
+                            >
+                              <AlertCircle size={16} />
+                              {versionInfo?.apiVersion}
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-2 text-sm font-bold text-green-400 shadow-inner">
+                              <Check size={16} />
+                              {t("settings.latest", "Latest")}
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="p-4 text-sm font-bold text-gray-200">{t("settings.ui_tag", "UI Tag")}</td>
+                        <td className="p-4 text-sm text-gray-200">{versionInfo?.currentUiTag ?? "-"}</td>
+                        <td className="whitespace-nowrap p-4">
+                          {!versionInfo ? (
+                            <span className="text-sm text-gray-500">-</span>
+                          ) : versionInfo.uiHasUpdate ? (
+                            <button
+                              onClick={updateUI}
+                              disabled={isUpdatingUI}
+                              title={t("settings.update_available", "Update Available")}
+                              className="flex items-center gap-2 text-brand-amber bg-brand-amber/10 hover:bg-brand-amber/20 border border-brand-amber hover:border-brand-amber transition-colors px-4 py-2 rounded-xl text-sm font-bold shadow-inner disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                            >
+                              <RefreshCw
+                                size={16}
+                                className={isUpdatingUI ? "animate-spin text-brand-amber" : "text-brand-amber"}
+                              />
+                              {versionInfo?.currentUiTag}
+                            </button>
+                          ) : (
+                            <span className="inline-flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-2 text-sm font-bold text-green-400 shadow-inner">
+                              <Check size={16} />
+                              {t("settings.latest", "Latest")}
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>

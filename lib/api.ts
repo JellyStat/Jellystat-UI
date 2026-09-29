@@ -28,6 +28,7 @@ import { LogsModel } from "./models/LogsModel";
 import { RecentlyAdded } from "./models/RecentlyAdded";
 import { CountModelWithSize } from "./models/countModelWithSize";
 import { BackupModel } from "./models/backupModel";
+import { VersionInfo } from "./models/VersionInfo";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
@@ -327,6 +328,9 @@ const deleteBackups = async (params: { FileName: string }): Promise<void> =>
 const deleteArchived = async (params: { Id: string; serverId?: string }): Promise<void> =>
   apiFetch<void>(`/Api/Archived${await buildQuery(undefined, params as Record<string, any>)}`, { method: "DELETE" });
 
+const getVersion = async (): Promise<VersionInfo> => apiFetch<VersionInfo>(`/Api/Version`);
+
+const updateUI = async (): Promise<void> => apiFetch<void>(`/Api/UpdateUI`);
 // Auth
 // Interface/type definitions have been moved to ./models/
 
@@ -546,6 +550,8 @@ export const Api = {
   getBackups,
   deleteBackups,
   deleteArchived,
+  getVersion,
+  updateUI,
 };
 
 export const Stats = {
