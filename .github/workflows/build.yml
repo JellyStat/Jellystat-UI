@@ -29,22 +29,58 @@ jobs:
           TAG_NAME="jellystat-ui-v${PACKAGE_VERSION}-${SHORT_SHA}"
 
           echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
-          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_OUTPUT
+          echo "SHORT_SHA=${SHORT_SHA}" >> $GITHUB_ENV
 
       - name: Install and Build UI
         run: |
           npm ci
           npm run build
 
-      #create empty tag file
+      # Create empty tag file
       - name: Create Empty Tag File
         run: |
-          cd out && touch $(git rev-parse --short HEAD).emtag
+          cd out && touch ${{ env.SHORT_SHA }}.emtag
 
       # Zip the output using your dynamic tag name
       - name: Zip Build Output
         run: |
           cd out && zip -r ../${{ env.TAG_NAME }}.zip .
+
+      # --- NEW STEPS START HERE ---
+
+      - name: Generate Release JSON Info
+        run: |
+          ZIP_FILE="${{ env.TAG_NAME }}.zip"
+
+          # Calculate the SHA-256 hash
+          ZIP_HASH=$(sha256sum $ZIP_FILE | awk '{ print $1 }')
+
+          # Construct the release link automatically handling your Jellystat org and repo name
+          REPO="${{ github.repository }}"
+          RELEASE_LINK="https://github.com/$REPO/releases/download/${{ env.TAG_NAME }}/$ZIP_FILE"
+
+          # Build the JSON file
+          jq -n \
+            --arg id "${{ env.SHORT_SHA }}" \
+            --arg hash "$ZIP_HASH" \
+            --arg link "$RELEASE_LINK" \
+            '{id: $id, hash: $hash, link: $link}' > release-info.json
+
+      - name: Commit and Push JSON
+        run: |
+          # Set up git author as the GitHub Actions bot
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add release-info.json
+
+          # Commit with [skip ci] to prevent infinite workflow loops
+          git commit -m "chore: update release info for ${{ env.TAG_NAME }} [skip ci]"
+
+          # Push specifically to main
+          git push origin HEAD:main
+
+      # --- NEW STEPS END HERE ---
 
       # Create a dedicated GitHub Release named after the version + SHA string
       - name: Create Versioned Release
