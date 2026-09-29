@@ -28,6 +28,7 @@ import { IpLookupModal } from "./IpLookUpModal";
 import BooleanFilter from "../DataTableFilters/BooleanFilter";
 import NumberFilter from "../DataTableFilters/NumberFilter";
 import DropdownSelector from "../Core/DropdownSelector";
+import NumberField from "../Core/NumberField";
 
 interface SortStatus {
   columnAccessor: string;
@@ -438,9 +439,15 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
               labelFn={(option) => option.toString()}
               widthPx={80}
             />
-            <span className="text-xs font-mono text-gray-400">
-              {t("common.page_info", "Page {{page}} of {{totalPages}}", { page: page, totalPages: totalPages })}
-            </span>
+            <NumberField
+              value={page}
+              onChange={(val) => (val ? setPage(val) : val)}
+              min={1}
+              max={totalPages}
+              className="py-3 px-1 focus:outline-none hover:bg-surface border border-transparent hover:border-border rounded-xl shadow-lg overflow-auto text-xs text-center font-mono text-gray-400"
+            />
+            <span className="text-xs font-mono text-gray-400">/</span>
+            <span className="text-xs font-mono text-gray-400">{totalPages}</span>
             <div className="flex gap-2">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}

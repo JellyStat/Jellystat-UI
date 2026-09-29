@@ -41,6 +41,8 @@
   }
 
   input[type="number"].no-spinner {
+    -webkit-appearance: textfield !important;
+    appearance: textfield !important;
     -moz-appearance: textfield !important;
   }
 
