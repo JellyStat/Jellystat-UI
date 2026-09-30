@@ -190,7 +190,7 @@ export default function SettingsPage() {
                                 size={16}
                                 className={isUpdatingUI ? "animate-spin text-brand-amber" : "text-brand-amber"}
                               />
-                              {versionInfo?.currentUiTag}
+                              {versionInfo?.latestUiTag}
                             </button>
                           ) : (
                             <span className="inline-flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-2 text-sm font-bold text-green-400 shadow-inner">
