@@ -219,6 +219,7 @@
     "waiting": "Warten darauf, dass Benutzer Medien abspielen"
   },
   "settings": {
+    "api": "API",
     "access_policies": "Zugriffsrichtlinien",
     "add_server": "Server hinzufügen",
     "add_server_desc": "Füge einen neuen Jellyfin- oder Emby-Server hinzu, um ihn zu überwachen.",

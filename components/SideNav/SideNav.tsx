@@ -95,19 +95,16 @@ export default function SideNav() {
 
   // --- NAVIGATION ROUTES ---
   const navItems = [
-    { name: t("nav.overview", "Overview"), path: "/", icon: Activity },
-    { name: t("nav.live_sessions", "Live Sessions"), path: "/sessions", icon: PlaySquare },
-    { name: t("nav.libraries", "Libraries"), path: "/libraries", icon: Film },
-    { name: t("nav.activity", "Activity"), path: "/activity", icon: History },
-    { name: t("nav.statistics", "Statistics"), path: "/statistics", icon: BarChart3 },
+    { name: t("nav.overview", "Overview"), path: "/", icon: Activity, isAdmin: false },
+    { name: t("nav.live_sessions", "Live Sessions"), path: "/sessions", icon: PlaySquare, isAdmin: false },
+    { name: t("nav.libraries", "Libraries"), path: "/libraries", icon: Film, isAdmin: false },
+    { name: t("nav.activity", "Activity"), path: "/activity", icon: History, isAdmin: false },
+    { name: t("nav.statistics", "Statistics"), path: "/statistics", icon: BarChart3, isAdmin: false },
+    { name: t("nav.users", "Users"), path: "/users", icon: Users, isAdmin: true },
+    { name: t("nav.settings", "Settings"), path: "/settings", icon: Settings, isAdmin: false },
   ];
 
-  const adminItems = [
-    { name: t("nav.users", "Users"), path: "/users", icon: Users },
-    { name: t("nav.settings", "Settings"), path: "/settings", icon: Settings },
-  ];
-
-  const activeItems = [...navItems, ...(isAdmin ? adminItems : [])];
+  const activeItems = navItems.filter((item) => !item.isAdmin || isAdmin);
 
   return (
     <aside className="w-64 h-dvh max-h-dvh bg-surface border-r border-border flex flex-col z-20 shrink-0 shadow-2xl shadow-black/50 transition-all duration-300">

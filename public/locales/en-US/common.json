@@ -223,6 +223,7 @@
     "waiting": "Waiting for users to start playing media"
   },
   "settings": {
+    "api": "API",
     "access_policies": "Access Policies",
     "add_server": "Add Server",
     "add_server_desc": "Add a new Jellyfin or Emby server to monitor.",

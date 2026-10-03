@@ -14,6 +14,8 @@ import LibraryMedia from "./media";
 import LibraryActivity from "./activity";
 import NotFound from "@/components/ErrorCards/NotFound";
 import LibraryOptions from "./options";
+import permissionsManager from "@/lib/permissionsManager";
+import Permissions from "@/lib/models/enums/Permissions";
 
 export default function LibraryPage() {
   const router = useRouter();
@@ -25,6 +27,12 @@ export default function LibraryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>(localStorage.getItem("PREF_LIBRARY_TAB") ?? "overview");
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const adminCheck = permissionsManager.hasPermission(Permissions.Administrator);
+    setIsAdmin(adminCheck);
+  }, []);
 
   const setAndStoreActiveTab = (tab: string) => {
     setActiveTab(tab);
@@ -67,7 +75,7 @@ export default function LibraryPage() {
       />
     );
   }
-  const showOptionsTab = lib && (lib.archived === true || lib.hasArchivedItems === true);
+  const showOptionsTab = isAdmin && lib && (lib.archived === true || lib.hasArchivedItems === true);
 
   if (lib && !showOptionsTab && activeTab === "options") {
     setAndStoreActiveTab("overview");

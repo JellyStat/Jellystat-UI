@@ -20,6 +20,8 @@ import { ItemsWithStats } from "@/lib/models/itemsWithStats";
 import { Server } from "@/lib/models/server";
 import configManager from "@/lib/configManager";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
+import permissionsManager from "@/lib/permissionsManager";
+import Permissions from "@/lib/models/enums/Permissions";
 
 import ItemOverview from "./overview";
 import ItemActivity from "./activity";
@@ -38,8 +40,13 @@ export default function ItemPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>(localStorage.getItem("PREF_ITEM_TAB") ?? "overview");
-
   const [config, setConfig] = useState<Server | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const adminCheck = permissionsManager.hasPermission(Permissions.Administrator);
+    setIsAdmin(adminCheck);
+  }, []);
 
   const setAndStoreActiveTab = (tab: string) => {
     setActiveTab(tab);
@@ -105,7 +112,7 @@ export default function ItemPage() {
     setAndStoreActiveTab("overview");
   }
 
-  const showOptionsTab = item && (item.archived === true || item.hasArchivedItems === true);
+  const showOptionsTab = isAdmin && item && (item.archived === true || item.hasArchivedItems === true);
 
   if (item && !showOptionsTab && activeTab === "options") {
     setAndStoreActiveTab("overview");

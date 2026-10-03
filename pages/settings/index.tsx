@@ -25,11 +25,19 @@ import LanguageSwitcher from "@/components/Core/LanguageSwitcher";
 import { VersionInfo } from "@/lib/models/VersionInfo";
 import versionManager from "@/lib/versionManager";
 import client from "@/lib/api";
+import permissionsManager from "@/lib/permissionsManager";
+import Permissions from "@/lib/models/enums/Permissions";
 
 export default function SettingsPage() {
   const { t } = useTranslation("common");
   const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
   const [isUpdatingUI, setIsUpdatingUI] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const adminCheck = permissionsManager.hasPermission(Permissions.Administrator);
+    setIsAdmin(adminCheck);
+  }, []);
 
   const fetchVersionInfo = useCallback(async () => {
     try {
@@ -53,13 +61,13 @@ export default function SettingsPage() {
   };
 
   const tabs = [
-    { id: "settings", label: t("settings.tab_general", "General Settings"), icon: Settings },
-    { id: "servers", label: t("settings.tab_servers", "Servers & Auth"), icon: Server },
-    { id: "users", label: t("nav.users", "Users"), icon: Users },
-    { id: "librarySettings", label: t("settings.tab_library", "Library Settings"), icon: Library },
-    { id: "migrations", label: t("settings.tab_migrations", "Activity Migration"), icon: ArrowLeftRight },
-    { id: "backups", label: t("settings.tab_backups", "Backups"), icon: Archive },
-    { id: "tasks", label: t("settings.tab_tasks", "Background Tasks"), icon: Terminal },
+    { id: "settings", label: t("settings.tab_general", "General Settings"), icon: Settings, IsAdmin: false },
+    { id: "servers", label: t("settings.tab_servers", "Servers & Auth"), icon: Server, IsAdmin: true },
+    { id: "users", label: t("nav.users", "Users"), icon: Users, IsAdmin: true },
+    { id: "librarySettings", label: t("settings.tab_library", "Library Settings"), icon: Library, IsAdmin: true },
+    { id: "migrations", label: t("settings.tab_migrations", "Activity Migration"), icon: ArrowLeftRight, IsAdmin: true },
+    { id: "backups", label: t("settings.tab_backups", "Backups"), icon: Archive, IsAdmin: true },
+    { id: "tasks", label: t("settings.tab_tasks", "Background Tasks"), icon: Terminal, IsAdmin: true },
   ];
 
   const updateUI = useCallback(async () => {
@@ -88,28 +96,30 @@ export default function SettingsPage() {
           <div className="flex overflow-x-auto custom-scrollbar pb-4">
             {/* Glassmorphic Tab Container */}
             <div className="flex items-center p-1.5 bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-inner w-max">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
+              {tabs
+                .filter((tab) => !tab.IsAdmin || isAdmin)
+                .map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
 
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setAndStoreActiveTab(tab.id)}
-                    className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 group ${
-                      isActive
-                        ? "bg-brand-cyan text-black shadow-md shadow-brand-cyan/20"
-                        : "text-gray-400 hover:text-white hover:bg-surface-hover"
-                    }`}
-                  >
-                    <Icon
-                      size={18}
-                      className={`transition-colors ${isActive ? "text-black" : "text-gray-500 group-hover:text-gray-300"}`}
-                    />
-                    {tab.label}
-                  </button>
-                );
-              })}
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setAndStoreActiveTab(tab.id)}
+                      className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 group ${
+                        isActive
+                          ? "bg-brand-cyan text-black shadow-md shadow-brand-cyan/20"
+                          : "text-gray-400 hover:text-white hover:bg-surface-hover"
+                      }`}
+                    >
+                      <Icon
+                        size={18}
+                        className={`transition-colors ${isActive ? "text-black" : "text-gray-500 group-hover:text-gray-300"}`}
+                      />
+                      {tab.label}
+                    </button>
+                  );
+                })}
             </div>
           </div>
         </div>
@@ -152,7 +162,7 @@ export default function SettingsPage() {
                     </colgroup>
                     <tbody className="divide-y divide-border">
                       <tr>
-                        <td className="p-4 text-sm font-bold text-gray-200">{t("settings.version", "Version")}</td>
+                        <td className="p-4 text-sm font-bold text-gray-200">{t("settings.api", "API")}</td>
                         <td className="p-4 text-sm text-gray-200">{versionInfo?.apiVersion ?? "-"}</td>
                         <td className="whitespace-nowrap p-4">
                           {!versionInfo ? (
@@ -182,7 +192,7 @@ export default function SettingsPage() {
                           ) : versionInfo.uiHasUpdate ? (
                             <button
                               onClick={updateUI}
-                              disabled={isUpdatingUI}
+                              disabled={isUpdatingUI || !isAdmin}
                               title={t("settings.update_available", "Update Available")}
                               className="flex items-center gap-2 text-brand-amber bg-brand-amber/10 hover:bg-brand-amber/20 border border-brand-amber hover:border-brand-amber transition-colors px-4 py-2 rounded-xl text-sm font-bold shadow-inner disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                             >
