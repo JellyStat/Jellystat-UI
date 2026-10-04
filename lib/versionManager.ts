@@ -36,14 +36,14 @@ async function fetchAndStore(): Promise<VersionInfo> {
   return cache;
 }
 
-const versionManger = {
+const versionManager = {
   /**
    * Get the stored config. If refresh===true, force fetch from API.
    * If no stored config exists, will fetch from API and persist it.
    */
   async getInfo(refresh = false): Promise<VersionInfo> {
     if (refresh) {
-      return fetchAndStore();
+      return await fetchAndStore();
     }
 
     if (cache) return cache;
@@ -55,7 +55,7 @@ const versionManger = {
     }
 
     // fallback: fetch from API
-    return fetchAndStore();
+    return await fetchAndStore();
   },
 
   /** Replace stored config (memory + localStorage) */
@@ -71,4 +71,4 @@ const versionManger = {
   },
 };
 
-export default versionManger;
+export default versionManager;

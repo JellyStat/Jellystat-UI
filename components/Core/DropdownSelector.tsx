@@ -59,7 +59,11 @@ export default function DropdownSelector<T>({
 
   return (
     <div className="relative" style={{ minWidth: `${widthPx}px` }}>
-      <Listbox value={selectedOption} onChange={(opt: DropdownOption<T>) => onChange?.(opt.value)} disabled={disabled}>
+      <Listbox
+        value={(selectedOption ?? null) as DropdownOption<T>}
+        onChange={(opt: DropdownOption<T>) => onChange?.(opt.value)}
+        disabled={disabled}
+      >
         <div className="relative">
           <ListboxButton
             ref={buttonRef as any}

@@ -10,6 +10,9 @@ import permissionsManager from "@/lib/permissionsManager";
 import { setToken } from "@/lib/helpers/tokenHelper";
 import { Server } from "@/lib/models/server";
 import DropdownSelector from "@/components/Core/DropdownSelector";
+import { config } from "node:process";
+import configManager from "@/lib/configManager";
+import Permissions from "@/lib/models/enums/Permissions";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -113,9 +116,6 @@ export default function LoginPage() {
 
       const res = await client.Auth.login(payload);
       await setToken(res, activeServerId);
-
-      // Force permissions manager to read from the newly set JWT token
-      permissionsManager.clearCache();
 
       try {
         wsClient.init();

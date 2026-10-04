@@ -10,6 +10,7 @@ export async function setToken(result: Token, serverId?: string): Promise<boolea
         return false;
       }
       localStorage.setItem("jellystat_token", result.token);
+      permissionsManager.clearCache();
       await processServerId(serverId);
 
       if (result?.refreshToken) localStorage.setItem("jellystat_refreshToken", result.refreshToken);
@@ -27,25 +28,20 @@ export async function setToken(result: Token, serverId?: string): Promise<boolea
 export async function processServerId(serverId?: string) {
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("jellystat_token");
-    console.log("Processing server ID. Token present:", !!token, "Provided serverId:", serverId);
     if (!token) return;
     try {
       const payloadBase64 = token.split(".")[1];
       const decoded = JSON.parse(atob(payloadBase64));
-      if (decoded && decoded.serverId.length == 0) {
-        decoded.serverId = null;
-      }
-
-      if (!decoded.serverId && !serverId && permissionsManager.hasPermission(Permissions.Administrator)) {
-        const servers = await configManager.getConfig();
+      let selectedServerId: string | null = decoded?.serverId || serverId || null;
+      const isAdmin = permissionsManager.hasPermission(Permissions.Administrator);
+      if (selectedServerId == null && isAdmin) {
+        const servers = await configManager.getConfig(true);
         if (servers.length > 0) {
-          decoded.serverId = servers[0].id;
+          selectedServerId = servers[0].id;
         }
       }
-      console.log("Decoded token payload:", decoded);
-      console.log("Determined server ID to store:", decoded.serverId ?? serverId);
-      if (decoded.serverId ?? serverId) {
-        localStorage.setItem("jellystat_serverId", decoded.serverId ?? serverId);
+      if (selectedServerId) {
+        localStorage.setItem("jellystat_serverId", selectedServerId);
       }
     } catch {
       console.warn("Failed to decode token payload, server selection may not persist across sessions");

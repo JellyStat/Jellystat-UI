@@ -44,7 +44,7 @@ const configManager = {
    */
   async getConfig(refresh = false): Promise<Server[]> {
     if (refresh) {
-      return fetchAndStore();
+      return await fetchAndStore();
     }
 
     if (cache && cache.length > 0) return cache;
@@ -56,7 +56,7 @@ const configManager = {
     }
 
     // fallback: fetch from API
-    return fetchAndStore();
+    return await fetchAndStore();
   },
 
   async getTaskSettings(refresh = false): Promise<TaskSettings[]> {
