@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Server, ShieldAlert, Users, Plus, Loader2, AlertCircle, Globe, Key, ShieldCheck } from "lucide-react";
+import { Server, ShieldAlert, Users, Plus, Loader2, AlertCircle, Globe, Key, ShieldCheck, ShieldClose } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
@@ -110,7 +110,7 @@ export default function ServerSettingsPage() {
               </div>
             ) : (
               <div className="divide-y divide-border/50">
-                {servers.map((server) => (
+                {servers.map((server: ServerModel) => (
                   <div
                     key={server.id}
                     className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-hover transition-colors"
@@ -121,13 +121,24 @@ export default function ServerSettingsPage() {
                         <span className="text-[10px] uppercase tracking-wider bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20 px-2 py-0.5 rounded-full">
                           {server.type || "Jellyfin"}
                         </span>
+                        {server.allowRemoteAuth ? (
+                          <ShieldCheck size={20} className="text-brand-emerald" />
+                        ) : (
+                          <ShieldClose size={20} className="text-brand-rose" />
+                        )}
                       </h3>
                       <div className="flex items-center flex-wrap gap-4 mt-2 text-xs text-gray-400 font-mono">
-                        <span className="flex items-center gap-1.5">
+                        <span
+                          className="flex items-center gap-1.5 cursor-pointer hover:text-brand-purple transition-colors"
+                          onClick={() => window.open(server.url, "_blank")}
+                        >
                           <Globe size={12} /> {server.url}
                         </span>
                         {server.externalURL && (
-                          <span className="flex items-center gap-1.5">
+                          <span
+                            className="flex items-center gap-1.5 cursor-pointer hover:text-brand-purple transition-colors"
+                            onClick={() => window.open(server.externalURL, "_blank")}
+                          >
                             <Globe size={12} className="text-brand-purple" /> {server.externalURL}
                           </span>
                         )}

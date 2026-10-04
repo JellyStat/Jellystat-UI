@@ -32,11 +32,15 @@ export default function SettingsPage() {
   const { t } = useTranslation("common");
   const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
   const [isUpdatingUI, setIsUpdatingUI] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>(localStorage.getItem("PREF_SETTINGS_TAB") ?? "settings");
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const adminCheck = permissionsManager.hasPermission(Permissions.Administrator);
     setIsAdmin(adminCheck);
+    if (!adminCheck && activeTab !== "settings") {
+      setAndStoreActiveTab("settings");
+    }
   }, []);
 
   const fetchVersionInfo = useCallback(async () => {
@@ -51,8 +55,6 @@ export default function SettingsPage() {
   useEffect(() => {
     fetchVersionInfo();
   }, [fetchVersionInfo]);
-
-  const [activeTab, setActiveTab] = useState<string>(localStorage.getItem("PREF_SETTINGS_TAB") ?? "settings");
 
   const setAndStoreActiveTab = (tab: string) => {
     setActiveTab(tab);

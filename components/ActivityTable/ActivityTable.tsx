@@ -15,6 +15,8 @@ import {
   CheckCircle2,
   AlertCircle,
   MonitorPlay,
+  RefreshCcw,
+  RefreshCw,
 } from "lucide-react";
 
 import Activity from "@/lib/models/activity";
@@ -29,6 +31,7 @@ import BooleanFilter from "../DataTableFilters/BooleanFilter";
 import NumberFilter from "../DataTableFilters/NumberFilter";
 import DropdownSelector from "../Core/DropdownSelector";
 import NumberField from "../Core/NumberField";
+import IconButton from "../Core/IconButton";
 
 interface SortStatus {
   columnAccessor: string;
@@ -107,11 +110,11 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
     setPage(1);
     fetchPage(1, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gridify]);
+  }, [filter, gridify]);
 
   useEffect(() => {
     fetchPage(page);
-  }, [fetchPage, page, filter, sortStatus]);
+  }, [fetchPage, page, sortStatus]);
 
   // --- HANDLERS ---
   const handleSort = (accessor: string) => {
@@ -239,12 +242,18 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-black text-gray-200 tracking-tight flex items-center gap-3">
+      <h2 className="text-2xl font-black text-gray-200 flex items-center justify-between">
+        <div className="flex items-center gap-3 shrink-0">
           <ActivityIcon className="text-brand-purple" size={28} />
           {t("activity.title", "Activity Log")}
-        </h2>
-      </div>
+        </div>
+        <IconButton
+          icon={RefreshCw}
+          tooltip={t("common.refresh", "Refresh")}
+          onClick={() => fetchPage(page)}
+          className="hover:text-brand-purple"
+        />
+      </h2>
 
       {/* Main Table Container */}
       <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col relative min-h-[400px]">

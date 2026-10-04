@@ -91,7 +91,9 @@
         "singular": "Jahr",
         "plural": "Jahre"
       }
-    }
+    },
+    "unknown": "Unbekannt",
+    "refresh": "Aktualisieren"
   },
   "error_cards": {
     "failed_to_load": "Fehler beim Laden",

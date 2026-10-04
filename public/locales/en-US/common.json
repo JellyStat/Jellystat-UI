@@ -95,7 +95,8 @@
         "plural": "Years"
       }
     },
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "refresh": "Refresh"
   },
   "error_cards": {
     "failed_to_load": "Failed to load",
