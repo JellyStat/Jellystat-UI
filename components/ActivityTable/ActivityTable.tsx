@@ -27,6 +27,7 @@ import TextFilter from "../DataTableFilters/TextFilter";
 import DateFilter from "../DataTableFilters/DateFilter";
 import { DatesRangeValue, NumberFilterType, NumberRangeValue } from "../DataTableFilters/FilterItem";
 import { IpLookupModal } from "./IpLookUpModal";
+import { StreamInfoModal } from "./StreamInfoModal";
 import BooleanFilter from "../DataTableFilters/BooleanFilter";
 import NumberFilter from "../DataTableFilters/NumberFilter";
 import DropdownSelector from "../Core/DropdownSelector";
@@ -71,6 +72,15 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
   const pageCountOptions = [10, 20, 50, 100];
 
   const [expandedActivityIds, setExpandedActivityIds] = useState<string[]>([]);
+
+  // Stream info modal
+  const [streamModalOpen, setStreamModalOpen] = useState(false);
+  const [streamModalActivity, setStreamModalActivity] = useState<Activity | null>(null);
+
+  const openStreamModal = (activity: Activity) => {
+    setStreamModalActivity(activity);
+    setStreamModalOpen(true);
+  };
 
   // Filter Hook
   const { filter, addOrReplaceFilter, removeFilter, getFilterValueOrDefault, applyFiltersToQuery } = useFilters();
@@ -137,18 +147,18 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
       if (isTranscoding) {
         return (
           <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-amber bg-brand-amber/10 border border-brand-amber/20 px-2 py-0.5 rounded shadow-inner">
-            <Cpu size={10} className="mr-1" /> {t("activity.transcode", "Transcode")}
+            <Cpu size={10} className="mr-1" /> {t("common.transcode", "Transcode")}
           </span>
         );
       }
       return (
         <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-cyan bg-brand-cyan/10 border border-brand-cyan/20 px-2 py-0.5 rounded shadow-inner">
-          <CheckCircle2 size={10} className="mr-1" /> {t("activity.direct", "Direct")}
+          <CheckCircle2 size={10} className="mr-1" /> {t("common.direct", "Direct")}
         </span>
       );
     }
 
-    let display = t("activity.transcode", "Transcode");
+    let display = t("common.transcode", "Transcode");
     if (transcodingInfo.isVideoDirect === false) display += " (V)";
     if (transcodingInfo.isAudioDirect === false) display += " (A)";
 
@@ -210,8 +220,24 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
           </Link>
         </td>
 
-        <td className="p-3 text-xs text-gray-400">{activity.client}</td>
-        <td className="p-3">{formatTranscode(activity)}</td>
+        <td className="p-3">
+          <button
+            onClick={() => openStreamModal(activity)}
+            className="text-xs text-gray-400 hover:text-brand-cyan transition-colors cursor-pointer focus:outline-none"
+            title={t("activity.view_stream_info", "View stream details")}
+          >
+            {activity.client}
+          </button>
+        </td>
+        <td className="p-3">
+          <button
+            onClick={() => openStreamModal(activity)}
+            className="cursor-pointer focus:outline-none"
+            title={t("activity.view_stream_info", "View stream details")}
+          >
+            {formatTranscode(activity)}
+          </button>
+        </td>
         <td className="p-3 text-xs text-gray-400">{activity.device}</td>
 
         <td className="p-3 text-xs text-gray-400 font-mono">
@@ -301,7 +327,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
                   currentSort={sortStatus}
                   onSort={handleSort}
                 />
-                <th className="p-3 cursor-default">{t("activity.transcode", "Transcode")}</th>
+                <th className="p-3 cursor-default">{t("common.transcode", "Transcode")}</th>
                 <SortableHeader
                   label={t("activity.device", "Device")}
                   accessor="device"
@@ -476,6 +502,13 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Stream Info Modal */}
+      <StreamInfoModal
+        activity={streamModalActivity}
+        open={streamModalOpen}
+        onClose={() => setStreamModalOpen(false)}
+      />
     </div>
   );
 }

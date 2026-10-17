@@ -140,6 +140,15 @@ Number.prototype.formatBytes = function (): string | null {
   return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
 };
 
+Number.prototype.formatBitrate = function (): string | null {
+  const bitrate = Number(this.valueOf());
+  if (!bitrate) return null;
+  const kbps = bitrate / 1000;
+  const mbps = bitrate / 1000000;
+  if (kbps >= 1000) return `${mbps.toFixed(1)} Mbps`;
+  return `${kbps.toFixed(1)} Kbps`;
+};
+
 Number.prototype.formatTimeDifference = function (): string {
   const time = Number(this.valueOf());
   if (!time) return "Unknown";

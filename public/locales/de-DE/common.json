@@ -1,14 +1,12 @@
 {
   "activity": {
     "device": "Gerät",
-    "direct": "Direkt",
     "ip": "IP-Adresse",
     "no_activity": "Keine Aktivität gefunden",
     "title": "Aktivitätsprotokoll",
     "title_col": "Titel",
     "total_playback": "Gesamtwiedergabe",
-    "total_records": "Gesamtdatensätze:",
-    "transcode": "Transkodieren"
+    "total_records": "Gesamtdatensätze:"
   },
   "app": {
     "connecting": "Verbindung zu Jellystat wird hergestellt",
@@ -93,7 +91,14 @@
       }
     },
     "unknown": "Unbekannt",
-    "refresh": "Aktualisieren"
+    "refresh": "Aktualisieren",
+    "audio": "AUDIO",
+    "container": "CONTAINER",
+    "direct": "Direkt",
+    "transcode": "Transkodieren",
+    "video": "VIDEO",
+    "playback_stream": "Wiedergabestrom",
+    "source": "Quelle"
   },
   "error_cards": {
     "failed_to_load": "Fehler beim Laden",
@@ -206,14 +211,11 @@
     "pick_value": "Wert auswählen"
   },
   "session": {
-    "audio": "AUDIO",
     "client": "CLIENT",
-    "container": "CONTAINER",
     "device": "GERÄT",
     "eta": "ETA",
     "ip_address": "IP-ADRESSE",
-    "subtitles": "UNTERTITEL",
-    "video": "VIDEO"
+    "subtitles": "UNTERTITEL"
   },
   "sessions": {
     "active_streams": "Aktive Streams",
@@ -433,5 +435,24 @@
     "viewed_shows": "Meistgesehene Serien",
     "watch_statistics": "Wiedergabestatistiken",
     "watch_stats_desc": "Bestenlisten für deine am meisten genutzten Medien und Benutzer."
+  },
+  "stream": {
+    "aspect_ratio": "SEITENVERHÄLTNIS",
+    "bitrate": "BITRATE",
+    "channels": "KANÄLE",
+    "codec": "CODEC",
+    "direct_stream": "Direkt-Stream",
+    "d_range": "DYNAMISCHER BEREICH",
+    "framerate": "BILDER/SEK",
+    "height": "HÖHE",
+    "language": "SPRACHE",
+    "media": "MEDIEN",
+    "source_details": "QUELLENDETAILS",
+    "stream_details": "STREAMDETAILS",
+    "transcode_reasons": "TRANSKODIERGRÜNDE",
+    "width": "BREITE",
+    "resolution": "Auflösung",
+    "hdr": "HDR",
+    "dynamic_range": "Dynamischer Bereich"
   }
 }

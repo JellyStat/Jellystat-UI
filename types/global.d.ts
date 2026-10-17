@@ -9,6 +9,7 @@ declare global {
     secondsToDurationString(): string | null;
     secondsToTimeString(): string | null;
     formatBytes(): string | null;
+    formatBitrate(): string | null;
     formatTimeDifference(): string;
   }
 }

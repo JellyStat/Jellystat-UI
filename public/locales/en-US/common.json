@@ -1,14 +1,13 @@
 {
   "activity": {
     "device": "Device",
-    "direct": "Direct",
     "ip": "IP Address",
     "no_activity": "No activity found",
     "title": "Activity Log",
     "title_col": "Title",
     "total_playback": "Total Playback",
     "total_records": "Total Records:",
-    "transcode": "Transcode"
+    "view_stream_info": "View stream details"
   },
   "app": {
     "connecting": "Connecting to Jellystat",
@@ -96,7 +95,14 @@
       }
     },
     "unknown": "Unknown",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "audio": "AUDIO",
+    "container": "CONTAINER",
+    "direct": "Direct",
+    "transcode": "Transcode",
+    "video": "VIDEO",
+    "playback_stream": "Playback Stream",
+    "source": "Source"
   },
   "error_cards": {
     "failed_to_load": "Failed to load",
@@ -209,19 +215,35 @@
     "pick_value": "Pick value"
   },
   "session": {
-    "audio": "AUDIO",
     "client": "CLIENT",
-    "container": "CONTAINER",
     "device": "DEVICE",
     "eta": "ETA",
     "ip_address": "IP ADDRESS",
-    "subtitles": "SUBTITLES",
-    "video": "VIDEO"
+    "subtitles": "SUBTITLES"
   },
   "sessions": {
     "active_streams": "Active Streams",
     "no_active": "No active sessions",
     "waiting": "Waiting for users to start playing media"
+  },
+  "stream": {
+    "aspect_ratio": "ASPECT RATIO",
+    "bitrate": "BITRATE",
+    "channels": "CHANNELS",
+    "codec": "CODEC",
+    "direct_stream": "Direct Stream",
+    "d_range": "DYNAMIC RANGE",
+    "framerate": "FRAMERATE",
+    "height": "HEIGHT",
+    "language": "LANGUAGE",
+    "media": "MEDIA",
+    "source_details": "SOURCE DETAILS",
+    "stream_details": "STREAM DETAILS",
+    "transcode_reasons": "TRANSCODE REASONS",
+    "width": "WIDTH",
+    "resolution": "Resolution",
+    "hdr": "HDR",
+    "dynamic_range": "Dynamic Range"
   },
   "settings": {
     "api": "API",

@@ -223,9 +223,9 @@ export default function SessionCard({ session }: SessionCardProps) {
 
           {/* Details Row */}
           <div className="flex flex-col gap-1.5 w-full">
-            <LabeledText label={t("session.container", "CONTAINER")} value={container} />
-            <LabeledText label={t("session.video", "VIDEO")} value={`${video} ${videoBitrate}`} />
-            <LabeledText label={t("session.audio", "AUDIO")} value={`${audio} ${audioBitrate}`} />
+            <LabeledText label={t("common.container", "CONTAINER")} value={container} />
+            <LabeledText label={t("common.video", "VIDEO")} value={`${video} ${videoBitrate}`} />
+            <LabeledText label={t("common.audio", "AUDIO")} value={`${audio} ${audioBitrate}`} />
             <LabeledText label={t("session.subtitles", "SUBTITLES")} value={subtitles} />
           </div>
 
