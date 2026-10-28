@@ -77,7 +77,7 @@ export default function CreateServerPage({ onComplete }: Props) {
         <div className="w-16 h-16 bg-gradient-to-br from-brand-cyan to-brand-purple rounded-2xl flex items-center justify-center shadow-lg shadow-brand-purple/20 mb-6 border border-white/10">
           <Database className="text-white" size={32} />
         </div>
-        <h2 className="text-3xl font-black text-white tracking-tight mb-2">
+        <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">
           {t("setup.connect_server_title", "Connect Server")}
         </h2>
         <p className="text-sm text-gray-400 font-medium">

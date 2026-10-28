@@ -130,6 +130,41 @@ export default function UsersPage() {
     }
   };
 
+  const renderAvatar = (user: TrackedUsers) => (
+    <div className="w-10 h-10 mx-auto rounded-full bg-surface border border-border shadow-inner overflow-hidden flex items-center justify-center shrink-0">
+      {user.imageTag ? (
+        <img
+          src={`${API_BASE}/Proxy/Images/User/Primary?ServerId=${encodeURIComponent(user.serverId ?? "")}&Id=${encodeURIComponent(user.id)}&Width=80`}
+          alt={user.username}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            (e.target as HTMLImageElement).style.display = "none";
+          }}
+        />
+      ) : (
+        <UserIcon size={20} className="text-gray-500" />
+      )}
+    </div>
+  );
+
+  const renderTrackedToggle = (user: TrackedUsers) => (
+    <button
+      onClick={() => toggleUserTracking(user.id, !user.tracked)}
+      role="switch"
+      aria-checked={user.tracked}
+      aria-label={t("common.tracked", "Tracked")}
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:ring-offset-2 focus:ring-offset-background ${
+        user.tracked ? "bg-brand-emerald" : "bg-surface border border-border"
+      }`}
+    >
+      <span
+        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+          user.tracked ? "translate-x-6 shadow-md" : "translate-x-1 opacity-70"
+        }`}
+      />
+    </button>
+  );
+
   return (
     <>
       <Head>
@@ -143,7 +178,7 @@ export default function UsersPage() {
             <Users size={28} className="text-brand-cyan" />
           </div>
           <div>
-            <h1 className="text-3xl font-black text-white tracking-tight">{t("nav.users", "Users")}</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{t("nav.users", "Users")}</h1>
             <p className="text-sm text-gray-400 mt-1 font-medium">
               {t("users.tracking_desc", "Manage tracked users and view individual playback statistics.")}
             </p>
@@ -169,7 +204,49 @@ export default function UsersPage() {
             </div>
           )}
 
-          <div className="overflow-x-auto custom-scrollbar flex-1">
+          {/* Mobile: filter + card list */}
+          <div className="md:hidden p-3 bg-background/60 border-b border-border">
+            <TextFilter
+              keyName="userName"
+              value={getFilterValueOrDefault("userName", "") as string}
+              onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("userName"))}
+            />
+          </div>
+          <div className="md:hidden flex-1 divide-y divide-border">
+            {!loading && userData.length === 0 ? (
+              <div className="p-12 text-center text-gray-500">
+                <Users size={40} className="mx-auto mb-3 opacity-20" />
+                <span className="font-medium">{t("users.no_users", "No Users found")}</span>
+              </div>
+            ) : (
+              userData.map((user) => (
+                <div key={user.id} className="p-4 flex items-center gap-3">
+                  <div className="shrink-0">{renderAvatar(user)}</div>
+                  <div className="flex-1 min-w-0">
+                    <Link
+                      href={`/users/${user.id}`}
+                      className="block text-sm font-bold text-gray-100 hover:text-brand-cyan transition-colors truncate"
+                    >
+                      {user.username}
+                    </Link>
+                    <div className="text-xs text-gray-400 truncate mt-0.5">
+                      {user.latestActivity?.itemId ? formatLastWatched(user) : "-"}
+                    </div>
+                    <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 text-[11px] font-mono text-gray-500">
+                      <span>
+                        <span className="text-gray-300 font-bold">{user.playCount || 0}</span> {t("common.unit.plays", "Plays")}
+                      </span>
+                      <span>{user.playDuration?.secondsToDurationString?.() || "-"}</span>
+                      <span>{formatLastActivityDate(user)}</span>
+                    </div>
+                  </div>
+                  <div className="shrink-0">{renderTrackedToggle(user)}</div>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div className="hidden md:block overflow-x-auto custom-scrollbar flex-1">
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
                 <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
@@ -245,22 +322,7 @@ export default function UsersPage() {
                   userData.map((user) => (
                     <tr key={user.id} className="border-b border-border transition-colors hover:bg-surface-hover">
                       {/* Avatar */}
-                      <td className="p-3 text-center">
-                        <div className="w-10 h-10 mx-auto rounded-full bg-surface border border-border shadow-inner overflow-hidden flex items-center justify-center shrink-0">
-                          {user.imageTag ? (
-                            <img
-                              src={`${API_BASE}/Proxy/Images/User/Primary?ServerId=${encodeURIComponent(user.serverId ?? "")}&Id=${encodeURIComponent(user.id)}&Width=80`}
-                              alt={user.username}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).style.display = "none";
-                              }}
-                            />
-                          ) : (
-                            <UserIcon size={20} className="text-gray-500" />
-                          )}
-                        </div>
-                      </td>
+                      <td className="p-3 text-center">{renderAvatar(user)}</td>
 
                       <td className="p-3 text-sm font-bold text-gray-200">
                         <Link
@@ -272,20 +334,7 @@ export default function UsersPage() {
                       </td>
 
                       {/* Tracked Toggle Switch */}
-                      <td className="p-3">
-                        <button
-                          onClick={() => toggleUserTracking(user.id, !user.tracked)}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:ring-offset-2 focus:ring-offset-background ${
-                            user.tracked ? "bg-brand-emerald" : "bg-surface border border-border"
-                          }`}
-                        >
-                          <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              user.tracked ? "translate-x-6 shadow-md" : "translate-x-1 opacity-70"
-                            }`}
-                          />
-                        </button>
-                      </td>
+                      <td className="p-3">{renderTrackedToggle(user)}</td>
 
                       <td className="p-3">
                         {user.latestActivity?.itemId ? (
@@ -317,12 +366,12 @@ export default function UsersPage() {
           </div>
 
           {/* Pagination Footer */}
-          <div className="bg-background/80 border-t border-border p-4 flex items-center justify-between shrink-0">
+          <div className="bg-background/80 border-t border-border p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
             <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
               {t("users.total_users", "Total Users:")} <span className="text-white">{pageCount}</span>
             </span>
-            <div className="flex items-center gap-4">
-              <span className="text-xs font-mono text-gray-400">
+            <div className="flex items-center gap-4 ml-auto">
+              <span className="text-xs font-mono text-gray-400 whitespace-nowrap">
                 Page {page} of {totalPages}
               </span>
               <div className="flex gap-2">

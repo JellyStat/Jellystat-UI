@@ -265,7 +265,7 @@ export default function WatchStatCards() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory -mx-4 px-4 pb-2 scroll-px-4 custom-scrollbar max-md:*:w-[85%] max-md:*:max-w-sm max-md:*:shrink-0 max-md:*:snap-start sm:-mx-6 sm:px-6 sm:scroll-px-6 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:mx-0 md:px-0 md:pb-0 xl:grid-cols-3 2xl:grid-cols-4">
           <LeaderboardCard
             title={t("watch_stat_cards.viewed_movies", "Most Viewed Movies")}
             unit={t("common.unit.plays", "Plays")}

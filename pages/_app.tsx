@@ -78,20 +78,23 @@ function App({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>Jellystat</title>
-        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no" />
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no, viewport-fit=cover"
+        />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
 
-      <Toaster theme="dark" richColors position="top-right" />
+      <Toaster theme="dark" richColors position="top-right" mobileOffset={{ top: 72 }} />
 
-      <div className="flex h-screen w-screen bg-background font-sans text-gray-200 selection:bg-brand-purple/30 overflow-hidden">
+      <div className="flex flex-col lg:flex-row h-dvh w-full bg-background font-sans text-gray-200 selection:bg-brand-purple/30 overflow-hidden">
         {/* Render Sidebar unless on Auth/Setup pages */}
         {!hideNav && <SideNav />}
 
         {/* Main Content Area */}
-        <main className="flex-1 flex flex-col relative min-w-0 bg-background overflow-hidden">
+        <main className="flex-1 flex flex-col relative min-w-0 min-h-0 bg-background overflow-hidden">
           {/* Ambient Background Glow */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-brand-purple/5 blur-[120px] pointer-events-none rounded-full z-0"></div>
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[min(800px,100%)] h-[300px] bg-brand-purple/5 blur-[120px] pointer-events-none rounded-full z-0"></div>
 
           <div className="flex-1 overflow-y-auto custom-scrollbar relative z-10 w-full">
             {/* Loading State */}
@@ -104,8 +107,8 @@ function App({ Component, pageProps }: AppProps) {
 
             {/* Error State */}
             {showError && (
-              <div className="h-full w-full flex items-center justify-center p-6 animate-in fade-in zoom-in-95 duration-300">
-                <div className="bg-surface border border-brand-rose/20 p-8 md:p-10 rounded-3xl shadow-2xl shadow-brand-rose/10 max-w-2xl w-full text-center relative overflow-hidden">
+              <div className="h-full w-full flex items-center justify-center p-4 sm:p-6 animate-in fade-in zoom-in-95 duration-300">
+                <div className="bg-surface border border-brand-rose/20 p-6 sm:p-8 md:p-10 rounded-3xl shadow-2xl shadow-brand-rose/10 max-w-2xl w-full text-center relative overflow-hidden">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-brand-rose/10 blur-[80px] pointer-events-none rounded-full z-0"></div>
 
                   <div className="relative z-10">
@@ -141,7 +144,13 @@ function App({ Component, pageProps }: AppProps) {
 
             {/* Component Injection */}
             {!showLoading && !showError && (
-              <div className={hideNav ? "w-full h-full" : "p-6 md:p-10 max-w-[1600px] mx-auto w-full"}>
+              <div
+                className={
+                  hideNav
+                    ? "w-full h-full"
+                    : "px-4 py-5 sm:p-6 md:p-10 pb-[max(1.25rem,env(safe-area-inset-bottom))] max-w-[1600px] mx-auto w-full"
+                }
+              >
                 <Component {...pageProps} />
               </div>
             )}

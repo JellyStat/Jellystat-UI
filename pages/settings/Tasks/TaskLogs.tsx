@@ -87,7 +87,7 @@ export default function TasksLogsPage() {
 
     return (
       <tr key={log.task} className="hover:bg-surface-hover transition-colors group">
-        <td className={`p-3 w-12 text-center`}>
+        <td className={`p-2 sm:p-3 w-10 sm:w-12 text-center`}>
           {log.messages.length > 0 ? (
             <button
               onClick={() => toggleRow(log.id ?? "")}
@@ -107,19 +107,20 @@ export default function TasksLogsPage() {
             Restore: t("common.restore", "Restore"),
           };
           const badgeLabel = taskBadgeLabels[log.task] ?? log.task;
-          return <td className="p-4">{getTaskBadge(log.task, badgeLabel)}</td>;
+          return <td className="p-2 sm:p-4">{getTaskBadge(log.task, badgeLabel)}</td>;
         })()}
 
-        {/* Date */}
-        <td className="p-4">
-          <div className="flex items-center text-sm text-gray-300 font-medium">
-            <Clock size={14} className="mr-2 text-gray-500" />
+        {/* Date (duration shown underneath on small screens) */}
+        <td className="p-2 sm:p-4">
+          <div className="flex items-center text-xs sm:text-sm text-gray-300 font-medium">
+            <Clock size={14} className="mr-2 text-gray-500 hidden sm:block" />
             {new Date(log.dateCreated).toLocaleString()}
           </div>
+          <div className="sm:hidden text-[11px] font-mono text-gray-500 mt-1">{log.duration.secondsToDurationString()}</div>
         </td>
 
         {/* Duration */}
-        <td className="p-4">
+        <td className="hidden sm:table-cell p-4">
           <div className="flex items-center text-sm text-gray-300 font-medium">
             <Clock size={14} className="mr-2 text-gray-500" />
             {log.duration.secondsToDurationString()}
@@ -127,24 +128,27 @@ export default function TasksLogsPage() {
         </td>
 
         {/* Status */}
-        <td className="p-4">
+        <td className="p-2 sm:p-4">
           <div className="flex items-center text-sm text-gray-300 font-medium">
             {log.success == null ? (
               <span className="flex items-center gap-2 text-brand-cyan">
-                <CircleDashed size={14} /> {t("tasks.in_progress", "In Progress")}
+                <CircleDashed size={14} className="shrink-0" />{" "}
+                <span className="sr-only sm:not-sr-only">{t("tasks.in_progress", "In Progress")}</span>
               </span>
             ) : log.success ? (
               <span className="flex items-center gap-2 text-brand-emerald">
-                <CheckCircle2 size={14} /> {t("tasks.success", "Success")}
+                <CheckCircle2 size={14} className="shrink-0" />{" "}
+                <span className="sr-only sm:not-sr-only">{t("tasks.success", "Success")}</span>
               </span>
             ) : (
               <span className="flex items-center gap-2 text-brand-rose">
-                <XCircle size={14} /> {t("tasks.failed", "Failed")}
+                <XCircle size={14} className="shrink-0" />{" "}
+                <span className="sr-only sm:not-sr-only">{t("tasks.failed", "Failed")}</span>
               </span>
             )}
           </div>
         </td>
-        <td className="p-4 pr-6" />
+        <td className="hidden sm:table-cell p-4 pr-6" />
       </tr>
     );
   };
@@ -152,7 +156,7 @@ export default function TasksLogsPage() {
   const renderMessages = (messages: string[]) => {
     return (
       <tr className="bg-background/80">
-        <td colSpan={6} className="p-4 pl-12 text-sm text-gray-400 text-[16px]">
+        <td colSpan={6} className="p-4 pl-4 sm:pl-12 text-sm text-gray-400 sm:text-[16px] break-words">
           <ul className="list-none list-inside space-y-1">
             {messages.map((msg, index) => (
               <li key={index} className="mb-4">
@@ -175,7 +179,7 @@ export default function TasksLogsPage() {
           </div>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-black text-white tracking-tight">{t("tasks.logs_title", "Task Logs")}</h1>
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{t("tasks.logs_title", "Task Logs")}</h1>
             </div>
             <p className="text-sm text-gray-400 mt-1 font-medium">{t("tasks.logs_subtitle", "View task logs")}</p>
           </div>
@@ -186,12 +190,12 @@ export default function TasksLogsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-background/80 border-b border-border text-xs font-bold text-gray-500 uppercase tracking-wider">
-                <th className="p-3 w-12"></th>
-                <th className="p-4 w-1/5">Task</th>
-                <th className="p-4 w-1/5">Date</th>
-                <th className="p-4 w-1/5">Duration</th>
-                <th className="p-4 w-1/5 ">Status</th>
-                <th className="p-4 pr-6 text-right w-1/6" />
+                <th className="p-2 sm:p-3 w-10 sm:w-12"></th>
+                <th className="p-2 sm:p-4 w-1/5">Task</th>
+                <th className="p-2 sm:p-4 w-1/5">Date</th>
+                <th className="hidden sm:table-cell p-4 w-1/5">Duration</th>
+                <th className="p-2 sm:p-4 w-1/5 ">Status</th>
+                <th className="hidden sm:table-cell p-4 pr-6 text-right w-1/6" />
               </tr>
             </thead>
             <tbody className="divide-y divide-border">

@@ -14,12 +14,18 @@ export const getTaskBadge = (taskName: string, label: string) => {
             ? "bg-brand-purple/10 text-brand-purple border-brand-purple/20"
             : "bg-surface text-gray-300 border-border";
 
-  return <span className={`${colorClass} px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider`}>{label}</span>;
+  return (
+    <span
+      className={`${colorClass} inline-block whitespace-nowrap px-2 sm:px-2.5 py-1 rounded-md text-[11px] sm:text-xs font-bold uppercase tracking-wider`}
+    >
+      {label}
+    </span>
+  );
 };
 
 export default function TasksPage() {
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 p-6">
+    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 py-4 sm:p-6">
       <TaskActionsPage />
       <TasksLogsPage />
     </div>

@@ -66,7 +66,7 @@ export default function LibrarySettingsPage() {
   }, [fetchPage]);
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 p-6">
+    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 py-4 sm:p-6">
       {/* Header Container */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6 mb-8">
         <div className="flex items-center gap-4">
@@ -74,7 +74,9 @@ export default function LibrarySettingsPage() {
             <Library size={28} className="text-brand-emerald" />
           </div>
           <div>
-            <h1 className="text-3xl font-black text-white tracking-tight">{t("settings.library_title", "Library Settings")}</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              {t("settings.library_title", "Library Settings")}
+            </h1>
             <p className="text-sm text-gray-400 mt-1 font-medium">
               {t("settings.library_subtitle", "Select which media libraries you want to track statistics for.")}
             </p>

@@ -253,6 +253,91 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
     );
   };
 
+  // Card layout used on small screens instead of the wide table
+  const renderCard = (activity: Activity, isSubRow = false) => {
+    const hasGroup = !isSubRow && activity.groupedResults && activity.groupedResults.length > 1;
+    const isExpanded = expandedActivityIds.includes(activity.id ?? "");
+
+    return (
+      <div
+        key={activity.id}
+        className={`p-4 flex flex-col gap-2.5 ${isSubRow ? "bg-background/40 border-l-2 border-brand-purple ml-4" : ""}`}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <Link
+            href={`/libraries/items/${activity.itemId}`}
+            className="text-sm font-bold text-gray-200 hover:text-brand-cyan transition-colors line-clamp-2 leading-tight min-w-0"
+            title={activity.fullName || activity.name}
+          >
+            {activity.fullName || activity.name}
+          </Link>
+          <span className="text-xs font-mono text-gray-400 shrink-0 pt-0.5">
+            {activity.playDuration?.secondsToDurationString?.() || "-"}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs min-w-0">
+          <Link
+            href={`/users/${activity.userId}`}
+            className="font-bold text-brand-purple hover:text-brand-cyan transition-colors truncate"
+            title={activity.userName}
+          >
+            {activity.userName}
+          </Link>
+          <span className="text-gray-600 shrink-0">&middot;</span>
+          <span className="text-gray-500 font-mono truncate">
+            {activity.dateCreated ? new Date(activity.dateCreated).toLocaleString() : "-"}
+          </span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-gray-400">
+          <button
+            type="button"
+            onClick={() => openStreamModal(activity)}
+            className="cursor-pointer focus:outline-none"
+            title={t("activity.view_stream_info", "View stream details")}
+          >
+            {formatTranscode(activity)}
+          </button>
+          <button
+            type="button"
+            onClick={() => openStreamModal(activity)}
+            className="min-w-0 max-w-full truncate hover:text-brand-cyan transition-colors cursor-pointer focus:outline-none text-left"
+            title={t("activity.view_stream_info", "View stream details")}
+          >
+            {[activity.client, activity.device].filter(Boolean).join(" \u00b7 ")}
+          </button>
+          {activity.ipAddress && (
+            <span className="font-mono text-gray-500">
+              {isRemoteSession(activity.ipAddress) ? <IpLookupModal ip={activity.ipAddress} /> : activity.ipAddress}
+            </span>
+          )}
+        </div>
+
+        {hasGroup && (
+          <button
+            type="button"
+            onClick={() => toggleRow(activity.id ?? "")}
+            className="self-start flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-white bg-background/60 border border-border rounded-lg px-2.5 py-1.5 transition-colors cursor-pointer"
+          >
+            {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            {activity.playCount || activity.groupedResults?.length || 0} {t("common.unit.plays", "Plays")}
+          </button>
+        )}
+      </div>
+    );
+  };
+
+  const sortOptions: { value: string; label: string }[] = [
+    { value: "dateCreated", label: t("common.date_created", "Date Created") },
+    { value: "userName", label: t("common.user", "User") },
+    { value: "fullName", label: t("activity.title_col", "Title") },
+    { value: "client", label: t("common.client", "Client") },
+    { value: "device", label: t("activity.device", "Device") },
+    { value: "playCount", label: t("common.unit.plays", "Plays") },
+    { value: "playDuration", label: t("activity.total_playback", "Total Playback") },
+  ];
+
   const ipv4Regex = new RegExp(
     /\b(?!(10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168))(?:(?:2(?:[0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9])\.){3}(?:(?:2([0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9]))\b/,
   );
@@ -268,7 +353,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* Header */}
-      <h2 className="text-2xl font-black text-gray-200 flex items-center justify-between">
+      <h2 className="text-xl sm:text-2xl font-black text-gray-200 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 shrink-0">
           <ActivityIcon className="text-brand-purple" size={28} />
           {t("activity.title", "Activity Log")}
@@ -298,7 +383,61 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
           </div>
         )}
 
-        <div className="overflow-x-auto custom-scrollbar flex-1">
+        {/* Mobile: search + sort toolbar */}
+        <div className="md:hidden flex flex-col gap-2 p-3 bg-background/60 border-b border-border">
+          <TextFilter
+            keyName="fullName"
+            value={getFilterValueOrDefault("fullName", "") as string}
+            onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("fullName"))}
+          />
+          <div className="flex items-center gap-2">
+            <div className="flex-1 min-w-0">
+              <DropdownSelector<string>
+                data={sortOptions.map((o) => ({ value: o.value }))}
+                value={sortStatus.columnAccessor}
+                onChange={(value) => {
+                  setSortStatus((prev) => ({ ...prev, columnAccessor: value }));
+                  setPage(1);
+                }}
+                labelFn={(value) => sortOptions.find((o) => o.value === value)?.label ?? value}
+                leftIcon={ArrowUpDown}
+                widthPx={0}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setSortStatus((prev) => ({ ...prev, direction: prev.direction === "desc" ? "asc" : "desc" }));
+                setPage(1);
+              }}
+              className="shrink-0 w-11 h-11 flex items-center justify-center rounded-xl bg-surface/80 border border-border text-brand-cyan hover:border-gray-500 transition-colors cursor-pointer"
+              aria-label={sortStatus.direction === "desc" ? "Descending" : "Ascending"}
+            >
+              {sortStatus.direction === "desc" ? <ArrowDown size={16} /> : <ArrowUp size={16} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile: card list */}
+        <div className="md:hidden flex-1 divide-y divide-border">
+          {!loading && activityData.length === 0 ? (
+            <div className="p-12 text-center text-gray-500">
+              <MonitorPlay size={40} className="mx-auto mb-3 opacity-20" />
+              <span className="font-medium">{t("activity.no_activity", "No activity found")}</span>
+            </div>
+          ) : (
+            activityData.map((activity) => (
+              <React.Fragment key={activity.id}>
+                {renderCard(activity)}
+                {expandedActivityIds.includes(activity.id ?? "") && activity.groupedResults
+                  ? activity.groupedResults.map((subAct) => renderCard(subAct, true))
+                  : null}
+              </React.Fragment>
+            ))
+          )}
+        </div>
+
+        <div className="hidden md:block overflow-x-auto custom-scrollbar flex-1">
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
               <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
@@ -458,11 +597,11 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
         </div>
 
         {/* Pagination Footer */}
-        <div className="bg-background/80 border-t border-border p-4 flex items-center justify-between shrink-0">
+        <div className="bg-background/80 border-t border-border p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
           <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
             {t("activity.total_records", "Total Records:")} <span className="text-white">{pageCount}</span>
           </span>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 ml-auto">
             <DropdownSelector
               data={pageCountOptions.map((option) => ({ value: option }))}
               value={recordsPerPage}

@@ -57,14 +57,16 @@ export default function ApiKeysPage() {
   const formatDate = (value?: string | null) => (value ? new Date(value).toLocaleString() : null);
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 p-6">
+    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 py-4 sm:p-6">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6 mb-8">
         <div className="flex items-center gap-4">
           <div className="p-3.5 bg-brand-cyan/10 rounded-2xl border border-brand-cyan/20 shadow-inner shrink-0">
             <KeyRound size={28} className="text-brand-cyan" />
           </div>
           <div>
-            <h1 className="text-3xl font-black text-white tracking-tight">{t("settings.api_keys_title", "API Keys")}</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              {t("settings.api_keys_title", "API Keys")}
+            </h1>
             <p className="text-sm text-gray-400 mt-1 font-medium">
               {t("settings.api_keys_subtitle", "Let other apps read from Jellystat using the x-api-token header.")}
             </p>
@@ -169,7 +171,7 @@ export default function ApiKeysPage() {
 
       <Dialog open={isCreateOpen} onClose={() => {}} className="relative z-50 focus:outline-none">
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
-        <div className="fixed inset-0 flex items-center justify-center p-4">
+        <div className="fixed inset-0 flex items-center-safe justify-center p-3 sm:p-4 overflow-y-auto">
           <CreateApiKeyModal servers={servers} onClose={() => setIsCreateOpen(false)} onCreated={fetchKeys} />
         </div>
       </Dialog>

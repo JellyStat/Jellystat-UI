@@ -94,7 +94,7 @@ export default function TaskActionsPage() {
           </div>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-black text-white tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                 {t("tasks.background_tasks_title", "Background Tasks")}
               </h1>
             </div>
@@ -111,12 +111,12 @@ export default function TaskActionsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-background/80 border-b border-border text-xs font-bold text-gray-500 uppercase tracking-wider">
-                <th className="p-3 w-12"></th>
-                <th className="p-4 w-1/5">Task</th>
-                <th className="p-4 w-1/5">Interval</th>
-                <th className="p-4 w-1/5">Enabled</th>
-                <th className="p-4 w-1/5">Status</th>
-                <th className="p-4 pr-6 text-right w-1/6">Actions</th>
+                <th className="hidden sm:table-cell p-3 w-12"></th>
+                <th className="p-3 sm:p-4 w-1/5">Task</th>
+                <th className="p-3 sm:p-4 w-1/5">Interval</th>
+                <th className="p-3 sm:p-4 w-1/5">Enabled</th>
+                <th className="hidden sm:table-cell p-4 w-1/5">Status</th>
+                <th className="p-3 sm:p-4 pr-4 sm:pr-6 text-right w-1/6">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -208,14 +208,31 @@ export default function TaskActionsPage() {
                   };
                   const badgeLabel = taskBadgeLabels[taskSetting.task] ?? taskSetting.task;
 
+                  const statusBadge = isRunning ? (
+                    <span className="inline-flex items-center bg-brand-emerald/10 text-brand-emerald border border-brand-emerald/20 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider">
+                      <Loader2 size={12} className="mr-1.5 animate-spin" /> {t("tasks.running", "Running")}
+                    </span>
+                  ) : isQueued ? (
+                    <span className="inline-flex items-center bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider">
+                      {t("tasks.queued", "Queued")}
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center bg-background text-gray-500 border border-border px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider">
+                      {t("tasks.idle", "Idle")}
+                    </span>
+                  );
+
                   return (
                     <tr key={taskSetting.task} className="hover:bg-surface-hover transition-colors group">
-                      <td className={`p-3 w-12 text-center`} />
-                      {/* Task Name */}
-                      <td className="p-4">{getTaskBadge(taskSetting.task, badgeLabel)}</td>
+                      <td className={`hidden sm:table-cell p-3 w-12 text-center`} />
+                      {/* Task Name (status shown underneath on small screens) */}
+                      <td className="p-3 sm:p-4">
+                        {getTaskBadge(taskSetting.task, badgeLabel)}
+                        <div className="sm:hidden mt-1.5">{statusBadge}</div>
+                      </td>
 
                       {/* Interval */}
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4">
                         <div className="flex items-center text-sm text-gray-300 font-medium">
                           {interval > 0 ? (
                             <>
@@ -227,7 +244,7 @@ export default function TaskActionsPage() {
                       </td>
 
                       {/* Enabled Status */}
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4">
                         <button
                           onClick={() => toggleTaskEnabled(taskSetting)}
                           disabled={isRunning || isQueued || taskSetting.intervalMinutes <= 0}
@@ -250,24 +267,10 @@ export default function TaskActionsPage() {
                       </td>
 
                       {/* Live WebSocket Status */}
-                      <td className="p-4">
-                        {isRunning ? (
-                          <span className="inline-flex items-center bg-brand-emerald/10 text-brand-emerald border border-brand-emerald/20 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider">
-                            <Loader2 size={12} className="mr-1.5 animate-spin" /> {t("tasks.running", "Running")}
-                          </span>
-                        ) : isQueued ? (
-                          <span className="inline-flex items-center bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider">
-                            {t("tasks.queued", "Queued")}
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center bg-background text-gray-500 border border-border px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider">
-                            {t("tasks.idle", "Idle")}
-                          </span>
-                        )}
-                      </td>
+                      <td className="hidden sm:table-cell p-4">{statusBadge}</td>
 
                       {/* Action Button */}
-                      <td className="p-4 pr-6 text-right">
+                      <td className="p-3 sm:p-4 pr-4 sm:pr-6 text-right">
                         <button
                           onClick={isRunning ? stopTask : executeTask}
                           disabled={isQueued || taskSetting.intervalMinutes <= 0}

@@ -57,7 +57,7 @@ export default function ServerSettingsPage() {
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 p-6">
+    <div className="space-y-8 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 py-4 sm:p-6">
       {/* Header Container */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6">
         <div className="flex items-center gap-4">
@@ -65,7 +65,7 @@ export default function ServerSettingsPage() {
             <Server size={28} className="text-brand-cyan" />
           </div>
           <div>
-            <h1 className="text-3xl font-black text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
               {t("settings.servers_auth_title", "Servers")}
             </h1>
             <p className="text-sm text-gray-400 mt-1 font-medium">
@@ -196,7 +196,7 @@ export default function ServerSettingsPage() {
       <Dialog open={isAddServerOpen} onClose={setIsAddServerOpen} className="relative z-50 focus:outline-none">
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
 
-        <div className="fixed inset-0 flex items-center justify-center p-4">
+        <div className="fixed inset-0 flex items-center-safe justify-center p-3 sm:p-4 overflow-y-auto">
           <AddServerModal onClose={() => setIsAddServerOpen(false)} onCreated={fetchServers} />
         </div>
       </Dialog>
@@ -204,7 +204,7 @@ export default function ServerSettingsPage() {
       <Dialog open={editingServer !== null} onClose={() => setEditingServer(null)} className="relative z-50 focus:outline-none">
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
 
-        <div className="fixed inset-0 flex items-center justify-center p-4">
+        <div className="fixed inset-0 flex items-center-safe justify-center p-3 sm:p-4 overflow-y-auto">
           {editingServer && (
             <EditServerModal server={editingServer} onClose={() => setEditingServer(null)} onSaved={fetchServers} />
           )}

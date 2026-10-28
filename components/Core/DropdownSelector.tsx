@@ -58,7 +58,7 @@ export default function DropdownSelector<T>({
   const hasLeftIcon = loading == true || (selectedOption?.Icon ?? leftIcon) != null;
 
   return (
-    <div className="relative" style={{ minWidth: `${widthPx}px` }}>
+    <div className="relative max-w-full" style={{ minWidth: `min(${widthPx}px, calc(100vw - 2rem))` }}>
       <Listbox
         value={(selectedOption ?? null) as DropdownOption<T>}
         onChange={(opt: DropdownOption<T>) => onChange?.(opt.value)}

@@ -61,6 +61,16 @@ export default function SettingsPage() {
     fetchVersionInfo();
   }, [fetchVersionInfo]);
 
+  // Keep the active tab visible inside the horizontally scrollable tab bar (mobile)
+  useEffect(() => {
+    if (typeof document === "undefined") {
+      return;
+    }
+    document
+      .getElementById(`settings-tab-${activeTab}`)
+      ?.scrollIntoView?.({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, [activeTab, isAdmin]);
+
   const setAndStoreActiveTab = (tab: string) => {
     setActiveTab(tab);
     localStorage.setItem("PREF_SETTINGS_TAB", tab);
@@ -99,8 +109,8 @@ export default function SettingsPage() {
 
       <div className="w-full min-h-screen">
         {/* Top Navigation Bar */}
-        <div className="max-w-[1600px] mx-auto px-6 pt-6 animate-in slide-in-from-top-4 duration-500">
-          <div className="flex overflow-x-auto custom-scrollbar pb-4">
+        <div className="max-w-[1600px] mx-auto sm:px-6 sm:pt-6 animate-in slide-in-from-top-4 duration-500">
+          <div className="flex overflow-x-auto custom-scrollbar pb-2 sm:pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
             {/* Glassmorphic Tab Container */}
             <div className="flex items-center p-1.5 bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-inner w-max">
               {tabs
@@ -112,8 +122,9 @@ export default function SettingsPage() {
                   return (
                     <button
                       key={tab.id}
+                      id={`settings-tab-${tab.id}`}
                       onClick={() => setAndStoreActiveTab(tab.id)}
-                      className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 group ${
+                      className={`flex items-center gap-2 sm:gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap lg:whitespace-normal transition-all duration-300 group ${
                         isActive
                           ? "bg-brand-cyan text-black shadow-md shadow-brand-cyan/20"
                           : "text-gray-400 hover:text-white hover:bg-surface-hover"
@@ -134,7 +145,7 @@ export default function SettingsPage() {
         {/* Active Tab Panel */}
         <div className="w-full transition-opacity duration-300">
           {activeTab === "settings" && (
-            <div className="max-w-[1600px] mx-auto p-6 animate-in fade-in duration-500 flex flex-col gap-3">
+            <div className="max-w-[1600px] mx-auto py-4 sm:p-6 animate-in fade-in duration-500 flex flex-col gap-3">
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-6">
                   <Settings size={24} className="text-brand-cyan" />
@@ -142,7 +153,7 @@ export default function SettingsPage() {
                     {t("settings.general_title", "General Settings")}
                   </h3>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-surface-hover/50 rounded-2xl border border-border">
+                <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-surface-hover/50 rounded-2xl border border-border">
                   <div>
                     <h4 className="text-sm font-bold text-gray-200">{t("settings.language", "Language")}</h4>
                     <p className="text-xs text-gray-500 mt-1">
@@ -164,14 +175,14 @@ export default function SettingsPage() {
                   <table className="w-full table-fixed text-left">
                     <colgroup>
                       <col />
-                      <col className="w-30" />
-                      <col className="w-40" />
+                      <col className="w-24 sm:w-30" />
+                      <col className="w-36 sm:w-40" />
                     </colgroup>
                     <tbody className="divide-y divide-border">
                       <tr>
-                        <td className="p-4 text-sm font-bold text-gray-200">{t("settings.api", "API")}</td>
-                        <td className="p-4 text-sm text-gray-200">{versionInfo?.apiVersion ?? "-"}</td>
-                        <td className="whitespace-nowrap p-4">
+                        <td className="p-3 sm:p-4 text-sm font-bold text-gray-200">{t("settings.api", "API")}</td>
+                        <td className="p-3 sm:p-4 text-sm text-gray-200">{versionInfo?.apiVersion ?? "-"}</td>
+                        <td className="whitespace-nowrap p-3 sm:p-4">
                           {!versionInfo ? (
                             <span className="text-sm text-gray-500">-</span>
                           ) : versionInfo.uiHasUpdate ? (
@@ -191,9 +202,9 @@ export default function SettingsPage() {
                         </td>
                       </tr>
                       <tr>
-                        <td className="p-4 text-sm font-bold text-gray-200">{t("settings.ui_tag", "UI Tag")}</td>
-                        <td className="p-4 text-sm text-gray-200">{versionInfo?.currentUiTag ?? "-"}</td>
-                        <td className="whitespace-nowrap p-4">
+                        <td className="p-3 sm:p-4 text-sm font-bold text-gray-200">{t("settings.ui_tag", "UI Tag")}</td>
+                        <td className="p-3 sm:p-4 text-sm text-gray-200">{versionInfo?.currentUiTag ?? "-"}</td>
+                        <td className="whitespace-nowrap p-3 sm:p-4">
                           {!versionInfo ? (
                             <span className="text-sm text-gray-500">-</span>
                           ) : versionInfo.uiHasUpdate ? (
@@ -227,7 +238,7 @@ export default function SettingsPage() {
           {activeTab === "servers" && (
             <>
               <ServerSettingsPage />
-              <div className="max-w-[1600px] mx-auto px-6">
+              <div className="max-w-[1600px] mx-auto sm:px-6">
                 <hr className="border-border/50" />
               </div>
               <UsersSettingsPage />

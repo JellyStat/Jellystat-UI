@@ -16,7 +16,9 @@
 @layer base {
   html,
   body {
-    @apply bg-background text-gray-100 antialiased h-screen w-screen overflow-hidden;
+    @apply bg-background text-gray-100 antialiased h-full w-full overflow-hidden;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
     margin: 0;
     padding: 0;
   }

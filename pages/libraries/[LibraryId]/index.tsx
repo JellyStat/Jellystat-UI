@@ -114,7 +114,7 @@ export default function LibraryPage() {
         {!loading && !error && lib && (
           <div className="flex flex-col gap-6">
             {/* Header Block */}
-            <div className="bg-surface/60 backdrop-blur-xl border border-border rounded-3xl p-6 shadow-xl shadow-black/20 flex flex-col sm:flex-row items-center sm:items-start gap-6 relative overflow-hidden">
+            <div className="bg-surface/60 backdrop-blur-xl border border-border rounded-3xl p-4 sm:p-6 shadow-xl shadow-black/20 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 relative overflow-hidden">
               {/* Ambient Glow */}
               <div className="absolute top-[-50%] left-[-10%] w-[40%] h-[200%] bg-brand-cyan/5 blur-[80px] pointer-events-none rounded-full"></div>
 
@@ -125,13 +125,13 @@ export default function LibraryPage() {
 
               {/* Title & Tabs Container */}
               <div className="flex flex-col flex-1 w-full items-center sm:items-start">
-                <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-6 text-center sm:text-left drop-shadow-md">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight mb-6 text-center sm:text-left drop-shadow-md break-words">
                   {lib.name ?? LibraryId}
                 </h1>
 
                 {/* Horizontal Scrollable Tabs */}
                 <div className="flex overflow-x-auto custom-scrollbar w-full sm:w-auto">
-                  <div className="flex items-center p-1.5 bg-background/50 border border-border rounded-2xl shadow-inner w-max">
+                  <div className="flex items-center p-1.5 bg-background/50 border border-border rounded-2xl shadow-inner w-max min-w-full sm:min-w-0">
                     {tabs.map((tab) => {
                       const Icon = tab.icon;
                       const isActive = activeTab === tab.id;
@@ -140,7 +140,7 @@ export default function LibraryPage() {
                         <button
                           key={tab.id}
                           onClick={() => setAndStoreActiveTab(tab.id)}
-                          className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 group ${
+                          className={`flex flex-1 sm:flex-none justify-center items-center gap-2 sm:gap-2.5 px-3 sm:px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 group ${
                             isActive
                               ? "bg-brand-cyan text-black shadow-md shadow-brand-cyan/20"
                               : "text-gray-400 hover:text-white hover:bg-surface-hover"

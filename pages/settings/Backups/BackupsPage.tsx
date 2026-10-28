@@ -106,8 +106,52 @@ export default function BackupsPage() {
     }
   };
 
+  const formatBackupDate = (backup: BackupModel) =>
+    backup.date
+      ? new Date(backup.date).toLocaleDateString(i18n.language || undefined, {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })
+      : "";
+
+  const renderActions = (backup: BackupModel) => (
+    <>
+      <button
+        onClick={() => restoreBackup(backup.fileName)}
+        title={t("common.restore", "Restore backup")}
+        className="p-2 rounded-lg bg-background hover:bg-brand-cyan/20 text-gray-400 hover:text-brand-cyan border border-border hover:border-brand-cyan/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer"
+        disabled={loading}
+      >
+        <Clock size={16} />
+      </button>
+      <button
+        onClick={() => downloadBackup(backup.fileName)}
+        title={t("common.download", "Download backup")}
+        className="p-2 rounded-lg bg-background hover:bg-brand-cyan/20 text-gray-400 hover:text-brand-cyan border border-border hover:border-brand-cyan/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer"
+        disabled={loading}
+      >
+        <Download size={16} />
+      </button>
+
+      <ConfirmationDialogButton
+        buttonElement={<Trash size={16} />}
+        dialogTitle={t("settings.backups_confirm_delete_title", "Confirm Delete")}
+        description={t("settings.backups_confirm_delete_desc", "Are you sure you want to delete this backup?")}
+        confirmText={t("common.yes", "Yes")}
+        cancelText={t("common.no", "No")}
+        tooltip={t("common.delete", "Delete backup")}
+        onClick={() => setBackupToDelete(backup.fileName)}
+        onConfirm={deleteBackup}
+      />
+    </>
+  );
+
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 p-6">
+    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 py-4 sm:p-6">
       {/* Header Container */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6">
         <div className="flex items-center gap-4">
@@ -116,7 +160,9 @@ export default function BackupsPage() {
           </div>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-black text-white tracking-tight">{t("settings.backups_title", "Backups")}</h1>
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                {t("settings.backups_title", "Backups")}
+              </h1>
             </div>
             <p className="text-sm text-gray-400 mt-1 font-medium">{t("settings.backups_subtitle", "Manage your backups.")}</p>
           </div>
@@ -167,7 +213,30 @@ export default function BackupsPage() {
           </div>
         )}
 
-        <div className="overflow-x-auto custom-scrollbar flex-1">
+        {/* Mobile: card list */}
+        <div className="md:hidden flex-1 divide-y divide-border">
+          {!loading && backups.length === 0 ? (
+            <div className="p-12 text-center text-gray-500">
+              <Archive size={40} className="mx-auto mb-3 opacity-20" />
+              <span className="font-medium">{t("settings.backups_empty_title", "No backups found")}</span>
+              <p className="text-sm mt-1">{t("settings.backups_empty_desc", "No backups have been created yet.")}</p>
+            </div>
+          ) : (
+            backups.map((backup) => (
+              <div key={backup.fileName} className="p-4 flex flex-col gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-bold text-gray-200 break-all">{backup.fileName}</div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {formatBackupDate(backup)} &middot; {backup.size.formatBytes()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">{renderActions(backup)}</div>
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="hidden md:block overflow-x-auto custom-scrollbar flex-1">
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
               <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
@@ -189,16 +258,7 @@ export default function BackupsPage() {
                 </tr>
               ) : (
                 backups.map((backup) => {
-                  const formattedDate = backup.date
-                    ? new Date(backup.date).toLocaleDateString(i18n.language || undefined, {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                      })
-                    : "";
+                  const formattedDate = formatBackupDate(backup);
                   return (
                     <tr key={backup.fileName} className={`border-b border-border transition-colors hover:bg-surface-hover`}>
                       <td className="p-3 text-sm font-bold text-gray-200">{backup.fileName}</td>
@@ -207,40 +267,7 @@ export default function BackupsPage() {
 
                       {/* Actions */}
                       <td className="p-3 text-sm font-bold text-gray-200">
-                        {
-                          <div className="flex items-end gap-2">
-                            <button
-                              onClick={() => restoreBackup(backup.fileName)}
-                              title={t("common.restore", "Restore backup")}
-                              className="p-2 rounded-lg bg-background hover:bg-brand-cyan/20 text-gray-400 hover:text-brand-cyan border border-border hover:border-brand-cyan/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer"
-                              disabled={loading}
-                            >
-                              <Clock size={16} />
-                            </button>
-                            <button
-                              onClick={() => downloadBackup(backup.fileName)}
-                              title={t("common.download", "Download backup")}
-                              className="p-2 rounded-lg bg-background hover:bg-brand-cyan/20 text-gray-400 hover:text-brand-cyan border border-border hover:border-brand-cyan/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer"
-                              disabled={loading}
-                            >
-                              <Download size={16} />
-                            </button>
-
-                            <ConfirmationDialogButton
-                              buttonElement={<Trash size={16} />}
-                              dialogTitle={t("settings.backups_confirm_delete_title", "Confirm Delete")}
-                              description={t(
-                                "settings.backups_confirm_delete_desc",
-                                "Are you sure you want to delete this backup?",
-                              )}
-                              confirmText={t("common.yes", "Yes")}
-                              cancelText={t("common.no", "No")}
-                              tooltip={t("common.delete", "Delete backup")}
-                              onClick={() => setBackupToDelete(backup.fileName)}
-                              onConfirm={deleteBackup}
-                            />
-                          </div>
-                        }
+                        {<div className="flex items-end gap-2">{renderActions(backup)}</div>}
                       </td>
                     </tr>
                   );

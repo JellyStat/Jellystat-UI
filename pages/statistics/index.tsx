@@ -21,7 +21,7 @@ export default function StatisticsPage() {
               <BarChart3 size={28} className="text-brand-purple" />
             </div>
             <div>
-              <h1 className="text-3xl font-black text-white tracking-tight">{t("nav.statistics", "Statistics")}</h1>
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{t("nav.statistics", "Statistics")}</h1>
               <p className="text-sm text-gray-400 mt-1 font-medium">
                 {t("statistics.playback_trends", "31-Day global playback trends")}
               </p>

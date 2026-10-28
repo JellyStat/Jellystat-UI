@@ -78,7 +78,7 @@ export default function UsersSettingsPage() {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 p-6">
+    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 py-4 sm:p-6">
       {/* Header Container */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6 mb-8">
         <div className="flex items-center gap-4">
@@ -86,7 +86,9 @@ export default function UsersSettingsPage() {
             <UsersIcon size={28} className="text-brand-purple" />
           </div>
           <div>
-            <h1 className="text-3xl font-black text-white tracking-tight">{t("settings.users_title", "User Settings")}</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              {t("settings.users_title", "User Settings")}
+            </h1>
             <p className="text-sm text-gray-400 mt-1 font-medium">
               {t("settings.users_subtitle", "Manage local Jellystat users.")}
             </p>
@@ -135,15 +137,15 @@ export default function UsersSettingsPage() {
                 {usersData.map((user) => (
                   <div
                     key={user.id}
-                    className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-hover transition-colors"
+                    className="p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3 sm:gap-4 hover:bg-surface-hover transition-colors"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 mx-auto rounded-full bg-surface border border-border shadow-inner overflow-hidden flex items-center justify-center shrink-0">
+                    <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-surface border border-border shadow-inner overflow-hidden flex items-center justify-center shrink-0">
                         <UserIcon size={20} className="text-gray-500" />
                       </div>
-                      <h3 className="font-bold text-gray-100 flex items-center gap-2">{user.username}</h3>
+                      <h3 className="font-bold text-gray-100 truncate min-w-0">{user.username}</h3>
                       {findDefaultServer(user) && (
-                        <span className="text-[10px] uppercase tracking-wider bg-brand-purple/10 text-brand-purple border border-brand-purple/20 px-2 py-0.5 rounded-full">
+                        <span className="text-[10px] uppercase tracking-wider bg-brand-purple/10 text-brand-purple border border-brand-purple/20 px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">
                           {findDefaultServer(user)}
                         </span>
                       )}
@@ -182,7 +184,7 @@ export default function UsersSettingsPage() {
       <Dialog open={isAddUserOpen} onClose={setIsAddUserOpen} className="relative z-50 focus:outline-none">
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
 
-        <div className="fixed inset-0 flex items-center justify-center p-4">
+        <div className="fixed inset-0 flex items-center-safe justify-center p-3 sm:p-4 overflow-y-auto">
           <AddUserModal onClose={() => setIsAddUserOpen(false)} onCreated={fetchPage} />
         </div>
       </Dialog>
@@ -190,7 +192,7 @@ export default function UsersSettingsPage() {
       <Dialog open={isUpdateUserOpen} onClose={setIsUpdateUserOpen} className="relative z-50 focus:outline-none">
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
 
-        <div className="fixed inset-0 flex items-center justify-center p-4">
+        <div className="fixed inset-0 flex items-center-safe justify-center p-3 sm:p-4 overflow-y-auto">
           <UpdateUserModal userId={selectedUserId!} onClose={() => setIsUpdateUserOpen(false)} onCreated={fetchPage} />
         </div>
       </Dialog>

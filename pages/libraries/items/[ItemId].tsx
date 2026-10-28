@@ -160,9 +160,9 @@ export default function ItemPage() {
               <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-transparent backdrop-blur-[2px]" />
 
               {/* Header Content */}
-              <div className="relative z-10 p-6 md:p-10 flex flex-col md:flex-row gap-8 items-start md:items-center">
+              <div className="relative z-10 p-5 sm:p-6 md:p-10 flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-center">
                 {/* Poster Image */}
-                <div className="shrink-0 relative group">
+                <div className="shrink-0 relative group self-center md:self-auto max-w-full">
                   <ItemImage
                     imageUrl={imageUrl}
                     imageHash={item.imageHash}
@@ -174,7 +174,7 @@ export default function ItemPage() {
                 </div>
 
                 {/* Details */}
-                <div className="flex flex-col flex-1 items-start">
+                <div className="flex flex-col flex-1 items-start min-w-0 w-full">
                   <button
                     onClick={() => router.push(`/libraries/${item.libraryId}`)}
                     className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-cyan/10 text-brand-cyan hover:bg-brand-cyan hover:text-black border border-brand-cyan/20 transition-colors text-xs font-black uppercase tracking-widest mb-4 cursor-pointer"
@@ -183,8 +183,8 @@ export default function ItemPage() {
                     {item.library?.name || t("item.library", "Library")}
                   </button>
 
-                  <div className="flex items-start gap-4 mb-2">
-                    <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-md">
+                  <div className="flex items-start justify-between md:justify-start gap-4 mb-2 w-full">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-md break-words">
                       {item.parentId ? (
                         <Link href={`/libraries/items/${item.parentId}`} className="hover:text-brand-cyan transition-colors">
                           {title}
@@ -199,7 +199,7 @@ export default function ItemPage() {
                         href={`${externalURLBase}/web/index.html#/details?id=${item.id}&serverId=${item.serverId}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="mt-2 p-2 bg-surface/50 hover:bg-brand-cyan text-gray-300 hover:text-black border border-border hover:border-brand-cyan rounded-xl transition-all shadow-inner"
+                        className="mt-1 sm:mt-2 shrink-0 p-2 bg-surface/50 hover:bg-brand-cyan text-gray-300 hover:text-black border border-border hover:border-brand-cyan rounded-xl transition-all shadow-inner"
                         title={t("item.open_in_server", "Open in Media Server")}
                       >
                         <ExternalLink size={20} />
@@ -224,7 +224,7 @@ export default function ItemPage() {
                     </div>
                   )}
 
-                  <div className="flex flex-col gap-1.5 mt-2">
+                  <div className="flex flex-col gap-1.5 mt-2 w-full min-w-0">
                     {item.path && (
                       <p className="text-xs font-mono text-gray-500 truncate max-w-2xl" title={item.path}>
                         <span className="font-bold text-gray-400 mr-2">{t("item.file_path", "File Path:")}</span>
@@ -232,7 +232,7 @@ export default function ItemPage() {
                       </p>
                     )}
 
-                    <div className="flex items-center gap-6 mt-1">
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-1 mt-1">
                       {item.duration != undefined && (
                         <p className="text-xs font-mono text-gray-400">
                           <span className="font-bold mr-2 uppercase tracking-wider">{t("item.runtime", "Runtime:")}</span>
@@ -255,7 +255,7 @@ export default function ItemPage() {
             <div className="flex flex-col w-full">
               {/* Glassmorphic Tab Container */}
               <div className="flex overflow-x-auto custom-scrollbar mb-6">
-                <div className="flex items-center p-1.5 bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-inner w-max">
+                <div className="flex items-center p-1.5 bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-inner w-max min-w-full sm:min-w-0">
                   {tabs.map((tab) => {
                     const Icon = tab.icon;
                     const isActive = activeTab === tab.id;
@@ -264,7 +264,7 @@ export default function ItemPage() {
                       <button
                         key={tab.id}
                         onClick={() => setAndStoreActiveTab(tab.id)}
-                        className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 group ${
+                        className={`flex flex-1 sm:flex-none justify-center items-center gap-2 sm:gap-2.5 px-3 sm:px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 group ${
                           isActive
                             ? "bg-brand-cyan text-black shadow-md shadow-brand-cyan/20"
                             : "text-gray-400 hover:text-white hover:bg-surface-hover"

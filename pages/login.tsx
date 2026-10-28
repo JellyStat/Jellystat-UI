@@ -161,7 +161,9 @@ export default function LoginPage() {
                 </svg>
               </div>
             </div>
-            <h1 className="text-3xl font-black text-white tracking-tight mb-2">{t("login.welcome_back", "Welcome Back")}</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">
+              {t("login.welcome_back", "Welcome Back")}
+            </h1>
             <p className="text-sm text-gray-400 font-medium">
               {showServerPicker
                 ? t("login.subtitle_server", "Authenticate via Jellyfin Server")

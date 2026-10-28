@@ -19,7 +19,9 @@ export default function SessionsPage() {
             <PlaySquare size={28} className="text-brand-cyan" />
           </div>
           <div>
-            <h1 className="text-3xl font-black text-white tracking-tight">{t("nav.live_sessions", "Live Sessions")}</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              {t("nav.live_sessions", "Live Sessions")}
+            </h1>
             <p className="text-sm text-gray-400 mt-1 font-medium">
               {t("live_sessions.live_sessions_desc", "Monitor real-time server playback and user streams.")}
             </p>

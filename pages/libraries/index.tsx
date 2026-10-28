@@ -51,7 +51,7 @@ export default function LibrariesPage() {
             <Database size={28} className="text-brand-cyan" />
           </div>
           <div>
-            <h1 className="text-3xl font-black text-white tracking-tight">{t("nav.libraries", "Libraries")}</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{t("nav.libraries", "Libraries")}</h1>
             <p className="text-sm text-gray-400 mt-1 font-medium">
               {t("libraries.libraries_desc", "Manage, track, and analyze your media collections")}
             </p>

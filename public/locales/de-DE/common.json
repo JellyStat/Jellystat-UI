@@ -194,9 +194,11 @@
   },
   "nav": {
     "activity": "Aktivität",
+    "close_menu": "Menü schließen",
     "libraries": "Bibliotheken",
     "live_sessions": "Live-Sitzungen",
     "logout": "Abmelden",
+    "open_menu": "Menü öffnen",
     "overview": "Übersicht",
     "settings": "Einstellungen",
     "statistics": "Statistiken",

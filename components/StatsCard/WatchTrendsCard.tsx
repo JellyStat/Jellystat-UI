@@ -124,12 +124,14 @@ export default function WatchTrendsCard() {
     <>
       <div className="flex flex-col w-full animate-in fade-in duration-500">
         {/* Header & Controls */}
-        <div className="flex justify-between gap-3 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
           <div className="flex items-center gap-3">
-            <BarChart3 size={28} className="text-brand-purple" />
-            <h2 className="text-2xl font-black text-white tracking-tight">{t("stats.watch_trends", "Watch Trends")}</h2>
+            <BarChart3 size={28} className="text-brand-purple shrink-0" />
+            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+              {t("stats.watch_trends", "Watch Trends")}
+            </h2>
           </div>
-          <div className="flex items-end gap-3">
+          <div className="grid grid-cols-1 min-[440px]:grid-cols-2 gap-2 sm:flex sm:items-end sm:gap-3">
             {/* <DateRangePickerButton value={dateRange} onChange={handleDateRange} /> */}
             <DropdownSelector
               data={[

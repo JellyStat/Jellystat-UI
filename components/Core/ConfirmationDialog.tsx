@@ -39,10 +39,10 @@ export default function ConfirmationDialog({
     >
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
 
-      <div className="fixed inset-0 flex items-center justify-center p-4">
+      <div className="fixed inset-0 flex items-center-safe justify-center p-3 sm:p-4 overflow-y-auto">
         <DialogPanel
           transition
-          className="w-full m-50 rounded-2xl border border-border bg-surface p-5 shadow-2xl shadow-black/40 duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
+          className="w-full max-w-lg sm:max-w-none sm:m-12 lg:m-50 rounded-2xl border border-border bg-surface p-5 shadow-2xl shadow-black/40 duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
         >
           <DialogTitle className="text-lg font-black text-white">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">

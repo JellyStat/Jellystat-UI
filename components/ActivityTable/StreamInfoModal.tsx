@@ -57,9 +57,19 @@ function DataRow({
   const valueClass = isSame ? 'text-gray-500' : 'text-white';
   return (
     <tr>
-      <td className="py-2 pr-5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-24 shrink-0">{label}</td>
-      <td className={`py-2 pr-5 font-mono text-sm tabular-nums leading-tight w-[180px] ${valueClass}`}>{current}</td>
-      <td className={`py-2 pr-5 font-mono text-sm tabular-nums leading-tight w-[180px] shrink-0 ${valueClass}`}>{source}</td>
+      <td className="py-2 pr-3 sm:pr-5 text-xs font-semibold text-gray-500 uppercase tracking-wider w-20 sm:w-24 shrink-0">
+        {label}
+      </td>
+      <td
+        className={`py-2 pr-3 sm:pr-5 font-mono text-xs sm:text-sm tabular-nums leading-tight w-[110px] sm:w-[180px] ${valueClass}`}
+      >
+        {current}
+      </td>
+      <td
+        className={`py-2 pr-3 sm:pr-5 font-mono text-xs sm:text-sm tabular-nums leading-tight w-[110px] sm:w-[180px] shrink-0 ${valueClass}`}
+      >
+        {source}
+      </td>
     </tr>
   );
 }
@@ -69,7 +79,9 @@ function DataRow({
 function SectionHeader({ title, badge }: { title: string; badge?: React.ReactNode }) {
   return (
     <tr>
-      <td className="py-1.5 pr-5 text-xs font-black uppercase tracking-[0.15em] text-brand-purple whitespace-nowrap">{title}</td>
+      <td className="py-1.5 pr-3 sm:pr-5 text-xs font-black uppercase tracking-wider sm:tracking-[0.15em] text-brand-purple sm:whitespace-nowrap">
+        {title}
+      </td>
       <td colSpan={2} className="py-1.5">
         {badge && <div className="flex items-center gap-1.5">{badge}</div>}
       </td>
@@ -135,13 +147,13 @@ export function StreamInfoModal({ activity, open, onClose }: Props) {
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" aria-hidden="true" />
 
       {/* Panel */}
-      <div className="fixed inset-0 flex items-center justify-center p-4 pointer-events-none overflow-y-auto">
+      <div className="fixed inset-0 flex items-center-safe justify-center p-4 pointer-events-none overflow-y-auto">
         <DialogPanel
           transition
-          className="pointer-events-auto relative w-full max-w-3xl mt-8 mb-8 rounded-2xl border border-border bg-surface shadow-2xl shadow-black/50 duration-100 ease-out data-closed:scale-[95%] data-closed:opacity-0"
+          className="pointer-events-auto relative w-full min-w-0 max-w-3xl my-4 sm:my-8 rounded-2xl border border-border bg-surface shadow-2xl shadow-black/50 duration-100 ease-out data-closed:scale-[95%] data-closed:opacity-0"
         >
           {/* ---- HEADER ---- */}
-          <div className="flex items-start justify-between border-b border-border px-6 pt-5 pb-4">
+          <div className="flex items-start justify-between border-b border-border px-4 sm:px-6 pt-5 pb-4 pr-12 sm:pr-14">
             <div className="min-w-0 flex-1">
               <DialogTitle className="text-lg font-black text-white truncate">
                 {activity.seriesName ? `${activity.seriesName}: ${activity.fullName}` : activity.fullName || activity.name || ""}
@@ -177,16 +189,16 @@ export function StreamInfoModal({ activity, open, onClose }: Props) {
           </div>
 
           {/* ---- TABLE ---- */}
-          <div className="px-6 py-3 overflow-x-auto custom-scrollbar">
+          <div className="px-4 sm:px-6 py-3 overflow-x-auto custom-scrollbar">
             <table className="w-full text-left border-collapse">
               {/* Column headers */}
               <thead>
                 <tr className="text-xs font-black text-gray-600 uppercase tracking-widest ">
-                  <th className="py-2 pr-5 w-24 shrink-0"></th>
-                  <th className="py-2 pr-5 text-brand-purple text-left min-w-[280px] align-middle">
+                  <th className="py-2 pr-3 sm:pr-5 w-20 sm:w-24 shrink-0"></th>
+                  <th className="py-2 pr-5 text-brand-purple text-left min-w-[100px] sm:min-w-[280px] align-middle">
                     {t("common.playback_stream", "Playback Stream")}
                   </th>
-                  <th className="py-2 pr-5 text-gray-400 text-left w-[180px] shrink-0 align-middle">
+                  <th className="py-2 pr-5 text-gray-400 text-left w-[110px] sm:w-[180px] shrink-0 align-middle">
                     {t("common.source", "Source")}
                   </th>
                 </tr>
@@ -303,7 +315,7 @@ export function StreamInfoModal({ activity, open, onClose }: Props) {
           </div>
 
           {/* ---- FOOTER ---- */}
-          <div className="flex items-center justify-end gap-2 border-t border-border px-6 py-3 bg-background/40">
+          <div className="flex items-center justify-end gap-2 border-t border-border px-4 sm:px-6 py-3 bg-background/40">
             <button
               onClick={() => {
                 setVisible(false);

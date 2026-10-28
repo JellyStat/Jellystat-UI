@@ -266,7 +266,7 @@ export default function ActivityMigrationPage() {
   console.log("ActivityMigrationPage render", { activityData, migrations, selected, migrateableCount });
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 p-6">
+    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 py-4 sm:p-6">
       {/* Header Container */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6">
         <div className="flex items-center gap-4">
@@ -275,7 +275,7 @@ export default function ActivityMigrationPage() {
           </div>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-black text-white tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                 {t("settings.migration_title", "Activity Migration")}
               </h1>
               {migrations.length > 0 && (
@@ -474,12 +474,12 @@ export default function ActivityMigrationPage() {
         </div>
 
         {/* Pagination Footer */}
-        <div className="bg-background/80 border-t border-border p-4 flex items-center justify-between shrink-0">
+        <div className="bg-background/80 border-t border-border p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
           <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
             {t("settings.migration_total_unlinked", "Total Unlinked:")} <span className="text-white">{pageCount}</span>
           </span>
-          <div className="flex items-center gap-4">
-            <span className="text-xs font-mono text-gray-400">
+          <div className="flex items-center gap-4 ml-auto">
+            <span className="text-xs font-mono text-gray-400 whitespace-nowrap">
               {t("common.page_info", "Page {{page}} of {{totalPages}}", { page, totalPages })}
             </span>
             <div className="flex gap-2">
@@ -505,10 +505,10 @@ export default function ActivityMigrationPage() {
       <Dialog open={isSearchDialogOpen} onClose={setIsSearchDialogOpen} className="relative z-50 focus:outline-none">
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
 
-        <div className="fixed inset-0 flex items-center justify-center p-4">
+        <div className="fixed inset-0 flex items-center-safe justify-center p-3 sm:p-4 overflow-y-auto">
           <DialogPanel
             transition
-            className="w-full h-full m-50 rounded-2xl border border-border bg-surface p-5 shadow-2xl shadow-black/40 duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
+            className="w-full h-full md:m-12 lg:m-50 rounded-2xl border border-border bg-surface p-5 shadow-2xl shadow-black/40 duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
           >
             <DialogTitle className="text-lg font-black text-white">
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">

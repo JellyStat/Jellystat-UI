@@ -198,9 +198,11 @@
   },
   "nav": {
     "activity": "Activity",
+    "close_menu": "Close menu",
     "libraries": "Libraries",
     "live_sessions": "Live Sessions",
     "logout": "Logout",
+    "open_menu": "Open menu",
     "overview": "Overview",
     "settings": "Settings",
     "statistics": "Statistics",
