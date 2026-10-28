@@ -195,7 +195,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
         <div className="grid auto-rows-fr grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
           {items.map((it: ItemsWithStats) => (
             <div key={`${it.serverId || ""}-${it.id}`} className="w-full h-full">
-              <ItemCard item={it} width="100%" />
+              <ItemCard item={it} width="100%" showSize />
             </div>
           ))}
         </div>

@@ -179,6 +179,8 @@ export default function TaskActionsPage() {
                   const interval = taskSetting.intervalMinutes || 0;
                   const isSaving = savingTask === taskSetting.task;
 
+                  const isManualOnly = taskSetting.task === Tasks.PlaybackReportingPluginSync;
+
                   const executeTask = async () => {
                     toast.loading(t("tasks.starting_task", "Starting {{taskName}}...", { taskName: taskSetting.task }), {
                       id: taskSetting.task,
@@ -307,7 +309,7 @@ export default function TaskActionsPage() {
                       <td className="p-3 sm:p-4 pr-4 sm:pr-6 text-right">
                         <button
                           onClick={isRunning ? stopTask : executeTask}
-                          disabled={isQueued || taskSetting.intervalMinutes <= 0}
+                          disabled={isQueued || (!isManualOnly && taskSetting.intervalMinutes <= 0)}
                           title={t("tasks.run_now", "Run {{taskName}} now", { taskName: taskSetting.task })}
                           className={`p-2 rounded-lg bg-background hover:bg-brand-emerald/20 text-gray-400 hover:${isRunning ? "text-brand-rose" : "text-brand-emerald"} border border-border hover:${isRunning ? "border-brand-rose/50" : "border-brand-emerald/50"} transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 ml-auto flex cursor-pointer`}
                         >

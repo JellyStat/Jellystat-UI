@@ -3,15 +3,18 @@ import { API_BASE } from "@/lib/api";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import type { RecentlyAdded } from "@/lib/models/RecentlyAdded";
+import { HardDrive } from "lucide-react";
 import ItemImage from "../ItemImage/ItemImage";
 
 type Props = {
   item: RecentlyAdded;
   width?: number | string;
   height?: number | string;
+  /** Overlay the item's on-disk size (series/seasons are rolled up from episodes by the sync task). */
+  showSize?: boolean;
 };
 
-export default function ItemCard({ item, width = 160, height = 240 }: Props) {
+export default function ItemCard({ item, width = 160, height = 240, showSize = false }: Props) {
   const router = useRouter();
   const { t, i18n } = useTranslation("common");
 
@@ -36,6 +39,7 @@ export default function ItemCard({ item, width = 160, height = 240 }: Props) {
     : "";
   const episodeCount = item.grouped?.length ?? 0;
   const episodesLabel = t("item.episodes", "{{episodeCount}} Episodes", { episodeCount });
+  const sizeLabel = showSize && item.size ? item.size.formatBytes() : null;
 
   return (
     <div
@@ -43,7 +47,7 @@ export default function ItemCard({ item, width = 160, height = 240 }: Props) {
       style={{ width }}
     >
       {/* Image Container */}
-      <div className="shrink-0 overflow-hidden bg-background/50" style={{ height }}>
+      <div className="relative shrink-0 overflow-hidden bg-background/50" style={{ height }}>
         <ItemImage
           imageUrl={imageUrl}
           imageHash={item.imageHash}
@@ -53,6 +57,17 @@ export default function ItemCard({ item, width = 160, height = 240 }: Props) {
           borderRadius={[16, 16, 0, 0]}
           onClick={() => router.push(`/libraries/items/${encodeURIComponent(item.id)}`)}
         />
+
+        {/* Size Badge (ported from v1's .size-tag) */}
+        {sizeLabel && (
+          <div
+            className="pointer-events-none absolute bottom-2 right-2 z-30 flex items-center gap-1 rounded-md border border-brand-purple/40 bg-black/70 px-1.5 py-0.5 shadow-lg backdrop-blur-md"
+            title={t("media_grid.sort_size", "Size")}
+          >
+            <HardDrive size={10} className="text-brand-purple" />
+            <span className="text-xs font-bold tabular-nums tracking-wide text-gray-100">{sizeLabel}</span>
+          </div>
+        )}
       </div>
 
       {/* Metadata Container */}
