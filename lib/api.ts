@@ -536,8 +536,27 @@ const uploadBackup = async (file: File) => {
   return apiFetch(`/Tasks/UploadBackup`, { method: "POST", body: formData }, null);
 };
 
-const downloadBackup = async (params: { FileName: string }): Promise<boolean> =>
-  apiFetch<boolean>(`/Tasks/DownloadBackup${await buildQuery(undefined, params as Record<string, any>)}`);
+// Fetches the backup as a binary blob and hands it to the browser as a file download.
+const downloadBackup = async (params: { FileName: string }): Promise<boolean> => {
+  const res = await apiFetchRaw(`/Tasks/DownloadBackup${await buildQuery(undefined, params as Record<string, any>)}`);
+  const blob = await res.blob();
+  if (typeof window === "undefined") return false;
+
+  const url = URL.createObjectURL(blob);
+  try {
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = params.FileName;
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } finally {
+    // Give the browser a moment to start the download before releasing the blob
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  return true;
+};
 
 const getGlobalTasks = async (): Promise<TaskSettings[]> => apiFetch<TaskSettings[]>(`/Tasks/GlobalTasks`);
 const stopRunningTask = async (params: { Task: TaskTypes; ServerId: string | null }) =>

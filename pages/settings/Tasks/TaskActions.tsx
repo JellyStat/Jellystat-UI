@@ -13,6 +13,7 @@ import { TaskQueueUpdate } from "@/lib/models/taskQueueUpdate";
 import TasksLogsPage from "./TaskLogs";
 import { getTaskBadge } from "./Tasks";
 import Tasks from "@/lib/models/enums/Tasks";
+import DropdownSelector from "@/components/Core/DropdownSelector";
 
 const taskOptionsBase = [{ value: 60 }, { value: 1440 }, { value: 720 }];
 
@@ -21,6 +22,7 @@ export default function TaskActionsPage() {
   const [tasks, setTasks] = useState<TaskSettings[]>([]);
   const [taskStatus, setTaskStatus] = useState<TaskQueueUpdate>({ enqueuedTasks: [], currentTask: null });
   const [loading, setLoading] = useState(true);
+  const [savingTask, setSavingTask] = useState<Tasks | null>(null);
 
   const eventTag = WebSocketMessageTypes.TaskUpdate.toString();
 
@@ -60,28 +62,64 @@ export default function TaskActionsPage() {
     };
   }, []);
 
-  async function toggleTaskEnabled(task: TaskSettings) {
-    const updatedTask = { ...task, enabled: !task.enabled };
-    setLoading(true);
-    await client.Tasks.updateTask(updatedTask)
-      .then((success) => {
-        if (success) {
-          setTasks((prevTasks) => prevTasks.map((t) => (t.task === updatedTask.task ? updatedTask : t)));
-          toast.success(
-            t("tasks.task_toggled", 'Task "{{taskName}}" {{action}}', {
-              taskName: updatedTask.task,
-              action: updatedTask.enabled ? "enabled" : "disabled",
-            }),
-          );
-        } else {
-          toast.error(t("tasks.update_failed", 'Failed to update task "{{taskName}}"', { taskName: updatedTask.task }));
-        }
-      })
-      .catch((error) => {
-        console.error("Failed to update task:", error);
+  // Persists a task's settings and updates local state; returns true on success
+  async function saveTask(updatedTask: TaskSettings, successMessage: string): Promise<boolean> {
+    setSavingTask(updatedTask.task);
+    try {
+      const success = await client.Tasks.updateTask(updatedTask);
+      if (!success) {
         toast.error(t("tasks.update_failed", 'Failed to update task "{{taskName}}"', { taskName: updatedTask.task }));
-      });
-    setLoading(false);
+        return false;
+      }
+      setTasks((prevTasks) => prevTasks.map((t) => (t.task === updatedTask.task ? updatedTask : t)));
+      toast.success(successMessage);
+      return true;
+    } catch (error: any) {
+      console.error("Failed to update task:", error);
+      toast.error(
+        `${t("tasks.update_failed", 'Failed to update task "{{taskName}}"', { taskName: updatedTask.task })}: ${error?.message ?? String(error)}`,
+      );
+      return false;
+    } finally {
+      setSavingTask(null);
+    }
+  }
+
+  function toggleTaskEnabled(task: TaskSettings) {
+    const updatedTask = { ...task, enabled: !task.enabled };
+    return saveTask(
+      updatedTask,
+      t("tasks.task_toggled", 'Task "{{taskName}}" {{action}}', {
+        taskName: updatedTask.task,
+        action: updatedTask.enabled ? t("tasks.enabled", "enabled") : t("tasks.disabled", "disabled"),
+      }),
+    );
+  }
+
+  function changeTaskInterval(task: TaskSettings, intervalMinutes: number) {
+    if (intervalMinutes === task.intervalMinutes) return;
+    const updatedTask = { ...task, intervalMinutes };
+    return saveTask(
+      updatedTask,
+      t("tasks.interval_updated", 'Task "{{taskName}}" now runs every {{interval}}', {
+        taskName: updatedTask.task,
+        interval: formatInterval(intervalMinutes),
+      }),
+    );
+  }
+
+  function formatInterval(minutes: number) {
+    if (minutes === 60) return t("tasks.interval_1_hour", "1 Hour");
+    if (minutes === 720) return t("tasks.interval_12_hours", "12 Hours");
+    if (minutes === 1440) return t("tasks.interval_1_day", "1 Day");
+    return `${minutes} ${t("tasks.minutes", "Minutes")}`;
+  }
+
+  // Preset intervals, plus the task's current value if it was set to something custom
+  function intervalOptionsFor(task: TaskSettings) {
+    const values = taskOptionsBase.map((o) => o.value);
+    if (task.intervalMinutes > 0 && !values.includes(task.intervalMinutes)) values.push(task.intervalMinutes);
+    return values.sort((a, b) => a - b).map((value) => ({ value }));
   }
 
   return (
@@ -138,17 +176,8 @@ export default function TaskActionsPage() {
                   const isRunning = taskStatus.currentTask?.task === taskSetting.task;
                   const isQueued = taskStatus.enqueuedTasks.some((t) => t.task === taskSetting.task);
 
-                  console.log(`${taskSetting.task} is currently ${isRunning ? "running" : isQueued ? "queued" : "idle"}`);
-
                   const interval = taskSetting.intervalMinutes || 0;
-
-                  const intervalLabel = (() => {
-                    const minutes = taskSetting.intervalMinutes || 0;
-                    if (minutes === 60) return t("tasks.interval_1_hour", "1 Hour");
-                    if (minutes === 1440) return t("tasks.interval_1_day", "1 Day");
-                    if (minutes === 720) return t("tasks.interval_12_hours", "12 Hours");
-                    return `${minutes} ${t("tasks.minutes", "Minutes")}`;
-                  })();
+                  const isSaving = savingTask === taskSetting.task;
 
                   const executeTask = async () => {
                     toast.loading(t("tasks.starting_task", "Starting {{taskName}}...", { taskName: taskSetting.task }), {
@@ -233,21 +262,25 @@ export default function TaskActionsPage() {
 
                       {/* Interval */}
                       <td className="p-3 sm:p-4">
-                        <div className="flex items-center text-sm text-gray-300 font-medium">
-                          {interval > 0 ? (
-                            <>
-                              <Clock size={14} className="mr-2 text-gray-500" />
-                              {intervalLabel}
-                            </>
-                          ) : null}
-                        </div>
+                        {interval > 0 ? (
+                          <DropdownSelector<number>
+                            data={intervalOptionsFor(taskSetting)}
+                            value={interval}
+                            labelFn={formatInterval}
+                            onChange={(value) => void changeTaskInterval(taskSetting, value)}
+                            disabled={isSaving || isRunning || isQueued}
+                            loading={isSaving}
+                            leftIcon={Clock}
+                            widthPx={140}
+                          />
+                        ) : null}
                       </td>
 
                       {/* Enabled Status */}
                       <td className="p-3 sm:p-4">
                         <button
-                          onClick={() => toggleTaskEnabled(taskSetting)}
-                          disabled={isRunning || isQueued || taskSetting.intervalMinutes <= 0}
+                          onClick={() => void toggleTaskEnabled(taskSetting)}
+                          disabled={isSaving || isRunning || isQueued || taskSetting.intervalMinutes <= 0}
                           title={t("tasks.toggle_task", '{{action}} task "{{taskName}}"', {
                             action: taskSetting.enabled ? t("common.disable", "Disable") : t("common.enable", "Enable"),
                             taskName: taskSetting.task,

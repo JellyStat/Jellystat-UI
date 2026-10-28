@@ -64,12 +64,16 @@ export default function BackupsPage() {
 
   const downloadBackup = async (backup: string) => {
     setLoading(true);
-    setError(null);
     try {
       await client.Tasks.downloadBackup({ FileName: backup });
     } catch (err: any) {
       console.error(err);
-      setError(err?.message ?? String(err));
+      toast.error(
+        t("settings.backup_download_failed", "Failed to download {{fileName}}: {{error}}", {
+          fileName: backup,
+          error: err?.message ?? String(err),
+        }),
+      );
     } finally {
       setLoading(false);
     }
