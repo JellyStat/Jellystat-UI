@@ -37,14 +37,14 @@ export default function ActivityMatchDialog({ open, onClose, activity, target, s
     <Dialog open={open} onClose={onClose} className="relative z-50 focus:outline-none">
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
 
-      <div className="fixed inset-0 flex items-center justify-center p-3 sm:p-6">
+      <div className="fixed inset-0 flex items-center justify-center p-2 sm:p-6">
         <DialogPanel
           transition
-          className="w-full max-w-6xl h-[85vh] flex flex-col gap-4 rounded-2xl border border-border bg-surface p-5 shadow-2xl shadow-black/40 duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
+          className="w-full max-w-6xl h-[92dvh] sm:h-[85vh] flex flex-col gap-3 sm:gap-4 rounded-2xl border border-border bg-surface p-4 sm:p-5 shadow-2xl shadow-black/40 duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
         >
           <div className="flex items-start justify-between gap-4">
             <div className="flex flex-col gap-2 min-w-0">
-              <DialogTitle as="h2" className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
+              <DialogTitle as="h2" className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-3">
                 <Film className="text-brand-cyan shrink-0" size={28} />
                 {t("settings.migration_search_title", "Search Activity Match")}
               </DialogTitle>
@@ -210,30 +210,32 @@ function MatchSearch({
         </div>
 
         {target === "item" && (
-          <div
-            role="group"
-            aria-label={t("settings.migration_type_label", "Item type")}
-            className="flex items-center p-1.5 bg-surface/60 border border-border rounded-2xl shadow-inner w-max"
-          >
-            {typeOptions.map((option) => {
-              const isActive = !parent && type === option.value;
-              return (
-                <button
-                  key={option.value}
-                  aria-pressed={isActive}
-                  onClick={() => {
-                    setType(option.value);
-                    setCrumbs([]);
-                    setSelected(null);
-                  }}
-                  className={`px-3.5 py-1.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
-                    isActive ? "bg-brand-cyan text-black" : "text-gray-400 hover:text-white hover:bg-surface-hover"
-                  }`}
-                >
-                  {option.label}
-                </button>
-              );
-            })}
+          <div className="flex overflow-x-auto custom-scrollbar">
+            <div
+              role="group"
+              aria-label={t("settings.migration_type_label", "Item type")}
+              className="flex items-center p-1.5 bg-surface/60 border border-border rounded-2xl shadow-inner w-max"
+            >
+              {typeOptions.map((option) => {
+                const isActive = !parent && type === option.value;
+                return (
+                  <button
+                    key={option.value}
+                    aria-pressed={isActive}
+                    onClick={() => {
+                      setType(option.value);
+                      setCrumbs([]);
+                      setSelected(null);
+                    }}
+                    className={`px-3.5 py-1.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
+                      isActive ? "bg-brand-cyan text-black" : "text-gray-400 hover:text-white hover:bg-surface-hover"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -285,37 +287,85 @@ function MatchSearch({
             <AlertCircle size={18} className="text-brand-rose shrink-0 mt-0.5" />
             <p className="text-sm text-brand-rose/90 font-medium">{error}</p>
           </div>
+        ) : loading ? (
+          <div className="p-8 text-center">
+            <Loader2 size={24} className="animate-spin text-brand-purple mx-auto mb-2" />
+            <span className="text-gray-500 text-sm font-medium">{t("common.loading", "Loading")}</span>
+          </div>
+        ) : results.length === 0 ? (
+          <div className="p-12 text-center text-gray-500">
+            <Search size={40} className="mx-auto mb-3 opacity-40" />
+            <span className="font-bold">{t("media_grid.no_results", "No results found")}</span>
+          </div>
         ) : (
-          <table className="w-full text-left border-collapse whitespace-nowrap">
-            <thead className="sticky top-0 z-10">
-              <tr className="bg-background border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
-                <th className="p-3 w-12">
-                  <span className="sr-only">{t("settings.migration_col_choose", "Choose")}</span>
-                </th>
-                <th className="p-3 w-28">{t("settings.migration_col_episode", "Episode")}</th>
-                <th className="p-3">{t("settings.migration_col_name", "Name")}</th>
-                <th className="p-3">{t("settings.migration_col_series", "Series")}</th>
-                <th className="p-3">{t("settings.migration_col_type", "Type")}</th>
-                <th className="p-3">{t("settings.migration_col_library", "Library")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="p-8 text-center">
-                    <Loader2 size={24} className="animate-spin text-brand-purple mx-auto mb-2" />
-                    <span className="text-gray-500 text-sm font-medium">{t("common.loading", "Loading")}</span>
-                  </td>
+          <>
+            {/* Phones: list */}
+            <ul className="md:hidden divide-y divide-border">
+              {results.map((item) => {
+                const container = isContainer(item);
+                const isChosen = selected?.id === item.id;
+                const code = episodeCode(item);
+                const meta = [item.parent?.name, item.type, item.library?.name].filter(Boolean).join(" · ");
+                const content = (
+                  <>
+                    {code && (
+                      <span className="shrink-0 font-mono text-xs font-bold text-gray-300 bg-surface-hover border border-border rounded-md px-1.5 py-0.5">
+                        {code}
+                      </span>
+                    )}
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-sm font-bold text-gray-200 break-words">{item.name}</span>
+                      <span className="block text-xs text-gray-400 truncate">{meta}</span>
+                    </span>
+                  </>
+                );
+                return (
+                  <li key={`${item.serverId || ""}-${item.id}`}>
+                    {container ? (
+                      <button
+                        onClick={() => openContainer(item)}
+                        className="w-full flex items-center gap-3 p-3 text-left hover:bg-surface-hover transition-colors cursor-pointer"
+                      >
+                        {content}
+                        <ChevronRight size={16} className="text-gray-500 shrink-0" aria-hidden="true" />
+                      </button>
+                    ) : (
+                      <label
+                        className={`flex items-center gap-3 p-3 cursor-pointer transition-colors hover:bg-surface-hover ${
+                          isChosen ? "bg-brand-cyan/10 shadow-[inset_3px_0_0_var(--color-brand-cyan)]" : ""
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="match-mobile"
+                          checked={isChosen}
+                          onChange={() => setSelected(item)}
+                          className="w-4 h-4 accent-brand-cyan cursor-pointer shrink-0"
+                        />
+                        {content}
+                      </label>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+
+            {/* Tablet and up: table */}
+            <table className="hidden md:table w-full text-left border-collapse whitespace-nowrap">
+              <thead className="sticky top-0 z-10">
+                <tr className="bg-background border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
+                  <th className="p-3 w-12">
+                    <span className="sr-only">{t("settings.migration_col_choose", "Choose")}</span>
+                  </th>
+                  <th className="p-3 w-28">{t("settings.migration_col_episode", "Episode")}</th>
+                  <th className="p-3">{t("settings.migration_col_name", "Name")}</th>
+                  <th className="p-3">{t("settings.migration_col_series", "Series")}</th>
+                  <th className="p-3">{t("settings.migration_col_type", "Type")}</th>
+                  <th className="p-3">{t("settings.migration_col_library", "Library")}</th>
                 </tr>
-              ) : results.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="p-12 text-center text-gray-500">
-                    <Search size={40} className="mx-auto mb-3 opacity-40" />
-                    <span className="font-bold">{t("media_grid.no_results", "No results found")}</span>
-                  </td>
-                </tr>
-              ) : (
-                results.map((item) => {
+              </thead>
+              <tbody>
+                {results.map((item) => {
                   const container = isContainer(item);
                   const isChosen = selected?.id === item.id;
                   const code = episodeCode(item);
@@ -370,16 +420,16 @@ function MatchSearch({
                       <td className="p-3 text-sm text-gray-400">{item.library?.name ?? "-"}</td>
                     </tr>
                   );
-                })
-              )}
-            </tbody>
-          </table>
+                })}
+              </tbody>
+            </table>
+          </>
         )}
       </div>
 
       {/* Footer */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <span className="text-sm text-gray-400 min-w-0 truncate">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+        <span className="text-sm text-gray-400 min-w-0 sm:truncate">
           {selected ? (
             <>
               {t("settings.migration_link_to", "Link to")}{" "}
@@ -391,17 +441,17 @@ function MatchSearch({
             t("settings.migration_choose_item_hint", "Open a series to browse its seasons, or choose an item.")
           )}
         </span>
-        <div className="flex gap-4">
+        <div className="flex gap-3 sm:gap-4">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-background border border-border text-gray-200 hover:text-white hover:border-gray-500 transition-all cursor-pointer"
+            className="flex-1 sm:flex-none px-4 py-2 rounded-lg bg-background border border-border text-gray-200 hover:text-white hover:border-gray-500 transition-all cursor-pointer"
           >
             {t("common.close", "Close")}
           </button>
           <button
             onClick={() => selected && onLink(selected)}
             disabled={!selected}
-            className="px-4 py-2 rounded-lg bg-brand-cyan text-black font-bold hover:bg-brand-cyan/90 transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+            className="flex-1 sm:flex-none px-4 py-2 rounded-lg bg-brand-cyan text-black font-bold hover:bg-brand-cyan/90 transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
           >
             {t("settings.migration_link_item", "Link Item")}
           </button>

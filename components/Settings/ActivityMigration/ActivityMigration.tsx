@@ -20,6 +20,8 @@ import { episodeCode, groupActivity, MigrationGroup } from "./helpers";
 
 const RECORDS_PER_PAGE = 20;
 
+type SeriesGroup = Extract<MigrationGroup, { kind: "series" }>;
+
 type DialogContext = { activity: Activity; target: MatchTarget; groupChildren?: Activity[] };
 
 /** Code pill + name + library, used in the dropdowns and their closed state. */
@@ -368,23 +370,127 @@ export default function ActivityMigrationPage() {
 
   const checkboxClass = "w-4 h-4 accent-brand-cyan cursor-pointer";
 
-  function renderItemRow(activity: Activity, indent: boolean) {
-    const migration = migrationFor(activity);
+  // --- SHARED CELLS (used by both the desktop table and the mobile cards) ---
+  function rowCheckbox(activity: Activity) {
     const selectedRow = isSelected(activity);
+    return (
+      <input
+        type="checkbox"
+        className={checkboxClass}
+        checked={selectedRow}
+        onChange={() => toggle([activity], !selectedRow)}
+        aria-label={t("settings.migration_select_row", "Select {{name}}", { name: activity.name })}
+      />
+    );
+  }
+
+  function groupCheckbox(group: SeriesGroup) {
+    const allSelected = group.children.every(isSelected);
+    return (
+      <input
+        type="checkbox"
+        className={checkboxClass}
+        checked={allSelected}
+        onChange={() => toggle(group.children, !allSelected)}
+        aria-label={t("settings.migration_select_series_all", "Select all of {{name}}", { name: group.seriesName })}
+      />
+    );
+  }
+
+  function itemSelect(activity: Activity) {
+    const migration = migrationFor(activity);
+    return (
+      <SelectAsync<ItemsWithParentData>
+        ariaLabel={t("settings.migration_link_item_for", "Linked item for {{name}}", { name: activity.name })}
+        cacheKey={migration.seriesItem?.id ?? "none"}
+        disabled={migration.isEpisode && !migration.seriesItem}
+        disabledText={t("settings.migration_pick_series_first", "Pick the series first")}
+        variant={migration.item ? "default" : "missing"}
+        fetchMethod={() => fetchMatchingItems(activity, migration.seriesItem)}
+        onSelect={(item) => item && setItem(activity, item)}
+        idPredicate={(it) => it.id}
+        namePredicate={(it) => it.name}
+        placeholder={t("settings.migration_select_item", "Select an item")}
+        value={migration.item ? new DefaultSelectedItem(migration.item.id, migration.item.name) : null}
+        valueContent={migration.item ? <ItemLabel item={migration.item} /> : undefined}
+        renderOption={(it) => <ItemLabel item={it} />}
+        header={
+          migration.seriesItem
+            ? t("settings.migration_episodes_in", "Episodes in {{name}}", { name: migration.seriesItem.name })
+            : undefined
+        }
+        footer={searchAllFooter(activity, "item")}
+      />
+    );
+  }
+
+  function seriesSelect(group: SeriesGroup, seriesItem: ItemsWithParentData | null) {
+    return (
+      <SelectAsync<ItemsWithParentData>
+        ariaLabel={t("settings.migration_link_series_for", "Linked series for {{name}}", { name: group.seriesName })}
+        variant={seriesItem ? "default" : "missing"}
+        fetchMethod={() => fetchMatchingSeries(group.seriesName)}
+        onSelect={(item) => item && setSeries(group.children, item)}
+        idPredicate={(it) => it.id}
+        namePredicate={(it) => it.name}
+        placeholder={t("settings.migration_select_series", "Select a series")}
+        value={seriesItem ? new DefaultSelectedItem(seriesItem.id, seriesItem.name) : null}
+        valueContent={seriesItem ? <ItemLabel item={seriesItem} /> : undefined}
+        renderOption={(it) => <ItemLabel item={it} />}
+        footer={searchAllFooter(group.children[0], "series", group.children)}
+      />
+    );
+  }
+
+  function itemStatus(activity: Activity) {
+    const migration = migrationFor(activity);
+    return (
+      <>
+        <MigrationStatusBadge status={migration.status} error={migration.errorMessage} />
+        {migration.errorMessage && (
+          <p className="mt-1 text-xs text-rose-400 max-w-40 whitespace-normal">{migration.errorMessage}</p>
+        )}
+      </>
+    );
+  }
+
+  function seriesInfo(group: SeriesGroup) {
+    const isOpen = !collapsed[group.key];
+    const candidates = seriesCandidates[group.seriesName] ?? 0;
+    return (
+      <div className="flex items-center gap-2 min-w-0">
+        <button
+          onClick={() => setCollapsed((prev) => ({ ...prev, [group.key]: isOpen }))}
+          aria-expanded={isOpen}
+          aria-label={t("settings.migration_toggle_series", "Show episodes of {{name}}", { name: group.seriesName })}
+          className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-surface-hover transition-colors cursor-pointer shrink-0"
+        >
+          <ChevronRight size={16} className={`transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`} />
+        </button>
+        <Tv size={18} className="text-brand-purple shrink-0" />
+        <div className="min-w-0">
+          <div className="text-[15px] font-black text-white tracking-tight truncate">{group.seriesName}</div>
+          <div className="text-xs font-medium text-gray-500">
+            {t("settings.migration_unlinked_count", "{{count}} unlinked", { count: group.children.length })}
+            {candidates > 1 &&
+              ` · ${t("settings.migration_series_candidates", "{{count}} series match this name", { count: candidates })}`}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const groupSeriesItem = (group: SeriesGroup) =>
+    group.children.map((c) => migrationFor(c).seriesItem).find((s) => s != null) ?? null;
+
+  // --- DESKTOP TABLE ROWS ---
+  function renderItemRow(activity: Activity, indent: boolean) {
     return (
       <tr
         key={activity.id}
-        className={`border-b border-border transition-colors hover:bg-surface-hover ${selectedRow ? "bg-brand-cyan/5" : ""}`}
+        className={`border-b border-border transition-colors hover:bg-surface-hover ${isSelected(activity) ? "bg-brand-cyan/5" : ""}`}
       >
-        <td className="p-3 text-center">
-          <input
-            type="checkbox"
-            className={checkboxClass}
-            checked={selectedRow}
-            onChange={() => toggle([activity], !selectedRow)}
-            aria-label={t("settings.migration_select_row", "Select {{name}}", { name: activity.name })}
-          />
-        </td>
+        <td className="p-3 text-center">{rowCheckbox(activity)}</td>
         <td className={`p-3 ${indent ? "pl-16" : ""}`}>
           <div className="flex items-center gap-2 min-w-0">
             {!indent && <Film size={18} className="text-brand-cyan shrink-0 ml-9" />}
@@ -394,35 +500,8 @@ export default function ActivityMigrationPage() {
         <td className="text-gray-600" aria-hidden="true">
           <ArrowRight size={16} className="mx-auto" />
         </td>
-        <td className="p-2 px-3">
-          <SelectAsync<ItemsWithParentData>
-            ariaLabel={t("settings.migration_link_item_for", "Linked item for {{name}}", { name: activity.name })}
-            cacheKey={migration.seriesItem?.id ?? "none"}
-            disabled={migration.isEpisode && !migration.seriesItem}
-            disabledText={t("settings.migration_pick_series_first", "Pick the series first")}
-            variant={migration.item ? "default" : "missing"}
-            fetchMethod={() => fetchMatchingItems(activity, migration.seriesItem)}
-            onSelect={(item) => item && setItem(activity, item)}
-            idPredicate={(it) => it.id}
-            namePredicate={(it) => it.name}
-            placeholder={t("settings.migration_select_item", "Select an item")}
-            value={migration.item ? new DefaultSelectedItem(migration.item.id, migration.item.name) : null}
-            valueContent={migration.item ? <ItemLabel item={migration.item} /> : undefined}
-            renderOption={(it) => <ItemLabel item={it} />}
-            header={
-              migration.seriesItem
-                ? t("settings.migration_episodes_in", "Episodes in {{name}}", { name: migration.seriesItem.name })
-                : undefined
-            }
-            footer={searchAllFooter(activity, "item")}
-          />
-        </td>
-        <td className="p-3">
-          <MigrationStatusBadge status={migration.status} error={migration.errorMessage} />
-          {migration.errorMessage && (
-            <p className="mt-1 text-xs text-rose-400 max-w-40 whitespace-normal">{migration.errorMessage}</p>
-          )}
-        </td>
+        <td className="p-2 px-3">{itemSelect(activity)}</td>
+        <td className="p-3">{itemStatus(activity)}</td>
         <td className="p-3">
           <div className="flex justify-end">{searchButton(activity, "item")}</div>
         </td>
@@ -430,77 +509,87 @@ export default function ActivityMigrationPage() {
     );
   }
 
-  function renderSeriesGroup(group: Extract<MigrationGroup, { kind: "series" }>) {
-    const first = group.children[0];
-    const seriesItem = group.children.map((c) => migrationFor(c).seriesItem).find((s) => s != null) ?? null;
-    const isOpen = !collapsed[group.key];
-    const allSelected = group.children.every(isSelected);
-    const candidates = seriesCandidates[group.seriesName] ?? 0;
-
+  function renderSeriesGroup(group: SeriesGroup) {
+    const seriesItem = groupSeriesItem(group);
     return (
       <tbody key={group.key}>
         <tr className="border-b border-border bg-surface-hover/35 hover:bg-surface-hover transition-colors">
-          <td className="p-3 text-center">
-            <input
-              type="checkbox"
-              className={checkboxClass}
-              checked={allSelected}
-              onChange={() => toggle(group.children, !allSelected)}
-              aria-label={t("settings.migration_select_series_all", "Select all of {{name}}", { name: group.seriesName })}
-            />
-          </td>
-          <td className="p-3">
-            <div className="flex items-center gap-2 min-w-0">
-              <button
-                onClick={() => setCollapsed((prev) => ({ ...prev, [group.key]: isOpen }))}
-                aria-expanded={isOpen}
-                aria-label={t("settings.migration_toggle_series", "Show episodes of {{name}}", { name: group.seriesName })}
-                className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-surface-hover transition-colors cursor-pointer"
-              >
-                <ChevronRight size={16} className={`transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`} />
-              </button>
-              <Tv size={18} className="text-brand-purple shrink-0" />
-              <div className="min-w-0">
-                <div className="text-[15px] font-black text-white tracking-tight truncate">{group.seriesName}</div>
-                <div className="text-xs font-medium text-gray-500">
-                  {t("settings.migration_unlinked_count", "{{count}} unlinked", { count: group.children.length })}
-                  {candidates > 1 &&
-                    ` · ${t("settings.migration_series_candidates", "{{count}} series match this name", { count: candidates })}`}
-                </div>
-              </div>
-            </div>
-          </td>
+          <td className="p-3 text-center">{groupCheckbox(group)}</td>
+          <td className="p-3">{seriesInfo(group)}</td>
           <td className="text-gray-600" aria-hidden="true">
             <ArrowRight size={16} className="mx-auto" />
           </td>
-          <td className="p-2 px-3">
-            <SelectAsync<ItemsWithParentData>
-              ariaLabel={t("settings.migration_link_series_for", "Linked series for {{name}}", { name: group.seriesName })}
-              variant={seriesItem ? "default" : "missing"}
-              fetchMethod={() => fetchMatchingSeries(group.seriesName)}
-              onSelect={(item) => item && setSeries(group.children, item)}
-              idPredicate={(it) => it.id}
-              namePredicate={(it) => it.name}
-              placeholder={t("settings.migration_select_series", "Select a series")}
-              value={seriesItem ? new DefaultSelectedItem(seriesItem.id, seriesItem.name) : null}
-              valueContent={seriesItem ? <ItemLabel item={seriesItem} /> : undefined}
-              renderOption={(it) => <ItemLabel item={it} />}
-              footer={searchAllFooter(first, "series", group.children)}
-            />
-          </td>
+          <td className="p-2 px-3">{seriesSelect(group, seriesItem)}</td>
           <td className="p-3">
             <MigrationStatusBadge status={seriesItem ? "ready" : "notLinked"} />
           </td>
           <td className="p-3">
-            <div className="flex justify-end">{searchButton(first, "series", group.children)}</div>
+            <div className="flex justify-end">{searchButton(group.children[0], "series", group.children)}</div>
           </td>
         </tr>
-        {isOpen && group.children.map((child) => renderItemRow(child, true))}
+        {!collapsed[group.key] && group.children.map((child) => renderItemRow(child, true))}
       </tbody>
     );
   }
 
+  // --- MOBILE CARDS ---
+  function renderItemCard(activity: Activity, nested: boolean) {
+    return (
+      <div
+        key={activity.id}
+        className={`flex flex-col gap-3 ${nested ? "py-3 pl-3 border-l-2 border-border" : "p-4"} ${isSelected(activity) ? "bg-brand-cyan/5" : ""}`}
+      >
+        <div className="flex items-start gap-3">
+          <div className="pt-0.5">{rowCheckbox(activity)}</div>
+          {!nested && <Film size={18} className="text-brand-cyan shrink-0 mt-0.5" />}
+          <span className="flex-1 min-w-0 text-sm font-bold text-gray-200 break-words">{activity.name}</span>
+          <div className="shrink-0 text-right">{itemStatus(activity)}</div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex-1 min-w-0">{itemSelect(activity)}</div>
+          {searchButton(activity, "item")}
+        </div>
+      </div>
+    );
+  }
+
+  function renderSeriesCard(group: SeriesGroup) {
+    const seriesItem = groupSeriesItem(group);
+    return (
+      <div key={group.key} className="p-4 flex flex-col gap-3 bg-surface-hover/35">
+        <div className="flex items-start gap-3">
+          <div className="pt-1.5">{groupCheckbox(group)}</div>
+          <div className="flex-1 min-w-0">{seriesInfo(group)}</div>
+          <div className="shrink-0 pt-1">
+            <MigrationStatusBadge status={seriesItem ? "ready" : "notLinked"} />
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex-1 min-w-0">{seriesSelect(group, seriesItem)}</div>
+          {searchButton(group.children[0], "series", group.children)}
+        </div>
+        {!collapsed[group.key] && (
+          <div className="flex flex-col gap-1 ml-2">{group.children.map((child) => renderItemCard(child, true))}</div>
+        )}
+      </div>
+    );
+  }
+
   const hasFilters = !!search || typeFilter !== "all" || statusFilter !== "all";
+
+  const emptyState = (
+    <div className="p-10 sm:p-16 text-center text-gray-500">
+      <ArrowLeftRight size={48} className="mx-auto mb-4 opacity-20" />
+      <span className="font-medium text-lg">
+        {hasFilters
+          ? t("settings.migration_no_results", "Nothing matches these filters")
+          : t("settings.migration_empty_title", "No unlinked activity found")}
+      </span>
+      {!hasFilters && (
+        <p className="text-sm mt-1">{t("settings.migration_empty_desc", "All your watch history is successfully mapped.")}</p>
+      )}
+    </div>
+  );
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 py-4 sm:p-6">
@@ -511,7 +600,7 @@ export default function ActivityMigrationPage() {
             <ArrowLeftRight size={28} className="text-brand-purple" />
           </div>
           <div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                 {t("settings.migration_title", "Activity Migration")}
               </h1>
@@ -588,8 +677,31 @@ export default function ActivityMigrationPage() {
           </div>
         )}
 
-        <div className="overflow-x-auto custom-scrollbar flex-1">
-          <table className="w-full min-w-[980px] text-left border-collapse table-fixed">
+        {/* Mobile: cards */}
+        <div className="md:hidden flex-1 flex flex-col">
+          {groups.length > 0 && (
+            <label className="flex items-center gap-3 px-4 py-3 bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none cursor-pointer">
+              <input
+                type="checkbox"
+                className={checkboxClass}
+                checked={pageAllSelected}
+                onChange={() => toggle(activityData, !pageAllSelected)}
+              />
+              {t("settings.migration_select_page", "Select all on this page")}
+            </label>
+          )}
+          {!loading && groups.length === 0 ? (
+            emptyState
+          ) : (
+            <div className="divide-y divide-border">
+              {groups.map((group) => (group.kind === "series" ? renderSeriesCard(group) : renderItemCard(group.activity, false)))}
+            </div>
+          )}
+        </div>
+
+        {/* Desktop: table */}
+        <div className="hidden md:block overflow-x-auto custom-scrollbar flex-1">
+          <table className="w-full min-w-[900px] text-left border-collapse table-fixed">
             <colgroup>
               <col className="w-12" />
               <col />
@@ -622,19 +734,7 @@ export default function ActivityMigrationPage() {
             {!loading && groups.length === 0 ? (
               <tbody>
                 <tr>
-                  <td colSpan={6} className="p-16 text-center text-gray-500">
-                    <ArrowLeftRight size={48} className="mx-auto mb-4 opacity-20" />
-                    <span className="font-medium text-lg">
-                      {hasFilters
-                        ? t("settings.migration_no_results", "Nothing matches these filters")
-                        : t("settings.migration_empty_title", "No unlinked activity found")}
-                    </span>
-                    {!hasFilters && (
-                      <p className="text-sm mt-1">
-                        {t("settings.migration_empty_desc", "All your watch history is successfully mapped.")}
-                      </p>
-                    )}
-                  </td>
+                  <td colSpan={6}>{emptyState}</td>
                 </tr>
               </tbody>
             ) : (
