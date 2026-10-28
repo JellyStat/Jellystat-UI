@@ -7,9 +7,9 @@ import SystemState from "@/lib/models/enums/systemState";
 import client from "@/lib/api";
 import { processServerId, setToken } from "@/lib/helpers/tokenHelper";
 
-import CreateUserPage from "./createUser";
-import CreateServerPage from "./createServerInstance";
-import SetupCompletePage from "./setupComplete";
+import CreateUserPage from "@/components/Setup/CreateUser";
+import CreateServerPage from "@/components/Setup/CreateServerInstance";
+import SetupCompletePage from "@/components/Setup/SetupComplete";
 
 export default function SetupPage() {
   const { t } = useTranslation("common");

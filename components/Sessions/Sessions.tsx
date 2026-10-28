@@ -22,13 +22,9 @@ export default function Sessions() {
         return;
       }
 
-      if (Array.isArray(payload)) {
-        const sorted = payload.sort((a, b) => a.userName!.localeCompare(b.userName!));
-        setSessions(sorted);
-      } else {
-        const sorted = [payload as SessionItem, ...sessions].sort((a, b) => a.userName!.localeCompare(b.userName!));
-        setSessions(sorted);
-      }
+      // The server sends the full current session list; a single object means it's the only active session
+      const list = Array.isArray(payload) ? payload : [payload as SessionItem];
+      setSessions([...list].sort((a, b) => (a.userName ?? "").localeCompare(b.userName ?? "")));
     };
 
     wsClient.on(eventTag, handler);

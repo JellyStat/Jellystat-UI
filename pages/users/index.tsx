@@ -11,6 +11,7 @@ import { TrackedUsers } from "@/lib/models/trackedUsers";
 import useFilters from "@/components/DataTableFilters/useFilters";
 import TextFilter from "@/components/DataTableFilters/TextFilter";
 import BooleanFilter from "@/components/DataTableFilters/BooleanFilter";
+import FilterItem from "@/components/DataTableFilters/FilterItem";
 
 interface SortStatus {
   columnAccessor: string;
@@ -72,6 +73,13 @@ export default function UsersPage() {
   }, [fetchPage, page]);
 
   // --- HANDLERS ---
+  // Changing a filter can shrink the result set, so always go back to the first page
+  const applyFilter = (key: string, value: FilterItem | null) => {
+    if (value) addOrReplaceFilter(value);
+    else removeFilter(key);
+    setPage(1);
+  };
+
   const handleSort = (accessor: string) => {
     setSortStatus((prev) => ({
       columnAccessor: accessor,
@@ -90,7 +98,11 @@ export default function UsersPage() {
 
     try {
       await client.Api.trackedUsers.post([targetUser]);
-      toast.success(`Tracking ${tracked ? "enabled" : "disabled"} for ${targetUser.username}`);
+      toast.success(
+        tracked
+          ? t("users.tracking_enabled", "Tracking enabled for {{username}}", { username: targetUser.username })
+          : t("users.tracking_disabled", "Tracking disabled for {{username}}", { username: targetUser.username }),
+      );
     } catch (err: any) {
       // Revert optimistic update on failure
       setUserData((prev) =>
@@ -99,7 +111,7 @@ export default function UsersPage() {
           return u;
         }),
       );
-      toast.error(`Failed to update tracking: ${err?.message ?? String(err)}`);
+      toast.error(t("users.tracking_failed", "Failed to update tracking: {{error}}", { error: err?.message ?? String(err) }));
     }
   };
 
@@ -209,7 +221,7 @@ export default function UsersPage() {
             <TextFilter
               keyName="userName"
               value={getFilterValueOrDefault("userName", "") as string}
-              onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("userName"))}
+              onChange={(val) => applyFilter("userName", val)}
             />
           </div>
           <div className="md:hidden flex-1 divide-y divide-border">
@@ -295,7 +307,7 @@ export default function UsersPage() {
                     <TextFilter
                       keyName="userName"
                       value={getFilterValueOrDefault("userName", "") as string}
-                      onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("userName"))}
+                      onChange={(val) => applyFilter("userName", val)}
                     />
                   </th>
                   <th className="p-2 border-r border-border/50 font-normal">
@@ -303,7 +315,7 @@ export default function UsersPage() {
                       keyName="tracked"
                       label=""
                       value={getFilterValueOrDefault("tracked", null) as boolean | null}
-                      onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("tracked"))}
+                      onChange={(val) => applyFilter("tracked", val)}
                     />
                   </th>
                   <th colSpan={5} className="p-2"></th>
@@ -372,7 +384,7 @@ export default function UsersPage() {
             </span>
             <div className="flex items-center gap-4 ml-auto">
               <span className="text-xs font-mono text-gray-400 whitespace-nowrap">
-                Page {page} of {totalPages}
+                {t("common.page_of", "Page {{page}} of {{total}}", { page, total: totalPages })}
               </span>
               <div className="flex gap-2">
                 <button

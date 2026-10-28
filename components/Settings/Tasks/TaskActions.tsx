@@ -150,11 +150,11 @@ export default function TaskActionsPage() {
             <thead>
               <tr className="bg-background/80 border-b border-border text-xs font-bold text-gray-500 uppercase tracking-wider">
                 <th className="hidden sm:table-cell p-3 w-12"></th>
-                <th className="p-3 sm:p-4 w-1/5">Task</th>
-                <th className="p-3 sm:p-4 w-1/5">Interval</th>
-                <th className="p-3 sm:p-4 w-1/5">Enabled</th>
-                <th className="hidden sm:table-cell p-4 w-1/5">Status</th>
-                <th className="p-3 sm:p-4 pr-4 sm:pr-6 text-right w-1/6">Actions</th>
+                <th className="p-3 sm:p-4 w-1/5">{t("tasks.col_task", "Task")}</th>
+                <th className="p-3 sm:p-4 w-1/5">{t("tasks.col_interval", "Interval")}</th>
+                <th className="p-3 sm:p-4 w-1/5">{t("tasks.col_enabled", "Enabled")}</th>
+                <th className="hidden sm:table-cell p-4 w-1/5">{t("tasks.col_status", "Status")}</th>
+                <th className="p-3 sm:p-4 pr-4 sm:pr-6 text-right w-1/6">{t("tasks.col_actions", "Actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -289,11 +289,11 @@ export default function TaskActionsPage() {
                         >
                           {taskSetting.enabled ? (
                             <div className="flex items-center text-xs font-bold text-emerald-400">
-                              <CheckCircle2 size={14} className="mr-1.5" /> Yes
+                              <CheckCircle2 size={14} className="mr-1.5" /> {t("common.yes", "Yes")}
                             </div>
                           ) : (
                             <div className="flex items-center text-xs font-bold text-gray-500">
-                              <CircleDashed size={14} className="mr-1.5" /> No
+                              <CircleDashed size={14} className="mr-1.5" /> {t("common.no", "No")}
                             </div>
                           )}
                         </button>

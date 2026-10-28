@@ -23,11 +23,14 @@ export default function ItemOptions({ item }: Props) {
         window.location.href = `/libraries/${item.libraryId}`;
       });
     } catch (error: any) {
-      const status = error?.status ?? "Unknown error";
-      if (status == 404) {
-        toast.error("Item is not archived");
+      if (error?.status == 404) {
+        toast.error(t("item.not_archived", "Item is not archived"));
       } else {
-        toast.error(status);
+        toast.error(
+          t("library.delete_archived_failed", "Delete failed: {{error}}", {
+            error: error?.message || error?.statusText || String(error),
+          }),
+        );
       }
     } finally {
       setLoading(false);

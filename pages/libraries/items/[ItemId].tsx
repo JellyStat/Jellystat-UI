@@ -23,13 +23,13 @@ import ItemTypes from "@/lib/models/enums/ItemTypes";
 import permissionsManager from "@/lib/permissionsManager";
 import Permissions from "@/lib/models/enums/Permissions";
 
-import ItemOverview from "./overview";
-import ItemActivity from "./activity";
-import ItemMedia from "./media";
+import ItemOverview from "@/components/ItemPage/ItemOverviewTab";
+import ItemActivity from "@/components/ItemPage/ItemActivityTab";
+import ItemMedia from "@/components/ItemPage/ItemMediaTab";
 import NotFound from "@/components/ErrorCards/NotFound";
 import ItemImage from "@/components/ItemImage/ItemImage";
 import Link from "next/link";
-import ItemOptions from "./options";
+import ItemOptions from "@/components/ItemPage/ItemOptionsTab";
 
 export default function ItemPage() {
   const router = useRouter();

@@ -9,11 +9,11 @@ import client from "@/lib/api";
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
 
-import LibraryOverView from "./overview";
-import LibraryMedia from "./media";
-import LibraryActivity from "./activity";
+import LibraryOverView from "@/components/LibraryPage/LibraryOverviewTab";
+import LibraryMedia from "@/components/LibraryPage/LibraryMediaTab";
+import LibraryActivity from "@/components/LibraryPage/LibraryActivityTab";
 import NotFound from "@/components/ErrorCards/NotFound";
-import LibraryOptions from "./options";
+import LibraryOptions from "@/components/LibraryPage/LibraryOptionsTab";
 import permissionsManager from "@/lib/permissionsManager";
 import Permissions from "@/lib/models/enums/Permissions";
 

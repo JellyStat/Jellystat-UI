@@ -9,11 +9,11 @@ import client, { API_BASE } from "@/lib/api";
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
 
-import UserOverView from "./overview";
+import UserOverView from "@/components/UserPage/UserOverviewTab";
 import { Users } from "@/lib/models/users";
 import NotFound from "@/components/ErrorCards/NotFound";
-import UserActivity from "./activity";
-import UserTimeline from "./timeline";
+import UserActivity from "@/components/UserPage/UserActivityTab";
+import UserTimeline from "@/components/UserPage/UserTimelineTab";
 
 export default function LibraryPage() {
   const router = useRouter();

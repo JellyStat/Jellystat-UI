@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { ArrowLeftRight, Trash2, Save, Loader2, AlertCircle, CheckSquare, Square, Search, Film } from "lucide-react";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
+import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
 
 import client from "@/lib/api";
 import Activity from "@/lib/models/activity";
@@ -104,8 +106,11 @@ export default function ActivityMigrationPage() {
       setPageCount(1);
       setPage(1);
       await fetchPage(1, true);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      toast.error(
+        t("settings.migration_apply_failed", "Failed to apply migrations: {{error}}", { error: err?.message ?? String(err) }),
+      );
     } finally {
       setMigrationLoading(false);
     }
@@ -118,13 +123,19 @@ export default function ActivityMigrationPage() {
     const serverId = selected[0]?.serverId;
     try {
       await client.History.activity.delete(serverId, activityIds);
+      toast.success(
+        t("settings.migration_deleted", "Deleted {{count}} activity records", { count: activityIds.length }),
+      );
       setSelected([]);
       setActivityData([]);
       setPageCount(1);
       setPage(1);
       await fetchPage(1, true);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      toast.error(
+        t("settings.migration_delete_failed", "Failed to delete activity: {{error}}", { error: err?.message ?? String(err) }),
+      );
     } finally {
       setDeleteLoading(false);
     }
@@ -292,14 +303,26 @@ export default function ActivityMigrationPage() {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <button
-            onClick={deleteActivity}
+          <ConfirmationDialogButton
+            buttonElement={
+              <>
+                {deleteLoading ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                {t("common.delete", "Delete")} {selected.length > 0 && `(${selected.length})`}
+              </>
+            }
+            dialogTitle={t("settings.migration_confirm_delete_title", "Delete selected activity?")}
+            description={t(
+              "settings.migration_confirm_delete_desc",
+              "This permanently deletes {{count}} unlinked activity records. They can't be migrated afterwards.",
+              { count: selected.length },
+            )}
+            confirmText={t("common.delete", "Delete")}
+            cancelText={t("common.cancel", "Cancel")}
+            actionColor="bg-brand-rose"
             disabled={selected.length === 0 || deleteLoading}
+            onConfirm={deleteActivity}
             className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-brand-rose/10 hover:bg-brand-rose text-brand-rose hover:text-white border border-brand-rose/20 hover:border-brand-rose py-2 px-4 rounded-xl font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-inner"
-          >
-            {deleteLoading ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-            {t("common.delete", "Delete")} {selected.length > 0 && `(${selected.length})`}
-          </button>
+          />
 
           <button
             onClick={applyMigrations}

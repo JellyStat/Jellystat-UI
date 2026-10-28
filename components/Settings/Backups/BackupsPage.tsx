@@ -25,8 +25,15 @@ export default function BackupsPage() {
     try {
       await client.Api.deleteBackups({ FileName: backupToDelete });
       setBackups((prev) => prev.filter((b) => b.fileName !== backupToDelete));
-    } catch (err) {
+      toast.success(t("settings.backup_deleted", "Deleted {{fileName}}", { fileName: backupToDelete }));
+    } catch (err: any) {
       console.error(err);
+      toast.error(
+        t("settings.backup_delete_failed", "Failed to delete {{fileName}}: {{error}}", {
+          fileName: backupToDelete,
+          error: err?.message ?? String(err),
+        }),
+      );
     } finally {
       setLoading(false);
       setBackupToDelete(null);
@@ -124,14 +131,21 @@ export default function BackupsPage() {
 
   const renderActions = (backup: BackupModel) => (
     <>
-      <button
-        onClick={() => restoreBackup(backup.fileName)}
-        title={t("common.restore", "Restore backup")}
-        className="p-2 rounded-lg bg-background hover:bg-brand-cyan/20 text-gray-400 hover:text-brand-cyan border border-border hover:border-brand-cyan/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer"
+      <ConfirmationDialogButton
+        buttonElement={<Clock size={16} />}
+        dialogTitle={t("settings.backups_confirm_restore_title", "Restore this backup?")}
+        description={t(
+          "settings.backups_confirm_restore_desc",
+          "Restoring {{fileName}} replaces the data currently in Jellystat with the contents of this backup. This can't be undone, so consider downloading a fresh backup first.",
+          { fileName: backup.fileName },
+        )}
+        confirmText={t("common.restore", "Restore")}
+        cancelText={t("common.cancel", "Cancel")}
+        tooltip={t("common.restore", "Restore backup")}
+        actionColor="bg-brand-rose"
         disabled={loading}
-      >
-        <Clock size={16} />
-      </button>
+        onConfirm={() => restoreBackup(backup.fileName)}
+      />
       <button
         onClick={() => downloadBackup(backup.fileName)}
         title={t("common.download", "Download backup")}
@@ -148,6 +162,8 @@ export default function BackupsPage() {
         confirmText={t("common.yes", "Yes")}
         cancelText={t("common.no", "No")}
         tooltip={t("common.delete", "Delete backup")}
+        actionColor="bg-brand-rose"
+        disabled={loading}
         onClick={() => setBackupToDelete(backup.fileName)}
         onConfirm={deleteBackup}
       />

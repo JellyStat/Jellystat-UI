@@ -156,7 +156,7 @@ export default function UsersSettingsPage() {
                         onClick={() => handleUpdateUser(user.id)}
                         className="px-3 py-1.5 text-xs font-bold text-gray-300 hover:text-white bg-background border border-border hover:border-gray-500 rounded-lg transition-all shadow-inner"
                       >
-                        Edit
+                        {t("common.edit", "Edit")}
                       </button>
 
                       <ConfirmationDialogButton

@@ -15,13 +15,13 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import ActivityMigrationPage from "./ActivityMigration/ActivityMigration";
-import TasksPage from "./Tasks/Tasks";
-import LibrarySettingsPage from "./Library/LibrarySettings";
-import ServerSettingsPage from "./Servers/ServerSettings";
-import UsersSettingsPage from "./Users";
-import BackupsPage from "./Backups/BackupsPage";
-import ApiKeysPage from "./ApiKeys/ApiKeysPage";
+import ActivityMigrationPage from "@/components/Settings/ActivityMigration/ActivityMigration";
+import TasksPage from "@/components/Settings/Tasks/Tasks";
+import LibrarySettingsPage from "@/components/Settings/Library/LibrarySettings";
+import ServerSettingsPage from "@/components/Settings/Servers/ServerSettings";
+import UsersSettingsPage from "@/components/Settings/Users/UsersSettings";
+import BackupsPage from "@/components/Settings/Backups/BackupsPage";
+import ApiKeysPage from "@/components/Settings/ApiKeys/ApiKeysPage";
 import LanguageSwitcher from "@/components/Core/LanguageSwitcher";
 import { VersionInfo } from "@/lib/models/VersionInfo";
 import versionManager from "@/lib/versionManager";

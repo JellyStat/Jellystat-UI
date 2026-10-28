@@ -211,10 +211,10 @@ export default function TasksLogsPage() {
             <thead>
               <tr className="bg-background/80 border-b border-border text-xs font-bold text-gray-500 uppercase tracking-wider">
                 <th className="p-2 sm:p-3 w-10 sm:w-12"></th>
-                <th className="p-2 sm:p-4 w-1/5">Task</th>
-                <th className="p-2 sm:p-4 w-1/5">Date</th>
-                <th className="hidden sm:table-cell p-4 w-1/5">Duration</th>
-                <th className="p-2 sm:p-4 w-1/5 ">Status</th>
+                <th className="p-2 sm:p-4 w-1/5">{t("tasks.col_task", "Task")}</th>
+                <th className="p-2 sm:p-4 w-1/5">{t("tasks.col_date", "Date")}</th>
+                <th className="hidden sm:table-cell p-4 w-1/5">{t("tasks.col_duration", "Duration")}</th>
+                <th className="p-2 sm:p-4 w-1/5">{t("tasks.col_status", "Status")}</th>
                 <th className="hidden sm:table-cell p-4 pr-6 text-right w-1/6" />
               </tr>
             </thead>
