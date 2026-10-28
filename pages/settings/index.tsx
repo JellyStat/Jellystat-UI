@@ -82,10 +82,10 @@ export default function SettingsPage() {
   };
 
   const tabs = [
-    { id: "settings", label: t("settings.tab_general", "General Settings"), icon: Settings, IsAdmin: false },
+    { id: "settings", label: t("settings.tab_general", "General"), icon: Settings, IsAdmin: false },
     { id: "servers", label: t("settings.tab_servers_users", "Servers & Users"), icon: Server, IsAdmin: true },
     { id: "apikeys", label: t("settings.tab_api_keys", "API Keys"), icon: KeyRound, IsAdmin: true },
-    { id: "librarySettings", label: t("settings.tab_library", "Library Settings"), icon: Library, IsAdmin: true },
+    { id: "librarySettings", label: t("settings.tab_library", "Library"), icon: Library, IsAdmin: true },
     { id: "migrations", label: t("settings.tab_migrations", "Activity Migration"), icon: ArrowLeftRight, IsAdmin: true },
     { id: "backups", label: t("settings.tab_backups", "Backups"), icon: Archive, IsAdmin: true },
     { id: "tasks", label: t("settings.tab_tasks", "Background Tasks"), icon: Terminal, IsAdmin: true },
@@ -116,7 +116,7 @@ export default function SettingsPage() {
         <div className="max-w-[1600px] mx-auto sm:px-6 sm:pt-6 animate-in slide-in-from-top-4 duration-500">
           <div className="flex overflow-x-auto custom-scrollbar pb-2 sm:pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
             {/* Glassmorphic Tab Container */}
-            <div className="flex items-center p-1.5 bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-inner w-max">
+            <div className="flex items-center p-1.5 bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-inner w-full justify-between">
               {tabs
                 .filter((tab) => !tab.IsAdmin || isAdmin)
                 .map((tab) => {

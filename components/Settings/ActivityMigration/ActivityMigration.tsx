@@ -604,11 +604,6 @@ export default function ActivityMigrationPage() {
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                 {t("settings.migration_title", "Activity Migration")}
               </h1>
-              {applicable.length > 0 && (
-                <span className="flex items-center justify-center bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30 text-xs font-black h-6 px-2 rounded-full">
-                  {applicable.length} {t("settings.migration_ready", "Ready")}
-                </span>
-              )}
             </div>
             <p className="text-sm text-gray-400 mt-1 font-medium">
               {t("settings.migration_subtitle", "Map unlinked playback activity to valid library items.")}
