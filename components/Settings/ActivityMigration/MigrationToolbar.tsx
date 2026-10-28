@@ -24,7 +24,7 @@ export default function MigrationToolbar({ status, onStatusChange, search, onSea
   ];
 
   const typeLabels: Record<TypeFilter, string> = {
-    all: t("settings.migration_type_all", "Episodes & Movies"),
+    all: t("settings.migration_filter_all", "All"),
     episodes: t("settings.migration_type_episodes", "Episodes"),
     movies: t("settings.migration_type_movies", "Movies"),
   };

@@ -1,16 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  AlertCircle,
-  ArrowLeftRight,
-  ArrowRight,
-  ChevronRight,
-  Film,
-  Loader2,
-  Save,
-  Search,
-  Trash2,
-  Tv,
-} from "lucide-react";
+import { AlertCircle, ArrowLeftRight, ArrowRight, ChevronRight, Film, Loader2, Save, Search, Trash2, Tv } from "lucide-react";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -81,7 +70,7 @@ export default function ActivityMigrationPage() {
 
   const migrationFor = useCallback(
     (activity: Activity) => migrations[activity.id ?? ""] ?? new ActivityMigrationModel({ activity }),
-    [migrations]
+    [migrations],
   );
 
   // --- MIGRATION UPDATES ---
@@ -188,7 +177,7 @@ export default function ActivityMigrationPage() {
         await Promise.all(
           seriesNames.map(async (name) => {
             matches[name] = await fetchMatchingSeries(name);
-          })
+          }),
         );
         if (cancelled) return;
 
@@ -241,7 +230,9 @@ export default function ActivityMigrationPage() {
       const res = await client.History.migrateActivity(applicable.map((m) => m.toMigrateActivity()));
       const results = MigrateActivity.fromJSONArray(res);
       const failures = new Map(
-        results.filter((r) => !r.success).map((r) => [r.id, r.errorMessage || t("settings.migration_unknown_error", "Unknown error")])
+        results
+          .filter((r) => !r.success)
+          .map((r) => [r.id, r.errorMessage || t("settings.migration_unknown_error", "Unknown error")]),
       );
       const linked = applicable.length - failures.size;
 
@@ -262,7 +253,7 @@ export default function ActivityMigrationPage() {
             linked,
             total: applicable.length,
             failed: failures.size,
-          })
+          }),
         );
       }
       setPage(1);
@@ -270,7 +261,7 @@ export default function ActivityMigrationPage() {
     } catch (err: any) {
       console.error(err);
       toast.error(
-        t("settings.migration_apply_failed", "Failed to apply migrations: {{error}}", { error: err?.message ?? String(err) })
+        t("settings.migration_apply_failed", "Failed to apply migrations: {{error}}", { error: err?.message ?? String(err) }),
       );
     } finally {
       setMigrationLoading(false);
@@ -295,7 +286,7 @@ export default function ActivityMigrationPage() {
     } catch (err: any) {
       console.error(err);
       toast.error(
-        t("settings.migration_delete_failed", "Failed to delete activity: {{error}}", { error: err?.message ?? String(err) })
+        t("settings.migration_delete_failed", "Failed to delete activity: {{error}}", { error: err?.message ?? String(err) }),
       );
     } finally {
       setDeleteLoading(false);
@@ -548,7 +539,7 @@ export default function ActivityMigrationPage() {
             description={t(
               "settings.migration_confirm_delete_desc",
               "This permanently deletes {{count}} unlinked activity records. They can't be migrated afterwards.",
-              { count: selectedList.length }
+              { count: selectedList.length },
             )}
             confirmText={t("common.delete", "Delete")}
             cancelText={t("common.cancel", "Cancel")}
@@ -652,7 +643,7 @@ export default function ActivityMigrationPage() {
                   renderSeriesGroup(group)
                 ) : (
                   <tbody key={group.key}>{renderItemRow(group.activity, false)}</tbody>
-                )
+                ),
               )
             )}
           </table>
@@ -663,9 +654,6 @@ export default function ActivityMigrationPage() {
           <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
             <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
               {t("settings.migration_total_unlinked", "Total Unlinked:")} <span className="text-white">{totalCount}</span>
-            </span>
-            <span className="text-xs text-gray-400">
-              {t("settings.migration_kept_across_pages", "Selections are kept when you change page.")}
             </span>
           </div>
           <div className="flex items-center gap-4 ml-auto">
