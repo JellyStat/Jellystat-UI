@@ -1,111 +1,263 @@
-import { useCallback, useEffect, useState } from "react";
-import { ArrowLeftRight, Trash2, Save, Loader2, AlertCircle, CheckSquare, Square, Search, Film } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { AlertCircle, ArrowLeftRight, ArrowRight, ChevronRight, Film, Loader2, Save, Search, Trash2, Tv } from "lucide-react";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
 
+import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
+import { DefaultSelectedItem, SelectAsync } from "@/components/SelectAsync";
 import client from "@/lib/api";
+import { ActivityMigrationModel } from "@/lib/models/ActivityMigrationModel";
 import Activity from "@/lib/models/activity";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
 import ItemsWithParentData from "@/lib/models/itemsWithParentData";
-import { DefaultSelectedItem, SelectAsync } from "@/components/SelectAsync";
-import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import ActivityItemSearch from "./ActivityItemSearch";
-import { ActivityMigrationModel } from "@/lib/models/ActivityMigrationModel";
+import { MigrateActivity } from "@/lib/models/MigrateActivity";
+import { useDebounce } from "@/lib/hooks/useDebounce";
+import ActivityMatchDialog, { MatchTarget } from "./ActivityMatchDialog";
+import MigrationStatusBadge from "./MigrationStatusBadge";
+import MigrationToolbar, { StatusFilter, TypeFilter } from "./MigrationToolbar";
+import { episodeCode, groupActivity, MigrationGroup } from "./helpers";
+
+const RECORDS_PER_PAGE = 20;
+
+type DialogContext = { activity: Activity; target: MatchTarget; groupChildren?: Activity[] };
+
+/** Code pill + name + library, used in the dropdowns and their closed state. */
+function ItemLabel({ item }: { item: ItemsWithParentData }) {
+  const code = episodeCode(item);
+  return (
+    <>
+      {code && (
+        <span className="shrink-0 font-mono text-[11px] font-bold text-gray-300 bg-surface-hover border border-border rounded-md px-1.5 py-0.5">
+          {code}
+        </span>
+      )}
+      <span className="truncate">{item.name}</span>
+      {item.library?.name && <span className="shrink-0 text-[11px] font-normal text-gray-400">· {item.library.name}</span>}
+    </>
+  );
+}
 
 export default function ActivityMigrationPage() {
   const { t } = useTranslation("common");
-
-  type SearchDialogContext = {
-    activity: Activity;
-    migration: ActivityMigrationModel | undefined;
-  };
 
   // --- STATE ---
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activityData, setActivityData] = useState<Activity[]>([]);
-  const [pageCount, setPageCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const [reloadToken, setReloadToken] = useState(0);
+
+  const [searchInput, setSearchInput] = useState("");
+  const search = useDebounce(searchInput.trim(), 400);
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
   const [migrationLoading, setMigrationLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [migrations, setMigrations] = useState<ActivityMigrationModel[]>([]);
-  const [selected, setSelected] = useState<Activity[]>([]);
+  // Keyed by activity id. Kept across pages so choices survive paging.
+  const [migrations, setMigrations] = useState<Record<string, ActivityMigrationModel>>({});
+  // How many series matched each unlinked series name during auto-match.
+  const [seriesCandidates, setSeriesCandidates] = useState<Record<string, number>>({});
+  const [selected, setSelected] = useState<Record<string, Activity>>({});
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [dialog, setDialog] = useState<DialogContext | null>(null);
 
-  const [searchDialogContext, setSearchDialogContext] = useState<SearchDialogContext | null>(null);
-  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
+  const totalPages = Math.ceil(totalCount / RECORDS_PER_PAGE) || 1;
+  const applicable = useMemo(() => Object.values(migrations).filter((m) => m.isValid()), [migrations]);
+  const selectedList = Object.values(selected);
 
-  const recordsPerPage = 20;
-  const totalPages = Math.ceil(pageCount / recordsPerPage) || 1;
+  const migrationFor = useCallback(
+    (activity: Activity) => migrations[activity.id ?? ""] ?? new ActivityMigrationModel({ activity }),
+    [migrations],
+  );
 
-  const migrateableCount = migrations.filter((m) => m.isValid()).length;
-
-  // --- MIGRATION LOGIC ---
-  function updateMigrationSeries(activity: Activity, item: ItemsWithParentData) {
-    if (activity.seriesId === item.parent?.id) return;
-    let migration: ActivityMigrationModel | undefined = migrations.find((m) => m.activity.id === activity.id);
-    if (!migration) {
-      migration = new ActivityMigrationModel({ activity: activity, seriesItem: item });
-    } else {
-      migration = migration.copyWith({ seriesItem: item });
-    }
+  // --- MIGRATION UPDATES ---
+  function setSeries(activities: Activity[], seriesItem: ItemsWithParentData) {
     setMigrations((prev) => {
-      const exists = prev.some((m) => m.activity.id === activity.id);
-      if (exists) {
-        return prev.map((m) => (m.activity.id === activity.id ? migration : m));
-      } else {
-        return [...prev, migration!];
+      const next = { ...prev };
+      for (const activity of activities) {
+        const id = activity.id;
+        if (!id) continue;
+        const current = prev[id] ?? new ActivityMigrationModel({ activity });
+        // Drop a chosen episode that belongs to a different series.
+        const itemSeriesId = current.item?.rootId ?? current.item?.parent?.id ?? null;
+        const keepItem = !current.item || itemSeriesId == null || itemSeriesId === seriesItem.id;
+        next[id] = current.copyWith({ seriesItem, item: keepItem ? undefined : null, errorMessage: null });
       }
+      return next;
     });
   }
 
-  function updateMigrationItem(activityId: string, item: ItemsWithParentData) {
-    let migration: ActivityMigrationModel | undefined = migrations.find((m) => m.activity.id === activityId);
-    if (!migration) {
-      migration = new ActivityMigrationModel({ activity: activityData.find((a) => a.id === activityId)!, item: item });
-    } else {
-      migration = migration.copyWith({ item: item });
+  function setItem(activity: Activity, item: ItemsWithParentData) {
+    const id = activity.id;
+    if (!id) return;
+    setMigrations((prev) => ({
+      ...prev,
+      [id]: (prev[id] ?? new ActivityMigrationModel({ activity })).copyWith({ item, errorMessage: null }),
+    }));
+  }
+
+  // --- LOOKUPS ---
+  const fetchMatchingSeries = async (name: string) => {
+    if (name.trim().length < 3) return [];
+    try {
+      const query = new GridifyQueryBuilder().addCondition("type", op.Equal, ItemTypes.Series.toString());
+      const res = await client.Api.getMatchingItems(name, query.build());
+      return res?.data ?? [];
+    } catch (err) {
+      console.error(err);
+      return [];
     }
-    setMigrations((prev) => {
-      const exists = prev.some((m) => m.activity.id === activityId);
-      if (exists) {
-        return prev.map((m) => (m.activity.id === activityId ? migration : m));
-      } else {
-        return [...prev, migration!];
-      }
-    });
-  }
+  };
 
-  function addOrUpdateMigrations(migrations: ActivityMigrationModel[]) {
-    setMigrations((prev) => {
-      const existingIds = new Set(prev.map((m) => m.activity.id));
-      const toAdd = migrations.filter((m) => !existingIds.has(m.activity.id));
-      const toUpdate = migrations.filter((m) => existingIds.has(m.activity.id));
-      const updated = prev.map((m) => {
-        const update = toUpdate.find((u) => u.activity.id === m.activity.id);
-        return update ? update : m;
-      });
-      return [...updated, ...toAdd];
-    });
-  }
+  const fetchMatchingItems = async (activity: Activity, seriesItem: ItemsWithParentData | null) => {
+    if (!activity.name || activity.name.trim().length < 3) return [];
+    try {
+      const query = new GridifyQueryBuilder()
+        .startGroup()
+        .addCondition("type", op.Equal, ItemTypes.Episode.toString())
+        .or()
+        .addCondition("type", op.Equal, ItemTypes.Movie.toString())
+        .endGroup();
+      if (seriesItem?.id) query.and().addCondition("rootId", op.Equal, seriesItem.id);
+      const res = await client.Api.getMatchingItems(activity.name, query.build());
+      return res?.data ?? [];
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  };
+
+  // --- DATA FETCHING ---
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      setError(null);
+      try {
+        const query = new GridifyQueryBuilder();
+        query.setPage(page);
+        query.setPageSize(RECORDS_PER_PAGE);
+        // Keep a series' episodes together on a page.
+        query.addOrderBy("seriesName");
+        query.addOrderBy("name");
+
+        let hasCondition = false;
+        const and = () => {
+          if (hasCondition) query.and();
+          hasCondition = true;
+        };
+        if (search) {
+          and();
+          query
+            .startGroup()
+            .addCondition("name", op.Contains, search, false)
+            .or()
+            .addCondition("seriesName", op.Contains, search, false)
+            .endGroup();
+        }
+        if (typeFilter === "episodes") {
+          and();
+          query.addCondition("seriesId", op.NotEqual, "");
+        } else if (typeFilter === "movies") {
+          and();
+          query.addCondition("seriesId", op.Equal, "");
+        }
+
+        const res = await client.History.getUnlinkedActivity(query.build());
+        if (cancelled) return;
+        const data = res?.data ?? [];
+
+        // Auto-match: pick the first matching series for each series name on this page.
+        const seriesNames = Array.from(new Set(data.map((d) => d.seriesName).filter((n): n is string => !!n)));
+        const matches: Record<string, ItemsWithParentData[]> = {};
+        await Promise.all(
+          seriesNames.map(async (name) => {
+            matches[name] = await fetchMatchingSeries(name);
+          }),
+        );
+        if (cancelled) return;
+
+        setSeriesCandidates((prev) => {
+          const next = { ...prev };
+          for (const name of seriesNames) next[name] = matches[name]?.length ?? 0;
+          return next;
+        });
+        setMigrations((prev) => {
+          const next = { ...prev };
+          for (const activity of data) {
+            const id = activity.id;
+            // Never overwrite a choice that already exists (e.g. when coming back to a page).
+            if (!id || !activity.seriesName || next[id]?.seriesItem) continue;
+            const first = matches[activity.seriesName]?.[0];
+            if (!first) continue;
+            next[id] = (next[id] ?? new ActivityMigrationModel({ activity })).copyWith({ seriesItem: first });
+          }
+          return next;
+        });
+
+        setTotalCount(res?.count ?? 0);
+        setActivityData(data);
+      } catch (err: any) {
+        if (cancelled || err?.name === "AbortError") return;
+        console.error(err);
+        setError(err?.message ?? String(err));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, search, typeFilter, reloadToken]);
+
+  // Back to page 1 whenever the server-side filters change.
+  useEffect(() => {
+    setPage(1);
+  }, [search, typeFilter]);
 
   // --- ACTIONS ---
   async function applyMigrations() {
+    if (applicable.length === 0) return;
     try {
       setMigrationLoading(true);
-      const validMigrations = migrations.filter((m) => m.isValid());
-      const res = await client.History.migrateActivity(validMigrations.map((m) => m.toMigrateActivity()));
-      const failedMigrations = res.filter((m) => !m.success);
-      const unsuccessfulIds = new Set(failedMigrations.map((m) => m.id));
-      const invalidMigrations = migrations.filter((m) => !m.isValid() && !unsuccessfulIds.has(m.activity.id ?? ""));
-      // setMigrations(failedMigrations);
-      setMigrations(invalidMigrations);
-      setActivityData([]);
-      setPageCount(1);
+      const res = await client.History.migrateActivity(applicable.map((m) => m.toMigrateActivity()));
+      const results = MigrateActivity.fromJSONArray(res);
+      const failures = new Map(
+        results
+          .filter((r) => !r.success)
+          .map((r) => [r.id, r.errorMessage || t("settings.migration_unknown_error", "Unknown error")]),
+      );
+      const linked = applicable.length - failures.size;
+
+      setMigrations((prev) => {
+        const next: Record<string, ActivityMigrationModel> = {};
+        for (const [id, m] of Object.entries(prev)) {
+          if (failures.has(id)) next[id] = m.copyWith({ errorMessage: failures.get(id) });
+          else if (!m.isValid()) next[id] = m; // not applied, keep working on it
+        }
+        return next;
+      });
+
+      if (failures.size === 0) {
+        toast.success(t("settings.migration_applied", "Linked {{count}} items", { count: linked }));
+      } else {
+        toast.warning(
+          t("settings.migration_applied_partial", "Linked {{linked}} of {{total}}. {{failed}} failed.", {
+            linked,
+            total: applicable.length,
+            failed: failures.size,
+          }),
+        );
+      }
       setPage(1);
-      await fetchPage(1, true);
+      setReloadToken((n) => n + 1);
     } catch (err: any) {
       console.error(err);
       toast.error(
@@ -117,20 +269,20 @@ export default function ActivityMigrationPage() {
   }
 
   async function deleteActivity() {
-    if (selected.length === 0) return;
+    if (selectedList.length === 0) return;
     setDeleteLoading(true);
-    const activityIds: string[] = selected.map((a) => a.id!);
-    const serverId = selected[0]?.serverId;
+    const activityIds = selectedList.map((a) => a.id!).filter(Boolean);
     try {
-      await client.History.activity.delete(serverId, activityIds);
-      toast.success(
-        t("settings.migration_deleted", "Deleted {{count}} activity records", { count: activityIds.length }),
-      );
-      setSelected([]);
-      setActivityData([]);
-      setPageCount(1);
+      await client.History.activity.delete(selectedList[0]?.serverId, activityIds);
+      toast.success(t("settings.migration_deleted", "Deleted {{count}} activity records", { count: activityIds.length }));
+      setMigrations((prev) => {
+        const next = { ...prev };
+        activityIds.forEach((id) => delete next[id]);
+        return next;
+      });
+      setSelected({});
       setPage(1);
-      await fetchPage(1, true);
+      setReloadToken((n) => n + 1);
     } catch (err: any) {
       console.error(err);
       toast.error(
@@ -141,144 +293,218 @@ export default function ActivityMigrationPage() {
     }
   }
 
-  // --- DATA FETCHING ---
-  const fetchMatchingItems = async (id: string) => {
-    const activity = activityData.find((a) => a.id === id);
-    const migration = migrations.find((m) => m.activity.id === id);
-    if (!activity || !activity.name || activity.name.length < 3) return [];
-    try {
-      const query = new GridifyQueryBuilder()
-        .startGroup()
-        .addCondition("type", op.Equal, ItemTypes.Episode.toString())
-        .or()
-        .addCondition("type", op.Equal, ItemTypes.Movie.toString())
-        .endGroup();
-      if (migration?.seriesItem?.id) query.and().addCondition("rootId", op.Equal, migration.seriesItem.id);
-      const res = await client.Api.getMatchingItems(activity.name, query.build());
-      return res?.data ?? [];
-    } catch (err) {
-      console.error(err);
-      return [];
+  function onDialogLink(item: ItemsWithParentData) {
+    if (!dialog) return;
+    if (dialog.target === "series") {
+      setSeries(dialog.groupChildren ?? [dialog.activity], item);
+    } else {
+      if (item.type === ItemTypes.Episode && item.parent) setSeries([dialog.activity], item.parent);
+      setItem(dialog.activity, item);
     }
+    setDialog(null);
+  }
+
+  // --- SELECTION ---
+  const isSelected = (a: Activity) => !!a.id && !!selected[a.id];
+  const toggle = (activities: Activity[], on: boolean) =>
+    setSelected((prev) => {
+      const next = { ...prev };
+      activities.forEach((a) => {
+        if (!a.id) return;
+        if (on) next[a.id] = a;
+        else delete next[a.id];
+      });
+      return next;
+    });
+  const pageAllSelected = activityData.length > 0 && activityData.every(isSelected);
+
+  // --- FILTERED GROUPS ---
+  const passesStatus = (a: Activity) => {
+    if (statusFilter === "all") return true;
+    const ready = migrationFor(a).status === "ready";
+    return statusFilter === "ready" ? ready : !ready;
   };
 
-  const fetchMatchingSeries = async (name: string) => {
-    if (name.length < 3) return [];
-    try {
-      const query = new GridifyQueryBuilder().addCondition("type", op.Equal, ItemTypes.Series.toString());
-      const res = await client.Api.getMatchingItems(name, query.build());
-      return res?.data ?? [];
-    } catch (err) {
-      console.error(err);
-      return [];
-    }
-  };
-
-  const fetchPage = useCallback(
-    async (pageToLoad: number, replace = false) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const query = new GridifyQueryBuilder();
-        query.setPage(pageToLoad);
-        query.setPageSize(recordsPerPage);
-        query.addOrderBy("dateCreated", true);
-        const builtQuery = query.build();
-
-        const res = await client.History.getUnlinkedActivity(builtQuery);
-        const data = res?.data ?? [];
-        const count = res?.count ?? 0;
-
-        //series prematching
-        const distinctSeriesSet = new Set<string>();
-        const seriesMatchesTemp: Record<string, ItemsWithParentData[]> = {};
-        const dataWithSeriesNames = data.filter((d) => d.seriesName != undefined && d.seriesName != null);
-
-        dataWithSeriesNames.forEach((activity) => {
-          if (activity.seriesName) distinctSeriesSet.add(activity.seriesName);
-        });
-        const seriesArray = Array.from(distinctSeriesSet);
-
-        await Promise.all(
-          seriesArray.map(async (series) => {
-            const data = await fetchMatchingSeries(series);
-            seriesMatchesTemp[series] = data;
-          }),
-        );
-
-        const tempMigrations: ActivityMigrationModel[] = [];
-
-        for (const activity of dataWithSeriesNames) {
-          const migration = new ActivityMigrationModel({
-            activity: activity,
-            seriesItem: seriesMatchesTemp[activity.seriesName ?? ""]?.[0] ?? null,
-          });
-          tempMigrations.push(migration);
-        }
-
-        addOrUpdateMigrations(tempMigrations);
-
-        setPageCount(count);
-        // setSeriesMatches(seriesMatchesTemp);
-        setActivityData(data);
-      } catch (err: any) {
-        if (err?.name === "AbortError") return;
-        console.error(err);
-        setError(err?.message ?? String(err));
-      } finally {
-        setLoading(false);
+  const groups = useMemo(() => {
+    const result: MigrationGroup[] = [];
+    for (const group of groupActivity(activityData)) {
+      if (group.kind === "movie") {
+        if (passesStatus(group.activity)) result.push(group);
+      } else {
+        const children = group.children.filter(passesStatus);
+        if (children.length > 0) result.push({ ...group, children });
       }
-    },
+    }
+    return result;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+  }, [activityData, statusFilter, migrations]);
+
+  // --- RENDER HELPERS ---
+  const searchAllFooter = (activity: Activity, target: MatchTarget, groupChildren?: Activity[]) => (close: () => void) => (
+    <button
+      type="button"
+      onClick={() => {
+        close();
+        setDialog({ activity, target, groupChildren });
+      }}
+      className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold text-brand-cyan hover:bg-surface-hover transition-colors cursor-pointer"
+    >
+      <Search size={14} />
+      {t("settings.migration_search_all", "Search all libraries…")}
+    </button>
   );
 
-  useEffect(() => {
-    setActivityData([]);
-    setPageCount(1);
-    setPage(1);
-    fetchPage(1, true);
-  }, [fetchPage]);
+  const searchButton = (activity: Activity, target: MatchTarget, groupChildren?: Activity[]) => (
+    <button
+      onClick={() => setDialog({ activity, target, groupChildren })}
+      aria-label={t("settings.migration_search_for", "Search for {{name}}", {
+        name: target === "series" ? activity.seriesName : activity.name,
+      })}
+      className="p-2 rounded-lg bg-background hover:bg-brand-cyan/20 text-gray-400 hover:text-brand-cyan border border-border hover:border-brand-cyan/50 transition-all flex cursor-pointer"
+    >
+      <Search size={16} />
+    </button>
+  );
 
-  useEffect(() => {
-    fetchPage(page);
-  }, [fetchPage, page]);
+  const checkboxClass = "w-4 h-4 accent-brand-cyan cursor-pointer";
 
-  // --- SELECTION HELPERS ---
-  const isSelected = (id: string) => selected.some((a) => a.id === id);
-  const allSelected = activityData.length > 0 && selected.length === activityData.length;
-
-  const toggleSelectAll = () => {
-    if (allSelected) {
-      setSelected([]);
-    } else {
-      setSelected([...activityData]);
-    }
-  };
-
-  const toggleSelectRow = (activity: Activity) => {
-    setSelected((prev) =>
-      prev.some((a) => a.id === activity.id) ? prev.filter((a) => a.id !== activity.id) : [...prev, activity],
+  function renderItemRow(activity: Activity, indent: boolean) {
+    const migration = migrationFor(activity);
+    const selectedRow = isSelected(activity);
+    return (
+      <tr
+        key={activity.id}
+        className={`border-b border-border transition-colors hover:bg-surface-hover ${selectedRow ? "bg-brand-cyan/5" : ""}`}
+      >
+        <td className="p-3 text-center">
+          <input
+            type="checkbox"
+            className={checkboxClass}
+            checked={selectedRow}
+            onChange={() => toggle([activity], !selectedRow)}
+            aria-label={t("settings.migration_select_row", "Select {{name}}", { name: activity.name })}
+          />
+        </td>
+        <td className={`p-3 ${indent ? "pl-16" : ""}`}>
+          <div className="flex items-center gap-2 min-w-0">
+            {!indent && <Film size={18} className="text-brand-cyan shrink-0 ml-9" />}
+            <span className="text-sm font-bold text-gray-200 truncate">{activity.name}</span>
+          </div>
+        </td>
+        <td className="text-gray-600" aria-hidden="true">
+          <ArrowRight size={16} className="mx-auto" />
+        </td>
+        <td className="p-2 px-3">
+          <SelectAsync<ItemsWithParentData>
+            ariaLabel={t("settings.migration_link_item_for", "Linked item for {{name}}", { name: activity.name })}
+            cacheKey={migration.seriesItem?.id ?? "none"}
+            disabled={migration.isEpisode && !migration.seriesItem}
+            disabledText={t("settings.migration_pick_series_first", "Pick the series first")}
+            variant={migration.item ? "default" : "missing"}
+            fetchMethod={() => fetchMatchingItems(activity, migration.seriesItem)}
+            onSelect={(item) => item && setItem(activity, item)}
+            idPredicate={(it) => it.id}
+            namePredicate={(it) => it.name}
+            placeholder={t("settings.migration_select_item", "Select an item")}
+            value={migration.item ? new DefaultSelectedItem(migration.item.id, migration.item.name) : null}
+            valueContent={migration.item ? <ItemLabel item={migration.item} /> : undefined}
+            renderOption={(it) => <ItemLabel item={it} />}
+            header={
+              migration.seriesItem
+                ? t("settings.migration_episodes_in", "Episodes in {{name}}", { name: migration.seriesItem.name })
+                : undefined
+            }
+            footer={searchAllFooter(activity, "item")}
+          />
+        </td>
+        <td className="p-3">
+          <MigrationStatusBadge status={migration.status} error={migration.errorMessage} />
+          {migration.errorMessage && (
+            <p className="mt-1 text-xs text-rose-400 max-w-40 whitespace-normal">{migration.errorMessage}</p>
+          )}
+        </td>
+        <td className="p-3">
+          <div className="flex justify-end">{searchButton(activity, "item")}</div>
+        </td>
+      </tr>
     );
-  };
+  }
 
-  const showSearchDialog = (activity: Activity) => {
-    const mediaType = activity.seriesName != null ? ItemTypes.Episode : ItemTypes.Movie;
-    const migration = migrations.find((m: ActivityMigrationModel) => m.activity.id === activity.id);
+  function renderSeriesGroup(group: Extract<MigrationGroup, { kind: "series" }>) {
+    const first = group.children[0];
+    const seriesItem = group.children.map((c) => migrationFor(c).seriesItem).find((s) => s != null) ?? null;
+    const isOpen = !collapsed[group.key];
+    const allSelected = group.children.every(isSelected);
+    const candidates = seriesCandidates[group.seriesName] ?? 0;
 
-    setSearchDialogContext({
-      activity: activity,
-      migration: migration,
-    });
+    return (
+      <tbody key={group.key}>
+        <tr className="border-b border-border bg-surface-hover/35 hover:bg-surface-hover transition-colors">
+          <td className="p-3 text-center">
+            <input
+              type="checkbox"
+              className={checkboxClass}
+              checked={allSelected}
+              onChange={() => toggle(group.children, !allSelected)}
+              aria-label={t("settings.migration_select_series_all", "Select all of {{name}}", { name: group.seriesName })}
+            />
+          </td>
+          <td className="p-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <button
+                onClick={() => setCollapsed((prev) => ({ ...prev, [group.key]: isOpen }))}
+                aria-expanded={isOpen}
+                aria-label={t("settings.migration_toggle_series", "Show episodes of {{name}}", { name: group.seriesName })}
+                className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-surface-hover transition-colors cursor-pointer"
+              >
+                <ChevronRight size={16} className={`transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`} />
+              </button>
+              <Tv size={18} className="text-brand-purple shrink-0" />
+              <div className="min-w-0">
+                <div className="text-[15px] font-black text-white tracking-tight truncate">{group.seriesName}</div>
+                <div className="text-xs font-medium text-gray-500">
+                  {t("settings.migration_unlinked_count", "{{count}} unlinked", { count: group.children.length })}
+                  {candidates > 1 &&
+                    ` · ${t("settings.migration_series_candidates", "{{count}} series match this name", { count: candidates })}`}
+                </div>
+              </div>
+            </div>
+          </td>
+          <td className="text-gray-600" aria-hidden="true">
+            <ArrowRight size={16} className="mx-auto" />
+          </td>
+          <td className="p-2 px-3">
+            <SelectAsync<ItemsWithParentData>
+              ariaLabel={t("settings.migration_link_series_for", "Linked series for {{name}}", { name: group.seriesName })}
+              variant={seriesItem ? "default" : "missing"}
+              fetchMethod={() => fetchMatchingSeries(group.seriesName)}
+              onSelect={(item) => item && setSeries(group.children, item)}
+              idPredicate={(it) => it.id}
+              namePredicate={(it) => it.name}
+              placeholder={t("settings.migration_select_series", "Select a series")}
+              value={seriesItem ? new DefaultSelectedItem(seriesItem.id, seriesItem.name) : null}
+              valueContent={seriesItem ? <ItemLabel item={seriesItem} /> : undefined}
+              renderOption={(it) => <ItemLabel item={it} />}
+              footer={searchAllFooter(first, "series", group.children)}
+            />
+          </td>
+          <td className="p-3">
+            <MigrationStatusBadge status={seriesItem ? "ready" : "notLinked"} />
+          </td>
+          <td className="p-3">
+            <div className="flex justify-end">{searchButton(first, "series", group.children)}</div>
+          </td>
+        </tr>
+        {isOpen && group.children.map((child) => renderItemRow(child, true))}
+      </tbody>
+    );
+  }
 
-    setIsSearchDialogOpen(true);
-  };
-
-  console.log("ActivityMigrationPage render", { activityData, migrations, selected, migrateableCount });
+  const hasFilters = !!search || typeFilter !== "all" || statusFilter !== "all";
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 py-4 sm:p-6">
-      {/* Header Container */}
+      {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6">
         <div className="flex items-center gap-4">
           <div className="p-3.5 bg-brand-purple/10 rounded-2xl border border-brand-purple/20 shadow-inner shrink-0">
@@ -289,9 +515,9 @@ export default function ActivityMigrationPage() {
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                 {t("settings.migration_title", "Activity Migration")}
               </h1>
-              {migrations.length > 0 && (
-                <span className="flex items-center justify-center bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30 text-xs font-black h-6 px-2 rounded-full shadow-[0_0_10px_rgba(0,164,220,0.2)] animate-pulse">
-                  {migrateableCount} {t("settings.migration_ready", "Ready")}
+              {applicable.length > 0 && (
+                <span className="flex items-center justify-center bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30 text-xs font-black h-6 px-2 rounded-full">
+                  {applicable.length} {t("settings.migration_ready", "Ready")}
                 </span>
               )}
             </div>
@@ -301,43 +527,52 @@ export default function ActivityMigrationPage() {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex items-center gap-3 w-full md:w-auto">
           <ConfirmationDialogButton
             buttonElement={
               <>
                 {deleteLoading ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-                {t("common.delete", "Delete")} {selected.length > 0 && `(${selected.length})`}
+                {t("common.delete", "Delete")} {selectedList.length > 0 && `(${selectedList.length})`}
               </>
             }
             dialogTitle={t("settings.migration_confirm_delete_title", "Delete selected activity?")}
             description={t(
               "settings.migration_confirm_delete_desc",
               "This permanently deletes {{count}} unlinked activity records. They can't be migrated afterwards.",
-              { count: selected.length },
+              { count: selectedList.length },
             )}
             confirmText={t("common.delete", "Delete")}
             cancelText={t("common.cancel", "Cancel")}
             actionColor="bg-brand-rose"
-            disabled={selected.length === 0 || deleteLoading}
+            disabled={selectedList.length === 0 || deleteLoading}
             onConfirm={deleteActivity}
             className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-brand-rose/10 hover:bg-brand-rose text-brand-rose hover:text-white border border-brand-rose/20 hover:border-brand-rose py-2 px-4 rounded-xl font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-inner"
           />
 
           <button
             onClick={applyMigrations}
-            disabled={migrateableCount === 0 || migrationLoading}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-brand-cyan text-black hover:bg-brand-cyan/90 py-2 px-6 rounded-xl font-black transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-lg shadow-brand-cyan/20 active:scale-95"
+            disabled={applicable.length === 0 || migrationLoading}
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-brand-cyan text-black hover:bg-brand-cyan/90 py-2 px-6 rounded-xl font-black transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-lg shadow-brand-cyan/20 active:scale-95 cursor-pointer"
           >
             {migrationLoading ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-            {t("settings.migration_apply", "Apply Migrations")}
+            {applicable.length > 0
+              ? t("settings.migration_apply_count", "Apply {{count}} Migrations", { count: applicable.length })
+              : t("settings.migration_apply", "Apply Migrations")}
           </button>
         </div>
       </div>
 
-      {/* Main Table Container */}
+      <MigrationToolbar
+        status={statusFilter}
+        onStatusChange={setStatusFilter}
+        search={searchInput}
+        onSearchChange={setSearchInput}
+        type={typeFilter}
+        onTypeChange={setTypeFilter}
+      />
+
+      {/* Table */}
       <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col relative min-h-[400px]">
-        {/* Loading Overlay */}
         {loading && (
           <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
             <Loader2 size={40} className="text-brand-purple animate-spin mb-3" />
@@ -345,7 +580,6 @@ export default function ActivityMigrationPage() {
           </div>
         )}
 
-        {/* Error Overlay */}
         {error && (
           <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in p-6">
             <AlertCircle size={40} className="text-brand-rose mb-3" />
@@ -355,152 +589,73 @@ export default function ActivityMigrationPage() {
         )}
 
         <div className="overflow-x-auto custom-scrollbar flex-1">
-          <table className="w-full text-left border-collapse whitespace-nowrap">
+          <table className="w-full min-w-[980px] text-left border-collapse table-fixed">
+            <colgroup>
+              <col className="w-12" />
+              <col />
+              <col className="w-8" />
+              <col className="w-[42%]" />
+              <col className="w-36" />
+              <col className="w-16" />
+            </colgroup>
             <thead>
               <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
-                <th className="p-3 w-12 text-center">
-                  <button
-                    onClick={toggleSelectAll}
-                    className="text-gray-400 hover:text-white transition-colors focus:outline-none"
-                  >
-                    {allSelected ? <CheckSquare size={18} className="text-brand-cyan" /> : <Square size={18} />}
-                  </button>
+                <th className="p-3 text-center">
+                  <input
+                    type="checkbox"
+                    className={checkboxClass}
+                    checked={pageAllSelected}
+                    onChange={() => toggle(activityData, !pageAllSelected)}
+                    aria-label={t("settings.migration_select_page", "Select all on this page")}
+                  />
                 </th>
-                <th className="p-3">{t("settings.migration_col_series", "Series")}</th>
-                <th className="p-3 w-64">{t("settings.migration_col_matched_series", "Matched Series")}</th>
-                <th className="p-3">{t("common.title", "Title")}</th>
-                <th className="p-3 w-64">{t("settings.migration_col_matched_title", "Matched Title")}</th>
+                <th className="p-3">{t("settings.migration_col_unlinked", "Unlinked Activity")}</th>
+                <th aria-hidden="true"></th>
+                <th className="p-3">{t("settings.migration_col_linked", "Linked Item")}</th>
+                <th className="p-3">{t("settings.migration_col_status", "Status")}</th>
+                <th className="p-3">
+                  <span className="sr-only">{t("common.actions", "Actions")}</span>
+                </th>
               </tr>
             </thead>
 
-            <tbody>
-              {!loading && activityData.length === 0 ? (
+            {!loading && groups.length === 0 ? (
+              <tbody>
                 <tr>
-                  <td colSpan={5} className="p-16 text-center text-gray-500">
+                  <td colSpan={6} className="p-16 text-center text-gray-500">
                     <ArrowLeftRight size={48} className="mx-auto mb-4 opacity-20" />
                     <span className="font-medium text-lg">
-                      {t("settings.migration_empty_title", "No unlinked activity found")}
+                      {hasFilters
+                        ? t("settings.migration_no_results", "Nothing matches these filters")
+                        : t("settings.migration_empty_title", "No unlinked activity found")}
                     </span>
-                    <p className="text-sm mt-1">
-                      {t("settings.migration_empty_desc", "All your watch history is successfully mapped.")}
-                    </p>
+                    {!hasFilters && (
+                      <p className="text-sm mt-1">
+                        {t("settings.migration_empty_desc", "All your watch history is successfully mapped.")}
+                      </p>
+                    )}
                   </td>
                 </tr>
-              ) : (
-                activityData.map((activity) => {
-                  const isRowSelected = isSelected(activity.id!);
-
-                  // Setup Series Select Data
-                  // const matchedSeriesOptions = (activity.seriesName ? seriesMatches[activity.seriesName] : []) ?? [];
-                  // const currentSeriesValue = migrations.find((m) => m.id === activity.id)?.SeriesId || "";
-
-                  return (
-                    <tr
-                      key={activity.id}
-                      className={`border-b border-border transition-colors hover:bg-surface-hover ${isRowSelected ? "bg-brand-cyan/5" : ""}`}
-                    >
-                      {/* Checkbox */}
-                      <td className="p-3 text-center">
-                        <button
-                          onClick={() => toggleSelectRow(activity)}
-                          className="text-gray-400 hover:text-white transition-colors focus:outline-none mt-1"
-                        >
-                          {isRowSelected ? <CheckSquare size={18} className="text-brand-cyan" /> : <Square size={18} />}
-                        </button>
-                      </td>
-
-                      {/* Original Series */}
-                      <td className="p-3 text-sm font-bold text-gray-200">
-                        {activity.seriesName ?? (
-                          <span className="text-gray-600 font-normal italic">{t("settings.migration_none", "None")}</span>
-                        )}
-                      </td>
-
-                      {/* Matched Series Select */}
-                      <td className="p-3 max-w-[200]">
-                        {activity.seriesName ? (
-                          <SelectAsync<ItemsWithParentData>
-                            fetchMethod={() => fetchMatchingSeries(activity.seriesName ?? "")}
-                            onSelect={(item) => {
-                              if (!item) return;
-                              updateMigrationSeries(activity, item);
-                            }}
-                            idPredicate={(it) => it.id}
-                            namePredicate={(it) => it.name}
-                            placeholder={t("settings.migration_select_item", "Select an item")}
-                            value={
-                              migrations.find((m) => m.activity.id === activity.id)?.seriesItem
-                                ? new DefaultSelectedItem(
-                                    migrations.find((m) => m.activity.id === activity.id)!.seriesItem!.id,
-                                    migrations.find((m) => m.activity.id === activity.id)!.seriesItem!.name,
-                                  )
-                                : null
-                            }
-                          />
-                        ) : (
-                          <span className="text-gray-600 font-normal italic">{t("settings.migration_none", "None")}</span>
-                        )}
-                      </td>
-
-                      {/* Original Title */}
-                      <td className="max-w-80 p-3 text-sm font-bold text-gray-200">
-                        <div className="line-clamp-2 whitespace-normal wrap-break-word">{activity.name}</div>
-                      </td>
-
-                      {/* Matched Title SelectAsync */}
-                      <td className="p-3">
-                        {activity.id ? (
-                          <div className="flex items-center gap-2">
-                            <SelectAsync<ItemsWithParentData>
-                              fetchMethod={() => {
-                                const matchingMigration = migrations.find((m) => m.activity.id === activity.id);
-                                if (activity.seriesId == null || matchingMigration?.seriesItem?.id) {
-                                  return fetchMatchingItems(activity.id!);
-                                } else {
-                                  return Promise.resolve([]);
-                                }
-                              }}
-                              onSelect={(item) => {
-                                if (!item) return;
-                                updateMigrationItem(activity.id!, item);
-                              }}
-                              idPredicate={(it) => it.id}
-                              namePredicate={(it) => it.name}
-                              placeholder={t("settings.migration_select_item", "Select an item")}
-                              value={
-                                migrations.find((m) => m.activity.id === activity.id)?.item
-                                  ? new DefaultSelectedItem(
-                                      migrations.find((m) => m.activity.id === activity.id)!.item!.id,
-                                      migrations.find((m) => m.activity.id === activity.id)!.item!.name,
-                                    )
-                                  : null
-                              }
-                            />
-
-                            <button
-                              onClick={() => showSearchDialog(activity)}
-                              className="p-2 rounded-lg bg-background hover:bg-brand-cyan/20 text-gray-400 hover:text-brand-cyan border border-border hover:border-brand-cyan/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 ml-auto flex cursor-pointer"
-                            >
-                              <Search size={16} />
-                            </button>
-                          </div>
-                        ) : (
-                          <span className="text-gray-500">-</span>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
+              </tbody>
+            ) : (
+              groups.map((group) =>
+                group.kind === "series" ? (
+                  renderSeriesGroup(group)
+                ) : (
+                  <tbody key={group.key}>{renderItemRow(group.activity, false)}</tbody>
+                ),
+              )
+            )}
           </table>
         </div>
 
-        {/* Pagination Footer */}
+        {/* Pagination */}
         <div className="bg-background/80 border-t border-border p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
-          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-            {t("settings.migration_total_unlinked", "Total Unlinked:")} <span className="text-white">{pageCount}</span>
-          </span>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+              {t("settings.migration_total_unlinked", "Total Unlinked:")} <span className="text-white">{totalCount}</span>
+            </span>
+          </div>
           <div className="flex items-center gap-4 ml-auto">
             <span className="text-xs font-mono text-gray-400 whitespace-nowrap">
               {t("common.page_info", "Page {{page}} of {{totalPages}}", { page, totalPages })}
@@ -525,54 +680,14 @@ export default function ActivityMigrationPage() {
         </div>
       </div>
 
-      <Dialog open={isSearchDialogOpen} onClose={setIsSearchDialogOpen} className="relative z-50 focus:outline-none">
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
-
-        <div className="fixed inset-0 flex items-center-safe justify-center p-3 sm:p-4 overflow-y-auto">
-          <DialogPanel
-            transition
-            className="w-full h-full md:m-12 lg:m-50 rounded-2xl border border-border bg-surface p-5 shadow-2xl shadow-black/40 duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
-          >
-            <DialogTitle className="text-lg font-black text-white">
-              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
-                <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3 shrink-0">
-                  <Film className="text-brand-cyan overflow-hidden text-ellipsis " size={28} />
-                  Search Activity Match -{" "}
-                  {(searchDialogContext?.activity.seriesName ? searchDialogContext.activity.seriesName + ": " : "") +
-                    (searchDialogContext?.activity.name ?? "")}
-                </h2>
-              </div>
-            </DialogTitle>
-
-            {searchDialogContext ? (
-              <ActivityItemSearch
-                onSelect={(item: ItemsWithParentData) => {
-                  if (item.type === ItemTypes.Episode && item.parent) {
-                    updateMigrationSeries(searchDialogContext.activity, item.parent!);
-                  }
-
-                  updateMigrationItem(searchDialogContext.activity.id!, item);
-
-                  setIsSearchDialogOpen(false);
-                }}
-                name={searchDialogContext.activity.name ?? ""}
-                id={searchDialogContext.migration?.seriesItem?.id ?? searchDialogContext.migration?.item?.id ?? null}
-              />
-            ) : (
-              <div className="mt-4 text-sm text-gray-400">{t("common.loading", "Loading")}</div>
-            )}
-
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => setIsSearchDialogOpen(false)}
-                className="px-4 py-2 rounded-lg bg-background border border-border text-gray-200 hover:text-white hover:border-gray-500 transition-all"
-              >
-                {t("common.close", "Close")}
-              </button>
-            </div>
-          </DialogPanel>
-        </div>
-      </Dialog>
+      <ActivityMatchDialog
+        open={dialog !== null}
+        onClose={() => setDialog(null)}
+        activity={dialog?.activity ?? null}
+        target={dialog?.target ?? "item"}
+        seriesItem={dialog ? migrationFor(dialog.activity).seriesItem : null}
+        onLink={onDialogLink}
+      />
     </div>
   );
 }
