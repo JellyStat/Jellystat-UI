@@ -278,7 +278,7 @@
     "remote_auth_desc": "Erlaube Benutzern, sich mit ihren bestehenden Jellyfin- oder Emby-Zugangsdaten bei Jellystat anzumelden.",
     "remote_auth_warning": "Warnung: Wenn deaktiviert, können nur lokale Administratoren sich bei diesem Dashboard anmelden.",
     "servers_auth_subtitle": "Verwalte verbundene Medienserver und kontrolliere Benutzerzugriffsrichtlinien.",
-    "servers_auth_title": "Server & Authentifizierung",
+    "servers_auth_title": "Servers",
     "sync_failed": "Synchronisierung fehlgeschlagen",
     "syncing_libraries": "Bibliotheken werden synchronisiert",
     "tab_backups": "Backups",

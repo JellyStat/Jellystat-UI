@@ -304,7 +304,7 @@
     "remote_auth_desc": "Allow users to log into Jellystat using their existing Jellyfin or Emby credentials.",
     "remote_auth_warning": "Warning: If disabled, only Local Administrators will be able to log into this dashboard.",
     "servers_auth_subtitle": "Manage connected media servers and control user access policies.",
-    "servers_auth_title": "Servers & Authentication",
+    "servers_auth_title": "Servers",
     "sync_failed": "Sync Failed",
     "syncing_libraries": "Syncing libraries",
     "tab_backups": "Backups",

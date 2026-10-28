@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Server, ShieldAlert, Users, Plus, Loader2, AlertCircle, Globe, Key, ShieldCheck, ShieldClose } from "lucide-react";
+import { Server, Plus, Loader2, AlertCircle, Globe, ShieldCheck, ShieldClose } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
@@ -13,9 +13,10 @@ export default function ServerSettingsPage() {
   const [servers, setServers] = useState<ServerModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [remoteAuthEnabled, setRemoteAuthEnabled] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   const [isAddServerOpen, setIsAddServerOpen] = useState(false);
+  const [editingServer, setEditingServer] = useState<ServerModel | null>(null);
 
   // --- DATA FETCHING ---
   const fetchServers = useCallback(async () => {
@@ -23,9 +24,7 @@ export default function ServerSettingsPage() {
     setError(null);
     try {
       const data = await configManager.getConfig(true);
-      const currentConfig = await configManager.getActiveConfig();
       setServers(data ?? []);
-      setRemoteAuthEnabled(currentConfig?.allowRemoteAuth ?? false);
     } catch (err: any) {
       console.error(err);
       setError(err?.message ?? t("settings.error_load_servers", "Failed to load server configuration."));
@@ -39,17 +38,21 @@ export default function ServerSettingsPage() {
   }, [fetchServers]);
 
   // --- HANDLERS ---
-  const toggleRemoteAuth = async (enabled: boolean) => {
-    setRemoteAuthEnabled(enabled);
+  const toggleRemoteAuth = async (server: ServerModel) => {
+    setTogglingId(server.id);
     try {
-      //@TODO
-      const config = await configManager.getActiveConfig();
-      await client.Api.toggleAllowRemoteAuth(config?.id);
-      fetchServers(); // Refresh server list to reflect changes
-      toast.success(t("settings.toast_auth_updated", "Authentication preferences updated"));
+      const enabled = Boolean(await client.Api.toggleAllowRemoteAuth(server.id));
+      setServers((current) => current.map((s) => (s.id === server.id ? { ...s, allowRemoteAuth: enabled } : s)));
+      toast.success(
+        enabled
+          ? t("settings.toast_remote_auth_on", "Remote authentication enabled for {{name}}", { name: server.name })
+          : t("settings.toast_remote_auth_off", "Remote authentication disabled for {{name}}", { name: server.name }),
+      );
     } catch (err) {
-      setRemoteAuthEnabled(!enabled); // Revert
+      console.error(err);
       toast.error(t("settings.error_auth_update", "Failed to update authentication settings"));
+    } finally {
+      setTogglingId(null);
     }
   };
 
@@ -63,18 +66,17 @@ export default function ServerSettingsPage() {
           </div>
           <div>
             <h1 className="text-3xl font-black text-white tracking-tight">
-              {t("settings.servers_auth_title", "Servers & Authentication")}
+              {t("settings.servers_auth_title", "Servers")}
             </h1>
             <p className="text-sm text-gray-400 mt-1 font-medium">
-              {t("settings.servers_auth_subtitle", "Manage connected media servers and control user access policies.")}
+              {t("settings.servers_auth_subtitle", "Manage connected media servers and whether their users can sign in to Jellystat.")}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Servers */}
-        <div className="lg:col-span-2 space-y-6">
+      <div>
+        <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               <Database size={20} className="text-brand-cyan" />
@@ -145,8 +147,42 @@ export default function ServerSettingsPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button className="px-3 py-1.5 text-xs font-bold text-gray-300 hover:text-white bg-background border border-border hover:border-gray-500 rounded-lg transition-all shadow-inner">
-                        Edit
+                      <button
+                        onClick={() => toggleRemoteAuth(server)}
+                        disabled={togglingId === server.id}
+                        aria-pressed={!!server.allowRemoteAuth}
+                        title={
+                          server.allowRemoteAuth
+                            ? t(
+                                "settings.remote_auth_on_hint",
+                                "Users can sign in with their Jellyfin or Emby credentials. Click to disable.",
+                              )
+                            : t(
+                                "settings.remote_auth_off_hint",
+                                "Only local Jellystat users can sign in for this server. Click to allow Jellyfin or Emby sign-in.",
+                              )
+                        }
+                        className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border transition-all shadow-inner disabled:opacity-50 disabled:cursor-not-allowed ${
+                          server.allowRemoteAuth
+                            ? "text-brand-emerald bg-brand-emerald/10 border-brand-emerald/40 hover:border-brand-emerald"
+                            : "text-gray-400 bg-background border-border hover:border-gray-500 hover:text-white"
+                        }`}
+                      >
+                        {togglingId === server.id ? (
+                          <Loader2 size={13} className="animate-spin" />
+                        ) : server.allowRemoteAuth ? (
+                          <ShieldCheck size={13} />
+                        ) : (
+                          <ShieldClose size={13} />
+                        )}
+                        {t("settings.remote_auth_short", "Remote auth")}:{" "}
+                        {server.allowRemoteAuth ? t("common.on", "On") : t("common.off", "Off")}
+                      </button>
+                      <button
+                        onClick={() => setEditingServer(server)}
+                        className="px-3 py-1.5 text-xs font-bold text-gray-300 hover:text-white bg-background border border-border hover:border-gray-500 rounded-lg transition-all shadow-inner"
+                      >
+                        {t("common.edit", "Edit")}
                       </button>
                     </div>
                   </div>
@@ -156,61 +192,22 @@ export default function ServerSettingsPage() {
           </div>
         </div>
 
-        {/* Right Column: Authentication & Users */}
-        <div className="space-y-8">
-          {/* Global Auth Settings */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <ShieldCheck size={20} className="text-brand-emerald" />
-              {t("settings.access_policies", "Access Policies")}
-            </h2>
-
-            <div className="bg-surface border border-border rounded-2xl p-5 shadow-xl shadow-black/20">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="font-bold text-gray-100 mb-1">{t("settings.remote_auth", "Remote Authentication")}</h3>
-                  <p className="text-xs text-gray-400 leading-relaxed">
-                    {t(
-                      "settings.remote_auth_desc",
-                      "Allow users to log into Jellystat using their existing Jellyfin or Emby credentials.",
-                    )}
-                  </p>
-                </div>
-                {/* Toggle */}
-                <button
-                  onClick={() => toggleRemoteAuth(!remoteAuthEnabled)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand-emerald focus:ring-offset-2 focus:ring-offset-background ${
-                    remoteAuthEnabled ? "bg-brand-emerald" : "bg-background border border-border shadow-inner"
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      remoteAuthEnabled ? "translate-x-6 shadow-md" : "translate-x-1 opacity-70"
-                    }`}
-                  />
-                </button>
-              </div>
-
-              {!remoteAuthEnabled && (
-                <div className="mt-4 p-3 bg-brand-rose/10 border border-brand-rose/20 rounded-xl flex gap-3 animate-in fade-in zoom-in-95">
-                  <ShieldAlert size={16} className="text-brand-rose shrink-0 mt-0.5" />
-                  <p className="text-xs text-brand-rose font-medium">
-                    {t(
-                      "settings.remote_auth_warning",
-                      "Warning: If disabled, only Local Administrators will be able to log into this dashboard.",
-                    )}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
       </div>
       <Dialog open={isAddServerOpen} onClose={setIsAddServerOpen} className="relative z-50 focus:outline-none">
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
 
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <AddServerModal onClose={() => setIsAddServerOpen(false)} onCreated={fetchServers} />
+        </div>
+      </Dialog>
+
+      <Dialog open={editingServer !== null} onClose={() => setEditingServer(null)} className="relative z-50 focus:outline-none">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
+
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          {editingServer && (
+            <EditServerModal server={editingServer} onClose={() => setEditingServer(null)} onSaved={fetchServers} />
+          )}
         </div>
       </Dialog>
     </div>
@@ -221,3 +218,4 @@ import { Database } from "lucide-react";
 import configManager from "@/lib/configManager";
 import { Dialog } from "@headlessui/react";
 import AddServerModal from "./AddServer";
+import EditServerModal from "./EditServer";

@@ -6,7 +6,7 @@ import {
   ArrowLeftRight,
   Terminal,
   Server,
-  Users,
+  KeyRound,
   Archive,
   Info,
   RefreshCw,
@@ -21,6 +21,7 @@ import LibrarySettingsPage from "./Library/LibrarySettings";
 import ServerSettingsPage from "./Servers/ServerSettings";
 import UsersSettingsPage from "./Users";
 import BackupsPage from "./Backups/BackupsPage";
+import ApiKeysPage from "./ApiKeys/ApiKeysPage";
 import LanguageSwitcher from "@/components/Core/LanguageSwitcher";
 import { VersionInfo } from "@/lib/models/VersionInfo";
 import versionManager from "@/lib/versionManager";
@@ -32,7 +33,11 @@ export default function SettingsPage() {
   const { t } = useTranslation("common");
   const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
   const [isUpdatingUI, setIsUpdatingUI] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>(localStorage.getItem("PREF_SETTINGS_TAB") ?? "settings");
+  const [activeTab, setActiveTab] = useState<string>(
+    localStorage.getItem("PREF_SETTINGS_TAB") === "users"
+      ? "servers"
+      : (localStorage.getItem("PREF_SETTINGS_TAB") ?? "settings"),
+  );
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -64,8 +69,8 @@ export default function SettingsPage() {
 
   const tabs = [
     { id: "settings", label: t("settings.tab_general", "General Settings"), icon: Settings, IsAdmin: false },
-    { id: "servers", label: t("settings.tab_servers", "Servers & Auth"), icon: Server, IsAdmin: true },
-    { id: "users", label: t("nav.users", "Users"), icon: Users, IsAdmin: true },
+    { id: "servers", label: t("settings.tab_servers_users", "Servers & Users"), icon: Server, IsAdmin: true },
+    { id: "apikeys", label: t("settings.tab_api_keys", "API Keys"), icon: KeyRound, IsAdmin: true },
     { id: "librarySettings", label: t("settings.tab_library", "Library Settings"), icon: Library, IsAdmin: true },
     { id: "migrations", label: t("settings.tab_migrations", "Activity Migration"), icon: ArrowLeftRight, IsAdmin: true },
     { id: "backups", label: t("settings.tab_backups", "Backups"), icon: Archive, IsAdmin: true },
@@ -219,8 +224,16 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {activeTab === "servers" && <ServerSettingsPage />}
-          {activeTab === "users" && <UsersSettingsPage />}
+          {activeTab === "servers" && (
+            <>
+              <ServerSettingsPage />
+              <div className="max-w-[1600px] mx-auto px-6">
+                <hr className="border-border/50" />
+              </div>
+              <UsersSettingsPage />
+            </>
+          )}
+          {activeTab === "apikeys" && <ApiKeysPage />}
           {activeTab === "librarySettings" && <LibrarySettingsPage />}
           {activeTab === "migrations" && <ActivityMigrationPage />}
           {activeTab === "backups" && <BackupsPage />}

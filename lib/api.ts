@@ -29,6 +29,7 @@ import { RecentlyAdded } from "./models/RecentlyAdded";
 import { CountModelWithSize } from "./models/countModelWithSize";
 import { BackupModel } from "./models/backupModel";
 import { VersionInfo } from "./models/VersionInfo";
+import type { ApiKeyInfo, CreateApiKey, CreatedApiKey } from "./models/apiKey";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
@@ -349,6 +350,14 @@ const createUser = (payload: LocalUser): Promise<void> =>
 const deleteUser = async (payload: { Id: string }): Promise<void> =>
   apiFetch<void>(`/Auth/DeleteUser${await buildQuery(undefined, payload as Record<string, any>)}`, { method: "DELETE" });
 
+const getApiKeys = (): Promise<ApiKeyInfo[]> => apiFetch<ApiKeyInfo[]>("/ApiKeys/List");
+
+const createApiKey = (payload: CreateApiKey): Promise<CreatedApiKey> =>
+  apiFetch<CreatedApiKey>("/ApiKeys/Create", { method: "POST", body: JSON.stringify(payload) });
+
+const deleteApiKey = async (payload: { Id: string }): Promise<void> =>
+  apiFetch<void>(`/ApiKeys/Delete${await buildQuery(undefined, payload as Record<string, any>)}`, { method: "DELETE" });
+
 // Refresh auth (no body expected)
 const refreshToken = async (): Promise<void> => {
   console.log("Attempting token refresh");
@@ -582,6 +591,12 @@ export const Auth = {
   refreshToken,
 };
 
+export const ApiKeys = {
+  list: getApiKeys,
+  create: createApiKey,
+  delete: deleteApiKey,
+};
+
 export const Proxy = {
   devices: getProxyDeviceImage,
   items: { getItemBackdrop, getItemPrimary },
@@ -611,6 +626,7 @@ export default {
   Stats,
   History,
   Auth,
+  ApiKeys,
   Proxy,
   System,
   Tasks,
