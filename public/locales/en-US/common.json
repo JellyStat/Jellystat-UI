@@ -204,6 +204,7 @@
     "overview": "Overview",
     "settings": "Settings",
     "statistics": "Statistics",
+    "timeline": "Timeline",
     "users": "Users"
   },
   "recently_added": {
@@ -431,6 +432,18 @@
     "task_toggled": "Task {{taskName}} {{action}}",
     "toggle_task": "{{action}} task {{taskName}}",
     "update_failed": "Failed to update task {{taskName}}"
+  },
+  "timeline": {
+    "empty_message": "No qualifying playback found for the selected libraries",
+    "empty_title": "Nothing on the timeline yet",
+    "episodes": "{{episodeCount}} Episodes",
+    "error_loading": "Error loading timeline",
+    "season": "Season {{n}}",
+    "season_range": "{{from}} - {{to}}",
+    "show_more": "Show more",
+    "specials": "Specials",
+    "watched_hours_minutes": "{{hours}}h {{minutes}}m watched",
+    "watched_minutes": "{{minutes}}m watched"
   },
   "user": {
     "error_loading": "Error loading user",

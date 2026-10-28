@@ -28,6 +28,7 @@ import { LogsModel } from "./models/LogsModel";
 import { RecentlyAdded } from "./models/RecentlyAdded";
 import { CountModelWithSize } from "./models/countModelWithSize";
 import { BackupModel } from "./models/backupModel";
+import type { TimelineEntry } from "./models/timelineEntry";
 import { VersionInfo } from "./models/VersionInfo";
 import type { ApiKeyInfo, CreateApiKey, CreatedApiKey } from "./models/apiKey";
 
@@ -423,6 +424,9 @@ const deleteHistoryActivity = async (serverId: string | undefined, ids: string[]
     body: JSON.stringify(ids),
   });
 
+const getTimeline = async (params: { UserId?: string; LibraryIds?: string[]; ServerId?: string }): Promise<TimelineEntry[]> =>
+  apiFetch<TimelineEntry[]>(`/History/Timeline${await buildQuery(undefined, params as Record<string, any>)}`);
+
 const getUnlinkedActivity = async (gridify?: IGridifyQuery): Promise<PagingResponse<Activity>> =>
   apiFetch<PagingResponse<Activity>>(`/History/UnlinkedActivity${await buildQuery(gridify)}`);
 
@@ -578,6 +582,7 @@ export const Stats = {
 
 export const History = {
   activity: { get: getHistoryActivity, delete: deleteHistoryActivity },
+  timeline: getTimeline,
   getUnlinkedActivity,
   migrateActivity,
 };

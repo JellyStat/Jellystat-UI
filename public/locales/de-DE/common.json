@@ -200,6 +200,7 @@
     "overview": "Übersicht",
     "settings": "Einstellungen",
     "statistics": "Statistiken",
+    "timeline": "Zeitleiste",
     "users": "Benutzer"
   },
   "recently_added": {
@@ -404,6 +405,18 @@
     "task_toggled": "Aufgabe {{taskName}} {{action}}",
     "toggle_task": "{{action}} Aufgabe {{taskName}}",
     "update_failed": "Fehler beim Aktualisieren der Aufgabe {{taskName}}"
+  },
+  "timeline": {
+    "empty_message": "Für die ausgewählten Bibliotheken wurde keine Wiedergabe gefunden",
+    "empty_title": "Noch nichts auf der Zeitleiste",
+    "episodes": "{{episodeCount}} Folgen",
+    "error_loading": "Fehler beim Laden der Zeitleiste",
+    "season": "Staffel {{n}}",
+    "season_range": "{{from}} - {{to}}",
+    "show_more": "Mehr anzeigen",
+    "specials": "Specials",
+    "watched_hours_minutes": "{{hours}} Std. {{minutes}} Min. angesehen",
+    "watched_minutes": "{{minutes}} Min. angesehen"
   },
   "user": {
     "error_loading": "Fehler beim Laden des Benutzers",

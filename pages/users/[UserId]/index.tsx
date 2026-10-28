@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { useTranslation } from "react-i18next";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
-import { Loader2, AlertCircle, Image as ImageIcon, Info, Film, Activity as ActivityIcon, Settings, UserIcon } from "lucide-react";
+import { Loader2, AlertCircle, Image as ImageIcon, Info, Film, Activity as ActivityIcon, Settings, UserIcon, GitCommitVertical } from "lucide-react";
 
 import client, { API_BASE } from "@/lib/api";
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
@@ -13,6 +13,7 @@ import UserOverView from "./overview";
 import { Users } from "@/lib/models/users";
 import NotFound from "@/components/ErrorCards/NotFound";
 import UserActivity from "./activity";
+import UserTimeline from "./timeline";
 
 export default function LibraryPage() {
   const router = useRouter();
@@ -70,6 +71,7 @@ export default function LibraryPage() {
   const tabs = [
     { id: "overview", label: t("nav.overview", "Overview"), icon: Info },
     { id: "activity", label: t("nav.activity", "Activity"), icon: ActivityIcon },
+    { id: "timeline", label: t("nav.timeline", "Timeline"), icon: GitCommitVertical },
   ];
 
   // const UserIcon = LibraryTypeIcons[lib?.type ?? ""] ?? ImageIcon;
@@ -163,6 +165,13 @@ export default function LibraryPage() {
               <div className={activeTab === "activity" ? "block animate-in fade-in slide-in-from-bottom-2" : "hidden"}>
                 <UserActivity user={user} />
               </div>
+
+              {/* Only mounted while selected so the timeline is fetched on demand */}
+              {activeTab === "timeline" && (
+                <div className="block animate-in fade-in slide-in-from-bottom-2">
+                  <UserTimeline user={user} />
+                </div>
+              )}
             </div>
           </div>
         )}
