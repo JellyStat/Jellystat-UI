@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AlertCircle, Eye, EyeOff, Loader2, Lock, User, UserPlus } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Loader2, Lock, Server as ServerIcon, User, UserPlus } from "lucide-react";
 import { DialogPanel, DialogTitle } from "@headlessui/react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -7,6 +7,9 @@ import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 
 import client from "@/lib/api";
 import { LocalUser } from "@/lib/models/localUser";
+import type { Server } from "@/lib/models/server";
+import configManager from "@/lib/configManager";
+import DropdownSelector from "@/components/Core/DropdownSelector";
 
 type Props = {
   userId: string;
@@ -24,6 +27,8 @@ export default function UpdateUserModal({ userId, onClose, onCreated }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{ username?: string; password?: string; confirmPassword?: string }>({});
   const [user, setUser] = useState<LocalUser | null>(null);
+  const [servers, setServers] = useState<Server[]>([]);
+  const [serverId, setServerId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchUser() {
@@ -32,10 +37,18 @@ export default function UpdateUserModal({ userId, onClose, onCreated }: Props) {
         const query = new GridifyQueryBuilder();
         query.addCondition("Id", op.Equal, userId);
         const builtQuery = query.build();
-        const response = await client.Api.getLocalUsers(builtQuery);
+        const [response, serverList] = await Promise.all([
+          client.Api.getLocalUsers(builtQuery),
+          configManager.getConfig().catch((err) => {
+            console.error("Failed to load servers:", err);
+            return [] as Server[];
+          }),
+        ]);
         const data = response?.data ?? [];
         const user = data.FirstOrDefault();
         setUser(user ?? null);
+        setServers(serverList ?? []);
+        setServerId(user?.serverId || null);
       } catch (err) {
         console.error("Failed to fetch user:", err);
       } finally {
@@ -45,24 +58,30 @@ export default function UpdateUserModal({ userId, onClose, onCreated }: Props) {
     fetchUser();
   }, [userId]);
 
+  const serverChanged = !!serverId && serverId !== (user?.serverId || null);
+  const passwordEntered = password.trim() !== "" || confirmPassword.trim() !== "";
+
   async function handleSubmit(e: React.SubmitEvent) {
     e.preventDefault();
 
     setError(null);
     setFieldErrors({});
 
+    // Password is optional here: only validate it when the admin is changing it
     const nextFieldErrors: typeof fieldErrors = {};
-    if (!password.trim()) {
-      nextFieldErrors.password = t("common.error_password_required", "Password is required");
-    }
+    if (passwordEntered) {
+      if (!password.trim()) {
+        nextFieldErrors.password = t("common.error_password_required", "Password is required");
+      }
 
-    if (!confirmPassword.trim()) {
-      nextFieldErrors.confirmPassword = t("common.error_confirm_password_required", "Confirm Password is required");
-    }
+      if (!confirmPassword.trim()) {
+        nextFieldErrors.confirmPassword = t("common.error_confirm_password_required", "Confirm Password is required");
+      }
 
-    if (password !== confirmPassword) {
-      nextFieldErrors.confirmPassword = t("common.error_password_mismatch", "Passwords do not match");
-      nextFieldErrors.password = t("common.error_password_mismatch", "Passwords do not match");
+      if (password !== confirmPassword) {
+        nextFieldErrors.confirmPassword = t("common.error_password_mismatch", "Passwords do not match");
+        nextFieldErrors.password = t("common.error_password_mismatch", "Passwords do not match");
+      }
     }
 
     if (Object.keys(nextFieldErrors).length > 0) {
@@ -72,14 +91,17 @@ export default function UpdateUserModal({ userId, onClose, onCreated }: Props) {
 
     setLoading(true);
     try {
-      const payload = user!;
-      payload.password = password;
-      await client.Auth.updateUser(payload);
+      if (serverChanged) {
+        await client.Api.setLocalUserServer({ userId: user!.id!, serverId: serverId! });
+      }
+      if (passwordEntered) {
+        await client.Auth.updateUser({ ...user!, password });
+      }
       toast.success(t("settings.toast_user_updated", "User updated successfully"));
       onCreated?.();
       onClose();
     } catch (err: any) {
-      const message = err?.message ?? t("settings.error_create_user", "Failed to create user");
+      const message = err?.message ?? t("settings.error_update_user", "Failed to update user");
       setError(message);
       toast.error(message);
     } finally {
@@ -141,6 +163,29 @@ export default function UpdateUserModal({ userId, onClose, onCreated }: Props) {
 
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
+              {t("settings.default_server", "Default Server")}
+            </label>
+            <DropdownSelector<string>
+              data={servers.map((s) => ({ value: s.id, Icon: ServerIcon }))}
+              value={serverId ?? undefined}
+              onChange={(value) => setServerId(value)}
+              labelFn={(value) => {
+                const server = servers.find((s) => s.id === value);
+                return server ? `${server.type ? `${server.type} - ` : ""}${server.name}` : value;
+              }}
+              placeholder={t("settings.no_default_server", "No default server")}
+              emptyDataMessage={t("settings.no_servers", "No servers connected")}
+              leftIcon={ServerIcon}
+              disabled={loading || servers.length === 0}
+              widthPx={0}
+            />
+            <p className="text-[11px] text-gray-500 ml-1">
+              {t("settings.default_server_desc", "The server this user sees when they sign in.")}
+            </p>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
               {t("common.password", "Password")}
             </label>
             <div className="relative group">
@@ -152,7 +197,7 @@ export default function UpdateUserModal({ userId, onClose, onCreated }: Props) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
-                placeholder={t("settings.placeholder_password", "Enter your password")}
+                placeholder={t("settings.placeholder_new_password", "Leave blank to keep the current password")}
                 className={`w-full bg-background border rounded-xl py-3 pl-11 pr-12 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all shadow-inner ${
                   fieldErrors.password
                     ? "border-brand-rose focus:border-brand-rose focus:ring-brand-rose/50"
@@ -223,7 +268,7 @@ export default function UpdateUserModal({ userId, onClose, onCreated }: Props) {
           <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-2">
             <button
               type="submit"
-              disabled={loading || !password.trim()}
+              disabled={loading || (!passwordEntered && !serverChanged)}
               className="px-5 py-2.5 rounded-xl bg-brand-purple hover:bg-[#9a2cee] text-white font-black transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg shadow-brand-purple/20 active:scale-[0.98]"
             >
               {loading ? (

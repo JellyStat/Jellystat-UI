@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Play,
   ServerCog,
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { GridifyQueryBuilder } from "gridify-client";
 
 import client from "@/lib/api";
 import { LogsModel } from "@/lib/models/LogsModel";
@@ -21,24 +22,38 @@ import WebSocketMessageTypes from "@/lib/models/enums/WebSocketMessageTypes";
 import { WebsocketMessage } from "@/lib/models/WebsocketMessage";
 import { wsClient } from "@/lib/wsClient";
 
+const LOGS_PER_PAGE = 20;
+
 export default function TasksLogsPage() {
   const { t } = useTranslation("common");
   const [logs, setLogs] = useState<LogsModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedLogIds, setExpandedLogIds] = useState<string[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const totalPages = Math.max(1, Math.ceil(totalCount / LOGS_PER_PAGE));
+  // The websocket handler is registered once, so it reads the current page through a ref
+  const pageRef = useRef(page);
+  pageRef.current = page;
 
   const toggleRow = (id: string) => {
     setExpandedLogIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
 
-  // --- INITIAL FETCH ---
+  // --- PAGE FETCH ---
   useEffect(() => {
     let isMounted = true;
     const fetchLogs = async () => {
       try {
         setLoading(true);
-        const logs = await client.Api.getTaskLogs();
-        if (isMounted) setLogs(logs.data || []);
+        const query = new GridifyQueryBuilder();
+        query.setPage(page);
+        query.setPageSize(LOGS_PER_PAGE);
+        query.addOrderBy("dateCreated", true);
+        const res = await client.Api.getTaskLogs(query.build());
+        if (!isMounted) return;
+        setLogs(res?.data ?? []);
+        setTotalCount(res?.count ?? 0);
       } catch (error) {
         console.error("Failed to fetch task logs:", error);
         toast.error(t("tasks.logs_load_error", "Failed to load logs. Please try again later."));
@@ -51,33 +66,38 @@ export default function TasksLogsPage() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [page]);
 
   // --- WEBSOCKET SUBSCRIPTION ---
   useEffect(() => {
     const handler = (msg: WebsocketMessage<LogsModel>) => {
       const payload = msg?.data;
       if (!payload) return;
-      //add new log or update existing log
+      // Update a log already on screen; new logs only appear on page 1 (newest first)
       setLogs((prevLogs) => {
         const existingLogIndex = prevLogs.findIndex((log) => log.id === payload.id);
         if (existingLogIndex !== -1) {
-          // Update existing log
           const updatedLogs = [...prevLogs];
           updatedLogs[existingLogIndex] = payload;
           return updatedLogs;
         }
-        // Add new log
-        return [payload, ...prevLogs];
+        if (pageRef.current !== 1) return prevLogs;
+        return [payload, ...prevLogs].slice(0, LOGS_PER_PAGE);
       });
+    };
+
+    const countHandler = (msg: WebsocketMessage<LogsModel>) => {
+      if (msg?.data) setTotalCount((c) => c + 1);
     };
 
     const startEventTag = WebSocketMessageTypes.TaskStart.toString();
     const updateEventTag = WebSocketMessageTypes.TaskLogUpdate.toString();
     wsClient.on(startEventTag, handler);
+    wsClient.on(startEventTag, countHandler);
     wsClient.on(updateEventTag, handler);
     return () => {
       wsClient.off(startEventTag, handler);
+      wsClient.off(startEventTag, countHandler);
       wsClient.off(updateEventTag, handler);
     };
   }, []);
@@ -86,7 +106,7 @@ export default function TasksLogsPage() {
     const isExpanded = expandedLogIds.includes(log.id ?? "");
 
     return (
-      <tr key={log.task} className="hover:bg-surface-hover transition-colors group">
+      <tr className="hover:bg-surface-hover transition-colors group">
         <td className={`p-2 sm:p-3 w-10 sm:w-12 text-center`}>
           {log.messages.length > 0 ? (
             <button
@@ -201,14 +221,14 @@ export default function TasksLogsPage() {
             <tbody className="divide-y divide-border">
               {loading && logs.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center">
+                  <td colSpan={6} className="p-8 text-center">
                     <Loader2 size={24} className="animate-spin text-brand-purple mx-auto mb-2" />
                     <span className="text-gray-500 text-sm font-medium">{t("common.loading", "Loading logs...")}</span>
                   </td>
                 </tr>
               ) : logs.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-gray-500 text-sm font-medium">
+                  <td colSpan={6} className="p-8 text-center text-gray-500 text-sm font-medium">
                     {t("tasks.no_logs", "No logs found.")}
                   </td>
                 </tr>
@@ -224,6 +244,49 @@ export default function TasksLogsPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination Footer */}
+        <div className="bg-background/80 border-t border-border p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3">
+          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+            {t("tasks.total_logs", "Total Logs:")} <span className="text-white">{totalCount}</span>
+          </span>
+          <div className="flex items-center gap-4 ml-auto">
+            {loading && logs.length > 0 && <Loader2 size={14} className="animate-spin text-brand-purple" />}
+            <span className="text-xs font-mono text-gray-400 whitespace-nowrap">
+              {t("common.page_of", "Page {{page}} of {{total}}", { page, total: totalPages })}
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPage(1)}
+                disabled={page === 1 || loading}
+                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer disabled:cursor-not-allowed"
+              >
+                {t("common.first", "First")}
+              </button>
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1 || loading}
+                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer disabled:cursor-not-allowed"
+              >
+                {t("common.prev", "Prev")}
+              </button>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page >= totalPages || loading}
+                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer disabled:cursor-not-allowed"
+              >
+                {t("common.next", "Next")}
+              </button>
+              <button
+                onClick={() => setPage(totalPages)}
+                disabled={page >= totalPages || loading}
+                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer disabled:cursor-not-allowed"
+              >
+                {t("common.last", "Last")}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -31,6 +31,7 @@ import { BackupModel } from "./models/backupModel";
 import type { TimelineEntry } from "./models/timelineEntry";
 import { VersionInfo } from "./models/VersionInfo";
 import type { ApiKeyInfo, CreateApiKey, CreatedApiKey } from "./models/apiKey";
+import type { GeolocationInfo } from "./models/geolocationInfo";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
@@ -518,6 +519,10 @@ const getResolutionStats = async (gridify?: IGridifyQuery) =>
 // History
 const getSystemInfo = async (): Promise<SystemInfo> => apiFetch(`/System/Info`);
 
+// Utils
+const geolocateIp = async (ipAddress: string): Promise<GeolocationInfo> =>
+  apiFetch<GeolocationInfo>(`/Utils/GeolocateIp${await buildQuery(undefined, { IpAddress: ipAddress }, false)}`);
+
 //Tasks
 const startTask = async (task: TaskTypes) =>
   apiFetchRaw(`/Tasks/StartTask${await buildQuery(undefined, { task })}`)
@@ -631,6 +636,10 @@ export const System = {
   getSystemInfo,
 };
 
+export const Utils = {
+  geolocateIp,
+};
+
 export const Tasks = {
   startTask,
   updateTask,
@@ -654,6 +663,7 @@ export default {
   Proxy,
   System,
   Tasks,
+  Utils,
   ApiError,
   // keep individual exports for backward compatibility
   //   getConfig,
