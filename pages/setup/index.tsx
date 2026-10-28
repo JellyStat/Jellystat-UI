@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { UserPlus, Database, CheckCircle2, Loader2, AlertTriangle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -11,8 +12,18 @@ import CreateUserPage from "@/components/Setup/CreateUser";
 import CreateServerPage from "@/components/Setup/CreateServerInstance";
 import SetupCompletePage from "@/components/Setup/SetupComplete";
 
+function hasStoredToken(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return !!localStorage.getItem("jellystat_token");
+  } catch {
+    return false;
+  }
+}
+
 export default function SetupPage() {
   const { t } = useTranslation("common");
+  const router = useRouter();
 
   const [loading, setLoading] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -30,7 +41,16 @@ export default function SetupPage() {
     setError(null);
     try {
       const info = await client.System.getSystemInfo();
-      setSystemState(info?.state ?? SystemState.Unconfigured);
+      const state = info?.state ?? SystemState.Unconfigured;
+
+      // After the admin is created, the server step is admin-only. Without a stored login (another browser,
+      // or the API restarted), send them to sign in first instead of failing on the server step.
+      if (state === SystemState.FirstUserCreated && !hasStoredToken()) {
+        void router.replace("/login");
+        return;
+      }
+
+      setSystemState(state);
     } catch (err: any) {
       let msg = err?.message ?? String(err ?? "Unknown error");
       if (err instanceof client.ApiError) {

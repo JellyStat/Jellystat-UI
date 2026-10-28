@@ -118,6 +118,9 @@ export default function LoginPage() {
       await setToken(res, activeServerId);
 
       try {
+        // Always reconnect with the new token. init() alone is a no-op if a socket is still open from a
+        // previous login in this tab, which would keep receiving that user's data.
+        wsClient.close();
         wsClient.init();
       } catch (wsErr) {
         console.warn("WebSocket init failed during login:", wsErr);

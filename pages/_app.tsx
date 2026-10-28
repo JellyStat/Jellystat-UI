@@ -35,6 +35,13 @@ function App({ Component, pageProps }: AppProps) {
     setError(null);
     try {
       const info = await client.System.getSystemInfo();
+      // Once the first admin exists, adding a server needs their login. Let /login through so they can
+      // sign in; after login they land on "/" and get sent back to setup from there.
+      if (info && info.state === SystemState.FirstUserCreated && router.pathname === "/login") {
+        if (isRetry) setRetrying(false);
+        else setLoading(false);
+        return;
+      }
       if (info && info.state !== SystemState.Configured) {
         try {
           router.push("/setup");

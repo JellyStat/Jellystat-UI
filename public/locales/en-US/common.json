@@ -476,6 +476,7 @@
     "no_configurable_tasks": "No configurable tasks found.",
     "no_logs": "No logs found.",
     "partial_sync": "Partial Sync",
+    "playback_reporting_import": "Playback Reporting Import",
     "queued": "Queued",
     "run_now": "Run {{taskName}} Now",
     "running": "Running",

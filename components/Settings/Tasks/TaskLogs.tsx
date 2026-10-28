@@ -125,6 +125,7 @@ export default function TasksLogsPage() {
             Backup: t("tasks.backup", "Backup"),
             FullSync: t("tasks.full_sync", "Full Sync"),
             PartialSync: t("tasks.partial_sync", "Partial Sync"),
+            PlaybackReportingPluginSync: t("tasks.playback_reporting_import", "Playback Reporting Import"),
             Restore: t("common.restore", "Restore"),
           };
           const badgeLabel = taskBadgeLabels[log.task] ?? log.task;

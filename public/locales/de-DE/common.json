@@ -449,6 +449,7 @@
     "no_configurable_tasks": "Keine konfigurierbaren Aufgaben gefunden.",
     "no_logs": "Keine Logs gefunden.",
     "partial_sync": "Partielle Synchronisierung",
+    "playback_reporting_import": "Playback-Reporting-Import",
     "queued": "Warteschlange",
     "run_now": "{{taskName}} jetzt ausführen",
     "running": "Läuft",

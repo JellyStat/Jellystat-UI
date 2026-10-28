@@ -128,6 +128,9 @@ export default function SideNav() {
 
   const handleLogout = (e: React.MouseEvent) => {
     e.preventDefault();
+    // Close the socket first: it was opened with this user's token and would otherwise stay open
+    // (logout is a client-side navigation), keeping this user's live feed for whoever logs in next.
+    wsClient.close();
     try {
       localStorage.removeItem("jellystat_token");
       localStorage.removeItem("jellystat_refreshToken");
