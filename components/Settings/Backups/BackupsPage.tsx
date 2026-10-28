@@ -3,6 +3,7 @@ import { Archive, Loader2, AlertCircle, Download, Delete, Trash, Clock, Upload }
 import { useTranslation } from "react-i18next";
 
 import client from "@/lib/api";
+import { formatDateTime } from "@/lib/dateFormat";
 import { toast } from "sonner";
 import Tasks from "@/lib/models/enums/Tasks";
 import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
@@ -119,7 +120,7 @@ export default function BackupsPage() {
 
   const formatBackupDate = (backup: BackupModel) =>
     backup.date
-      ? new Date(backup.date).toLocaleDateString(i18n.language || undefined, {
+      ? formatDateTime(backup.date, {
           month: "short",
           day: "numeric",
           year: "numeric",

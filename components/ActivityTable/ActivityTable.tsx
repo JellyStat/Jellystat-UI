@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import { GridifyQueryBuilder } from "gridify-client";
+import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
+import { toast } from "sonner";
 import {
   ActivityIcon,
   ChevronDown,
@@ -17,6 +18,7 @@ import {
   MonitorPlay,
   RefreshCcw,
   RefreshCw,
+  Trash2,
 } from "lucide-react";
 
 import Activity from "@/lib/models/activity";
@@ -33,6 +35,23 @@ import NumberFilter from "../DataTableFilters/NumberFilter";
 import DropdownSelector from "../Core/DropdownSelector";
 import NumberField from "../Core/NumberField";
 import IconButton from "../Core/IconButton";
+import ConfirmationDialogButton from "../Core/ConfirmationDialogButton";
+import LibraryFilter from "./LibraryFilter";
+import permissionsManager from "@/lib/permissionsManager";
+import Permissions from "@/lib/models/enums/Permissions";
+import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
+import { formatDateTime } from "@/lib/dateFormat";
+
+const LIBRARY_FILTER_STORAGE_KEY = "PREF_ACTIVITY_LIBRARY_FILTER";
+
+function readStoredLibraryFilter(): string[] {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(LIBRARY_FILTER_STORAGE_KEY) ?? "[]");
+    return Array.isArray(parsed) ? parsed.filter((v) => typeof v === "string") : [];
+  } catch {
+    return [];
+  }
+}
 
 interface SortStatus {
   columnAccessor: string;
@@ -42,9 +61,11 @@ interface SortStatus {
 type Props = {
   gridify?: GridifyQueryBuilder | null;
   GroupResults?: boolean;
+  /** Show the library picker (used on the main Activity page). */
+  showLibraryFilter?: boolean;
 };
 
-export function ActivityTable({ gridify, GroupResults }: Props) {
+export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false }: Props) {
   const { t } = useTranslation("common");
 
   // --- STATE ---
@@ -73,6 +94,23 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
 
   const [expandedActivityIds, setExpandedActivityIds] = useState<string[]>([]);
 
+  // Admin-only row selection for deleting activity
+  const [isAdmin] = useState(() => {
+    try {
+      return permissionsManager.hasPermission(Permissions.Administrator);
+    } catch {
+      return false;
+    }
+  });
+  // Selected play id -> its server id. Kept across page, sort and filter changes until deleted or cleared.
+  const [selected, setSelected] = useState<Record<string, string | undefined>>({});
+  const selectedIds = Object.keys(selected);
+  const [deleting, setDeleting] = useState(false);
+
+  // Library filter (empty = all libraries)
+  const [libraries, setLibraries] = useState<LibrariesWithStats[]>([]);
+  const [libraryIds, setLibraryIds] = useState<string[]>(() => (showLibraryFilter ? readStoredLibraryFilter() : []));
+
   // Stream info modal
   const [streamModalOpen, setStreamModalOpen] = useState(false);
   const [streamModalActivity, setStreamModalActivity] = useState<Activity | null>(null);
@@ -96,6 +134,17 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
         query.setPageSize(recordsPerPage);
 
         applyFiltersToQuery(query);
+
+        if (libraryIds.length > 0) {
+          if (query.build().filter) query.and();
+          query.startGroup();
+          libraryIds.forEach((id, i) => {
+            if (i > 0) query.or();
+            query.addCondition("LibraryId", op.Equal, id);
+          });
+          query.endGroup();
+        }
+
         query.addOrderBy(sortStatus.columnAccessor, sortStatus.direction === "desc");
 
         const builtQuery = query.build();
@@ -111,7 +160,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [gridify, sortStatus, filter, GroupResults, recordsPerPage],
+    [gridify, sortStatus, filter, GroupResults, recordsPerPage, libraryIds],
   );
 
   useEffect(() => {
@@ -120,7 +169,31 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
     setPage(1);
     fetchPage(1, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, gridify]);
+  }, [filter, gridify, libraryIds]);
+
+  useEffect(() => {
+    if (!showLibraryFilter) return;
+    client.Api.getLibraries(new GridifyQueryBuilder().addOrderBy("name").build())
+      .then((res) => {
+        const libs = res?.data ?? [];
+        setLibraries(libs);
+        // Drop stored ids for libraries that no longer exist
+        setLibraryIds((prev) => {
+          const valid = prev.filter((id) => libs.some((l) => l.id === id));
+          return valid.length === prev.length ? prev : valid;
+        });
+      })
+      .catch((err) => console.error("Failed to load libraries", err));
+  }, [showLibraryFilter]);
+
+  const changeLibraryFilter = (ids: string[]) => {
+    setLibraryIds(ids);
+    try {
+      localStorage.setItem(LIBRARY_FILTER_STORAGE_KEY, JSON.stringify(ids));
+    } catch {
+      /* ignore storage errors */
+    }
+  };
 
   useEffect(() => {
     fetchPage(page);
@@ -137,6 +210,87 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
 
   const toggleRow = (id: string) => {
     setExpandedActivityIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
+  };
+
+  // --- SELECTION (admin only) ---
+  type SelectionEntry = [id: string, serverId: string | undefined];
+
+  // A grouped row stands for every play in its group, so selecting it selects all of them
+  const entriesForRow = (activity: Activity, isSubRow: boolean): SelectionEntry[] => {
+    if (!isSubRow && activity.groupedResults && activity.groupedResults.length > 0) {
+      return activity.groupedResults
+        .filter((a) => !!a.id)
+        .map((a): SelectionEntry => [a.id!, a.serverId ?? activity.serverId]);
+    }
+    return activity.id ? [[activity.id, activity.serverId]] : [];
+  };
+
+  const isSelected = (id: string) => Object.prototype.hasOwnProperty.call(selected, id);
+
+  const pageEntries = activityData.flatMap((a) => entriesForRow(a, false));
+  const allPageSelected = pageEntries.length > 0 && pageEntries.every(([id]) => isSelected(id));
+  const somePageSelected = pageEntries.some(([id]) => isSelected(id));
+
+  const toggleEntries = (entries: SelectionEntry[]) => {
+    setSelected((prev) => {
+      const allSelected = entries.every(([id]) => Object.prototype.hasOwnProperty.call(prev, id));
+      const next = { ...prev };
+      for (const [id, serverId] of entries) {
+        if (allSelected) delete next[id];
+        else next[id] = serverId;
+      }
+      return next;
+    });
+  };
+
+  const clearSelection = () => setSelected({});
+
+  const deleteSelected = async () => {
+    const entries = Object.entries(selected);
+    if (entries.length === 0) return;
+
+    // The delete endpoint is per server, so group the selected plays by their server
+    const byServer = new Map<string | undefined, string[]>();
+    for (const [id, serverId] of entries) {
+      byServer.set(serverId, [...(byServer.get(serverId) ?? []), id]);
+    }
+
+    setDeleting(true);
+    try {
+      for (const [serverId, ids] of byServer) {
+        await client.History.activity.delete(serverId, ids);
+      }
+      toast.success(t("activity.deleted", "Deleted {{count}} activity records", { count: entries.length }));
+      clearSelection();
+      await fetchPage(page);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(t("activity.delete_failed", "Failed to delete activity: {{error}}", { error: err?.message ?? String(err) }));
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  // Hidden until the row is hovered or the box is ticked; always shown on touch screens (no hover)
+  const checkboxClass =
+    "w-4 h-4 cursor-pointer accent-brand-rose transition-opacity opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100 checked:opacity-100 indeterminate:opacity-100 [@media(hover:none)]:opacity-100";
+
+  const renderCheckbox = (entries: SelectionEntry[], label: string) => {
+    const checked = entries.length > 0 && entries.every(([id]) => isSelected(id));
+    const partial = !checked && entries.some(([id]) => isSelected(id));
+    return (
+      <input
+        type="checkbox"
+        aria-label={label}
+        checked={checked}
+        ref={(el) => {
+          if (el) el.indeterminate = partial;
+        }}
+        onChange={() => toggleEntries(entries)}
+        disabled={deleting || entries.length === 0}
+        className={checkboxClass}
+      />
+    );
   };
 
   // --- RENDER HELPERS ---
@@ -176,8 +330,13 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
     return (
       <tr
         key={activity.id}
-        className={`border-b border-border transition-colors hover:bg-surface-hover ${isSubRow ? "bg-background/40" : "bg-transparent"}`}
+        className={`group/row border-b border-border transition-colors hover:bg-surface-hover ${isSubRow ? "bg-background/40" : "bg-transparent"}`}
       >
+        {isAdmin && (
+          <td className="w-10 pl-4 pr-1 text-center">
+            {renderCheckbox(entriesForRow(activity, isSubRow), t("activity.select_row", "Select activity"))}
+          </td>
+        )}
         <td className={`w-12 ${isSubRow ? "text-left" : "text-center"}`}>
           {!isSubRow && hasGroup ? (
             <button
@@ -241,7 +400,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
         <td className="p-3 text-xs text-gray-400">{activity.device}</td>
 
         <td className="p-3 text-xs text-gray-400 font-mono">
-          {activity.dateCreated ? new Date(activity.dateCreated).toLocaleString() : "-"}
+          {formatDateTime(activity.dateCreated) || "-"}
         </td>
 
         <td className="p-3 text-center text-sm font-bold text-gray-200">{activity.playCount || 0}</td>
@@ -261,12 +420,17 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
     return (
       <div
         key={activity.id}
-        className={`p-4 flex flex-col gap-2.5 ${isSubRow ? "bg-background/40 border-l-2 border-brand-purple ml-4" : ""}`}
+        className={`group/row p-4 flex flex-col gap-2.5 ${isSubRow ? "bg-background/40 border-l-2 border-brand-purple ml-4" : ""}`}
       >
         <div className="flex items-start justify-between gap-3">
+          {isAdmin && (
+            <span className="shrink-0 pt-0.5">
+              {renderCheckbox(entriesForRow(activity, isSubRow), t("activity.select_row", "Select activity"))}
+            </span>
+          )}
           <Link
             href={`/libraries/items/${activity.itemId}`}
-            className="text-sm font-bold text-gray-200 hover:text-brand-cyan transition-colors line-clamp-2 leading-tight min-w-0"
+            className="flex-1 text-sm font-bold text-gray-200 hover:text-brand-cyan transition-colors line-clamp-2 leading-tight min-w-0"
             title={activity.fullName || activity.name}
           >
             {activity.fullName || activity.name}
@@ -286,7 +450,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
           </Link>
           <span className="text-gray-600 shrink-0">&middot;</span>
           <span className="text-gray-500 font-mono truncate">
-            {activity.dateCreated ? new Date(activity.dateCreated).toLocaleString() : "-"}
+            {formatDateTime(activity.dateCreated) || "-"}
           </span>
         </div>
 
@@ -353,18 +517,55 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* Header */}
-      <h2 className="text-xl sm:text-2xl font-black text-gray-200 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3 shrink-0">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-xl sm:text-2xl font-black text-gray-200 flex items-center gap-3 shrink-0">
           <ActivityIcon className="text-brand-purple" size={28} />
           {t("activity.title", "Activity Log")}
+        </h2>
+        <div className="flex flex-wrap items-center gap-2 ml-auto">
+          {isAdmin && selectedIds.length > 0 && (
+            <ConfirmationDialogButton
+              buttonElement={
+                <>
+                  {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                  {t("activity.delete_selected", "Delete ({{count}})", { count: selectedIds.length })}
+                </>
+              }
+              dialogTitle={t("activity.confirm_delete_title", "Delete selected activity?")}
+              description={t(
+                "activity.confirm_delete_desc",
+                "This permanently deletes {{count}} selected activity records, including any selected on other pages, and removes them from all statistics. This can't be undone.",
+                { count: selectedIds.length },
+              )}
+              confirmText={t("common.delete", "Delete")}
+              cancelText={t("common.cancel", "Cancel")}
+              actionColor="bg-brand-rose"
+              disabled={deleting}
+              onConfirm={deleteSelected}
+              className="flex items-center gap-2 bg-brand-rose/10 hover:bg-brand-rose text-brand-rose hover:text-white border border-brand-rose/20 hover:border-brand-rose py-2 px-4 rounded-xl text-sm font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            />
+          )}
+          {isAdmin && selectedIds.length > 0 && (
+            <button
+              type="button"
+              onClick={clearSelection}
+              disabled={deleting}
+              className="py-2 px-3 rounded-xl text-sm font-bold text-gray-400 hover:text-white border border-border hover:border-gray-500 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              {t("activity.clear_selection", "Clear selection")}
+            </button>
+          )}
+          {showLibraryFilter && (
+            <LibraryFilter libraries={libraries} value={libraryIds} onChange={changeLibraryFilter} disabled={loading} />
+          )}
+          <IconButton
+            icon={RefreshCw}
+            tooltip={t("common.refresh", "Refresh")}
+            onClick={() => fetchPage(page)}
+            className="hover:text-brand-purple"
+          />
         </div>
-        <IconButton
-          icon={RefreshCw}
-          tooltip={t("common.refresh", "Refresh")}
-          onClick={() => fetchPage(page)}
-          className="hover:text-brand-purple"
-        />
-      </h2>
+      </div>
 
       {/* Main Table Container */}
       <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col relative min-h-[400px]">
@@ -440,7 +641,22 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
         <div className="hidden md:block overflow-x-auto custom-scrollbar flex-1">
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
-              <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
+              <tr className="group/row bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
+                {isAdmin && (
+                  <th className="w-10 pl-4 pr-1 text-center">
+                    <input
+                      type="checkbox"
+                      aria-label={t("activity.select_page", "Select all on this page")}
+                      checked={allPageSelected}
+                      ref={(el) => {
+                        if (el) el.indeterminate = !allPageSelected && somePageSelected;
+                      }}
+                      onChange={() => toggleEntries(pageEntries)}
+                      disabled={deleting || pageEntries.length === 0}
+                      className={checkboxClass}
+                    />
+                  </th>
+                )}
                 <th className="p-3 w-12"></th>
                 <SortableHeader
                   label={t("common.user", "User")}
@@ -497,6 +713,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
 
               {/* Filter Row */}
               <tr className="bg-background/40 border-b border-border shadow-inner">
+                {isAdmin && <th className="p-2"></th>}
                 <th className="p-2 border-r border-border/50"></th>
 
                 <th className="p-2 border-r border-border/50 font-normal relative group">
@@ -577,7 +794,7 @@ export function ActivityTable({ gridify, GroupResults }: Props) {
             <tbody>
               {!loading && activityData.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="p-16 text-center text-gray-500">
+                  <td colSpan={isAdmin ? 11 : 10} className="p-16 text-center text-gray-500">
                     <MonitorPlay size={48} className="mx-auto mb-4 opacity-20" />
                     <span className="font-medium text-lg">{t("activity.no_activity", "No activity found")}</span>
                   </td>

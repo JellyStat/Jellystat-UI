@@ -8,6 +8,7 @@ import ItemTypes from "@/lib/models/enums/ItemTypes";
 import ItemTypeIcons from "@/lib/declarations/itemIcons";
 import ItemImage from "../ItemImage/ItemImage";
 import DeviceIcon from "../DeviceIcon/DeviceIcon";
+import { formatTime } from "@/lib/dateFormat";
 
 export type SessionCardProps = {
   session: SessionItem;
@@ -167,7 +168,7 @@ export default function SessionCard({ session }: SessionCardProps) {
   const TICKS_PER_MS = 10000;
   const remainingTicks = (item?.runtimeTicks ?? 0) - (session.playState?.positionTicks ?? 0);
   const etaDate = new Date(Date.now() + remainingTicks / TICKS_PER_MS);
-  const eta = etaDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const eta = formatTime(etaDate);
   const progressVal = ((session.playState?.positionTicks ?? 0) / (item?.runtimeTicks ?? 1)) * 100;
 
   const subtitles = (item?.mediaStreams ?? [])[session.playState?.subtitleStreamIndex ?? -1]?.displayTitle ?? "";

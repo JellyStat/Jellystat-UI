@@ -21,7 +21,7 @@ export default function UserActivity({ user }: Props) {
 
   return (
     <div className="w-full animate-in fade-in duration-500 pt-2">
-      <ActivityTable gridify={userActivityQuery} />
+      <ActivityTable gridify={userActivityQuery} showLibraryFilter />
     </div>
   );
 }

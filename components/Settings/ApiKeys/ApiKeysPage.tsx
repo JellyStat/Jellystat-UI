@@ -4,6 +4,7 @@ import { Dialog } from "@headlessui/react";
 import { AlertCircle, Eye, KeyRound, Loader2, Plus, ShieldCheck } from "lucide-react";
 
 import client from "@/lib/api";
+import { formatDateTime } from "@/lib/dateFormat";
 import configManager from "@/lib/configManager";
 import Permissions from "@/lib/models/enums/Permissions";
 import type { ApiKeyInfo } from "@/lib/models/apiKey";
@@ -54,7 +55,7 @@ export default function ApiKeysPage() {
   }
 
   const serverName = (id?: string | null) => servers.find((s) => s.id === id)?.name ?? null;
-  const formatDate = (value?: string | null) => (value ? new Date(value).toLocaleString() : null);
+  const formatDate = (value?: string | null) => formatDateTime(value) || null;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 py-4 sm:p-6">

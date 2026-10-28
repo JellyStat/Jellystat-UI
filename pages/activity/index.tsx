@@ -14,7 +14,7 @@ export default function ActivityPage() {
       </Head>
 
       <div className="w-full h-full animate-in fade-in duration-500">
-        <ActivityTable />
+        <ActivityTable showLibraryFilter />
       </div>
     </>
   );

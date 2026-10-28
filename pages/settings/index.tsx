@@ -12,6 +12,7 @@ import {
   RefreshCw,
   Check,
   AlertCircle,
+  Clock,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -23,22 +24,25 @@ import UsersSettingsPage from "@/components/Settings/Users/UsersSettings";
 import BackupsPage from "@/components/Settings/Backups/BackupsPage";
 import ApiKeysPage from "@/components/Settings/ApiKeys/ApiKeysPage";
 import LanguageSwitcher from "@/components/Core/LanguageSwitcher";
+import DropdownSelector from "@/components/Core/DropdownSelector";
+import { getHourFormat, setHourFormat, type HourFormat } from "@/lib/dateFormat";
 import { VersionInfo } from "@/lib/models/VersionInfo";
 import versionManager from "@/lib/versionManager";
 import client from "@/lib/api";
 import permissionsManager from "@/lib/permissionsManager";
 import Permissions from "@/lib/models/enums/Permissions";
 
+const hourFormatOptions: HourFormat[] = ["auto", "12", "24"];
+
 export default function SettingsPage() {
   const { t } = useTranslation("common");
   const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
   const [isUpdatingUI, setIsUpdatingUI] = useState(false);
   const [activeTab, setActiveTab] = useState<string>(
-    localStorage.getItem("PREF_SETTINGS_TAB") === "users"
-      ? "servers"
-      : (localStorage.getItem("PREF_SETTINGS_TAB") ?? "settings"),
+    localStorage.getItem("PREF_SETTINGS_TAB") === "users" ? "servers" : (localStorage.getItem("PREF_SETTINGS_TAB") ?? "settings"),
   );
   const [isAdmin, setIsAdmin] = useState(false);
+  const [hourFormat, setHourFormatState] = useState<HourFormat>(getHourFormat());
 
   useEffect(() => {
     const adminCheck = permissionsManager.hasPermission(Permissions.Administrator);
@@ -161,6 +165,32 @@ export default function SettingsPage() {
                     </p>
                   </div>
                   <LanguageSwitcher />
+                </div>
+                <div className="flex flex-wrap items-center justify-between gap-3 p-4 mt-3 bg-surface-hover/50 rounded-2xl border border-border">
+                  <div>
+                    <h4 className="text-sm font-bold text-gray-200">{t("settings.hour_format", "Time Format")}</h4>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {t("settings.hour_format_desc", "Show times on a 12-hour or 24-hour clock")}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock size={16} className="text-gray-400" />
+                    <DropdownSelector<HourFormat>
+                      data={hourFormatOptions.map((value) => ({ value }))}
+                      value={hourFormat}
+                      onChange={(value) => {
+                        setHourFormat(value);
+                        setHourFormatState(value);
+                      }}
+                      labelFn={(value) =>
+                        value === "12"
+                          ? t("settings.hour_format_12", "12-hour")
+                          : value === "24"
+                            ? t("settings.hour_format_24", "24-hour")
+                            : t("settings.hour_format_auto", "Match language")
+                      }
+                    />
+                  </div>
                 </div>
               </div>
 

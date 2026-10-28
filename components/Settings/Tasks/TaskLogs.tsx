@@ -21,6 +21,7 @@ import { getTaskBadge } from "./Tasks";
 import WebSocketMessageTypes from "@/lib/models/enums/WebSocketMessageTypes";
 import { WebsocketMessage } from "@/lib/models/WebsocketMessage";
 import { wsClient } from "@/lib/wsClient";
+import { formatDateTime } from "@/lib/dateFormat";
 
 const LOGS_PER_PAGE = 20;
 
@@ -134,7 +135,7 @@ export default function TasksLogsPage() {
         <td className="p-2 sm:p-4">
           <div className="flex items-center text-xs sm:text-sm text-gray-300 font-medium">
             <Clock size={14} className="mr-2 text-gray-500 hidden sm:block" />
-            {new Date(log.dateCreated).toLocaleString()}
+            {formatDateTime(log.dateCreated)}
           </div>
           <div className="sm:hidden text-[11px] font-mono text-gray-500 mt-1">{log.duration.secondsToDurationString()}</div>
         </td>

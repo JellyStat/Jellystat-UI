@@ -13,6 +13,13 @@ import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import { DateRange } from "react-day-picker";
 import DateRangePickerButton from "../Core/DateRangePickerButton";
 import StatMetric from "@/lib/models/enums/statMetric";
+import { formatHourOfDay } from "@/lib/dateFormat";
+
+// The API labels hourly buckets as "HH:00"; re-render them in the user's 12/24-hour style
+function formatHourKey(key: string): string {
+  const hour = parseInt(String(key).split(":")[0], 10);
+  return Number.isNaN(hour) ? key : formatHourOfDay(hour);
+}
 
 // --- THEME COLORS FOR CHART SERIES ---
 const chartColors = [
@@ -214,7 +221,10 @@ export default function WatchTrendsCard() {
                       // Format "YYYY-MM-DD" down to just "MMM DD" for cleaner UI
                       tickFormatter={(val) => {
                         try {
-                          if (timeGranularity === StatMetric.Day || timeGranularity === StatMetric.Hour) {
+                          if (timeGranularity === StatMetric.Hour) {
+                            return formatHourKey(val);
+                          }
+                          if (timeGranularity === StatMetric.Day) {
                             return val;
                           }
                           const d = new Date(val);
@@ -275,6 +285,8 @@ const CustomTooltip = ({ active, payload, label, formatValue, metricType, timeGr
     try {
       if (timeGranularity === StatMetric.Date) {
         displayLabel = new Date(label).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+      } else if (timeGranularity === StatMetric.Hour) {
+        displayLabel = formatHourKey(label);
       }
     } catch {
       /* ignore */
