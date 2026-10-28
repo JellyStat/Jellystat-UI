@@ -40,6 +40,7 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
   const episodeCount = item.grouped?.length ?? 0;
   const episodesLabel = t("item.episodes", "{{episodeCount}} Episodes", { episodeCount });
   const sizeLabel = showSize && item.size ? item.size.formatBytes() : null;
+  const fluid = typeof width === "string";
 
   return (
     <div
@@ -47,7 +48,11 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
       style={{ width }}
     >
       {/* Image Container */}
-      <div className="relative shrink-0 overflow-hidden bg-background/50" style={{ height }}>
+      {/* Fixed-width cards use the explicit height; fluid (grid) cards keep the 2:3 poster ratio. */}
+      <div
+        className={`relative shrink-0 overflow-hidden bg-background/50 ${fluid ? "w-full aspect-2/3" : ""}`}
+        style={fluid ? undefined : { height }}
+      >
         <ItemImage
           imageUrl={imageUrl}
           imageHash={item.imageHash}

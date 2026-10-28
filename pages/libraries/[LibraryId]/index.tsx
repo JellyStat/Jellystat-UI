@@ -131,7 +131,7 @@ export default function LibraryPage() {
 
                 {/* Horizontal Scrollable Tabs */}
                 <div className="flex overflow-x-auto custom-scrollbar w-full sm:w-auto">
-                  <div className="flex items-center p-1.5 bg-background/50 border border-border rounded-2xl shadow-inner w-max min-w-full sm:min-w-0">
+                  <div className="flex items-center p-1.5 bg-background/50 border border-border rounded-2xl shadow-inner w-max shrink-0 min-w-full sm:min-w-0">
                     {tabs.map((tab) => {
                       const Icon = tab.icon;
                       const isActive = activeTab === tab.id;

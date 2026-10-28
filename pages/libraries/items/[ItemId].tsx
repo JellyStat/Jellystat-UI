@@ -255,7 +255,7 @@ export default function ItemPage() {
             <div className="flex flex-col w-full">
               {/* Glassmorphic Tab Container */}
               <div className="flex overflow-x-auto custom-scrollbar mb-6">
-                <div className="flex items-center p-1.5 bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-inner w-max min-w-full sm:min-w-0">
+                <div className="flex items-center p-1.5 bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-inner w-max shrink-0 min-w-full sm:min-w-0">
                   {tabs.map((tab) => {
                     const Icon = tab.icon;
                     const isActive = activeTab === tab.id;
