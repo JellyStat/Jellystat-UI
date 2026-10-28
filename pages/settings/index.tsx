@@ -215,13 +215,13 @@ export default function SettingsPage() {
                         <td className="whitespace-nowrap p-3 sm:p-4">
                           {!versionInfo ? (
                             <span className="text-sm text-gray-500">-</span>
-                          ) : versionInfo.uiHasUpdate ? (
+                          ) : versionInfo.apiHasUpdate ? (
                             <span
-                              title={t("settings.update_available", "Update Available")}
+                              title={t("settings.api_update_available", "Update available: pull the latest Docker image to update")}
                               className="inline-flex items-center gap-2 rounded-xl border border-brand-amber bg-brand-amber/10 px-4 py-2 text-sm font-bold text-brand-amber shadow-inner"
                             >
                               <AlertCircle size={16} />
-                              {versionInfo?.apiVersion}
+                              {versionInfo?.latestApiVersion}
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-2 text-sm font-bold text-green-400 shadow-inner">

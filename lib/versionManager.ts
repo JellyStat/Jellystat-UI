@@ -31,7 +31,7 @@ function writeStored(info: VersionInfo | null) {
 async function fetchAndStore(): Promise<VersionInfo> {
   const info = (await client.Api.getVersion()) as VersionInfo;
   cache = info ?? null;
-  if (!info) return { apiVersion: "", currentUiTag: "", latestUiTag: "", uiHasUpdate: false };
+  if (!info) return { apiVersion: "", latestApiVersion: "", apiHasUpdate: false, currentUiTag: "", latestUiTag: "", uiHasUpdate: false };
   writeStored(cache);
   return cache;
 }
