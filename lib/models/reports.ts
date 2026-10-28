@@ -1,0 +1,298 @@
+// Mirrors Models/Reports in JellyStat-API-Core. The definition is shared by every renderer (designer, viewer,
+// server SVG/HTML/PNG/PDF), so keep both sides in sync. Coordinates and sizes are CSS px at 96 DPI.
+
+export type ReportElementType = "text" | "metric" | "table" | "chart" | "image" | "shape" | "line";
+export type ChartKind = "bar" | "horizontalBar" | "line" | "area" | "pie" | "donut";
+export type QueryEngine = "efcore" | "gridify";
+export type FieldType = "string" | "number" | "integer" | "boolean" | "date" | "duration" | "bytes" | "enum";
+export type ExportFormat = "json" | "svg" | "html" | "png" | "pdf";
+export type WebhookType = "generic" | "discord" | "json";
+
+export interface ReportDefinition {
+  version: number;
+  page: ReportPageSettings;
+  pages: ReportPage[];
+  dataSources: ReportDataSource[];
+  parameters: ReportParameter[];
+}
+
+export interface ReportPageSettings {
+  size: string;
+  orientation: "portrait" | "landscape";
+  width: number;
+  height: number;
+  margin: number;
+  background: string;
+}
+
+export interface ReportPage {
+  id: string;
+  name: string;
+  /** Paint order: later elements are drawn on top. */
+  elements: ReportElement[];
+}
+
+export interface ReportElementStyle {
+  fontSize: number;
+  fontFamily: string;
+  fontWeight: string;
+  italic: boolean;
+  underline: boolean;
+  color: string;
+  textAlign: "left" | "center" | "right";
+  verticalAlign: "top" | "middle" | "bottom";
+  lineHeight: number;
+  background?: string | null;
+  borderColor?: string | null;
+  borderWidth: number;
+  borderStyle: "solid" | "dashed" | "dotted";
+  borderRadius: number;
+  padding: number;
+}
+
+export interface ReportElement {
+  id: string;
+  type: ReportElementType;
+  name?: string | null;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  hidden?: boolean;
+  locked?: boolean;
+  opacity: number;
+  style: ReportElementStyle;
+  text?: string | null;
+  dataSourceId?: string | null;
+  valueField?: string | null;
+  label?: string | null;
+  format?: string | null;
+  prefix?: string | null;
+  suffix?: string | null;
+  columns?: ReportTableColumn[] | null;
+  table?: ReportTableOptions | null;
+  chart?: ReportChartOptions | null;
+  src?: string | null;
+  fit?: "contain" | "cover" | "fill" | null;
+  shape?: "rect" | "ellipse" | null;
+}
+
+export interface ReportTableColumn {
+  field: string;
+  header?: string | null;
+  width: number;
+  align: "left" | "center" | "right";
+  format?: string | null;
+}
+
+export interface ReportTableOptions {
+  showHeader: boolean;
+  headerBackground: string;
+  headerColor: string;
+  stripeBackground?: string | null;
+  gridColor: string;
+  rowHeight: number;
+  maxRows?: number | null;
+}
+
+export interface ReportChartOptions {
+  kind: ChartKind;
+  categoryField?: string | null;
+  categoryFormat?: string | null;
+  series: ReportChartSeries[];
+  valueFormat?: string | null;
+  stacked: boolean;
+  showLegend: boolean;
+  showGrid: boolean;
+  showValues: boolean;
+  showAxes: boolean;
+  axisColor: string;
+  gridColor: string;
+  palette?: string[] | null;
+}
+
+export interface ReportChartSeries {
+  field: string;
+  label?: string | null;
+  color?: string | null;
+}
+
+export interface ReportParameter {
+  name: string;
+  label?: string | null;
+  type: "string" | "number" | "date" | "boolean";
+  defaultValue?: unknown;
+}
+
+export interface ReportDataSource {
+  id: string;
+  name: string;
+  dataset: string;
+  engine: QueryEngine;
+  filter?: ReportFilterNode | null;
+  /** Raw Gridify syntax, Gridify engine only. */
+  gridifyFilter?: string | null;
+  fields: string[];
+  groupBy: ReportGroupBy[];
+  aggregates: ReportAggregate[];
+  sort: ReportSort[];
+  limit?: number | null;
+}
+
+export interface ReportGroupBy {
+  field: string;
+  bucket?: string | null;
+  alias?: string | null;
+}
+
+export interface ReportAggregate {
+  fn: string;
+  field?: string | null;
+  alias?: string | null;
+}
+
+export interface ReportSort {
+  field: string;
+  desc: boolean;
+}
+
+/** A group when `rules` is set, otherwise a rule. */
+export interface ReportFilterNode {
+  combinator?: "and" | "or" | null;
+  not?: boolean;
+  rules?: ReportFilterNode[] | null;
+  field?: string | null;
+  operator?: string | null;
+  value?: unknown;
+  valueTo?: unknown;
+  parameter?: string | null;
+}
+
+export interface ReportColumn {
+  name: string;
+  label: string;
+  type: FieldType;
+}
+
+export interface ReportDataResult {
+  dataSourceId: string;
+  columns: ReportColumn[];
+  rows: Record<string, unknown>[];
+  truncated: boolean;
+  error?: string | null;
+  elapsedMs: number;
+}
+
+export interface ReportRenderModel {
+  reportId?: string | null;
+  name: string;
+  definition: ReportDefinition;
+  data: Record<string, ReportDataResult>;
+  parameters: Record<string, unknown>;
+  generatedAt: string;
+}
+
+export interface ReportFieldInfo {
+  key: string;
+  label: string;
+  type: FieldType;
+  groupable: boolean;
+  aggregatable: boolean;
+  /** Can be empty, so isNull/isNotNull apply. */
+  nullable: boolean;
+  description?: string | null;
+  options?: string[] | null;
+}
+
+export interface ReportDatasetInfo {
+  key: string;
+  label: string;
+  description: string;
+  fields: ReportFieldInfo[];
+}
+
+export interface ReportCapabilities {
+  datasets: ReportDatasetInfo[];
+  engines: QueryEngine[];
+  operators: string[];
+  aggregates: string[];
+  dateBuckets: string[];
+  formats: string[];
+  exportFormats: ExportFormat[];
+  webhookTypes: WebhookType[];
+  maxRows: number;
+}
+
+export interface ReportSummary {
+  id: string;
+  name: string;
+  description?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  createdBy?: string | null;
+  updatedBy?: string | null;
+  scheduleCount: number;
+}
+
+export interface ReportDetail extends ReportSummary {
+  definition: ReportDefinition;
+}
+
+export interface SaveReport {
+  id?: string | null;
+  name: string;
+  description?: string | null;
+  definition: ReportDefinition;
+}
+
+export interface ReportSchedule {
+  id?: string | null;
+  reportId: string;
+  name: string;
+  enabled: boolean;
+  serverId?: string | null;
+  intervalMinutes: number;
+  format: ExportFormat;
+  webhookUrl: string;
+  webhookType: WebhookType;
+  /** On save: undefined/null keeps the stored secret, "" removes it. Never returned by the API. */
+  webhookSecret?: string | null;
+  hasSecret?: boolean;
+  message?: string | null;
+  parameters?: Record<string, unknown> | null;
+  lastRunAt?: string | null;
+  nextRunAt?: string | null;
+  lastSuccess?: boolean | null;
+  lastError?: string | null;
+}
+
+export interface ReportDeliveryResult {
+  success: boolean;
+  error?: string | null;
+  fileName?: string | null;
+  elapsedMs: number;
+}
+
+export interface ReportRenderRequest {
+  reportId?: string | null;
+  definition?: ReportDefinition | null;
+  name?: string | null;
+  format: ExportFormat;
+  page?: number | null;
+  scale?: number | null;
+  parameters?: Record<string, unknown> | null;
+  serverId?: string | null;
+}
+
+export interface ReportDeliverRequest {
+  reportId?: string | null;
+  definition?: ReportDefinition | null;
+  name?: string | null;
+  webhookUrl: string;
+  webhookType: WebhookType;
+  webhookSecret?: string | null;
+  format: ExportFormat;
+  message?: string | null;
+  parameters?: Record<string, unknown> | null;
+  serverId?: string | null;
+}

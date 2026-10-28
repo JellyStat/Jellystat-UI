@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Server as ServerIcon,
+  FileBarChart,
 } from "lucide-react";
 
 import permissionsManager from "@/lib/permissionsManager";
@@ -150,6 +151,7 @@ export default function SideNav() {
     { name: t("nav.libraries", "Libraries"), path: "/libraries", icon: Film, isAdmin: false },
     { name: t("nav.activity", "Activity"), path: "/activity", icon: History, isAdmin: false },
     { name: t("nav.statistics", "Statistics"), path: "/statistics", icon: BarChart3, isAdmin: false },
+    { name: t("nav.reports", "Reports"), path: "/reports", icon: FileBarChart, isAdmin: false },
     { name: t("nav.users", "Users"), path: "/users", icon: Users, isAdmin: true },
     { name: t("nav.settings", "Settings"), path: "/settings", icon: Settings, isAdmin: false },
   ];
