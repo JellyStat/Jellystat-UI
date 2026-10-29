@@ -19,10 +19,11 @@ import { useRef } from "react";
 import { toast } from "sonner";
 import type { ReportChartOptions, ReportElement, ReportElementStyle, ReportTableColumn, ReportTableOptions } from "@/lib/models/reports";
 import { dataSourceColumns } from "@/lib/reports/columns";
-import { DEFAULT_PALETTE, defaultChartOptions, defaultTableOptions, FONT_FAMILIES, PAGE_PRESETS } from "@/lib/reports/defaults";
+import { DEFAULT_PALETTE, defaultChartOptions, defaultTableOptions, PAGE_PRESETS } from "@/lib/reports/defaults";
 import { TOKEN_HELP, VALUE_FORMATS } from "@/lib/reports/format";
 import { ColorInput, Field, NumberInput, Section, Select, TextInput, Toggle, ToolButton, useCapabilities } from "./controls";
 import { useDesigner } from "./designerStore";
+import FontPicker from "./FontPicker";
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const formatOptions = VALUE_FORMATS.map((f) => ({
@@ -856,11 +857,7 @@ function StyleSection({ elements }: { elements: ReportElement[] }) {
         <>
           <div className="grid grid-cols-[1fr_64px] gap-2">
             <Field label="Font">
-              <Select
-                value={FONT_FAMILIES.some((f) => f.value === s.fontFamily) ? s.fontFamily : FONT_FAMILIES[0].value}
-                options={FONT_FAMILIES}
-                onChange={(v) => set("fontFamily", v)}
-              />
+              <FontPicker value={s.fontFamily} onChange={(v) => set("fontFamily", v)} />
             </Field>
             <Field label="Size">
               <NumberInput value={s.fontSize} min={4} max={400} onChange={(v) => set("fontSize", v ?? 14)} />

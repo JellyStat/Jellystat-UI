@@ -11,10 +11,11 @@ import type {
 
 export const DEFAULT_FONT = "Inter, Segoe UI, DejaVu Sans, Arial, sans-serif";
 
+/** System font stacks: they depend on what is installed where the report is viewed or rendered. */
 export const FONT_FAMILIES = [
-  { label: "Sans serif", value: DEFAULT_FONT },
-  { label: "Serif", value: "Georgia, DejaVu Serif, Times New Roman, serif" },
-  { label: "Monospace", value: "JetBrains Mono, Consolas, DejaVu Sans Mono, monospace" },
+  { label: "System sans serif", value: "Segoe UI, DejaVu Sans, Arial, sans-serif" },
+  { label: "System serif", value: "Georgia, DejaVu Serif, Times New Roman, serif" },
+  { label: "System monospace", value: "Consolas, DejaVu Sans Mono, monospace" },
 ];
 
 export const DEFAULT_PALETTE = ["#6366f1", "#22c55e", "#f59e0b", "#ef4444", "#06b6d4", "#a855f7", "#ec4899", "#84cc16", "#14b8a6", "#f97316"];

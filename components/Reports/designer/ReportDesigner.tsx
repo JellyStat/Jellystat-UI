@@ -39,6 +39,7 @@ import client from "@/lib/api";
 import type { ReportDataResult, ReportDefinition, ReportRenderModel } from "@/lib/models/reports";
 import { downloadBlob, exportFileName, exportPdf, exportPng } from "@/lib/reports/clientExport";
 import { normalizeDefinition } from "@/lib/reports/defaults";
+import { useReportFonts } from "@/lib/reports/fonts";
 import ReportPageView from "../render/ReportPageView";
 import ReportSchedulesDialog from "../ReportSchedulesDialog";
 import ContextMenu, { type MenuEntry } from "./ContextMenu";
@@ -108,6 +109,8 @@ function usePreviewData(definition: ReportDefinition, name: string) {
 }
 
 function DesignerShell() {
+  // Re-renders (re-measuring chart and table text) once the report fonts have loaded
+  useReportFonts();
   const router = useRouter();
   const designer = useDesigner();
   const { state, definition, page, selected, dirty, canUndo, canRedo } = designer;

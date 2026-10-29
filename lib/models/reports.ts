@@ -325,3 +325,10 @@ export interface ReportImageBinding {
   field?: string | null;
   parameter?: string | null;
 }
+
+/** A font bundled with the API; the server renders exports with the same files the browser loads. */
+export interface ReportFontFamily {
+  family: string;
+  category: "sans-serif" | "serif" | "monospace" | "display";
+  files: { file: string; weight: number; italic: boolean }[];
+}

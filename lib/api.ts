@@ -40,6 +40,7 @@ import type {
   ReportDeliverRequest,
   ReportDeliveryResult,
   ReportDetail,
+  ReportFontFamily,
   ReportParameter,
   ReportParameterOption,
   ReportRenderModel,
@@ -588,6 +589,7 @@ const stopRunningTask = async (params: { Task: TaskTypes; ServerId: string | nul
 // Reports
 const getReportCapabilities = (): Promise<ReportCapabilities> => apiFetch<ReportCapabilities>("/Reports/Capabilities");
 const listReports = (): Promise<ReportSummary[]> => apiFetch<ReportSummary[]>("/Reports/List");
+const getReportFonts = (): Promise<ReportFontFamily[]> => apiFetch<ReportFontFamily[]>("/Reports/Fonts");
 const getReport = async (params: { Id: string }): Promise<ReportDetail> =>
   apiFetch<ReportDetail>(`/Reports/Get${await buildQuery(undefined, params, false)}`);
 const saveReport = (payload: SaveReport): Promise<ReportSummary> =>
@@ -698,6 +700,7 @@ export const ApiKeys = {
 
 export const Reports = {
   capabilities: getReportCapabilities,
+  fonts: getReportFonts,
   list: listReports,
   get: getReport,
   save: saveReport,

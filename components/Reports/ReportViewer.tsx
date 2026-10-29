@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import client from "@/lib/api";
 import type { ReportRenderModel } from "@/lib/models/reports";
 import { downloadBlob, exportFileName, exportPdf, exportPng } from "@/lib/reports/clientExport";
+import { useReportFonts } from "@/lib/reports/fonts";
 import ContextMenu from "./designer/ContextMenu";
 import ParameterInput from "./ParameterInput";
 import ReportPageView from "./render/ReportPageView";
@@ -24,6 +25,8 @@ interface Props {
  * can be placed on any page of the web UI: <ReportViewer reportId="..." bare />.
  */
 export default function ReportViewer({ reportId, parameters: initialParameters, bare, mode: initialMode = "client" }: Props) {
+  // Re-renders (re-measuring chart and table text) once the report fonts have loaded
+  useReportFonts();
   const [model, setModel] = useState<ReportRenderModel | null>(null);
   const [html, setHtml] = useState<string | null>(null);
   const [mode, setMode] = useState(initialMode);
