@@ -83,10 +83,13 @@ export interface ReportElement {
   link?: string | null;
   /** table, cards: rows that don't fit continue on extra pages added after this page. */
   grow?: boolean;
-  /** Where a growing element starts on those extra pages (px from the top); its bottom edge stays put. */
+  /**
+   * Header height for the extra pages (px from the top): the growing element starts there, and elements entirely
+   * above it repeat on every extra page (see repeatsOnExtraPages).
+   */
   continueTop?: number | null;
-  /** Also draw this element on the extra pages growing elements add (titles, footers, page numbers). */
-  repeat?: boolean;
+  /** Keeps an element in the header or footer zone off the extra pages. */
+  firstPageOnly?: boolean;
   /** table, cards, metric: styles for rows (or cells) that match. */
   conditions?: ReportCondition[] | null;
   cards?: ReportCardOptions | null;

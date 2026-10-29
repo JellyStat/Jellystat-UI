@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import type { ReportLayoutPage } from "@/lib/models/reports";
+import { repeatsOnExtraPages } from "@/lib/reports/layout";
 import ReportElementView, { type RenderContext } from "./ReportElementView";
 
 interface Props {
@@ -22,8 +23,8 @@ const ReportPageView = forwardRef<HTMLDivElement, Props>(function ReportPageView
     <div ref={ref} className="relative overflow-hidden" style={{ width: page.width, height: page.height, background: page.background }}>
       {reportPage?.elements
         .filter((e) => !e.hidden)
-        // Extra pages only carry the growing elements still showing rows, and the ones marked to repeat
-        .filter((e) => layout.continuation === 0 || !!layout.slices[e.id] || e.repeat)
+        // Extra pages carry the growing elements still showing rows, plus the header and footer zones
+        .filter((e) => layout.continuation === 0 || !!layout.slices[e.id] || repeatsOnExtraPages(reportPage, e))
         .map((e) => {
           const slice = layout.slices[e.id];
           const placed = slice ? { ...e, y: slice.y, height: slice.height } : e;

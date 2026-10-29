@@ -2,6 +2,7 @@ import { Lock } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import type { ReportElement } from "@/lib/models/reports";
 import { TOOLBOX } from "@/lib/reports/defaults";
+import { isGrowing, pageZones } from "@/lib/reports/layout";
 import ReportElementView, { type RenderContext } from "../render/ReportElementView";
 import { bounds, useDesigner, type Rect } from "./designerStore";
 
@@ -442,6 +443,19 @@ export default function DesignerCanvas({ model, settings, onContextMenu }: Props
   const rectOf = (e: ReportElement): Rect => live?.[e.id] ?? e;
   const selectedElements = page.elements.filter((e) => state.selection.includes(e.id));
   const stroke = 1 / zoom;
+  // Page flow: the header line (draggable) and the footer edge of the growing elements
+  const zones = pageZones(page);
+  const growingIds = page.elements.filter(isGrowing).map((e) => e.id);
+  const headerMax = Math.min(...page.elements.filter(isGrowing).map((e) => e.y));
+  const headerDrag = useRef(false);
+  const zoneLabel: CSSProperties = {
+    fontSize: 11 / zoom,
+    padding: `${1 / zoom}px ${5 / zoom}px`,
+    borderRadius: 4 / zoom,
+    background: "#16a34a",
+    color: "#fff",
+    whiteSpace: "nowrap",
+  };
   const handleSize = 8 / zoom;
   const pageStyle: CSSProperties = {
     width: pageSettings.width,
@@ -506,6 +520,19 @@ export default function DesignerCanvas({ model, settings, onContextMenu }: Props
                 outline: `${stroke}px dashed rgba(99,102,241,0.35)`,
               }}
             />
+          )}
+
+          {zones && (
+            <>
+              <div
+                className="absolute left-0 right-0 top-0 pointer-events-none"
+                style={{ height: zones.header, background: "rgba(22,163,74,0.06)" }}
+              />
+              <div
+                className="absolute left-0 right-0 bottom-0 pointer-events-none"
+                style={{ top: zones.footer, background: "rgba(22,163,74,0.06)" }}
+              />
+            </>
           )}
 
           {page.elements.map((e) => {
@@ -633,6 +660,51 @@ export default function DesignerCanvas({ model, settings, onContextMenu }: Props
           {guides.y.map((y, i) => (
             <div key={`gy-${i}`} className="absolute left-0 right-0 pointer-events-none" style={{ top: y, height: stroke, background: "#f43f5e" }} />
           ))}
+
+          {zones && (
+            <>
+              {/* Header line: drag to set where the extra pages' header ends */}
+              <div
+                className="absolute left-0 right-0 flex items-center justify-end"
+                style={{ top: zones.header - 5 / zoom, height: 10 / zoom, cursor: "ns-resize", zIndex: 5 }}
+                title="Header line: everything above it repeats on the extra pages"
+                onPointerDown={(ev) => {
+                  ev.stopPropagation();
+                  ev.preventDefault();
+                  ev.currentTarget.setPointerCapture(ev.pointerId);
+                  headerDrag.current = true;
+                }}
+                onPointerMove={(ev) => {
+                  if (!headerDrag.current) {
+                    return;
+                  }
+                  const p = toPage(ev.clientX, ev.clientY);
+                  const y = Math.round(Math.max(0, Math.min(headerMax, snap ? toGrid(p.y) : p.y)));
+                  updateElements(
+                    growingIds,
+                    (x) => {
+                      x.continueTop = y;
+                    },
+                    "header-line",
+                  );
+                }}
+                onPointerUp={() => {
+                  headerDrag.current = false;
+                }}
+              >
+                <div className="absolute left-0 right-0" style={{ top: 5 / zoom, borderTop: `${stroke * 1.5}px dashed #16a34a` }} />
+                <span className="relative pointer-events-none" style={{ ...zoneLabel, marginRight: 4 / zoom }}>
+                  Header · repeats on extra pages
+                </span>
+              </div>
+              <div
+                className="absolute left-0 right-0 pointer-events-none flex justify-end"
+                style={{ top: zones.footer, borderTop: `${stroke * 1.5}px dashed #16a34a`, zIndex: 5 }}
+              >
+                <span style={{ ...zoneLabel, marginRight: 4 / zoom, marginTop: 2 / zoom }}>Footer · repeats on extra pages</span>
+              </div>
+            </>
+          )}
 
           {marquee && (
             <div

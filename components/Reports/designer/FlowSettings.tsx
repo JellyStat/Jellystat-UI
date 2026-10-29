@@ -3,12 +3,16 @@ import type { ReactNode } from "react";
 import type { ReportCardOptions, ReportColumn, ReportCondition, ReportElement } from "@/lib/models/reports";
 import { CONDITION_OPERATORS } from "@/lib/reports/conditions";
 import { defaultCardOptions } from "@/lib/reports/defaults";
+import { isGrowing, pageZones } from "@/lib/reports/layout";
 import { ColorInput, Field, NumberInput, Section, Select, TextInput, Toggle } from "./controls";
 import { useDesigner } from "./designerStore";
 
-/** Page flow: growing tables and card grids add pages for rows that don't fit; other elements can repeat on them. */
+/**
+ * Page flow: growing tables and card grids add pages for rows that don't fit. What else appears on those pages
+ * follows from position: the header zone (above the dashed header line) and footer zone (below the growing element).
+ */
 export function PagesSection({ e }: { e: ReportElement }) {
-  const { updateElements } = useDesigner();
+  const { updateElements, page } = useDesigner();
   const set = (patch: Partial<ReportElement>, key: string) =>
     updateElements(
       [e.id],
@@ -18,26 +22,43 @@ export function PagesSection({ e }: { e: ReportElement }) {
       `pages-${e.id}-${key}`,
     );
   const grows = e.type === "table" || e.type === "cards";
+  const zones = pageZones(page);
+  // Other elements only need this section when something on the page grows
+  if (!grows && !zones) {
+    return null;
+  }
+  const inZone = !!zones && !isGrowing(e) && (e.y + e.height <= zones.header + 0.5 || e.y >= zones.footer - 0.5);
   return (
     <Section title="Pages" defaultOpen={grows}>
       {grows && (
         <>
           <Toggle label="Continue on new pages when rows don't fit" checked={!!e.grow} onChange={(v) => set({ grow: v }, "grow")} />
           {e.grow && (
-            <Field label="Top on the extra pages (px)" hint="It keeps its bottom edge, so it gets taller there">
-              <div className="w-28">
-                <NumberInput value={e.continueTop ?? 40} min={0} onChange={(v) => set({ continueTop: v ?? 40 }, "continueTop")} />
-              </div>
-            </Field>
+            <>
+              <Field label="Header height (px)" hint="Drag the dashed header line on the page, or type it here">
+                <div className="w-28">
+                  <NumberInput value={e.continueTop ?? 40} min={0} max={e.y} onChange={(v) => set({ continueTop: v ?? 40 }, "continueTop")} />
+                </div>
+              </Field>
+              <p className="text-[11px] text-gray-500">
+                The extra pages repeat everything above the header line and everything below this element, like page headers and footers. Elements in
+                between only appear on the first page. This element starts at the header line there.
+              </p>
+            </>
           )}
         </>
       )}
-      {!e.grow && (
-        <Toggle
-          label="Show on the extra pages too (headers, footers, page numbers)"
-          checked={!!e.repeat}
-          onChange={(v) => set({ repeat: v }, "repeat")}
-        />
+      {!isGrowing(e) && zones && (
+        <>
+          <p className="text-[11px] text-gray-500">
+            {!inZone
+              ? "Between the header line and the growing element: first page only."
+              : e.firstPageOnly
+                ? "In the header or footer zone, but kept to the first page."
+                : "In the header or footer zone: repeats on every extra page."}
+          </p>
+          {inZone && <Toggle label="First page only" checked={!!e.firstPageOnly} onChange={(v) => set({ firstPageOnly: v }, "firstPageOnly")} />}
+        </>
       )}
     </Section>
   );

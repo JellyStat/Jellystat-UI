@@ -1,12 +1,38 @@
 // Page flow, same rules as ReportPaginator in Services/Reports/Rendering/ReportLayout.cs on the server. The viewer
 // uses the server's layout; the designer works it out here for its preview and in-browser exports. Change both together.
-import type { ReportElement, ReportLayoutPage } from "@/lib/models/reports";
+import type { ReportElement, ReportLayoutPage, ReportPage } from "@/lib/models/reports";
 import type { RenderContext } from "@/components/Reports/render/ReportElementView";
 import { defaultCardOptions, defaultTableOptions } from "./defaults";
 import { findData } from "./format";
 
 export const MAX_PAGES = 500;
 export const DEFAULT_CONTINUE_TOP = 40;
+
+export const isGrowing = (e: ReportElement) => !e.hidden && !!e.grow && (e.type === "table" || e.type === "cards");
+
+/**
+ * The header and footer zones of a page with growing elements: elements entirely above `header` or below `footer`
+ * repeat on the extra pages. Null when nothing on the page grows.
+ */
+export function pageZones(page: ReportPage | undefined): { header: number; footer: number } | null {
+  const growing = page?.elements.filter(isGrowing) ?? [];
+  if (growing.length === 0) {
+    return null;
+  }
+  return {
+    header: Math.min(...growing.map((g) => Math.min(g.continueTop ?? DEFAULT_CONTINUE_TOP, g.y))),
+    footer: Math.max(...growing.map((g) => g.y + g.height)),
+  };
+}
+
+/** Same rule as ReportPaginator.RepeatsOnExtraPages: header and footer zones repeat, the rest is first-page only. */
+export function repeatsOnExtraPages(page: ReportPage | undefined, e: ReportElement): boolean {
+  const zones = pageZones(page);
+  if (!zones || e.firstPageOnly || isGrowing(e)) {
+    return false;
+  }
+  return e.y + e.height <= zones.header + 0.5 || e.y >= zones.footer - 0.5;
+}
 
 /** Rows the element shows in total (all pages), after its own row limit. */
 export function totalRows(e: ReportElement, model: RenderContext): number {
@@ -40,7 +66,7 @@ export function paginate(model: RenderContext): ReportLayoutPage[] {
       return;
     }
     const growing = designPage.elements
-      .filter((e) => !e.hidden && e.grow && (e.type === "table" || e.type === "cards"))
+      .filter(isGrowing)
       .map((e) => ({ e, total: totalRows(e, model) }))
       .filter((g) => g.total > 0);
     const next: Record<string, number> = Object.fromEntries(growing.map((g) => [g.e.id, 0]));
