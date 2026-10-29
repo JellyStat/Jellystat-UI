@@ -32,6 +32,23 @@ import type { TimelineEntry } from "./models/timelineEntry";
 import { VersionInfo } from "./models/VersionInfo";
 import type { ApiKeyInfo, CreateApiKey, CreatedApiKey } from "./models/apiKey";
 import type { GeolocationInfo } from "./models/geolocationInfo";
+import type {
+  ReportCapabilities,
+  ReportDataResult,
+  ReportDataSource,
+  ReportDefinition,
+  ReportDeliverRequest,
+  ReportDeliveryResult,
+  ReportDetail,
+  ReportFontFamily,
+  ReportParameter,
+  ReportParameterOption,
+  ReportRenderModel,
+  ReportRenderRequest,
+  ReportSchedule,
+  ReportSummary,
+  SaveReport,
+} from "./models/reports";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
@@ -569,6 +586,64 @@ const stopRunningTask = async (params: { Task: TaskTypes; ServerId: string | nul
     .then(() => true)
     .catch(() => false);
 
+// Reports
+const getReportCapabilities = (): Promise<ReportCapabilities> => apiFetch<ReportCapabilities>("/Reports/Capabilities");
+const listReports = (): Promise<ReportSummary[]> => apiFetch<ReportSummary[]>("/Reports/List");
+const getReportFonts = (): Promise<ReportFontFamily[]> => apiFetch<ReportFontFamily[]>("/Reports/Fonts");
+const getReport = async (params: { Id: string }): Promise<ReportDetail> =>
+  apiFetch<ReportDetail>(`/Reports/Get${await buildQuery(undefined, params, false)}`);
+const saveReport = (payload: SaveReport): Promise<ReportSummary> =>
+  apiFetch<ReportSummary>("/Reports/Save", { method: "POST", body: JSON.stringify(payload) });
+const duplicateReport = async (params: { Id: string }): Promise<ReportSummary> =>
+  apiFetch<ReportSummary>(`/Reports/Duplicate${await buildQuery(undefined, params, false)}`, { method: "POST" });
+const deleteReport = async (params: { Id: string }): Promise<void> =>
+  apiFetch<void>(`/Reports/Delete${await buildQuery(undefined, params, false)}`, { method: "DELETE" });
+const queryReportData = (payload: {
+  dataSource: ReportDataSource;
+  parameterDefinitions?: ReportParameter[];
+  parameters?: Record<string, unknown>;
+  maxRows?: number;
+  timeZone?: string | null;
+  /** The report's other data sources, which a combined source is built from. */
+  dataSources?: ReportDataSource[];
+}): Promise<ReportDataResult> =>
+  apiFetch<ReportDataResult>("/Reports/Query", { method: "POST", body: JSON.stringify({ ...payload, serverId: getServerId() }) });
+const previewReport = (payload: {
+  definition: ReportDefinition;
+  name?: string;
+  parameters?: Record<string, unknown>;
+  maxRows?: number;
+}): Promise<ReportRenderModel> =>
+  apiFetch<ReportRenderModel>("/Reports/Preview", { method: "POST", body: JSON.stringify({ ...payload, serverId: getServerId() }) });
+const getReportParameterOptions = (payload: {
+  reportId?: string;
+  definition?: ReportDefinition;
+  parameter: string;
+  parameters?: Record<string, unknown>;
+}): Promise<ReportParameterOption[]> =>
+  apiFetch<ReportParameterOption[]>("/Reports/ParameterOptions", { method: "POST", body: JSON.stringify({ ...payload, serverId: getServerId() }) });
+/** Server-side render in any format; json gives the render model, the rest a file. */
+const renderReport = async (payload: ReportRenderRequest, download = false): Promise<Blob> => {
+  const res = await apiFetchRaw(`/Reports/Render${download ? "?Download=true" : ""}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ serverId: getServerId(), ...payload }),
+  });
+  return res.blob();
+};
+const renderReportModel = async (payload: Omit<ReportRenderRequest, "format">): Promise<ReportRenderModel> =>
+  JSON.parse(await (await renderReport({ ...payload, format: "json" })).text()) as ReportRenderModel;
+const listReportSchedules = async (params: { ReportId?: string }): Promise<ReportSchedule[]> =>
+  apiFetch<ReportSchedule[]>(`/Reports/Schedules${await buildQuery(undefined, params, false)}`);
+const saveReportSchedule = (payload: ReportSchedule): Promise<ReportSchedule> =>
+  apiFetch<ReportSchedule>("/Reports/Schedules/Save", { method: "POST", body: JSON.stringify(payload) });
+const deleteReportSchedule = async (params: { Id: string }): Promise<void> =>
+  apiFetch<void>(`/Reports/Schedules/Delete${await buildQuery(undefined, params, false)}`, { method: "DELETE" });
+const runReportSchedule = async (params: { Id: string }): Promise<ReportDeliveryResult> =>
+  apiFetch<ReportDeliveryResult>(`/Reports/Schedules/Run${await buildQuery(undefined, params, false)}`, { method: "POST" });
+const deliverReport = (payload: ReportDeliverRequest): Promise<ReportDeliveryResult> =>
+  apiFetch<ReportDeliveryResult>("/Reports/Deliver", { method: "POST", body: JSON.stringify({ serverId: getServerId(), ...payload }) });
+
 // Grouped exports by parent path
 export const Api = {
   addServer,
@@ -626,6 +701,28 @@ export const ApiKeys = {
   delete: deleteApiKey,
 };
 
+export const Reports = {
+  capabilities: getReportCapabilities,
+  fonts: getReportFonts,
+  list: listReports,
+  get: getReport,
+  save: saveReport,
+  duplicate: duplicateReport,
+  delete: deleteReport,
+  query: queryReportData,
+  preview: previewReport,
+  parameterOptions: getReportParameterOptions,
+  render: renderReport,
+  renderModel: renderReportModel,
+  deliver: deliverReport,
+  schedules: {
+    list: listReportSchedules,
+    save: saveReportSchedule,
+    delete: deleteReportSchedule,
+    run: runReportSchedule,
+  },
+};
+
 export const Proxy = {
   devices: getProxyDeviceImage,
   items: { getItemBackdrop, getItemPrimary },
@@ -660,6 +757,7 @@ export default {
   History,
   Auth,
   ApiKeys,
+  Reports,
   Proxy,
   System,
   Tasks,
