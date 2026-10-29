@@ -49,6 +49,7 @@ function LookupSettings({
   const columns = dataSourceColumns(
     definition.dataSources.find((d) => d.id === lookup.dataSourceId),
     caps,
+    definition.dataSources,
   ).map((c) => ({ value: c.name, label: c.label }));
   const usedBy = definition.dataSources.filter((d) => JSON.stringify(d.filter ?? {}).includes(`"parameter":"${parameter.name}"`)).length;
 
@@ -149,7 +150,9 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
         )}
         {definition.dataSources.map((ds) => {
           const result = data[ds.id];
-          const label = caps?.datasets.find((d) => d.key === ds.dataset)?.label ?? ds.dataset;
+          const label = ds.derive
+            ? `Combined (${ds.derive.mode}): ${ds.derive.sources.map((id) => definition.dataSources.find((d) => d.id === id)?.name ?? "?").join(", ")}`
+            : (caps?.datasets.find((d) => d.key === ds.dataset)?.label ?? ds.dataset);
           return (
             <div key={ds.id} className="group rounded-lg border border-border bg-background p-2.5 hover:border-gray-600">
               <div className="flex items-center gap-2">
@@ -305,6 +308,7 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
       {editing && (
         <DataSourceEditor
           source={editing}
+          allSources={definition.dataSources}
           parameters={definition.parameters}
           timeZone={definition.timeZone}
           onApply={saveSource}

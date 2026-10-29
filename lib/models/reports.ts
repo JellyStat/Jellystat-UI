@@ -133,6 +133,7 @@ export interface ReportParameter {
 export interface ReportDataSource {
   id: string;
   name: string;
+  /** Unused when the source is built from other sources (derive). */
   dataset: string;
   engine: QueryEngine;
   filter?: ReportFilterNode | null;
@@ -145,10 +146,37 @@ export interface ReportDataSource {
   limit?: number | null;
   /** Steps applied to the query result, in order. */
   transforms?: ReportTransform[] | null;
+  /** Row-level fields computed from an expression; usable like dataset fields. */
+  calculated?: ReportCalculatedField[] | null;
+  /** When set, the source combines other data sources' results instead of querying a dataset. */
+  derive?: ReportDerive | null;
+}
+
+export interface ReportCalculatedField {
+  name: string;
+  label?: string | null;
+  expression: string;
+  /** Result type; empty to infer it from the expression. */
+  type?: string | null;
+}
+
+export interface ReportJoinKey {
+  left: string;
+  right: string;
+}
+
+export interface ReportDerive {
+  mode: "join" | "union";
+  sources: string[];
+  on: ReportJoinKey[];
+  joinType?: "inner" | "left" | "full" | null;
+  rightPrefix?: string | null;
+  sourceColumn?: string | null;
 }
 
 export type ReportTransformType =
   | "filter"
+  | "calculate"
   | "topN"
   | "pivot"
   | "runningTotal"
@@ -177,7 +205,9 @@ export interface ReportTransform {
   fillZero?: boolean;
   sortColumns?: boolean;
   alias?: string | null;
-  mode?: "difference" | "percent" | null;
+  /** change: "difference" | "percent"; calculate: the result type (empty to infer). */
+  mode?: string | null;
+  expression?: string | null;
   bucket?: string | null;
   sort?: ReportSort[] | null;
 }
@@ -264,6 +294,7 @@ export interface ReportCapabilities {
   exportFormats: ExportFormat[];
   webhookTypes: WebhookType[];
   transformTypes: ReportTransformType[];
+  deriveModes?: string[];
   maxRows: number;
 }
 

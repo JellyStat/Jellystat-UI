@@ -1,10 +1,15 @@
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
 import type { ReportColumn, ReportParameter, ReportSort, ReportTransform, ReportTransformType } from "@/lib/models/reports";
 import { applyTransformColumns } from "@/lib/reports/columns";
+import { CALCULATED_TYPES } from "./CalculatedFieldsEditor";
 import { Field, inputClass, NumberInput, Select, TextInput, Toggle } from "./controls";
 
 export const TRANSFORM_LABELS: Record<ReportTransformType, { label: string; help: string }> = {
   filter: { label: "Filter rows", help: "Keep rows matching a condition on the result, e.g. plays at least 10 (works on totals)." },
+  calculate: {
+    label: "Calculate column",
+    help: 'Add a column computed from the row\'s other columns, e.g. watch / plays / 60, or iif(plays >= 10, "Regular", "Casual").',
+  },
   topN: { label: "Top N", help: 'Keep the highest (or lowest) rows, optionally per group, folding the rest into an "Other" row.' },
   pivot: { label: "Pivot", help: "Turn the values of one column into columns, e.g. users down the side and months across." },
   runningTotal: { label: "Running total", help: "Add a column that accumulates a value down the rows." },
@@ -53,6 +58,8 @@ const newStep = (type: ReportTransformType, columns: ReportColumn[]): ReportTran
       return { type, sort: numeric ? [{ field: numeric, desc: true }] : [] };
     case "limit":
       return { type, count: 10 };
+    case "calculate":
+      return { type, alias: "calculated", expression: numeric ?? "", mode: null };
     default:
       return { type, field: numeric, desc: true, mode: type === "change" ? "difference" : null };
   }
@@ -241,6 +248,29 @@ function StepFields({
           >
             <Plus size={12} /> Sort column
           </button>
+        </div>
+      );
+    case "calculate":
+      return (
+        <div className="space-y-1.5">
+          <div className="grid grid-cols-2 gap-1.5">
+            <Field label="New column name">
+              <TextInput value={step.alias ?? ""} onChange={(v) => set({ alias: v.replace(/[^A-Za-z0-9_]/g, "") || null })} />
+            </Field>
+            <Field label="Type">
+              <Select value={step.mode ?? "auto"} options={CALCULATED_TYPES} onChange={(v) => set({ mode: v === "auto" ? null : v })} />
+            </Field>
+          </div>
+          <Field label="Expression">
+            <TextInput multiline rows={2} value={step.expression ?? ""} placeholder="watch / plays / 60" onChange={(v) => set({ expression: v })} />
+          </Field>
+          <p className="text-[11px] text-gray-500">
+            Columns:{" "}
+            {columns
+              .filter((c) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(c.name))
+              .map((c) => c.name)
+              .join(", ")}
+          </p>
         </div>
       );
     case "limit":

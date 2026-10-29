@@ -326,6 +326,7 @@ function useColumns(e: ReportElement) {
   return dataSourceColumns(
     definition.dataSources.find((d) => d.id === e.dataSourceId),
     caps,
+    definition.dataSources,
   );
 }
 
@@ -696,6 +697,7 @@ function MediaSettings({ e }: { e: ReportElement }) {
   const columns = dataSourceColumns(
     definition.dataSources.find((d) => d.id === media.dataSourceId),
     caps,
+    definition.dataSources,
   );
 
   return (

@@ -604,6 +604,8 @@ const queryReportData = (payload: {
   parameters?: Record<string, unknown>;
   maxRows?: number;
   timeZone?: string | null;
+  /** The report's other data sources, which a combined source is built from. */
+  dataSources?: ReportDataSource[];
 }): Promise<ReportDataResult> =>
   apiFetch<ReportDataResult>("/Reports/Query", { method: "POST", body: JSON.stringify({ ...payload, serverId: getServerId() }) });
 const previewReport = (payload: {
