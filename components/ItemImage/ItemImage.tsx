@@ -12,6 +12,8 @@ type Props = {
   PlaceHolderIcon?: React.ElementType;
   onClick?: () => void;
   borderRadius?: number[];
+  /** Tailwind aspect class for the image box; defaults to the 2:3 poster ratio. */
+  aspectClassName?: string;
 };
 
 export default function ItemImage({
@@ -23,6 +25,7 @@ export default function ItemImage({
   PlaceHolderIcon = ImageIcon,
   onClick,
   borderRadius = [8, 0, 0, 0],
+  aspectClassName = "aspect-2/3",
 }: Props) {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -67,7 +70,7 @@ export default function ItemImage({
 
       {/* Actual Image */}
 
-      <div className="relative w-full aspect-2/3 overflow-hidden transition-all duration-300 group-hover:shadow-brand-cyan/20  group-hover:shadow-xl shrink-0">
+      <div className={`relative w-full ${aspectClassName} overflow-hidden transition-all duration-300 group-hover:shadow-brand-cyan/20  group-hover:shadow-xl shrink-0`}>
         {/* Background Image */}
         <img
           className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out ${

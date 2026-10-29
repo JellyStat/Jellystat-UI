@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import type { RecentlyAdded } from "@/lib/models/RecentlyAdded";
 import { HardDrive } from "lucide-react";
 import ItemImage from "../ItemImage/ItemImage";
+import ItemTypes from "@/lib/models/enums/ItemTypes";
 
 type Props = {
   item: RecentlyAdded;
@@ -12,17 +13,22 @@ type Props = {
   height?: number | string;
   /** Overlay the item's on-disk size (series/seasons are rolled up from episodes by the sync task). */
   showSize?: boolean;
+  /** Show episodes with their own 16:9 still instead of the series poster (media grid only). */
+  episodeStill?: boolean;
 };
 
-export default function ItemCard({ item, width = 160, height = 240, showSize = false }: Props) {
+export default function ItemCard({ item, width = 160, height = 240, showSize = false, episodeStill = false }: Props) {
   const router = useRouter();
   const { t, i18n } = useTranslation("common");
 
   const isValidParent = item.parent && item.parent.id && item.parent.id !== item.id;
   const hasGroupedItems = item.grouped && item.grouped.length > 0;
   const id = isValidParent ? item.parent!.id : item.id;
+  // When enabled, episodes show their own 16:9 still; everything else shows the parent's poster.
+  const isEpisodeStill = episodeStill && item.type === ItemTypes.Episode;
+  const imageId = isEpisodeStill ? item.id : id;
   const serverId = item.serverId;
-  const imageUrl = `${API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(id)}&Width=400&ServerId=${encodeURIComponent(serverId)}`;
+  const imageUrl = `${API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(imageId)}&Width=400&ServerId=${encodeURIComponent(serverId)}`;
 
   // Formatting
   const indexString =
@@ -48,9 +54,9 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
       style={{ width }}
     >
       {/* Image Container */}
-      {/* Fixed-width cards use the explicit height; fluid (grid) cards keep the 2:3 poster ratio. */}
+      {/* Fixed-width cards use the explicit height; fluid (grid) cards keep the 2:3 poster ratio (16:9 for episode stills). */}
       <div
-        className={`relative shrink-0 overflow-hidden bg-background/50 ${fluid ? "w-full aspect-2/3" : ""}`}
+        className={`relative shrink-0 overflow-hidden bg-background/50 ${fluid ? `w-full ${isEpisodeStill ? "aspect-video" : "aspect-2/3"}` : ""}`}
         style={fluid ? undefined : { height }}
       >
         <ItemImage
@@ -60,6 +66,7 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
           width="100%"
           height="100%"
           borderRadius={[16, 16, 0, 0]}
+          aspectClassName={isEpisodeStill ? "aspect-video" : undefined}
           onClick={() => router.push(`/libraries/items/${encodeURIComponent(item.id)}`)}
         />
 

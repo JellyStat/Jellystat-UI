@@ -15,6 +15,7 @@ import {
 import client from "@/lib/api";
 import type { ItemsWithStats } from "@/lib/models/itemsWithStats";
 import ItemCard from "../ItemsCards/ItemCard";
+import ItemTypes from "@/lib/models/enums/ItemTypes";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import DropdownSelector from "../Core/DropdownSelector";
 
@@ -194,8 +195,9 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
         {/* Media Items Grid */}
         <div className="grid auto-rows-fr grid-cols-[repeat(auto-fill,minmax(140px,1fr))] sm:grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-4">
           {items.map((it: ItemsWithStats) => (
-            <div key={`${it.serverId || ""}-${it.id}`} className="w-full h-full">
-              <ItemCard item={it} width="100%" showSize />
+            // Episode stills are 16:9, so give them two columns to stay a similar height to the 2:3 posters.
+            <div key={`${it.serverId || ""}-${it.id}`} className={`w-full h-full ${it.type === ItemTypes.Episode ? "col-span-2" : ""}`}>
+              <ItemCard item={it} width="100%" showSize episodeStill />
             </div>
           ))}
         </div>
