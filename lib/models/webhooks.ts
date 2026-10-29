@@ -1,4 +1,4 @@
-export type WebhookEventKey = "playback.started" | "playback.ended" | "media.added";
+export type WebhookEventKey = "playback.started" | "playback.ended" | "media.added" | "sync.completed";
 export type EventWebhookType = "generic" | "discord";
 
 export interface EventWebhook {
