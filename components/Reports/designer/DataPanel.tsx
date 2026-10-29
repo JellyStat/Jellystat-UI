@@ -13,9 +13,7 @@ function DefaultValueInput({ parameter, onChange }: { parameter: ReportParameter
   const v = parameter.defaultValue;
   switch (parameter.type) {
     case "lookup":
-      return (
-        <ParameterInput parameter={parameter} value={v} onChange={onChange} source={{ definition }} className="text-xs! py-1!" emptyLabel="All" />
-      );
+      return <ParameterInput parameter={parameter} value={v} onChange={onChange} source={{ definition }} size="sm" emptyLabel="All" />;
     case "number":
       return <NumberInput value={typeof v === "number" ? v : null} onChange={onChange} />;
     case "boolean":

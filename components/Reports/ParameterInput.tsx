@@ -16,12 +16,16 @@ interface Props {
   /** Current values of the other parameters, which a lookup's data source may filter on. */
   values?: Record<string, unknown>;
   className?: string;
+  /** sm matches the designer's compact inputs; md (default) suits the viewer's parameter bar. */
+  size?: "sm" | "md";
   /** Shown when nothing is chosen (the parameter's default applies, or the filter is switched off). */
   emptyLabel?: string;
 }
 
-const inputClass =
-  "w-full min-w-0 bg-background border border-border rounded-lg px-2.5 py-1.5 text-sm text-gray-200 outline-none focus:border-brand-purple";
+const inputClasses = {
+  md: "w-full min-w-0 bg-background border border-border rounded-lg px-2.5 py-1.5 text-sm text-gray-200 outline-none focus:border-brand-purple",
+  sm: "w-full min-w-0 bg-background border border-border rounded-md px-2 py-1 text-xs text-gray-200 outline-none focus:border-brand-purple",
+};
 
 const same = (a: unknown, b: unknown) => String(a) === String(b);
 
@@ -82,7 +86,8 @@ function useLookupOptions(parameter: ReportParameter, source: ParameterOptionsSo
   return { options, loading, error };
 }
 
-function LookupInput({ parameter, value, onChange, source, values, className, emptyLabel = "All" }: Props) {
+function LookupInput({ parameter, value, onChange, source, values, className, size = "md", emptyLabel = "All" }: Props) {
+  const inputClass = inputClasses[size];
   const { options, loading, error } = useLookupOptions(parameter, source, values);
   const [query, setQuery] = useState("");
   const multiple = !!parameter.lookup?.multiple;
@@ -132,7 +137,11 @@ function LookupInput({ parameter, value, onChange, source, values, className, em
           <ComboboxOption
             key={String(o.value)}
             value={o.value}
-            className="group flex items-center gap-2 px-3 py-1.5 text-sm text-gray-300 cursor-pointer data-focus:bg-surface-hover data-focus:text-white"
+            className={clsx(
+              "group flex items-center gap-2 px-3 text-gray-300",
+              size === "sm" ? "py-1 text-xs" : "py-1.5 text-sm",
+              "cursor-pointer data-focus:bg-surface-hover data-focus:text-white",
+            )}
           >
             <Check size={13} className="invisible text-brand-purple shrink-0 group-data-selected:visible" />
             <span className="truncate">{o.label}</span>
@@ -145,7 +154,8 @@ function LookupInput({ parameter, value, onChange, source, values, className, em
 
 /** Input for one report parameter: text, number, date, yes/no, or a dropdown of values from a data source (lookup). */
 export default function ParameterInput(props: Props) {
-  const { parameter: p, value, onChange, className, emptyLabel = "Default" } = props;
+  const { parameter: p, value, onChange, className, size = "md", emptyLabel = "Default" } = props;
+  const inputClass = inputClasses[size];
   if (p.type === "lookup") {
     return <LookupInput {...props} />;
   }
