@@ -3,7 +3,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import type { ReportElement, ReportElementStyle, ReportRenderModel } from "@/lib/models/reports";
 import { defaultChartOptions, defaultTableOptions } from "@/lib/reports/defaults";
-import { findData, formatValue, resolveTokens } from "@/lib/reports/format";
+import { findData, formatValue, resolveLink, resolveTokens } from "@/lib/reports/format";
 import { fontWeight } from "@/lib/reports/measure";
 import ChartView from "./ChartView";
 import MediaImage from "./MediaImage";
@@ -17,6 +17,20 @@ interface Props {
   pageCount: number;
   /** Hide the text while it is being edited in place. */
   hideText?: boolean;
+  /** Make hyperlinks clickable (the viewer); the designer shows them without following them. */
+  links?: boolean;
+}
+
+/** A hyperlink in the viewer, or plain content in the designer (where clicks select elements). */
+function Link({ url, enabled, className, children }: { url: string | null; enabled?: boolean; className?: string; children: ReactNode }) {
+  if (!url || !enabled) {
+    return <>{children}</>;
+  }
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer" className={className} style={{ color: "inherit", textDecoration: "inherit" }}>
+      {children}
+    </a>
+  );
 }
 
 const dash = (style: string, width: number) =>
@@ -45,7 +59,7 @@ function Message({ text, style, color = "#9ca3af" }: { text: string; style: Repo
 
 const justify = (v: string) => (v === "middle" ? "center" : v === "bottom" ? "flex-end" : "flex-start");
 
-export default function ReportElementView({ element: e, model, pageNumber, pageCount, hideText }: Props) {
+export default function ReportElementView({ element: e, model, pageNumber, pageCount, hideText, links }: Props) {
   const s = e.style;
   const isShape = e.type === "shape" || e.type === "line";
   const innerW = Math.max(0, e.width - 2 * s.padding);
@@ -81,6 +95,8 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
       }
       const column = data?.columns.find((c) => c.name.toLowerCase() === (e.valueField ?? "").toLowerCase());
       const raw = data && column && data.rows.length > 0 ? data.rows[0][column.name] : null;
+      const metricLink =
+        e.format === "link" && raw !== null && raw !== undefined ? resolveLink(e.link, raw, data!.rows[0], model, pageNumber, pageCount) : null;
       const value = `${e.prefix ?? ""}${raw === null || raw === undefined ? "—" : formatValue(raw, e.format, column?.type, model.definition.timeZone)}${e.suffix ?? ""}`;
       const label = resolveTokens(e.label, model, pageNumber, pageCount);
       const labelSize = Math.max(10, s.fontSize * 0.4);
@@ -91,8 +107,10 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
               {label}
             </div>
           )}
-          <div className="truncate" style={{ ...textStyle(s), lineHeight: 1.15 }}>
-            {value}
+          <div className="truncate" style={{ ...textStyle(s), lineHeight: 1.15, textDecoration: metricLink ? "underline" : undefined }}>
+            <Link url={metricLink} enabled={links}>
+              {value}
+            </Link>
           </div>
         </div>
       );
@@ -124,7 +142,7 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
       const headerH = t.showHeader ? rowH : 0;
       const fit = Math.floor((innerH - headerH) / rowH);
       const count = Math.min(data.rows.length, Math.max(0, Math.min(fit, t.maxRows ?? Number.MAX_SAFE_INTEGER)));
-      const cell = (key: string, text: string, i: number, weight?: string, color?: string) => (
+      const cell = (key: string, text: string, i: number, weight?: string, color?: string, url?: string | null) => (
         <div
           key={key}
           className="truncate px-1.5"
@@ -133,9 +151,12 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
             textAlign: columns[i].align,
             ...textStyle(s, undefined, weight, color),
             lineHeight: `${rowH}px`,
+            textDecoration: url && text ? "underline" : undefined,
           }}
         >
-          {text}
+          <Link url={url ?? null} enabled={links}>
+            {text}
+          </Link>
         </div>
       );
       content = (
@@ -174,6 +195,11 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
                   `c-${r}-${i}`,
                   formatValue(row[c.field], c.format, data.columns.find((x) => x.name === c.field)?.type, model.definition.timeZone),
                   i,
+                  undefined,
+                  undefined,
+                  c.format === "link" && row[c.field] !== null && row[c.field] !== undefined
+                    ? resolveLink(c.link, row[c.field], row, model, pageNumber, pageCount)
+                    : null,
                 ),
               )}
             </div>
@@ -288,7 +314,15 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
           padding: isShape ? 0 : s.padding,
         }}
       >
-        <div className="relative w-full h-full">{content}</div>
+        <div className="relative w-full h-full">
+          {(e.type === "text" || e.type === "image") && e.link?.trim() ? (
+            <Link url={resolveLink(e.link, null, null, model, pageNumber, pageCount)} enabled={links} className="block w-full h-full">
+              {content}
+            </Link>
+          ) : (
+            content
+          )}
+        </div>
       </div>
       {!isShape && s.borderWidth > 0 && s.borderColor && (
         <div

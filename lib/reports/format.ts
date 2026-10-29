@@ -2,7 +2,20 @@
 // server exports format values identically. Change both together.
 import type { ReportDataResult, ReportRenderModel } from "@/lib/models/reports";
 
-export const VALUE_FORMATS = ["auto", "text", "number", "integer", "decimal", "percent", "duration", "bytes", "date", "datetime", "time"] as const;
+export const VALUE_FORMATS = [
+  "auto",
+  "text",
+  "link",
+  "number",
+  "integer",
+  "decimal",
+  "percent",
+  "duration",
+  "bytes",
+  "date",
+  "datetime",
+  "time",
+] as const;
 
 const integerFormat = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
 const decimalFormat = new Intl.NumberFormat("en-US", {
@@ -188,6 +201,53 @@ export const TOKEN_HELP = [
     description: "Add |format: number, integer, percent, duration, bytes, date...",
   },
 ];
+
+/** Only http, https and mailto links are followed; anything else (javascript:, file:...) gives null. */
+export function safeLink(url: string | null | undefined): string | null {
+  const u = url?.trim();
+  if (!u) {
+    return null;
+  }
+  try {
+    const parsed = new URL(u);
+    return ["http:", "https:", "mailto:"].includes(parsed.protocol) ? u : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Builds a hyperlink like ReportTokenResolver.ResolveLink on the server: {{value}} is the linked value, {{row.FIELD}}
+ * another column of the row, other tokens as usual. A token at the very start goes in as it is (the URL or its base);
+ * anywhere else it is URL-encoded. An empty template uses the value itself.
+ */
+export function resolveLink(
+  template: string | null | undefined,
+  value: unknown,
+  row: Record<string, unknown> | null,
+  model: Pick<ReportRenderModel, "data" | "definition" | "name" | "parameters" | "generatedAt">,
+  pageNumber: number,
+  pageCount: number,
+): string | null {
+  const t = template?.trim() || "{{value}}";
+  const url = t.replace(TOKEN, (match, path: string, format: string | undefined, offset: number) => {
+    let v: unknown;
+    const p = path.trim();
+    if (p.toLowerCase() === "value") {
+      v = value;
+    } else if (p.toLowerCase().startsWith("row.") && row) {
+      const field = p.slice(4).toLowerCase();
+      const key = Object.keys(row).find((k) => k.toLowerCase() === field);
+      v = key === undefined ? null : row[key];
+    } else {
+      const resolved = resolveTokens(match, model, pageNumber, pageCount);
+      v = resolved === match ? "" : resolved;
+    }
+    const text = v === null || v === undefined ? "" : format && p.toLowerCase() === "value" ? formatValue(v, format) : String(v);
+    return offset === 0 ? text.trim() : encodeURIComponent(text);
+  });
+  return safeLink(url);
+}
 
 /** Replaces {{tokens}} the same way ReportTokenResolver does on the server. Unknown tokens are left as they are. */
 export function resolveTokens(

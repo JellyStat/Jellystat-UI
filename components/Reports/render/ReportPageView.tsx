@@ -16,7 +16,7 @@ const ReportPageView = forwardRef<HTMLDivElement, Props>(function ReportPageView
         .filter((e) => !e.hidden)
         .map((e) => (
           <div key={e.id} className="absolute" style={{ left: e.x, top: e.y, width: e.width, height: e.height }}>
-            <ReportElementView element={e} model={model} pageNumber={pageIndex + 1} pageCount={model.definition.pages.length} />
+            <ReportElementView element={e} model={model} pageNumber={pageIndex + 1} pageCount={model.definition.pages.length} links />
           </div>
         ))}
     </div>

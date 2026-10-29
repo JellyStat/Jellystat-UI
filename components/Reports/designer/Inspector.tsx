@@ -28,8 +28,35 @@ import FontPicker from "./FontPicker";
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const formatOptions = VALUE_FORMATS.map((f) => ({
   value: f,
-  label: f === "auto" ? "Automatic" : f.charAt(0).toUpperCase() + f.slice(1),
+  label: f === "auto" ? "Automatic" : f === "link" ? "Hyperlink" : f.charAt(0).toUpperCase() + f.slice(1),
 }));
+// Charts can't link their labels
+const chartFormatOptions = formatOptions.filter((f) => f.value !== "link");
+
+const LINK_HELP =
+  "Use {{value}} for the value and {{row.FIELD}} for other columns, e.g. https://jellyfin.example/web/#/details?id={{row.ItemId}}. Empty uses the value itself as the URL. Only http, https and mailto links work.";
+
+/** Link target for a text or image element. */
+function ElementLink({ e }: { e: ReportElement }) {
+  const { updateElements } = useDesigner();
+  return (
+    <Field label="Link (optional)" hint="Opens when clicked in the viewer, HTML/SVG and PDF exports; {{tokens}} work here">
+      <TextInput
+        value={e.link ?? ""}
+        placeholder="https://..."
+        onChange={(v) =>
+          updateElements(
+            [e.id],
+            (x) => {
+              x.link = v || null;
+            },
+            `link-${e.id}`,
+          )
+        }
+      />
+    </Field>
+  );
+}
 
 function TokenHelp() {
   return (
@@ -333,7 +360,7 @@ function useColumns(e: ReportElement) {
 function MetricContent({ e }: { e: ReportElement }) {
   const { updateElements } = useDesigner();
   const columns = useColumns(e);
-  const set = (key: "valueField" | "label" | "format" | "prefix" | "suffix", value: string | null) =>
+  const set = (key: "valueField" | "label" | "format" | "prefix" | "suffix" | "link", value: string | null) =>
     updateElements(
       [e.id],
       (x) => {
@@ -366,6 +393,11 @@ function MetricContent({ e }: { e: ReportElement }) {
           <TextInput value={e.suffix ?? ""} onChange={(v) => set("suffix", v || null)} />
         </Field>
       </div>
+      {e.format === "link" && (
+        <Field label="Link URL" hint={LINK_HELP}>
+          <TextInput value={e.link ?? ""} placeholder="{{value}}" onChange={(v) => set("link", v || null)} />
+        </Field>
+      )}
       <p className="text-[11px] text-gray-500">Shows the value from the first row. Use a Summary data source for totals.</p>
     </Section>
   );
@@ -471,6 +503,20 @@ function TableContent({ e }: { e: ReportElement }) {
                   }
                 />
               </div>
+              {c.format === "link" && (
+                <div title={LINK_HELP}>
+                  <TextInput
+                    value={c.link ?? ""}
+                    placeholder="Link URL, e.g. https://site/item/{{row.Id}} (empty: the value)"
+                    onChange={(v) =>
+                      setCols(
+                        cols.map((x, j) => (j === i ? { ...x, link: v || null } : x)),
+                        `${i}-link`,
+                      )
+                    }
+                  />
+                </div>
+              )}
             </div>
           ))}
           <div className="flex gap-2">
@@ -590,7 +636,7 @@ function ChartContent({ e }: { e: ReportElement }) {
         <Field label="Category format">
           <Select
             value={c.categoryFormat ?? "auto"}
-            options={formatOptions}
+            options={chartFormatOptions}
             onChange={(v) => set({ categoryFormat: v === "auto" ? null : v }, "categoryFormat")}
           />
         </Field>
@@ -654,7 +700,7 @@ function ChartContent({ e }: { e: ReportElement }) {
       <Field label="Value format">
         <Select
           value={c.valueFormat ?? "auto"}
-          options={formatOptions}
+          options={chartFormatOptions}
           onChange={(v) => set({ valueFormat: v === "auto" ? null : v }, "valueFormat")}
         />
       </Field>
@@ -858,6 +904,7 @@ function ImageContent({ e }: { e: ReportElement }) {
           }
         />
       </Field>
+      <ElementLink e={e} />
     </Section>
   );
 }
@@ -1007,6 +1054,7 @@ export default function Inspector() {
             }
           />
           <TokenHelp />
+          <ElementLink e={e} />
         </Section>
       )}
       {single && e.type === "metric" && <MetricContent e={e} />}

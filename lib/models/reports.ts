@@ -79,6 +79,8 @@ export interface ReportElement {
   shape?: "rect" | "ellipse" | null;
   /** image: a picture from the media server instead of src (also included in server exports). */
   media?: ReportImageBinding | null;
+  /** text, image: link target; metric with the "link" format: URL template ({{value}}; empty uses the value). */
+  link?: string | null;
 }
 
 export interface ReportTableColumn {
@@ -87,6 +89,8 @@ export interface ReportTableColumn {
   width: number;
   align: "left" | "center" | "right";
   format?: string | null;
+  /** "link" format: URL template with {{value}} and {{row.FIELD}}; empty uses the cell value as the URL. */
+  link?: string | null;
 }
 
 export interface ReportTableOptions {
