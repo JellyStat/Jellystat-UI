@@ -7,17 +7,17 @@ export const OPERATOR_LABELS: Record<string, string> = {
   eq: "equals",
   neq: "does not equal",
   gt: "greater than",
-  gte: "at least",
+  gte: "greater than or equal to",
   lt: "less than",
-  lte: "at most",
+  lte: "less than or equal to",
   contains: "contains",
-  notContains: "does not contain",
+  notContains: "not contains",
   startsWith: "starts with",
   endsWith: "ends with",
   isNull: "is empty",
   isNotNull: "is not empty",
-  in: "is one of",
-  notIn: "is none of",
+  in: "in",
+  notIn: "not in",
   between: "between",
   lastNDays: "in the last N days",
   lastNHours: "in the last N hours",
@@ -65,7 +65,9 @@ function ValueInput({
   onChange: (v: unknown) => void;
 }) {
   if (operator === "lastNDays" || operator === "lastNHours") {
-    return <NumberInput value={typeof value === "number" ? value : Number(value) || null} min={0} onChange={(v) => onChange(v)} />;
+    return (
+      <NumberInput value={typeof value === "number" ? value : Number(value) || null} min={0} onChange={(v) => onChange(v)} />
+    );
   }
   if (operator === "in" || operator === "notIn") {
     const text = Array.isArray(value) ? value.join(", ") : String(value ?? "");
@@ -191,7 +193,12 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
           <FolderPlus size={12} /> Group
         </button>
         {onRemove && (
-          <button type="button" title="Remove group" className="p-0.5 text-gray-500 hover:text-brand-rose cursor-pointer" onClick={onRemove}>
+          <button
+            type="button"
+            title="Remove group"
+            className="p-0.5 text-gray-500 hover:text-brand-rose cursor-pointer"
+            onClick={onRemove}
+          >
             <Trash2 size={12} />
           </button>
         )}
