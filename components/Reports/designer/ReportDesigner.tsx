@@ -43,7 +43,7 @@ import { useReportFonts } from "@/lib/reports/fonts";
 import ReportPageView from "../render/ReportPageView";
 import ReportSchedulesDialog from "../ReportSchedulesDialog";
 import ContextMenu, { type MenuEntry } from "./ContextMenu";
-import { CapabilitiesContext, ToolButton } from "./controls";
+import { CapabilitiesContext, PreviewDataContext, ToolButton } from "./controls";
 import DataPanel from "./DataPanel";
 import DesignerCanvas, { PAGE_GUTTER, type ContextMenuRequest } from "./DesignerCanvas";
 import { DesignerProvider, useDesigner, type DesignerDoc } from "./designerStore";
@@ -693,7 +693,9 @@ function DesignerShell() {
         {/* Inspector */}
         {showRight && !previewMode && (
           <div className="w-72 shrink-0 border-l border-border bg-surface overflow-y-auto">
-            <Inspector />
+            <PreviewDataContext.Provider value={preview.model?.data ?? {}}>
+              <Inspector />
+            </PreviewDataContext.Provider>
           </div>
         )}
       </div>

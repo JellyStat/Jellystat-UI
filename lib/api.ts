@@ -603,6 +603,7 @@ const queryReportData = (payload: {
   parameterDefinitions?: ReportParameter[];
   parameters?: Record<string, unknown>;
   maxRows?: number;
+  timeZone?: string | null;
 }): Promise<ReportDataResult> =>
   apiFetch<ReportDataResult>("/Reports/Query", { method: "POST", body: JSON.stringify({ ...payload, serverId: getServerId() }) });
 const previewReport = (payload: {

@@ -57,8 +57,38 @@ function toDate(value: unknown): Date | null {
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");
-const utcDate = (d: Date) => `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
-const utcTime = (d: Date) => `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
+const zoneFormats = new Map<string, Intl.DateTimeFormat>();
+
+/** Calendar parts of a UTC instant in a time zone (UTC when none or unknown), like the server's ReportFormatter. */
+function localParts(d: Date, timeZone?: string | null) {
+  if (timeZone && timeZone !== "UTC") {
+    let fmt = zoneFormats.get(timeZone);
+    if (!fmt) {
+      try {
+        fmt = new Intl.DateTimeFormat("en-US", {
+          timeZone,
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hourCycle: "h23",
+        });
+        zoneFormats.set(timeZone, fmt);
+      } catch {
+        fmt = undefined;
+      }
+    }
+    if (fmt) {
+      const parts = Object.fromEntries(fmt.formatToParts(d).map((p) => [p.type, p.value]));
+      return { date: `${parts.year}-${parts.month}-${parts.day}`, time: `${parts.hour}:${parts.minute}` };
+    }
+  }
+  return {
+    date: `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`,
+    time: `${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`,
+  };
+}
 
 export function formatDuration(seconds: number): string {
   const total = Math.max(0, Math.round(seconds));
@@ -90,7 +120,7 @@ export function formatBytes(bytes: number): string {
   return `${text} ${units[u]}`;
 }
 
-export function formatValue(value: unknown, format?: string | null, columnType?: string | null): string {
+export function formatValue(value: unknown, format?: string | null, columnType?: string | null, timeZone?: string | null): string {
   if (value === null || value === undefined) {
     return "";
   }
@@ -116,10 +146,11 @@ export function formatValue(value: unknown, format?: string | null, columnType?:
       if (!d) {
         return String(value);
       }
+      const local = localParts(d, timeZone);
       if (f === "date") {
-        return utcDate(d);
+        return local.date;
       }
-      return f === "time" ? utcTime(d) : `${utcDate(d)} ${utcTime(d)}`;
+      return f === "time" ? local.time : `${local.date} ${local.time}`;
     }
     default:
       if (typeof value === "boolean") {
@@ -207,6 +238,6 @@ export function resolveTokens(
     } else {
       return match;
     }
-    return formatValue(value, format, type);
+    return formatValue(value, format, type, model.definition.timeZone);
   });
 }

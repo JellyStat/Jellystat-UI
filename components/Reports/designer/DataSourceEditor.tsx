@@ -5,6 +5,7 @@ import { useState } from "react";
 import client from "@/lib/api";
 import type { ReportDataResult, ReportDataSource, ReportParameter } from "@/lib/models/reports";
 import { dataSourceColumns, isGrouped } from "@/lib/reports/columns";
+import TransformsEditor from "./TransformsEditor";
 import { formatValue } from "@/lib/reports/format";
 import { Field, inputClass, NumberInput, Select, TextInput, useCapabilities } from "./controls";
 import FilterBuilder from "./FilterBuilder";
@@ -12,6 +13,8 @@ import FilterBuilder from "./FilterBuilder";
 interface Props {
   source: ReportDataSource;
   parameters: ReportParameter[];
+  /** The report's time zone, so the preview buckets dates like the report will. */
+  timeZone?: string | null;
   onApply: (source: ReportDataSource) => void;
   onClose: () => void;
 }
@@ -34,7 +37,7 @@ const BUCKET_LABELS: Record<string, string> = {
   year: "Year",
 };
 
-export default function DataSourceEditor({ source, parameters, onApply, onClose }: Props) {
+export default function DataSourceEditor({ source, parameters, timeZone, onApply, onClose }: Props) {
   const caps = useCapabilities();
   const [draft, setDraft] = useState<ReportDataSource>(source);
   const [grouped, setGrouped] = useState(isGrouped(source));
@@ -48,6 +51,8 @@ export default function DataSourceEditor({ source, parameters, onApply, onClose 
   // Switching modes clears the other mode's settings so the saved definition has no leftovers
   const final = (): ReportDataSource => (grouped ? { ...draft, fields: [] } : { ...draft, groupBy: [], aggregates: [] });
   const outputColumns = dataSourceColumns(final(), caps);
+  // What the database query returns, before any post-query steps: the only columns SQL can sort on
+  const queryColumns = dataSourceColumns({ ...final(), transforms: [] }, caps);
 
   const run = async () => {
     setRunning(true);
@@ -58,6 +63,7 @@ export default function DataSourceEditor({ source, parameters, onApply, onClose 
           dataSource: final(),
           parameterDefinitions: parameters,
           maxRows: 100,
+          timeZone,
         }),
       );
     } catch (err: any) {
@@ -390,7 +396,7 @@ export default function DataSourceEditor({ source, parameters, onApply, onClose 
                         value={s.field}
                         options={
                           grouped
-                            ? outputColumns.map((c) => ({ value: c.name, label: c.label }))
+                            ? queryColumns.map((c) => ({ value: c.name, label: c.label }))
                             : fields.map((f) => ({ value: f.key, label: f.label }))
                         }
                         onChange={(v) =>
@@ -439,7 +445,7 @@ export default function DataSourceEditor({ source, parameters, onApply, onClose 
                     type="button"
                     className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-white cursor-pointer"
                     onClick={() => {
-                      const first = grouped ? outputColumns[0]?.name : fields[0]?.key;
+                      const first = grouped ? queryColumns[0]?.name : fields[0]?.key;
                       if (first) {
                         set({ sort: [...draft.sort, { field: first, desc: true }] });
                       }
@@ -448,6 +454,16 @@ export default function DataSourceEditor({ source, parameters, onApply, onClose 
                     <Plus size={12} /> Sort
                   </button>
                 </div>
+              </Field>
+
+              <Field label="After the query" hint="Steps applied to the result, in order">
+                <TransformsEditor
+                  transforms={draft.transforms ?? []}
+                  columns={queryColumns}
+                  resultColumns={preview?.error ? null : preview?.columns}
+                  parameters={parameters}
+                  onChange={(transforms) => set({ transforms })}
+                />
               </Field>
 
               <Field label={`Row limit (max ${caps?.maxRows ?? 10000})`}>
@@ -459,11 +475,12 @@ export default function DataSourceEditor({ source, parameters, onApply, onClose 
 
             {/* Preview */}
             <div className="flex flex-col min-h-0 p-5 gap-3">
-              <div className="flex items-center justify-between">
-                <div className="text-xs text-gray-400">
-                  Columns:{" "}
+              <div className="flex items-start gap-3">
+                {/* Wraps (and scrolls past a few lines) so the button always stays in view */}
+                <div className="flex-1 min-w-0 flex flex-wrap items-center gap-x-1.5 gap-y-1 max-h-16 overflow-y-auto text-xs text-gray-400">
+                  <span>Columns:</span>
                   {outputColumns.map((c) => (
-                    <code key={c.name} className="mr-1.5 text-gray-300">
+                    <code key={c.name} className="text-gray-300 break-all">
                       {c.name}
                     </code>
                   ))}
@@ -497,7 +514,7 @@ export default function DataSourceEditor({ source, parameters, onApply, onClose 
                         <tr key={r} className="border-b border-border/40">
                           {preview.columns.map((c) => (
                             <td key={c.name} className="px-2 py-1 text-gray-400 whitespace-nowrap max-w-[240px] truncate">
-                              {formatValue(row[c.name], null, c.type)}
+                              {formatValue(row[c.name], null, c.type, timeZone)}
                             </td>
                           ))}
                         </tr>

@@ -14,6 +14,8 @@ export interface ReportDefinition {
   pages: ReportPage[];
   dataSources: ReportDataSource[];
   parameters: ReportParameter[];
+  /** IANA time zone for date buckets, relative date filters and displayed dates; null = UTC. */
+  timeZone?: string | null;
 }
 
 export interface ReportPageSettings {
@@ -141,6 +143,43 @@ export interface ReportDataSource {
   aggregates: ReportAggregate[];
   sort: ReportSort[];
   limit?: number | null;
+  /** Steps applied to the query result, in order. */
+  transforms?: ReportTransform[] | null;
+}
+
+export type ReportTransformType =
+  | "filter"
+  | "topN"
+  | "pivot"
+  | "runningTotal"
+  | "percentOfTotal"
+  | "rank"
+  | "change"
+  | "fillDates"
+  | "sort"
+  | "limit";
+
+/** One post-query step; which properties apply depends on type (see ReportTransform on the server). */
+export interface ReportTransform {
+  type: ReportTransformType;
+  field?: string | null;
+  operator?: string | null;
+  value?: unknown;
+  parameter?: string | null;
+  count?: number | null;
+  desc?: boolean;
+  partitionBy?: string | null;
+  labelField?: string | null;
+  otherLabel?: string | null;
+  rowField?: string | null;
+  columnField?: string | null;
+  aggregate?: string | null;
+  fillZero?: boolean;
+  sortColumns?: boolean;
+  alias?: string | null;
+  mode?: "difference" | "percent" | null;
+  bucket?: string | null;
+  sort?: ReportSort[] | null;
 }
 
 export interface ReportGroupBy {
@@ -224,6 +263,7 @@ export interface ReportCapabilities {
   formats: string[];
   exportFormats: ExportFormat[];
   webhookTypes: WebhookType[];
+  transformTypes: ReportTransformType[];
   maxRows: number;
 }
 

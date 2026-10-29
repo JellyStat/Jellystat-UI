@@ -81,7 +81,7 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
       }
       const column = data?.columns.find((c) => c.name.toLowerCase() === (e.valueField ?? "").toLowerCase());
       const raw = data && column && data.rows.length > 0 ? data.rows[0][column.name] : null;
-      const value = `${e.prefix ?? ""}${raw === null || raw === undefined ? "—" : formatValue(raw, e.format, column?.type)}${e.suffix ?? ""}`;
+      const value = `${e.prefix ?? ""}${raw === null || raw === undefined ? "—" : formatValue(raw, e.format, column?.type, model.definition.timeZone)}${e.suffix ?? ""}`;
       const label = resolveTokens(e.label, model, pageNumber, pageCount);
       const labelSize = Math.max(10, s.fontSize * 0.4);
       content = (
@@ -169,7 +169,13 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
                 borderBottom: `1px solid ${t.gridColor}`,
               }}
             >
-              {columns.map((c, i) => cell(`c-${r}-${i}`, formatValue(row[c.field], c.format, data.columns.find((x) => x.name === c.field)?.type), i))}
+              {columns.map((c, i) =>
+                cell(
+                  `c-${r}-${i}`,
+                  formatValue(row[c.field], c.format, data.columns.find((x) => x.name === c.field)?.type, model.definition.timeZone),
+                  i,
+                ),
+              )}
             </div>
           ))}
         </div>
@@ -191,7 +197,7 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
       } else {
         content = (
           <svg width={innerW} height={innerH} className="block overflow-visible">
-            <ChartView chart={chart} data={data} style={s} width={innerW} height={innerH} />
+            <ChartView chart={chart} data={data} style={s} width={innerW} height={innerH} timeZone={model.definition.timeZone} />
           </svg>
         );
       }

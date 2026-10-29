@@ -13,9 +13,7 @@ function DefaultValueInput({ parameter, onChange }: { parameter: ReportParameter
   const v = parameter.defaultValue;
   switch (parameter.type) {
     case "lookup":
-      return (
-        <ParameterInput parameter={parameter} value={v} onChange={onChange} source={{ definition }} size="sm" emptyLabel="All" />
-      );
+      return <ParameterInput parameter={parameter} value={v} onChange={onChange} source={{ definition }} size="sm" emptyLabel="All" />;
     case "number":
       return <NumberInput value={typeof v === "number" ? v : null} onChange={onChange} />;
     case "boolean":
@@ -52,9 +50,7 @@ function LookupSettings({
     definition.dataSources.find((d) => d.id === lookup.dataSourceId),
     caps,
   ).map((c) => ({ value: c.name, label: c.label }));
-  const usedBy = definition.dataSources.filter((d) =>
-    JSON.stringify(d.filter ?? {}).includes(`"parameter":"${parameter.name}"`),
-  ).length;
+  const usedBy = definition.dataSources.filter((d) => JSON.stringify(d.filter ?? {}).includes(`"parameter":"${parameter.name}"`)).length;
 
   return (
     <div className="rounded-md border border-brand-amber/20 bg-brand-amber/5 p-2 space-y-2">
@@ -84,11 +80,7 @@ function LookupSettings({
           />
         </Field>
       </div>
-      <Toggle
-        label="Allow several choices"
-        checked={!!lookup.multiple}
-        onChange={(v) => onChange({ ...lookup, multiple: v }, "multiple")}
-      />
+      <Toggle label="Allow several choices" checked={!!lookup.multiple} onChange={(v) => onChange({ ...lookup, multiple: v }, "multiple")} />
       <p className="text-[11px] text-gray-500">
         {usedBy === 0
           ? `Not used yet: in a data source filter, pick @${parameter.name} as the value (use 'equals' / 'is one of').`
@@ -146,9 +138,7 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
             type="button"
             title="Add data source"
             className="p-1 text-gray-400 hover:text-white cursor-pointer"
-            onClick={() =>
-              setEditing(newDataSource(`Data source ${definition.dataSources.length + 1}`, caps?.datasets[0]?.key ?? "activity"))
-            }
+            onClick={() => setEditing(newDataSource(`Data source ${definition.dataSources.length + 1}`, caps?.datasets[0]?.key ?? "activity"))}
           >
             <Plus size={14} />
           </button>
@@ -171,12 +161,7 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
                 >
                   {ds.name}
                 </button>
-                <button
-                  type="button"
-                  title="Edit"
-                  className="p-0.5 text-gray-500 hover:text-white cursor-pointer"
-                  onClick={() => setEditing(ds)}
-                >
+                <button type="button" title="Edit" className="p-0.5 text-gray-500 hover:text-white cursor-pointer" onClick={() => setEditing(ds)}>
                   <Pencil size={12} />
                 </button>
                 <button
@@ -311,10 +296,7 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
               </Field>
             </div>
             {p.type === "lookup" && (
-              <LookupSettings
-                parameter={p}
-                onChange={(lookup, key) => setParameter(i, { lookup, defaultValue: null }, `lookup-${key}`)}
-              />
+              <LookupSettings parameter={p} onChange={(lookup, key) => setParameter(i, { lookup, defaultValue: null }, `lookup-${key}`)} />
             )}
           </div>
         ))}
@@ -324,6 +306,7 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
         <DataSourceEditor
           source={editing}
           parameters={definition.parameters}
+          timeZone={definition.timeZone}
           onApply={saveSource}
           onClose={() => setEditing(null)}
         />

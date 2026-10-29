@@ -298,8 +298,10 @@ export function normalizeDefinition(input: Partial<ReportDefinition> | null | un
       groupBy: d.groupBy ?? [],
       aggregates: d.aggregates ?? [],
       sort: d.sort ?? [],
+      transforms: d.transforms ?? [],
     })),
     parameters: input?.parameters ?? [],
+    timeZone: input?.timeZone ?? null,
   };
   def.pages = def.pages.map((p) => ({
     id: p.id || newId(),

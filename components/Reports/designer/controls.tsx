@@ -1,10 +1,13 @@
 import clsx from "clsx";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import type { ReportCapabilities } from "@/lib/models/reports";
+import type { ReportCapabilities, ReportDataResult } from "@/lib/models/reports";
 
 export const CapabilitiesContext = createContext<ReportCapabilities | null>(null);
 export const useCapabilities = () => useContext(CapabilitiesContext);
+
+/** The designer's latest preview results by data source id, for binding to columns only known after running (pivots). */
+export const PreviewDataContext = createContext<Record<string, ReportDataResult>>({});
 
 export const inputClass =
   "w-full min-w-0 bg-background border border-border rounded-md px-2 py-1 text-xs text-gray-200 outline-none focus:border-brand-purple transition-colors disabled:opacity-50";

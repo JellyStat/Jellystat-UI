@@ -15,13 +15,13 @@ import {
   Trash2,
   Upload,
 } from "lucide-react";
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 import { toast } from "sonner";
 import type { ReportChartOptions, ReportElement, ReportElementStyle, ReportTableColumn, ReportTableOptions } from "@/lib/models/reports";
 import { dataSourceColumns } from "@/lib/reports/columns";
 import { DEFAULT_PALETTE, defaultChartOptions, defaultTableOptions, PAGE_PRESETS } from "@/lib/reports/defaults";
 import { TOKEN_HELP, VALUE_FORMATS } from "@/lib/reports/format";
-import { ColorInput, Field, NumberInput, Section, Select, TextInput, Toggle, ToolButton, useCapabilities } from "./controls";
+import { ColorInput, Field, NumberInput, PreviewDataContext, Section, Select, TextInput, Toggle, ToolButton, useCapabilities } from "./controls";
 import { useDesigner } from "./designerStore";
 import FontPicker from "./FontPicker";
 
@@ -129,6 +129,14 @@ function PageSetup() {
   );
 }
 
+const TIME_ZONES: string[] = (() => {
+  try {
+    return (Intl as unknown as { supportedValuesOf?: (k: string) => string[] }).supportedValuesOf?.("timeZone") ?? [];
+  } catch {
+    return [];
+  }
+})();
+
 function ReportInfo() {
   const { state, change } = useDesigner();
   return (
@@ -143,6 +151,18 @@ function ReportInfo() {
               },
               { coalesceKey: "report-name" },
             )
+          }
+        />
+      </Field>
+      <Field label="Time zone" hint="Used for date groups, relative date filters (today, this month) and displayed dates">
+        <Select
+          value={state.doc.definition.timeZone ?? ""}
+          placeholder="UTC"
+          options={TIME_ZONES.map((z) => ({ value: z, label: z.replace(/_/g, " ") }))}
+          onChange={(v) =>
+            change((doc) => {
+              doc.definition.timeZone = v || null;
+            })
           }
         />
       </Field>
@@ -298,6 +318,11 @@ function DataSourcePicker({ e }: { e: ReportElement }) {
 function useColumns(e: ReportElement) {
   const caps = useCapabilities();
   const { definition } = useDesigner();
+  const result = useContext(PreviewDataContext)[e.dataSourceId ?? ""];
+  // Columns from the last preview are exact (pivoted columns are only known from the data)
+  if (result && !result.error && result.columns.length) {
+    return result.columns;
+  }
   return dataSourceColumns(
     definition.dataSources.find((d) => d.id === e.dataSourceId),
     caps,

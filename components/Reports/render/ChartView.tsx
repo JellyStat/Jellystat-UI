@@ -12,6 +12,7 @@ interface Props {
   style: ReportElementStyle;
   width: number;
   height: number;
+  timeZone?: string | null;
 }
 
 interface Box {
@@ -50,10 +51,10 @@ export function arcPath(cx: number, cy: number, r: number, inner: number, a0: nu
   return `M${p(r, a0)} A${r},${r} 0 ${large} 1 ${p(r, a1)} L${p(inner, a1)} A${inner},${inner} 0 ${large} 0 ${p(inner, a0)} Z`;
 }
 
-export default function ChartView({ chart: c, data, style: s, width, height }: Props) {
+export default function ChartView({ chart: c, data, style: s, width, height, timeZone }: Props) {
   const palette = c.palette?.length ? c.palette : DEFAULT_PALETTE;
   const categoryType = data.columns.find((x) => x.name === c.categoryField)?.type;
-  const categories = data.rows.map((r) => formatValue(r[c.categoryField ?? ""], c.categoryFormat, categoryType));
+  const categories = data.rows.map((r) => formatValue(r[c.categoryField ?? ""], c.categoryFormat, categoryType, timeZone));
   const series = c.series.map((sr, i) => ({
     name: sr.label || data.columns.find((x) => x.name === sr.field)?.label || sr.field,
     color: sr.color || palette[i % palette.length],
@@ -61,7 +62,7 @@ export default function ChartView({ chart: c, data, style: s, width, height }: P
     type: data.columns.find((x) => x.name === sr.field)?.type,
   }));
   const valueType = series[0]?.type;
-  const fmt = (v: number) => formatValue(v, c.valueFormat, valueType);
+  const fmt = (v: number) => formatValue(v, c.valueFormat, valueType, timeZone);
   const axisFont = Math.max(9, s.fontSize * 0.8);
   const textProps = { fontFamily: s.fontFamily, fontStyle: s.italic ? "italic" : undefined };
 
