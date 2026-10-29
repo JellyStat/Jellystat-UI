@@ -21,6 +21,8 @@ export const OPERATOR_LABELS: Record<string, string> = {
   between: "between",
   lastNDays: "in the last N days",
   lastNHours: "in the last N hours",
+  notLastNDays: "not in the last N days",
+  notLastNHours: "not in the last N hours",
   today: "is today",
   thisMonth: "is this month",
   thisYear: "is this year",
@@ -38,7 +40,21 @@ export function operatorsFor(field?: ReportFieldInfo): string[] {
     case "enum":
       return ["eq", "neq", "in", "notIn", ...nullOps];
     case "date":
-      return ["lastNDays", "lastNHours", "today", "thisMonth", "thisYear", "between", "gte", "gt", "lte", "lt", ...nullOps];
+      return [
+        "lastNDays",
+        "lastNHours",
+        "notLastNDays",
+        "notLastNHours",
+        "today",
+        "thisMonth",
+        "thisYear",
+        "between",
+        "gte",
+        "gt",
+        "lte",
+        "lt",
+        ...nullOps,
+      ];
     default:
       return ["eq", "neq", "gt", "gte", "lt", "lte", "between", "in", "notIn", ...nullOps];
   }
@@ -64,10 +80,8 @@ function ValueInput({
   value: unknown;
   onChange: (v: unknown) => void;
 }) {
-  if (operator === "lastNDays" || operator === "lastNHours") {
-    return (
-      <NumberInput value={typeof value === "number" ? value : Number(value) || null} min={0} onChange={(v) => onChange(v)} />
-    );
+  if (["lastNDays", "lastNHours", "notLastNDays", "notLastNHours"].includes(operator)) {
+    return <NumberInput value={typeof value === "number" ? value : Number(value) || null} min={0} onChange={(v) => onChange(v)} />;
   }
   if (operator === "in" || operator === "notIn") {
     const text = Array.isArray(value) ? value.join(", ") : String(value ?? "");
@@ -193,12 +207,7 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
           <FolderPlus size={12} /> Group
         </button>
         {onRemove && (
-          <button
-            type="button"
-            title="Remove group"
-            className="p-0.5 text-gray-500 hover:text-brand-rose cursor-pointer"
-            onClick={onRemove}
-          >
+          <button type="button" title="Remove group" className="p-0.5 text-gray-500 hover:text-brand-rose cursor-pointer" onClick={onRemove}>
             <Trash2 size={12} />
           </button>
         )}
