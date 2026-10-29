@@ -91,18 +91,38 @@ function logoutAndRedirect(): void {
   }
 }
 
+function getAuthHeader(): string | undefined {
+  if (typeof window === "undefined") return undefined;
+  try {
+    const t = localStorage.getItem("jellystat_token");
+    return t ? `Bearer ${t}` : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+// Replays a request that got a 401 with a fresh access token. Refresh errors (including dropped connections)
+// propagate to the caller untouched; only refreshToken() decides whether the session is over.
+async function retryWithFreshToken(
+  url: string,
+  options: RequestInit | undefined,
+  headers: Record<string, string>,
+  sentAuth: string,
+): Promise<Response> {
+  // Another request may have refreshed while this one was in flight; reuse that token instead of spending
+  // the refresh token again.
+  if (getAuthHeader() === sentAuth) await refreshToken();
+  const retryHeaders = { ...headers };
+  const newAuth = getAuthHeader();
+  if (newAuth) retryHeaders["Authorization"] = newAuth;
+  else delete retryHeaders["Authorization"];
+  return fetch(url, { ...options, headers: retryHeaders });
+}
+
 async function apiFetch<T>(path: string, options?: RequestInit, contentType: string | null = "application/json"): Promise<T> {
   // Include stored auth token (when available in browser) and allow callers to override headers
   const url = API_BASE + path;
-  let authHeader: string | undefined;
-  if (typeof window !== "undefined") {
-    try {
-      const t = localStorage.getItem("jellystat_token");
-      if (t) authHeader = `Bearer ${t}`;
-    } catch {
-      /* ignore localStorage errors */
-    }
-  }
+  const authHeader = getAuthHeader();
 
   const mergedHeaders: Record<string, string> = {
     ...(contentType ? { "Content-Type": contentType } : {}),
@@ -115,27 +135,10 @@ async function apiFetch<T>(path: string, options?: RequestInit, contentType: str
   // If unauthorized and we had a token, attempt one refresh+retry using the long-lived refresh token
   if (res.status === 401 && path !== "/Auth/Refresh" && path !== "/Auth/Login") {
     if (!authHeader) {
-      // No auth header, so this is likely a public endpoint that doesn't require auth. Don't attempt refresh.
+      // No token was sent, so there is nothing to refresh - the user has to sign in.
       logoutAndRedirect();
-    }
-    try {
-      await refreshToken();
-      // re-read token and retry once
-      let newAuth: string | undefined;
-      if (typeof window !== "undefined") {
-        try {
-          const t = localStorage.getItem("jellystat_token");
-          if (t) newAuth = `Bearer ${t}`;
-        } catch {}
-      }
-      const retryHeaders = { ...mergedHeaders } as Record<string, string>;
-      if (newAuth) retryHeaders["Authorization"] = newAuth;
-      else delete retryHeaders["Authorization"];
-      res = await fetch(url, { ...options, headers: retryHeaders });
-    } catch (er) {
-      // refresh failed - log out and redirect
-      console.error("Token refresh failed during apiFetch retry:", er);
-      logoutAndRedirect();
+    } else {
+      res = await retryWithFreshToken(url, options, mergedHeaders, authHeader);
     }
   }
 
@@ -175,15 +178,7 @@ async function apiFetch<T>(path: string, options?: RequestInit, contentType: str
 async function apiFetchRaw(path: string, options?: RequestInit): Promise<Response> {
   // For raw fetches (images/binaries) also include Authorization when available
   const url = API_BASE + path;
-  let authHeader: string | undefined;
-  if (typeof window !== "undefined") {
-    try {
-      const t = localStorage.getItem("jellystat_token");
-      if (t) authHeader = `Bearer ${t}`;
-    } catch {
-      /* ignore */
-    }
-  }
+  const authHeader = getAuthHeader();
 
   const mergedHeaders: Record<string, string> = {
     ...(options && (options.headers as Record<string, string>)),
@@ -194,25 +189,7 @@ async function apiFetchRaw(path: string, options?: RequestInit): Promise<Respons
 
   // If unauthorized and we had a token, attempt one refresh+retry using the long-lived refresh token
   if (res.status === 401 && authHeader) {
-    try {
-      await refreshToken();
-      // re-read token and retry once
-      let newAuth: string | undefined;
-      if (typeof window !== "undefined") {
-        try {
-          const t = localStorage.getItem("jellystat_token");
-          if (t) newAuth = `Bearer ${t}`;
-        } catch {}
-      }
-      const retryHeaders = { ...mergedHeaders } as Record<string, string>;
-      if (newAuth) retryHeaders["Authorization"] = newAuth;
-      else delete retryHeaders["Authorization"];
-      res = await fetch(url, { ...options, headers: retryHeaders });
-    } catch (er) {
-      // refresh failed - log out and redirect
-      console.error("Token refresh failed during apiFetchRaw retry:", er);
-      logoutAndRedirect();
-    }
+    res = await retryWithFreshToken(url, options, mergedHeaders, authHeader);
   }
 
   if (!res.ok) {
@@ -378,8 +355,25 @@ const createApiKey = (payload: CreateApiKey): Promise<CreatedApiKey> =>
 const deleteApiKey = async (payload: { Id: string }): Promise<void> =>
   apiFetch<void>(`/ApiKeys/Delete${await buildQuery(undefined, payload as Record<string, any>)}`, { method: "DELETE" });
 
+// Statuses where the server looked at the refresh token and refused it. Anything else (proxy 5xx while the
+// API restarts, timeouts, rate limits) says nothing about the session, so it must not log the user out.
+const isRefreshRejected = (status: number): boolean => status === 400 || status === 401 || status === 403;
+
+// One refresh at a time: when the connection comes back, every pending request and the websocket can hit a
+// 401 together, and parallel refreshes would race each other to rotate the same refresh token.
+let refreshInFlight: Promise<void> | null = null;
+
+const refreshToken = (): Promise<void> => {
+  if (!refreshInFlight) {
+    refreshInFlight = requestTokenRefresh().finally(() => {
+      refreshInFlight = null;
+    });
+  }
+  return refreshInFlight;
+};
+
 // Refresh auth (no body expected)
-const refreshToken = async (): Promise<void> => {
+const requestTokenRefresh = async (): Promise<void> => {
   console.log("Attempting token refresh");
   const path = "/Auth/Refresh";
   const url = API_BASE + path;
@@ -402,15 +396,15 @@ const refreshToken = async (): Promise<void> => {
   try {
     res = await fetch(url, { method: "GET", headers });
   } catch (err) {
+    // Network failure: the session may still be fine, so keep the tokens and let the caller retry later.
     console.error("Refresh token request failed:", err);
-    logoutAndRedirect();
     throw err;
   }
 
   if (!res.ok) {
     console.error("Refresh token request failed with status:", res.status, res.statusText);
     const text = await res.text().catch(() => "");
-    logoutAndRedirect();
+    if (isRefreshRejected(res.status)) logoutAndRedirect();
     throw new ApiError(text || `${res.status} ${res.statusText}`, res.status, res.statusText, text);
   }
 
@@ -615,14 +609,20 @@ const previewReport = (payload: {
   parameters?: Record<string, unknown>;
   maxRows?: number;
 }): Promise<ReportRenderModel> =>
-  apiFetch<ReportRenderModel>("/Reports/Preview", { method: "POST", body: JSON.stringify({ ...payload, serverId: getServerId() }) });
+  apiFetch<ReportRenderModel>("/Reports/Preview", {
+    method: "POST",
+    body: JSON.stringify({ ...payload, serverId: getServerId() }),
+  });
 const getReportParameterOptions = (payload: {
   reportId?: string;
   definition?: ReportDefinition;
   parameter: string;
   parameters?: Record<string, unknown>;
 }): Promise<ReportParameterOption[]> =>
-  apiFetch<ReportParameterOption[]>("/Reports/ParameterOptions", { method: "POST", body: JSON.stringify({ ...payload, serverId: getServerId() }) });
+  apiFetch<ReportParameterOption[]>("/Reports/ParameterOptions", {
+    method: "POST",
+    body: JSON.stringify({ ...payload, serverId: getServerId() }),
+  });
 /** Server-side render in any format; json gives the render model, the rest a file. */
 const renderReport = async (payload: ReportRenderRequest, download = false): Promise<Blob> => {
   const res = await apiFetchRaw(`/Reports/Render${download ? "?Download=true" : ""}`, {
@@ -643,7 +643,10 @@ const deleteReportSchedule = async (params: { Id: string }): Promise<void> =>
 const runReportSchedule = async (params: { Id: string }): Promise<ReportDeliveryResult> =>
   apiFetch<ReportDeliveryResult>(`/Reports/Schedules/Run${await buildQuery(undefined, params, false)}`, { method: "POST" });
 const deliverReport = (payload: ReportDeliverRequest): Promise<ReportDeliveryResult> =>
-  apiFetch<ReportDeliveryResult>("/Reports/Deliver", { method: "POST", body: JSON.stringify({ serverId: getServerId(), ...payload }) });
+  apiFetch<ReportDeliveryResult>("/Reports/Deliver", {
+    method: "POST",
+    body: JSON.stringify({ serverId: getServerId(), ...payload }),
+  });
 
 // Event webhooks
 const getWebhookEvents = (): Promise<WebhookEventInfo[]> => apiFetch<WebhookEventInfo[]>("/Webhooks/Events");
