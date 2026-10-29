@@ -13,6 +13,7 @@ import {
   Check,
   AlertCircle,
   Clock,
+  Webhook,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -23,6 +24,7 @@ import ServerSettingsPage from "@/components/Settings/Servers/ServerSettings";
 import UsersSettingsPage from "@/components/Settings/Users/UsersSettings";
 import BackupsPage from "@/components/Settings/Backups/BackupsPage";
 import ApiKeysPage from "@/components/Settings/ApiKeys/ApiKeysPage";
+import WebhooksPage from "@/components/Settings/Webhooks/WebhooksPage";
 import LanguageSwitcher from "@/components/Core/LanguageSwitcher";
 import DropdownSelector from "@/components/Core/DropdownSelector";
 import { getHourFormat, setHourFormat, type HourFormat } from "@/lib/dateFormat";
@@ -85,6 +87,7 @@ export default function SettingsPage() {
     { id: "settings", label: t("settings.tab_general", "General"), icon: Settings, IsAdmin: false },
     { id: "servers", label: t("settings.tab_servers_users", "Servers & Users"), icon: Server, IsAdmin: true },
     { id: "apikeys", label: t("settings.tab_api_keys", "API Keys"), icon: KeyRound, IsAdmin: true },
+    { id: "webhooks", label: t("settings.tab_webhooks", "Webhooks"), icon: Webhook, IsAdmin: true },
     { id: "librarySettings", label: t("settings.tab_library", "Library"), icon: Library, IsAdmin: true },
     { id: "migrations", label: t("settings.tab_migrations", "Activity Migration"), icon: ArrowLeftRight, IsAdmin: true },
     { id: "backups", label: t("settings.tab_backups", "Backups"), icon: Archive, IsAdmin: true },
@@ -275,6 +278,7 @@ export default function SettingsPage() {
             </>
           )}
           {activeTab === "apikeys" && <ApiKeysPage />}
+          {activeTab === "webhooks" && <WebhooksPage />}
           {activeTab === "librarySettings" && <LibrarySettingsPage />}
           {activeTab === "migrations" && <ActivityMigrationPage />}
           {activeTab === "backups" && <BackupsPage />}
