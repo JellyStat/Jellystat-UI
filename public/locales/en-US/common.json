@@ -366,6 +366,7 @@
     "syncing_libraries": "Syncing libraries",
     "tab_backups": "Backups",
     "tab_general": "General",
+    "tab_integrations": "Integrations",
     "tab_library": "Library",
     "tab_migrations": "Activity Migration",
     "tab_servers": "Servers & Auth",

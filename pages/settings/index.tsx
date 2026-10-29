@@ -6,14 +6,13 @@ import {
   ArrowLeftRight,
   Terminal,
   Server,
-  KeyRound,
+  Plug,
   Archive,
   Info,
   RefreshCw,
   Check,
   AlertCircle,
   Clock,
-  Webhook,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -36,13 +35,23 @@ import Permissions from "@/lib/models/enums/Permissions";
 
 const hourFormatOptions: HourFormat[] = ["auto", "12", "24"];
 
+// Tabs that were merged into another tab, mapped to the tab that now holds them
+const legacyTabs: Record<string, string> = {
+  users: "servers",
+  apikeys: "integrations",
+  webhooks: "integrations",
+};
+
+const getStoredTab = () => {
+  const stored = localStorage.getItem("PREF_SETTINGS_TAB") ?? "settings";
+  return legacyTabs[stored] ?? stored;
+};
+
 export default function SettingsPage() {
   const { t } = useTranslation("common");
   const [versionInfo, setVersionInfo] = useState<VersionInfo | null>(null);
   const [isUpdatingUI, setIsUpdatingUI] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>(
-    localStorage.getItem("PREF_SETTINGS_TAB") === "users" ? "servers" : (localStorage.getItem("PREF_SETTINGS_TAB") ?? "settings"),
-  );
+  const [activeTab, setActiveTab] = useState<string>(getStoredTab);
   const [isAdmin, setIsAdmin] = useState(false);
   const [hourFormat, setHourFormatState] = useState<HourFormat>(getHourFormat());
 
@@ -86,8 +95,7 @@ export default function SettingsPage() {
   const tabs = [
     { id: "settings", label: t("settings.tab_general", "General"), icon: Settings, IsAdmin: false },
     { id: "servers", label: t("settings.tab_servers_users", "Servers & Users"), icon: Server, IsAdmin: true },
-    { id: "apikeys", label: t("settings.tab_api_keys", "API Keys"), icon: KeyRound, IsAdmin: true },
-    { id: "webhooks", label: t("settings.tab_webhooks", "Webhooks"), icon: Webhook, IsAdmin: true },
+    { id: "integrations", label: t("settings.tab_integrations", "Integrations"), icon: Plug, IsAdmin: true },
     { id: "librarySettings", label: t("settings.tab_library", "Library"), icon: Library, IsAdmin: true },
     { id: "migrations", label: t("settings.tab_migrations", "Activity Migration"), icon: ArrowLeftRight, IsAdmin: true },
     { id: "backups", label: t("settings.tab_backups", "Backups"), icon: Archive, IsAdmin: true },
@@ -277,8 +285,15 @@ export default function SettingsPage() {
               <UsersSettingsPage />
             </>
           )}
-          {activeTab === "apikeys" && <ApiKeysPage />}
-          {activeTab === "webhooks" && <WebhooksPage />}
+          {activeTab === "integrations" && (
+            <>
+              <ApiKeysPage />
+              <div className="max-w-[1600px] mx-auto sm:px-6">
+                <hr className="border-border/50" />
+              </div>
+              <WebhooksPage />
+            </>
+          )}
           {activeTab === "librarySettings" && <LibrarySettingsPage />}
           {activeTab === "migrations" && <ActivityMigrationPage />}
           {activeTab === "backups" && <BackupsPage />}
