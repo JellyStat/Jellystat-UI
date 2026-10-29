@@ -3,9 +3,10 @@ import { ChevronDown, Download, Loader2, Monitor, RefreshCw, Server } from "luci
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import client from "@/lib/api";
-import type { ReportParameter, ReportRenderModel } from "@/lib/models/reports";
+import type { ReportRenderModel } from "@/lib/models/reports";
 import { downloadBlob, exportFileName, exportPdf, exportPng } from "@/lib/reports/clientExport";
 import ContextMenu from "./designer/ContextMenu";
+import ParameterInput from "./ParameterInput";
 import ReportPageView from "./render/ReportPageView";
 
 interface Props {
@@ -16,31 +17,6 @@ interface Props {
   bare?: boolean;
   /** "client" draws the server's render model in the browser; "server" shows the server-rendered HTML. */
   mode?: "client" | "server";
-}
-
-function ParameterInput({ p, value, onChange }: { p: ReportParameter; value: unknown; onChange: (v: unknown) => void }) {
-  const cls = "bg-background border border-border rounded-lg px-2.5 py-1.5 text-sm text-gray-200 outline-none focus:border-brand-purple";
-  if (p.type === "boolean") {
-    return (
-      <select
-        className={cls}
-        value={value === true ? "true" : value === false ? "false" : ""}
-        onChange={(ev) => onChange(ev.target.value === "" ? null : ev.target.value === "true")}
-      >
-        <option value="">Default</option>
-        <option value="true">Yes</option>
-        <option value="false">No</option>
-      </select>
-    );
-  }
-  return (
-    <input
-      className={clsx(cls, "w-40")}
-      type={p.type === "number" ? "number" : p.type === "date" ? "date" : "text"}
-      value={value === null || value === undefined ? "" : String(value)}
-      onChange={(ev) => onChange(ev.target.value === "" ? null : p.type === "number" ? Number(ev.target.value) : ev.target.value)}
-    />
-  );
 }
 
 /**
@@ -65,7 +41,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
     setLoading(true);
     setError(null);
     try {
-      const params = Object.fromEntries(Object.entries(applied).filter(([, v]) => v !== null && v !== undefined && v !== ""));
+      const params = Object.fromEntries(Object.entries(applied).filter(([, v]) => v !== undefined && v !== ""));
       if (mode === "server") {
         const blob = await client.Reports.render({ reportId, format: "html", parameters: params });
         setHtml(await blob.text());
@@ -106,7 +82,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
     }
     setExporting(true);
     try {
-      const params = Object.fromEntries(Object.entries(applied).filter(([, v]) => v !== null && v !== undefined && v !== ""));
+      const params = Object.fromEntries(Object.entries(applied).filter(([, v]) => v !== undefined && v !== ""));
       if (kind === "client-png" || kind === "client-pdf") {
         if (mode !== "client") {
           setMode("client");
@@ -139,8 +115,12 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
             <label key={p.name} className="flex flex-col gap-1">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">{p.label || p.name}</span>
               <ParameterInput
-                p={p}
-                value={values[p.name] ?? model?.parameters[p.name] ?? null}
+                parameter={p}
+                className="w-48"
+                source={{ reportId }}
+                values={values}
+                emptyLabel={p.type === "lookup" ? "All" : "Default"}
+                value={p.name in values ? values[p.name] : (p.defaultValue ?? null)}
                 onChange={(v) => setValues((s) => ({ ...s, [p.name]: v }))}
               />
             </label>

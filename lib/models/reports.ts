@@ -120,7 +120,9 @@ export interface ReportChartSeries {
 export interface ReportParameter {
   name: string;
   label?: string | null;
-  type: "string" | "number" | "date" | "boolean";
+  type: "string" | "number" | "date" | "boolean" | "lookup";
+  /** lookup: the dropdown's choices are the distinct values of a data source column. */
+  lookup?: ReportParameterLookup | null;
   defaultValue?: unknown;
 }
 
@@ -295,4 +297,19 @@ export interface ReportDeliverRequest {
   message?: string | null;
   parameters?: Record<string, unknown> | null;
   serverId?: string | null;
+}
+
+export interface ReportParameterLookup {
+  dataSourceId: string;
+  /** Column whose value is passed to filters. */
+  valueField: string;
+  /** Column shown in the dropdown; defaults to valueField. */
+  labelField?: string | null;
+  /** Several choices: the value becomes an array and equals/does-not-equal rules match any of them. */
+  multiple?: boolean;
+}
+
+export interface ReportParameterOption {
+  value: unknown;
+  label: string;
 }

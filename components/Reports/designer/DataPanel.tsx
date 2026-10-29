@@ -1,14 +1,21 @@
 import { AlertCircle, Copy, Database, Pencil, Plus, Trash2, Variable } from "lucide-react";
 import { useState } from "react";
 import type { ReportDataResult, ReportDataSource, ReportParameter } from "@/lib/models/reports";
+import { dataSourceColumns } from "@/lib/reports/columns";
 import { newDataSource, newId } from "@/lib/reports/defaults";
-import { Field, NumberInput, Section, Select, TextInput, useCapabilities } from "./controls";
+import ParameterInput from "../ParameterInput";
+import { Field, NumberInput, Section, Select, TextInput, Toggle, useCapabilities } from "./controls";
 import DataSourceEditor from "./DataSourceEditor";
 import { useDesigner } from "./designerStore";
 
 function DefaultValueInput({ parameter, onChange }: { parameter: ReportParameter; onChange: (v: unknown) => void }) {
+  const { definition } = useDesigner();
   const v = parameter.defaultValue;
   switch (parameter.type) {
+    case "lookup":
+      return (
+        <ParameterInput parameter={parameter} value={v} onChange={onChange} source={{ definition }} className="text-xs! py-1!" emptyLabel="All" />
+      );
     case "number":
       return <NumberInput value={typeof v === "number" ? v : null} onChange={onChange} />;
     case "boolean":
@@ -28,6 +35,61 @@ function DefaultValueInput({ parameter, onChange }: { parameter: ReportParameter
     default:
       return <TextInput value={v === null || v === undefined ? "" : String(v)} onChange={(x) => onChange(x || null)} />;
   }
+}
+
+/** Where a lookup parameter's dropdown gets its choices: a column of one of the report's data sources. */
+function LookupSettings({
+  parameter,
+  onChange,
+}: {
+  parameter: ReportParameter;
+  onChange: (lookup: NonNullable<ReportParameter["lookup"]>, key: string) => void;
+}) {
+  const caps = useCapabilities();
+  const { definition } = useDesigner();
+  const lookup = parameter.lookup ?? { dataSourceId: "", valueField: "", labelField: null, multiple: false };
+  const columns = dataSourceColumns(
+    definition.dataSources.find((d) => d.id === lookup.dataSourceId),
+    caps,
+  ).map((c) => ({ value: c.name, label: c.label }));
+  const usedBy = definition.dataSources.filter((d) => JSON.stringify(d.filter ?? {}).includes(`"parameter":"${parameter.name}"`)).length;
+
+  return (
+    <div className="rounded-md border border-brand-amber/20 bg-brand-amber/5 p-2 space-y-2">
+      <Field label="Choices from">
+        <Select
+          value={lookup.dataSourceId}
+          placeholder="Choose a data source..."
+          options={definition.dataSources.map((d) => ({ value: d.id, label: d.name }))}
+          onChange={(v) => onChange({ ...lookup, dataSourceId: v, valueField: "", labelField: null }, "source")}
+        />
+      </Field>
+      <div className="grid grid-cols-2 gap-2">
+        <Field label="Value column" hint="Passed to filters">
+          <Select
+            value={lookup.valueField}
+            placeholder="Choose..."
+            options={columns}
+            onChange={(v) => onChange({ ...lookup, valueField: v }, "value")}
+          />
+        </Field>
+        <Field label="Label column" hint="Shown in the dropdown">
+          <Select
+            value={lookup.labelField ?? ""}
+            placeholder="Same as value"
+            options={columns}
+            onChange={(v) => onChange({ ...lookup, labelField: v || null }, "label")}
+          />
+        </Field>
+      </div>
+      <Toggle label="Allow several choices" checked={!!lookup.multiple} onChange={(v) => onChange({ ...lookup, multiple: v }, "multiple")} />
+      <p className="text-[11px] text-gray-500">
+        {usedBy === 0
+          ? `Not used yet: in a data source filter, pick @${parameter.name} as the value (use 'equals' / 'is one of').`
+          : `Used by ${usedBy} data source filter(s). Leaving it empty switches those filters off.`}
+      </p>
+    </div>
+  );
 }
 
 export default function DataPanel({ data }: { data: Record<string, ReportDataResult> }) {
@@ -205,8 +267,22 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
                     { value: "number", label: "Number" },
                     { value: "date", label: "Date" },
                     { value: "boolean", label: "Yes/No" },
+                    { value: "lookup", label: "Lookup (from data)" },
                   ]}
-                  onChange={(v) => setParameter(i, { type: v, defaultValue: null }, "type")}
+                  onChange={(v) =>
+                    setParameter(
+                      i,
+                      {
+                        type: v,
+                        defaultValue: null,
+                        lookup:
+                          v === "lookup"
+                            ? (p.lookup ?? { dataSourceId: definition.dataSources[0]?.id ?? "", valueField: "", labelField: null, multiple: false })
+                            : null,
+                      },
+                      "type",
+                    )
+                  }
                 />
               </Field>
               <Field label="Label">
@@ -216,6 +292,9 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
                 <DefaultValueInput parameter={p} onChange={(v) => setParameter(i, { defaultValue: v }, "default")} />
               </Field>
             </div>
+            {p.type === "lookup" && (
+              <LookupSettings parameter={p} onChange={(lookup, key) => setParameter(i, { lookup, defaultValue: null }, `lookup-${key}`)} />
+            )}
           </div>
         ))}
       </Section>

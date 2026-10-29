@@ -7,6 +7,7 @@ import client from "@/lib/api";
 import { formatDateTime } from "@/lib/dateFormat";
 import type { ExportFormat, ReportParameter, ReportSchedule, WebhookType } from "@/lib/models/reports";
 import { Field, NumberInput, Select, TextInput, Toggle } from "./designer/controls";
+import ParameterInput from "./ParameterInput";
 
 interface Props {
   reportId: string;
@@ -290,16 +291,19 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                       {parameters.map((p) => (
                         <div key={p.name} className="flex items-center gap-2">
                           <span className="text-xs text-gray-400 w-24 truncate">{p.label || p.name}</span>
-                          <TextInput
-                            value={editing.parameters?.[p.name] === undefined ? "" : String(editing.parameters[p.name])}
-                            placeholder={p.defaultValue === null || p.defaultValue === undefined ? "default" : String(p.defaultValue)}
+                          <ParameterInput
+                            parameter={p}
+                            className="flex-1"
+                            source={{ reportId }}
+                            values={editing.parameters ?? {}}
+                            emptyLabel={p.type === "lookup" ? "All" : "Default"}
+                            value={editing.parameters?.[p.name] ?? null}
                             onChange={(v) => {
                               const next = { ...(editing.parameters ?? {}) };
-                              if (v === "") {
+                              if (v === null || v === undefined) {
                                 delete next[p.name];
                               } else {
-                                next[p.name] =
-                                  p.type === "number" && Number.isFinite(Number(v)) ? Number(v) : p.type === "boolean" ? v === "true" : v;
+                                next[p.name] = v;
                               }
                               set({ parameters: next });
                             }}

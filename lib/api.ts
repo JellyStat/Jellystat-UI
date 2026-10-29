@@ -41,6 +41,7 @@ import type {
   ReportDeliveryResult,
   ReportDetail,
   ReportParameter,
+  ReportParameterOption,
   ReportRenderModel,
   ReportRenderRequest,
   ReportSchedule,
@@ -609,6 +610,13 @@ const previewReport = (payload: {
   maxRows?: number;
 }): Promise<ReportRenderModel> =>
   apiFetch<ReportRenderModel>("/Reports/Preview", { method: "POST", body: JSON.stringify({ ...payload, serverId: getServerId() }) });
+const getReportParameterOptions = (payload: {
+  reportId?: string;
+  definition?: ReportDefinition;
+  parameter: string;
+  parameters?: Record<string, unknown>;
+}): Promise<ReportParameterOption[]> =>
+  apiFetch<ReportParameterOption[]>("/Reports/ParameterOptions", { method: "POST", body: JSON.stringify({ ...payload, serverId: getServerId() }) });
 /** Server-side render in any format; json gives the render model, the rest a file. */
 const renderReport = async (payload: ReportRenderRequest, download = false): Promise<Blob> => {
   const res = await apiFetchRaw(`/Reports/Render${download ? "?Download=true" : ""}`, {
@@ -697,6 +705,7 @@ export const Reports = {
   delete: deleteReport,
   query: queryReportData,
   preview: previewReport,
+  parameterOptions: getReportParameterOptions,
   render: renderReport,
   renderModel: renderReportModel,
   deliver: deliverReport,
