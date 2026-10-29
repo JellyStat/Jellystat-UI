@@ -191,7 +191,7 @@ const TOKEN = /\{\{\s*([^{}|]+?)\s*(?:\|\s*([a-zA-Z]+)\s*)?\}\}/g;
 
 export const TOKEN_HELP = [
   { token: "{{report.name}}", description: "Report name" },
-  { token: "{{now|datetime}}", description: "When the report was generated (UTC)" },
+  { token: "{{now|datetime}}", description: "When the report was generated (report time zone)" },
   { token: "{{param.NAME}}", description: "A report parameter" },
   { token: "{{ds.SOURCE.FIELD}}", description: "First row of a data source (name or id)" },
   { token: "{{ds.SOURCE.rowCount}}", description: "Number of rows" },

@@ -3,6 +3,7 @@ import {
   ArrowLeft,
   CalendarClock,
   ChevronDown,
+  CircleHelp,
   ClipboardPaste,
   Copy,
   Database,
@@ -40,6 +41,7 @@ import type { ReportDataResult, ReportDefinition, ReportRenderModel } from "@/li
 import { downloadBlob, exportFileName, exportPdf, exportPng } from "@/lib/reports/clientExport";
 import { normalizeDefinition } from "@/lib/reports/defaults";
 import { useReportFonts } from "@/lib/reports/fonts";
+import HelpDialog from "./HelpDialog";
 import { paginate } from "@/lib/reports/layout";
 import type { RenderContext } from "../render/ReportElementView";
 import ReportPageView, { layoutPages } from "../render/ReportPageView";
@@ -123,6 +125,7 @@ function DesignerShell() {
   const [snap, setSnap] = useState(true);
   const [showGrid, setShowGrid] = useState(true);
   const [previewMode, setPreviewMode] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const [saving, setSaving] = useState(false);
   const [menu, setMenu] = useState<(ContextMenuRequest & { items: MenuEntry[] }) | null>(null);
   const [exportOpen, setExportOpen] = useState(false);
@@ -237,7 +240,10 @@ function DesignerShell() {
       const key = ev.key.toLowerCase();
       const handled = () => ev.preventDefault();
 
-      if (mod && key === "s") {
+      if (key === "?" || key === "f1") {
+        handled();
+        setShowHelp(true);
+      } else if (mod && key === "s") {
         handled();
         void save();
       } else if (mod && key === "z" && !ev.shiftKey) {
@@ -540,6 +546,9 @@ function DesignerShell() {
         <ToolButton title="Refresh data" onClick={preview.refresh}>
           <RefreshCw size={16} className={clsx(preview.loading && "animate-spin")} />
         </ToolButton>
+        <ToolButton title="Help: placeholders, formats, page flow and shortcuts (?)" onClick={() => setShowHelp(true)}>
+          <CircleHelp size={16} />
+        </ToolButton>
         <div className="flex-1" />
         {state.doc.id && (
           <ToolButton title="Schedules & webhooks" onClick={() => setShowSchedules(true)}>
@@ -740,6 +749,8 @@ function DesignerShell() {
           }
         }}
       />
+
+      {showHelp && <HelpDialog onClose={() => setShowHelp(false)} />}
 
       {showSchedules && state.doc.id && (
         <ReportSchedulesDialog
