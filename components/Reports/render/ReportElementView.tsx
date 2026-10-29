@@ -6,6 +6,7 @@ import { defaultChartOptions, defaultTableOptions } from "@/lib/reports/defaults
 import { findData, formatValue, resolveTokens } from "@/lib/reports/format";
 import { fontWeight } from "@/lib/reports/measure";
 import ChartView from "./ChartView";
+import MediaImage from "./MediaImage";
 
 export type RenderContext = Pick<ReportRenderModel, "data" | "definition" | "name" | "parameters" | "generatedAt">;
 
@@ -198,7 +199,9 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
     }
 
     case "image":
-      content = e.src ? (
+      content = e.media ? (
+        <MediaImage binding={e.media} model={model} width={innerW} fit={e.fit ?? "contain"} alt={e.name ?? ""} />
+      ) : e.src ? (
         <img
           src={e.src}
           alt={e.name ?? ""}

@@ -654,6 +654,97 @@ function ChartContent({ e }: { e: ReportElement }) {
   );
 }
 
+function MediaSettings({ e }: { e: ReportElement }) {
+  const { definition, updateElements } = useDesigner();
+  const caps = useCapabilities();
+  const media = e.media!;
+  const set = (patch: Partial<NonNullable<ReportElement["media"]>>, key: string) =>
+    updateElements(
+      [e.id],
+      (x) => {
+        x.media = { ...media, ...patch };
+      },
+      `media-${e.id}-${key}`,
+    );
+  const from = media.parameter ? "parameter" : media.dataSourceId ? "data" : "fixed";
+  const columns = dataSourceColumns(
+    definition.dataSources.find((d) => d.id === media.dataSourceId),
+    caps,
+  );
+
+  return (
+    <>
+      <Field label="Picture">
+        <Select
+          value={media.type === "user" ? "user" : media.imageType === "Backdrop" ? "backdrop" : "poster"}
+          options={[
+            { value: "poster", label: "Item poster" },
+            { value: "backdrop", label: "Item backdrop" },
+            { value: "user", label: "User avatar" },
+          ]}
+          onChange={(v) => set({ type: v === "user" ? "user" : "item", imageType: v === "backdrop" ? "Backdrop" : "Primary" }, "kind")}
+        />
+      </Field>
+      <Field label={media.type === "user" ? "User id from" : "Item id from"}>
+        <Select
+          value={from}
+          options={[
+            { value: "data", label: "Data source (first row)" },
+            { value: "parameter", label: "Parameter" },
+            { value: "fixed", label: "Fixed id" },
+          ]}
+          onChange={(v) =>
+            set(
+              {
+                dataSourceId: v === "data" ? (definition.dataSources[0]?.id ?? null) : null,
+                field: null,
+                parameter: v === "parameter" ? (definition.parameters[0]?.name ?? null) : null,
+                id: null,
+              },
+              "from",
+            )
+          }
+        />
+      </Field>
+      {from === "data" && (
+        <div className="grid grid-cols-2 gap-2">
+          <Field label="Data source">
+            <Select
+              value={media.dataSourceId ?? ""}
+              placeholder="Choose..."
+              options={definition.dataSources.map((d) => ({ value: d.id, label: d.name }))}
+              onChange={(v) => set({ dataSourceId: v || null, field: null }, "source")}
+            />
+          </Field>
+          <Field label="Id column">
+            <Select
+              value={media.field ?? ""}
+              placeholder="Choose..."
+              options={columns.map((c) => ({ value: c.name, label: c.label }))}
+              onChange={(v) => set({ field: v || null }, "field")}
+            />
+          </Field>
+        </div>
+      )}
+      {from === "parameter" && (
+        <Field label="Parameter">
+          <Select
+            value={media.parameter ?? ""}
+            placeholder={definition.parameters.length ? "Choose..." : "Add one in the Data tab"}
+            options={definition.parameters.map((p) => ({ value: p.name, label: `@${p.name}` }))}
+            onChange={(v) => set({ parameter: v || null }, "parameter")}
+          />
+        </Field>
+      )}
+      {from === "fixed" && (
+        <Field label={media.type === "user" ? "User id" : "Item id"}>
+          <TextInput value={media.id ?? ""} onChange={(v) => set({ id: v.trim() || null }, "id")} />
+        </Field>
+      )}
+    </>
+  );
+}
+
 function ImageContent({ e }: { e: ReportElement }) {
   const { updateElements } = useDesigner();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -668,37 +759,62 @@ function ImageContent({ e }: { e: ReportElement }) {
 
   return (
     <Section title="Image">
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(ev) => {
-          const file = ev.target.files?.[0];
-          ev.target.value = "";
-          if (!file) {
-            return;
+      <Field label="Source">
+        <Select
+          value={e.media ? "media" : "file"}
+          options={[
+            { value: "file", label: "Upload or URL" },
+            { value: "media", label: "Media server image" },
+          ]}
+          onChange={(v) =>
+            updateElements([e.id], (x) => {
+              x.media = v === "media" ? { type: "item", imageType: "Primary", dataSourceId: null, field: null, parameter: null, id: null } : null;
+            })
           }
-          if (file.size > MAX_IMAGE_BYTES) {
-            toast.error("Images must be 5 MB or smaller");
-            return;
-          }
-          const reader = new FileReader();
-          reader.onload = () => setSrc(String(reader.result));
-          reader.readAsDataURL(file);
-        }}
-      />
-      <button
-        type="button"
-        onClick={() => fileRef.current?.click()}
-        className="w-full flex items-center justify-center gap-2 px-2 py-2 rounded-md border border-dashed border-border text-xs text-gray-300 hover:text-white hover:border-brand-purple cursor-pointer"
-      >
-        <Upload size={14} /> Upload image
-      </button>
-      <Field label="Or URL" hint="Server exports only include uploaded images; linked images show in the browser only">
-        <TextInput value={e.src?.startsWith("data:") ? "" : (e.src ?? "")} placeholder="https://..." onChange={(v) => setSrc(v || null)} />
+        />
       </Field>
-      {e.src?.startsWith("data:") && <p className="text-[11px] text-gray-500">Embedded image ({Math.round((e.src.length * 0.75) / 1024)} KB)</p>}
+      {e.media ? (
+        <MediaSettings e={e} />
+      ) : (
+        <>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(ev) => {
+              const file = ev.target.files?.[0];
+              ev.target.value = "";
+              if (!file) {
+                return;
+              }
+              if (file.size > MAX_IMAGE_BYTES) {
+                toast.error("Images must be 5 MB or smaller");
+                return;
+              }
+              const reader = new FileReader();
+              reader.onload = () => setSrc(String(reader.result));
+              reader.readAsDataURL(file);
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="w-full flex items-center justify-center gap-2 px-2 py-2 rounded-md border border-dashed border-border text-xs text-gray-300 hover:text-white hover:border-brand-purple cursor-pointer"
+          >
+            <Upload size={14} /> Upload image
+          </button>
+          <Field label="Or URL">
+            <TextInput value={e.src?.startsWith("data:") ? "" : (e.src ?? "")} placeholder="https://..." onChange={(v) => setSrc(v || null)} />
+          </Field>
+          {e.src?.startsWith("data:") && <p className="text-[11px] text-gray-500">Embedded image ({Math.round((e.src.length * 0.75) / 1024)} KB)</p>}
+          {e.src && !e.src.startsWith("data:") && (
+            <p className="text-[11px] text-brand-amber">
+              Server exports only fetch URLs from your Jellyfin/Emby server or Jellystat. For other sites, upload the image instead.
+            </p>
+          )}
+        </>
+      )}
       <Field label="Fit">
         <Select
           value={e.fit ?? "contain"}

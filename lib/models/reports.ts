@@ -75,6 +75,8 @@ export interface ReportElement {
   src?: string | null;
   fit?: "contain" | "cover" | "fill" | null;
   shape?: "rect" | "ellipse" | null;
+  /** image: a picture from the media server instead of src (also included in server exports). */
+  media?: ReportImageBinding | null;
 }
 
 export interface ReportTableColumn {
@@ -312,4 +314,14 @@ export interface ReportParameterLookup {
 export interface ReportParameterOption {
   value: unknown;
   label: string;
+}
+
+/** An image from the media server; the id comes from parameter, else the first row of dataSourceId's field, else id. */
+export interface ReportImageBinding {
+  type: "item" | "user";
+  imageType: "Primary" | "Backdrop";
+  id?: string | null;
+  dataSourceId?: string | null;
+  field?: string | null;
+  parameter?: string | null;
 }
