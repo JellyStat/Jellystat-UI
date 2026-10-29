@@ -1,7 +1,7 @@
 // Mirrors Models/Reports in JellyStat-API-Core. The definition is shared by every renderer (designer, viewer,
 // server SVG/HTML/PNG/PDF), so keep both sides in sync. Coordinates and sizes are CSS px at 96 DPI.
 
-export type ReportElementType = "text" | "metric" | "table" | "chart" | "image" | "shape" | "line";
+export type ReportElementType = "text" | "metric" | "table" | "chart" | "image" | "shape" | "line" | "cards";
 export type ChartKind = "bar" | "horizontalBar" | "line" | "area" | "pie" | "donut";
 export type QueryEngine = "efcore" | "gridify";
 export type FieldType = "string" | "number" | "integer" | "boolean" | "date" | "duration" | "bytes" | "enum";
@@ -81,6 +81,46 @@ export interface ReportElement {
   media?: ReportImageBinding | null;
   /** text, image: link target; metric with the "link" format: URL template ({{value}}; empty uses the value). */
   link?: string | null;
+  /** table, cards: rows that don't fit continue on extra pages added after this page. */
+  grow?: boolean;
+  /** Where a growing element starts on those extra pages (px from the top); its bottom edge stays put. */
+  continueTop?: number | null;
+  /** Also draw this element on the extra pages growing elements add (titles, footers, page numbers). */
+  repeat?: boolean;
+  /** table, cards, metric: styles for rows (or cells) that match. */
+  conditions?: ReportCondition[] | null;
+  cards?: ReportCardOptions | null;
+}
+
+export interface ReportCondition {
+  field: string;
+  operator: string;
+  value?: unknown;
+  /** table: the column to style; empty styles the whole row. */
+  target?: string | null;
+  color?: string | null;
+  background?: string | null;
+  bold?: boolean | null;
+}
+
+export interface ReportCardOptions {
+  columns: number;
+  cardHeight: number;
+  gap: number;
+  /** Column with the media item (or user) id of the picture; empty for none. */
+  imageField?: string | null;
+  imageKind: "item" | "user";
+  imageType: "Primary" | "Backdrop";
+  imagePosition: "top" | "left" | "none";
+  /** The picture's share of the card height (top) or width (left). */
+  imageSize: number;
+  /** Text lines with {{row.FIELD}} tokens. */
+  title?: string | null;
+  subtitle?: string | null;
+  value?: string | null;
+  cardBackground?: string | null;
+  cardRadius: number;
+  maxItems?: number | null;
 }
 
 export interface ReportTableColumn {
@@ -267,6 +307,24 @@ export interface ReportRenderModel {
   data: Record<string, ReportDataResult>;
   parameters: Record<string, unknown>;
   generatedAt: string;
+  /** Pages as drawn: design pages plus the extra pages growing tables and card grids need (from the server). */
+  layout?: ReportLayoutPage[];
+}
+
+export interface ReportLayoutPage {
+  /** Index of the design page. */
+  page: number;
+  /** 0 for the design page itself, 1+ for extra pages after it. */
+  continuation: number;
+  /** Growing elements on this page, by element id. */
+  slices: Record<string, ReportSlice>;
+}
+
+export interface ReportSlice {
+  start: number;
+  count: number;
+  y: number;
+  height: number;
 }
 
 export interface ReportFieldInfo {

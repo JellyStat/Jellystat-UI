@@ -23,6 +23,7 @@ import { DEFAULT_PALETTE, defaultChartOptions, defaultTableOptions, PAGE_PRESETS
 import { TOKEN_HELP, VALUE_FORMATS } from "@/lib/reports/format";
 import { ColorInput, Field, NumberInput, PreviewDataContext, Section, Select, TextInput, Toggle, ToolButton, useCapabilities } from "./controls";
 import { useDesigner } from "./designerStore";
+import { CardsSection, ConditionsSection, PagesSection } from "./FlowSettings";
 import FontPicker from "./FontPicker";
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
@@ -355,6 +356,16 @@ function useColumns(e: ReportElement) {
     caps,
     definition.dataSources,
   );
+}
+
+function CardsContent({ e }: { e: ReportElement }) {
+  const columns = useColumns(e);
+  return <CardsSection e={e} columns={columns} picker={<DataSourcePicker e={e} />} />;
+}
+
+function ConditionsContent({ e }: { e: ReportElement }) {
+  const columns = useColumns(e);
+  return <ConditionsSection e={e} columns={columns} />;
 }
 
 function MetricContent({ e }: { e: ReportElement }) {
@@ -1061,6 +1072,9 @@ export default function Inspector() {
       {single && e.type === "table" && <TableContent e={e} />}
       {single && e.type === "chart" && <ChartContent e={e} />}
       {single && e.type === "image" && <ImageContent e={e} />}
+      {single && e.type === "cards" && <CardsContent e={e} />}
+      {single && (e.type === "table" || e.type === "metric" || e.type === "cards") && <ConditionsContent e={e} />}
+      {single && <PagesSection e={e} />}
       {single && e.type === "shape" && (
         <Section title="Shape">
           <Select

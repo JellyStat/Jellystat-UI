@@ -13,6 +13,7 @@ import {
   Table2,
   Type,
   Unlock,
+  LayoutGrid,
   type LucideIcon,
 } from "lucide-react";
 import { useState } from "react";
@@ -27,6 +28,7 @@ const ICONS: Record<string, LucideIcon> = {
   image: ImageIcon,
   shape: Square,
   line: Minus,
+  cards: LayoutGrid,
 };
 
 export const elementLabel = (e: ReportElement) =>

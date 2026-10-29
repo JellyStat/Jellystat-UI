@@ -1,6 +1,6 @@
 // Same rules as Services/Reports/Rendering/ReportFormatting.cs on the server, so the designer, the viewer and
 // server exports format values identically. Change both together.
-import type { ReportDataResult, ReportRenderModel } from "@/lib/models/reports";
+import type { ReportColumn, ReportDataResult, ReportRenderModel } from "@/lib/models/reports";
 
 export const VALUE_FORMATS = [
   "auto",
@@ -255,6 +255,9 @@ export function resolveTokens(
   model: Pick<ReportRenderModel, "data" | "definition" | "name" | "parameters" | "generatedAt">,
   pageNumber: number,
   pageCount: number,
+  /** Card grids: {{row.FIELD}} is this row's value. */
+  row?: Record<string, unknown> | null,
+  columns?: ReportColumn[],
 ): string {
   if (!text) {
     return "";
@@ -264,7 +267,15 @@ export function resolveTokens(
     const head = parts[0].toLowerCase();
     let value: unknown;
     let type: string | null = null;
-    if (head === "now") {
+    if (head === "row" && row && parts.length > 1) {
+      const field = path.slice(4).toLowerCase();
+      const key = Object.keys(row).find((k) => k.toLowerCase() === field);
+      if (key === undefined) {
+        return match;
+      }
+      value = row[key];
+      type = columns?.find((c) => c.name === key)?.type ?? null;
+    } else if (head === "now") {
       value = model.generatedAt;
       type = "date";
     } else if (head === "report" && parts[1]?.toLowerCase() === "name") {

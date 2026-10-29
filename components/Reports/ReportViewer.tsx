@@ -8,7 +8,7 @@ import { downloadBlob, exportFileName, exportPdf, exportPng } from "@/lib/report
 import { useReportFonts } from "@/lib/reports/fonts";
 import ContextMenu from "./designer/ContextMenu";
 import ParameterInput from "./ParameterInput";
-import ReportPageView from "./render/ReportPageView";
+import ReportPageView, { layoutPages } from "./render/ReportPageView";
 
 interface Props {
   reportId: string;
@@ -209,9 +209,9 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
 
         {model && mode === "client" && (
           <div className={clsx("flex flex-col items-center gap-6 transition-opacity", loading && "opacity-60")}>
-            {model.definition.pages.map((p, i) => (
+            {layoutPages(model).map((p, i) => (
               <div
-                key={p.id}
+                key={`${p.page}-${p.continuation}`}
                 className="shadow-2xl shadow-black/40 rounded-sm overflow-hidden"
                 style={{
                   width: model.definition.page.width * scale,
@@ -236,7 +236,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
           // sandbox without scripts: the server HTML is a static document
           <iframe
             title="Server rendered report"
-            sandbox=""
+            sandbox="allow-popups allow-popups-to-escape-sandbox"
             srcDoc={html}
             className={clsx("w-full rounded-xl border border-border bg-[#e5e7eb] transition-opacity", loading && "opacity-60")}
             style={{ height: "80dvh" }}

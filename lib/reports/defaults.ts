@@ -1,4 +1,5 @@
 import type {
+  ReportCardOptions,
   ReportChartOptions,
   ReportDataSource,
   ReportDefinition,
@@ -61,6 +62,23 @@ export const defaultTableOptions = (): ReportTableOptions => ({
   gridColor: "#e5e7eb",
   rowHeight: 26,
   maxRows: null,
+});
+
+export const defaultCardOptions = (): ReportCardOptions => ({
+  columns: 4,
+  cardHeight: 240,
+  gap: 12,
+  imageField: null,
+  imageKind: "item",
+  imageType: "Primary",
+  imagePosition: "top",
+  imageSize: 0.72,
+  title: null,
+  subtitle: null,
+  value: null,
+  cardBackground: "#f3f4f6",
+  cardRadius: 8,
+  maxItems: null,
 });
 
 export const defaultChartOptions = (kind: ReportChartOptions["kind"] = "bar"): ReportChartOptions => ({
@@ -158,6 +176,19 @@ export const TOOLBOX: ToolboxItem[] = [
         borderWidth: 1,
         borderRadius: 8,
       }),
+    }),
+  },
+  {
+    key: "cards",
+    type: "cards",
+    label: "Card grid",
+    create: () => ({
+      type: "cards",
+      width: 680,
+      height: 520,
+      opacity: 1,
+      cards: defaultCardOptions(),
+      style: defaultStyle({ fontSize: 12 }),
     }),
   },
   {

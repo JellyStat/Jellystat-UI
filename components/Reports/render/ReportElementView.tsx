@@ -1,14 +1,15 @@
 // Browser rendering of one report element, following the same layout rules as SvgReportRenderer.cs on the
 // server: content sits inside the padding, the border is drawn on top, and everything is clipped to the element.
 import type { CSSProperties, ReactNode } from "react";
-import type { ReportElement, ReportElementStyle, ReportRenderModel } from "@/lib/models/reports";
-import { defaultChartOptions, defaultTableOptions } from "@/lib/reports/defaults";
+import type { ReportElement, ReportElementStyle, ReportRenderModel, ReportSlice } from "@/lib/models/reports";
+import { conditionStyle } from "@/lib/reports/conditions";
+import { defaultCardOptions, defaultChartOptions, defaultTableOptions } from "@/lib/reports/defaults";
 import { findData, formatValue, resolveLink, resolveTokens } from "@/lib/reports/format";
 import { fontWeight } from "@/lib/reports/measure";
 import ChartView from "./ChartView";
 import MediaImage from "./MediaImage";
 
-export type RenderContext = Pick<ReportRenderModel, "data" | "definition" | "name" | "parameters" | "generatedAt">;
+export type RenderContext = Pick<ReportRenderModel, "data" | "definition" | "name" | "parameters" | "generatedAt" | "layout">;
 
 interface Props {
   element: ReportElement;
@@ -19,7 +20,11 @@ interface Props {
   hideText?: boolean;
   /** Make hyperlinks clickable (the viewer); the designer shows them without following them. */
   links?: boolean;
+  /** Growing tables and card grids: the rows this page shows (from model.layout). */
+  slice?: ReportSlice | null;
 }
+
+const boldWeight = (bold?: boolean | null) => (bold === true ? "bold" : bold === false ? "normal" : undefined);
 
 /** A hyperlink in the viewer, or plain content in the designer (where clicks select elements). */
 function Link({ url, enabled, className, children }: { url: string | null; enabled?: boolean; className?: string; children: ReactNode }) {
@@ -59,8 +64,9 @@ function Message({ text, style, color = "#9ca3af" }: { text: string; style: Repo
 
 const justify = (v: string) => (v === "middle" ? "center" : v === "bottom" ? "flex-end" : "flex-start");
 
-export default function ReportElementView({ element: e, model, pageNumber, pageCount, hideText, links }: Props) {
+export default function ReportElementView({ element: e, model, pageNumber, pageCount, hideText, links, slice }: Props) {
   const s = e.style;
+  let background = !(e.type === "shape" || e.type === "line") && s.background ? s.background : undefined;
   const isShape = e.type === "shape" || e.type === "line";
   const innerW = Math.max(0, e.width - 2 * s.padding);
   const innerH = Math.max(0, e.height - 2 * s.padding);
@@ -97,6 +103,10 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
       const raw = data && column && data.rows.length > 0 ? data.rows[0][column.name] : null;
       const metricLink =
         e.format === "link" && raw !== null && raw !== undefined ? resolveLink(e.link, raw, data!.rows[0], model, pageNumber, pageCount) : null;
+      const cond = data && data.rows.length > 0 ? conditionStyle(e.conditions, data.rows[0], null) : null;
+      if (cond?.background) {
+        background = cond.background;
+      }
       const value = `${e.prefix ?? ""}${raw === null || raw === undefined ? "—" : formatValue(raw, e.format, column?.type, model.definition.timeZone)}${e.suffix ?? ""}`;
       const label = resolveTokens(e.label, model, pageNumber, pageCount);
       const labelSize = Math.max(10, s.fontSize * 0.4);
@@ -107,7 +117,14 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
               {label}
             </div>
           )}
-          <div className="truncate" style={{ ...textStyle(s), lineHeight: 1.15, textDecoration: metricLink ? "underline" : undefined }}>
+          <div
+            className="truncate"
+            style={{
+              ...textStyle(s, undefined, boldWeight(cond?.bold), cond?.color ?? undefined),
+              lineHeight: 1.15,
+              textDecoration: metricLink ? "underline" : undefined,
+            }}
+          >
             <Link url={metricLink} enabled={links}>
               {value}
             </Link>
@@ -140,9 +157,17 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
       const total = columns.reduce((a, c) => a + Math.max(0.1, c.width), 0);
       const rowH = Math.max(12, t.rowHeight);
       const headerH = t.showHeader ? rowH : 0;
+      // A slice (growing tables) says which rows this page shows; otherwise the rows that fit, from the first
       const fit = Math.floor((innerH - headerH) / rowH);
-      const count = Math.min(data.rows.length, Math.max(0, Math.min(fit, t.maxRows ?? Number.MAX_SAFE_INTEGER)));
-      const cell = (key: string, text: string, i: number, weight?: string, color?: string, url?: string | null) => (
+      const start = slice?.start ?? 0;
+      const count = Math.max(
+        0,
+        Math.min(
+          slice?.count ?? Math.min(data.rows.length, Math.max(0, Math.min(fit, t.maxRows ?? Number.MAX_SAFE_INTEGER))),
+          data.rows.length - start,
+        ),
+      );
+      const cell = (key: string, text: string, i: number, weight?: string, color?: string, url?: string | null, cellBackground?: string | null) => (
         <div
           key={key}
           className="truncate px-1.5"
@@ -152,6 +177,7 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
             ...textStyle(s, undefined, weight, color),
             lineHeight: `${rowH}px`,
             textDecoration: url && text ? "underline" : undefined,
+            background: cellBackground ?? undefined,
           }}
         >
           <Link url={url ?? null} enabled={links}>
@@ -180,30 +206,36 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
               <Message text="No rows" style={s} />
             </div>
           )}
-          {data.rows.slice(0, count).map((row, r) => (
-            <div
-              key={r}
-              className="flex"
-              style={{
-                height: rowH,
-                background: r % 2 === 1 && t.stripeBackground ? t.stripeBackground : undefined,
-                borderBottom: `1px solid ${t.gridColor}`,
-              }}
-            >
-              {columns.map((c, i) =>
-                cell(
-                  `c-${r}-${i}`,
-                  formatValue(row[c.field], c.format, data.columns.find((x) => x.name === c.field)?.type, model.definition.timeZone),
-                  i,
-                  undefined,
-                  undefined,
-                  c.format === "link" && row[c.field] !== null && row[c.field] !== undefined
-                    ? resolveLink(c.link, row[c.field], row, model, pageNumber, pageCount)
-                    : null,
-                ),
-              )}
-            </div>
-          ))}
+          {data.rows.slice(start, start + count).map((row, n) => {
+            const r = start + n;
+            const rowStyle = conditionStyle(e.conditions, row, null);
+            return (
+              <div
+                key={r}
+                className="flex"
+                style={{
+                  height: rowH,
+                  background: rowStyle?.background ?? (r % 2 === 1 && t.stripeBackground ? t.stripeBackground : undefined),
+                  borderBottom: `1px solid ${t.gridColor}`,
+                }}
+              >
+                {columns.map((c, i) => {
+                  const cellStyle = conditionStyle(e.conditions, row, c.field);
+                  return cell(
+                    `c-${r}-${i}`,
+                    formatValue(row[c.field], c.format, data.columns.find((x) => x.name === c.field)?.type, model.definition.timeZone),
+                    i,
+                    boldWeight(cellStyle?.bold ?? rowStyle?.bold),
+                    cellStyle?.color ?? rowStyle?.color ?? undefined,
+                    c.format === "link" && row[c.field] !== null && row[c.field] !== undefined
+                      ? resolveLink(c.link, row[c.field], row, model, pageNumber, pageCount)
+                      : null,
+                    cellStyle?.background,
+                  );
+                })}
+              </div>
+            );
+          })}
         </div>
       );
       break;
@@ -227,6 +259,113 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
           </svg>
         );
       }
+      break;
+    }
+
+    case "cards": {
+      const o = { ...defaultCardOptions(), ...(e.cards ?? {}) };
+      const data = findData(model, e.dataSourceId);
+      if (!data) {
+        content = <Message text="No data source" style={s} />;
+        break;
+      }
+      if (data.error) {
+        content = <Message text={data.error} style={s} color="#ef4444" />;
+        break;
+      }
+      if (data.rows.length === 0) {
+        content = <Message text="No rows" style={s} />;
+        break;
+      }
+      // Same grid as SvgReportRenderer.Cards / CardGrid on the server
+      const cols = Math.min(24, Math.max(1, Math.round(o.columns)));
+      const gap = Math.max(0, o.gap);
+      const cardH = Math.max(20, o.cardHeight);
+      const cardW = Math.max(1, (innerW - gap * (cols - 1)) / cols);
+      const totalRows = Math.min(data.rows.length, Math.max(0, o.maxItems ?? Number.MAX_SAFE_INTEGER));
+      const capacity = Math.max(0, Math.floor((innerH + gap) / (cardH + gap))) * cols;
+      const start = slice?.start ?? 0;
+      const count = Math.max(0, Math.min(slice?.count ?? Math.min(totalRows, capacity), totalRows - start));
+      const picture = (o.imagePosition === "top" || o.imagePosition === "left") && !!o.imageField;
+      const share = Math.min(0.95, Math.max(0.1, o.imageSize));
+      const imageColumn = data.columns.find((c) => c.name.toLowerCase() === (o.imageField ?? "").toLowerCase());
+      const small = Math.max(9, s.fontSize * 0.85);
+      content = (
+        <div className="relative w-full h-full">
+          {data.rows.slice(start, start + count).map((row, n) => {
+            const r = start + n;
+            const cond = conditionStyle(e.conditions, row, null);
+            const left = (n % cols) * (cardW + gap);
+            const top = Math.floor(n / cols) * (cardH + gap);
+            const imageW = picture ? (o.imagePosition === "left" ? cardW * share : cardW) : 0;
+            const imageH = picture ? (o.imagePosition === "left" ? cardH : cardH * share) : 0;
+            const text = !picture
+              ? { x: 10, y: 8, w: cardW - 20, h: cardH - 16 }
+              : o.imagePosition === "left"
+                ? { x: imageW + 10, y: 8, w: cardW - imageW - 18, h: cardH - 16 }
+                : { x: 8, y: imageH + 6, w: cardW - 16, h: cardH - imageH - 12 };
+            const lines = [
+              { value: o.title, size: s.fontSize, weight: "bold", opacity: 1 },
+              { value: o.subtitle, size: small, weight: "normal", opacity: 0.7 },
+              { value: o.value, size: s.fontSize, weight: boldWeight(cond?.bold), opacity: 1 },
+            ]
+              .map((l) => ({ ...l, text: resolveTokens(l.value, model, pageNumber, pageCount, row, data.columns) }))
+              .filter((l) => l.text);
+            let used = 0;
+            const fitting = lines.filter((l) => {
+              used += l.size * 1.35;
+              return used <= Math.max(0, text.h) + 1;
+            });
+            const url = e.link?.trim() ? resolveLink(e.link, null, row, model, pageNumber, pageCount) : null;
+            const mediaId = imageColumn ? row[imageColumn.name] : null;
+            return (
+              <div
+                key={r}
+                className="absolute overflow-hidden"
+                style={{
+                  left,
+                  top,
+                  width: cardW,
+                  height: cardH,
+                  borderRadius: o.cardRadius,
+                  background: cond?.background ?? o.cardBackground ?? undefined,
+                }}
+              >
+                <Link url={url} enabled={links} className="block w-full h-full">
+                  {picture && (
+                    <div className="absolute" style={{ left: 0, top: 0, width: imageW, height: imageH, background: "#e5e7eb" }}>
+                      <MediaImage
+                        binding={{ type: o.imageKind, imageType: o.imageType, dataSourceId: null, field: null, parameter: null, id: null }}
+                        mediaId={mediaId === null || mediaId === undefined ? null : String(mediaId)}
+                        model={model}
+                        width={imageW}
+                        fit="cover"
+                        alt=""
+                      />
+                    </div>
+                  )}
+                  <div className="absolute" style={{ left: text.x, top: text.y, width: Math.max(0, text.w), textAlign: s.textAlign }}>
+                    {fitting.map((l, i) => (
+                      <div
+                        key={i}
+                        className="truncate"
+                        style={{
+                          ...textStyle(s, l.size, l.weight, cond?.color ?? undefined),
+                          opacity: l.opacity,
+                          height: l.size * 1.35,
+                          lineHeight: `${l.size * 1.35}px`,
+                        }}
+                      >
+                        {l.text}
+                      </div>
+                    ))}
+                  </div>
+                </Link>
+              </div>
+            );
+          })}
+        </div>
+      );
       break;
     }
 
@@ -310,7 +449,7 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
         className="absolute inset-0 overflow-hidden"
         style={{
           borderRadius: s.borderRadius,
-          background: !isShape && s.background ? s.background : undefined,
+          background,
           padding: isShape ? 0 : s.padding,
         }}
       >

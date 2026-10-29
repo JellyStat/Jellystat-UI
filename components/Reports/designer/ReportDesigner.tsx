@@ -40,7 +40,9 @@ import type { ReportDataResult, ReportDefinition, ReportRenderModel } from "@/li
 import { downloadBlob, exportFileName, exportPdf, exportPng } from "@/lib/reports/clientExport";
 import { normalizeDefinition } from "@/lib/reports/defaults";
 import { useReportFonts } from "@/lib/reports/fonts";
-import ReportPageView from "../render/ReportPageView";
+import { paginate } from "@/lib/reports/layout";
+import type { RenderContext } from "../render/ReportElementView";
+import ReportPageView, { layoutPages } from "../render/ReportPageView";
 import ReportSchedulesDialog from "../ReportSchedulesDialog";
 import ContextMenu, { type MenuEntry } from "./ContextMenu";
 import { CapabilitiesContext, PreviewDataContext, ToolButton } from "./controls";
@@ -132,16 +134,17 @@ function DesignerShell() {
   const importRef = useRef<HTMLInputElement>(null);
 
   const preview = usePreviewData(definition, state.doc.name);
-  const renderModel = useMemo(
-    () => ({
+  const renderModel = useMemo(() => {
+    const model: RenderContext = {
       definition,
       name: state.doc.name || "Untitled report",
       data: (preview.model?.data ?? {}) as Record<string, ReportDataResult>,
       parameters: preview.model?.parameters ?? Object.fromEntries(definition.parameters.map((p) => [p.name, p.defaultValue ?? null])),
       generatedAt: preview.model?.generatedAt ?? new Date().toISOString(),
-    }),
-    [definition, state.doc.name, preview.model],
-  );
+    };
+    // The preview data is fetched without pages, so the page flow is worked out here (same rules as the server)
+    return { ...model, layout: paginate(model) };
+  }, [definition, state.doc.name, preview.model]);
 
   // ---------------------------------------------------------------- zoom
 
@@ -392,13 +395,18 @@ function DesignerShell() {
     setExportOpen(false);
     setExporting(kind);
     const name = state.doc.name || "report";
+    // Growing tables and card grids add pages, so "this page" is found in the drawn pages
+    const thisPage = Math.max(
+      0,
+      layoutPages(renderModel).findIndex((p) => p.page === state.pageIndex && p.continuation === 0),
+    );
     try {
       if (kind === "client-png" || kind === "client-pdf") {
         // Off-screen 1:1 pages (no selection chrome) are rendered while exporting is set; wait a frame for them
         await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
         const nodes = exportRefs.current.filter((n): n is HTMLDivElement => !!n);
         if (kind === "client-png") {
-          await exportPng([nodes[state.pageIndex]], exportFileName(name, "png"));
+          await exportPng([nodes[thisPage]], exportFileName(name, "png"));
         } else {
           await exportPdf(nodes, definition.page.width, definition.page.height, exportFileName(name, "pdf"), name);
         }
@@ -414,7 +422,7 @@ function DesignerShell() {
             definition,
             name,
             format,
-            page: format === "png" || format === "svg" ? state.pageIndex + 1 : null,
+            page: format === "png" || format === "svg" ? thisPage + 1 : null,
             scale: 2,
           },
           true,
@@ -634,9 +642,9 @@ function DesignerShell() {
         <div ref={canvasHost} className="flex-1 min-w-0 flex flex-col">
           {previewMode ? (
             <div className="flex-1 overflow-auto bg-[#16161a] p-10 flex flex-col items-center gap-8">
-              {definition.pages.map((p, i) => (
+              {layoutPages(renderModel).map((p, i) => (
                 <div
-                  key={p.id}
+                  key={`${p.page}-${p.continuation}`}
                   className="shadow-2xl shadow-black/60"
                   style={{
                     width: definition.page.width * zoom,
@@ -705,9 +713,9 @@ function DesignerShell() {
       {/* 1:1 pages for in-browser export, rendered only while exporting */}
       {(exporting === "client-png" || exporting === "client-pdf") && (
         <div aria-hidden className="fixed pointer-events-none" style={{ left: -100000, top: 0 }}>
-          {definition.pages.map((p, i) => (
+          {layoutPages(renderModel).map((p, i) => (
             <ReportPageView
-              key={p.id}
+              key={`${p.page}-${p.continuation}`}
               ref={(n) => {
                 exportRefs.current[i] = n;
               }}

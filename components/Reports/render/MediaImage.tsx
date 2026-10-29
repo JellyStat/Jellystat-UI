@@ -34,14 +34,17 @@ export default function MediaImage({
   width,
   fit,
   alt,
+  mediaId,
 }: {
   binding: ReportImageBinding;
   model: RenderContext;
   width: number;
   fit: string;
   alt: string;
+  /** A media id to show instead of the binding's (card grids pass each row's). */
+  mediaId?: string | null;
 }) {
-  const id = mediaBindingId(binding, model);
+  const id = mediaId !== undefined ? mediaId?.trim() || null : mediaBindingId(binding, model);
   const [url, setUrl] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
   const fetchWidth = Math.min(2000, Math.max(100, Math.ceil(width * 2)));
