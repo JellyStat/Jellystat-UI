@@ -183,43 +183,6 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                     />
                   </Field>
 
-                  <Field label="Query engine" hint="Both run as SQL in the database and give the same results">
-                    <div className="grid grid-cols-2 gap-2">
-                      {(
-                        [
-                          {
-                            key: "efcore",
-                            title: "EF Core",
-                            text: "Filters compile to LINQ expression trees.",
-                          },
-                          {
-                            key: "gridify",
-                            title: "Gridify",
-                            text: "Filters translate to Gridify syntax; also accepts raw Gridify.",
-                          },
-                        ] as const
-                      ).map((e) => (
-                        <button
-                          key={e.key}
-                          type="button"
-                          onClick={() =>
-                            set({
-                              engine: e.key,
-                              gridifyFilter: e.key === "gridify" ? draft.gridifyFilter : null,
-                            })
-                          }
-                          className={clsx(
-                            "text-left p-2.5 rounded-lg border cursor-pointer transition-colors",
-                            draft.engine === e.key ? "border-brand-purple bg-brand-purple/10" : "border-border hover:border-gray-600",
-                          )}
-                        >
-                          <div className="text-xs font-bold text-white">{e.title}</div>
-                          <div className="text-[11px] text-gray-500">{e.text}</div>
-                        </button>
-                      ))}
-                    </div>
-                  </Field>
-
                   <Field label="Filter">
                     <FilterBuilder
                       node={draft.filter ?? { combinator: "and", rules: [] }}
@@ -229,18 +192,22 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                     />
                   </Field>
 
-                  {draft.engine === "gridify" && (
-                    <Field label="Raw Gridify filter (optional)" hint="Combined with the filter above using AND">
-                      <TextInput
-                        value={draft.gridifyFilter ?? ""}
-                        placeholder="UserName=*bob/i,Duration>600"
-                        onChange={(v) => set({ gridifyFilter: v || null })}
-                      />
-                      <span className="text-[11px] text-gray-500">
-                        Fields: {fields.map((f) => f.key).join(", ")}. Operators: = != &gt; &lt; &gt;= &lt;= =* !* ^ $, combine with , (and) | (or)
-                        and ( ).
-                      </span>
-                    </Field>
+                  {draft.gridifyFilter && (
+                    <div className="rounded-lg border border-brand-amber/30 bg-brand-amber/5 p-3 space-y-1.5 text-xs text-brand-amber">
+                      <p>
+                        This data source was saved with a raw Gridify filter, which is no longer supported, so it won&apos;t run until the filter is
+                        removed:
+                      </p>
+                      <code className="block break-all text-gray-200">{draft.gridifyFilter}</code>
+                      <p>Add the same conditions to the filter above, then remove this one.</p>
+                      <button
+                        type="button"
+                        className="font-bold underline cursor-pointer hover:text-white"
+                        onClick={() => set({ gridifyFilter: null })}
+                      >
+                        Remove the raw filter
+                      </button>
+                    </div>
                   )}
 
                   <div className="flex rounded-lg border border-border overflow-hidden text-xs font-bold w-fit">

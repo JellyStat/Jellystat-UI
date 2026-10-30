@@ -78,7 +78,6 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
         <Ul
           items={[
             <>Pick a dataset (playback activity, library items, users...), filter it, and return either rows or a summary (group by + totals).</>,
-            <>Both query engines run as SQL in the database and give the same results; Gridify also accepts a raw Gridify filter.</>,
             <>
               Filters can compare against a <b className="text-gray-300">parameter</b> (pick @name as the value), so viewers and schedules can change
               them.

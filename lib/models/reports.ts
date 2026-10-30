@@ -3,7 +3,6 @@
 
 export type ReportElementType = "text" | "metric" | "table" | "chart" | "image" | "shape" | "line" | "cards";
 export type ChartKind = "bar" | "horizontalBar" | "line" | "area" | "pie" | "donut";
-export type QueryEngine = "efcore" | "gridify";
 export type FieldType = "string" | "number" | "integer" | "boolean" | "date" | "duration" | "bytes" | "enum";
 export type ExportFormat = "json" | "svg" | "html" | "png" | "pdf";
 export type WebhookType = "generic" | "discord" | "json";
@@ -182,9 +181,8 @@ export interface ReportDataSource {
   name: string;
   /** Unused when the source is built from other sources (derive). */
   dataset: string;
-  engine: QueryEngine;
   filter?: ReportFilterNode | null;
-  /** Raw Gridify syntax, Gridify engine only. */
+  /** Raw Gridify filter from reports saved before EF Core became the only engine; no longer run, the source reports an error. */
   gridifyFilter?: string | null;
   fields: string[];
   groupBy: ReportGroupBy[];
@@ -351,7 +349,6 @@ export interface ReportDatasetInfo {
 
 export interface ReportCapabilities {
   datasets: ReportDatasetInfo[];
-  engines: QueryEngine[];
   operators: string[];
   aggregates: string[];
   dateBuckets: string[];

@@ -194,9 +194,6 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
               </div>
               <div className="mt-1 flex items-center gap-2 text-[11px] text-gray-500">
                 <span>{label}</span>
-                <span className="uppercase text-[9px] tracking-wider border border-border rounded px-1">
-                  {ds.engine === "gridify" ? "Gridify" : "EF Core"}
-                </span>
                 {result?.error ? (
                   <span className="flex items-center gap-1 text-brand-rose truncate" title={result.error}>
                     <AlertCircle size={11} /> error
