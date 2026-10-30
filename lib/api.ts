@@ -47,6 +47,7 @@ import type {
   ReportRenderModel,
   ReportRenderRequest,
   ReportSchedule,
+  ReportImportResult,
   ReportSummary,
   SaveReport,
 } from "./models/reports";
@@ -587,6 +588,8 @@ const listReports = (): Promise<ReportSummary[]> => apiFetch<ReportSummary[]>("/
 const getReportFonts = (): Promise<ReportFontFamily[]> => apiFetch<ReportFontFamily[]>("/Reports/Fonts");
 const getReport = async (params: { Id: string }): Promise<ReportDetail> =>
   apiFetch<ReportDetail>(`/Reports/Get${await buildQuery(undefined, params, false)}`);
+const validateReportImport = (payload: { content: string }): Promise<ReportImportResult> =>
+  apiFetch<ReportImportResult>("/Reports/ValidateImport", { method: "POST", body: JSON.stringify({ ...payload, serverId: getServerId() }) });
 const saveReport = (payload: SaveReport): Promise<ReportSummary> =>
   apiFetch<ReportSummary>("/Reports/Save", { method: "POST", body: JSON.stringify(payload) });
 const duplicateReport = async (params: { Id: string }): Promise<ReportSummary> =>
@@ -722,6 +725,7 @@ export const Reports = {
   list: listReports,
   get: getReport,
   save: saveReport,
+  validateImport: validateReportImport,
   duplicate: duplicateReport,
   delete: deleteReport,
   query: queryReportData,

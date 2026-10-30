@@ -1,4 +1,17 @@
-import { AlertCircle, CalendarClock, Copy, FileBarChart, FilePlus2, LayoutTemplate, Loader2, Pencil, Upload } from "lucide-react";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import {
+  AlertCircle,
+  CalendarClock,
+  ChevronDown,
+  Copy,
+  Download,
+  FileBarChart,
+  FilePlus2,
+  LayoutTemplate,
+  Loader2,
+  Pencil,
+  Upload,
+} from "lucide-react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -6,13 +19,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
+import ReportImportDialog from "@/components/Reports/ReportImportDialog";
 import ReportSchedulesDialog from "@/components/Reports/ReportSchedulesDialog";
 import client from "@/lib/api";
 import { formatDateTime } from "@/lib/dateFormat";
 import Permissions from "@/lib/models/enums/Permissions";
-import type { ReportParameter, ReportSummary } from "@/lib/models/reports";
+import type { ReportImportResult, ReportParameter, ReportSummary } from "@/lib/models/reports";
 import permissionsManager from "@/lib/permissionsManager";
-import { normalizeDefinition } from "@/lib/reports/defaults";
+import { checkReportFile, downloadReportFile, reportNameFromFile } from "@/lib/reports/transfer";
 
 export default function ReportsPage() {
   const { t } = useTranslation("common");
@@ -27,6 +41,7 @@ export default function ReportsPage() {
     parameters: ReportParameter[];
   } | null>(null);
   const importRef = useRef<HTMLInputElement>(null);
+  const [importReview, setImportReview] = useState<{ file: File; result: ReportImportResult } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -63,19 +78,40 @@ export default function ReportsPage() {
     }
   };
 
-  const importFile = async (file: File) => {
+  const exportReport = async (r: ReportSummary) => {
     try {
-      const parsed = JSON.parse(await file.text());
-      const name = String(parsed.name || file.name.replace(/\.(report\.)?json$/i, "") || "Imported report");
+      const detail = await client.Reports.get({ Id: r.id });
+      downloadReportFile(detail.name, detail.description, detail.definition);
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to export the report");
+    }
+  };
+
+  const saveImport = async (file: File, result: ReportImportResult) => {
+    setImportReview(null);
+    try {
       const saved = await client.Reports.save({
-        name,
-        description: parsed.description ?? null,
-        definition: normalizeDefinition(parsed.definition ?? parsed),
+        name: result.name || reportNameFromFile(file),
+        description: result.description ?? null,
+        definition: result.definition!,
       });
       toast.success(`Imported ${saved.name}`);
       await router.push({ pathname: "/reports/designer", query: { id: saved.id } });
     } catch (err: any) {
-      toast.error(err?.message ?? "That file isn't a report definition");
+      toast.error(err?.message ?? "Failed to import the report");
+    }
+  };
+
+  const importFile = async (file: File) => {
+    try {
+      const result = await checkReportFile(file);
+      if (result.valid && result.warnings.length === 0) {
+        await saveImport(file, result);
+      } else {
+        setImportReview({ file, result });
+      }
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to check the file");
     }
   };
 
@@ -193,20 +229,35 @@ export default function ReportsPage() {
                     >
                       <Pencil size={13} /> {t("reports.edit", "Edit")}
                     </Link>
-                    <button
-                      type="button"
-                      onClick={() => openSchedules(r)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-gray-300 hover:text-white border border-border hover:border-brand-cyan rounded-lg cursor-pointer"
-                    >
-                      <CalendarClock size={13} /> {t("reports.schedule", "Schedule")}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => duplicate(r.id)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-gray-300 hover:text-white border border-border rounded-lg cursor-pointer"
-                    >
-                      <Copy size={13} /> {t("reports.duplicate", "Duplicate")}
-                    </button>
+                    <Menu>
+                      <MenuButton className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-gray-300 hover:text-white border border-border rounded-lg cursor-pointer">
+                        {t("reports.more", "More")} <ChevronDown size={13} />
+                      </MenuButton>
+                      <MenuItems
+                        anchor={{ to: "bottom end", gap: 4 }}
+                        className="z-30 min-w-40 rounded-xl border border-border bg-surface p-1 shadow-xl shadow-black/40 focus:outline-none"
+                      >
+                        {[
+                          {
+                            label: t("reports.schedule", "Schedule"),
+                            icon: <CalendarClock size={14} className="text-brand-cyan" />,
+                            onClick: () => openSchedules(r),
+                          },
+                          { label: t("reports.duplicate", "Duplicate"), icon: <Copy size={14} />, onClick: () => duplicate(r.id) },
+                          { label: t("reports.export", "Export"), icon: <Download size={14} />, onClick: () => exportReport(r) },
+                        ].map((item) => (
+                          <MenuItem key={item.label}>
+                            <button
+                              type="button"
+                              onClick={item.onClick}
+                              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold text-gray-300 data-[focus]:bg-surface-hover data-[focus]:text-white cursor-pointer"
+                            >
+                              {item.icon} {item.label}
+                            </button>
+                          </MenuItem>
+                        ))}
+                      </MenuItems>
+                    </Menu>
                     <ConfirmationDialogButton
                       buttonElement={<div>{t("common.delete", "Delete")}</div>}
                       dialogTitle={t("reports.delete_title", "Delete report {{name}}", {
@@ -224,6 +275,15 @@ export default function ReportsPage() {
           </div>
         </div>
       </div>
+
+      {importReview && (
+        <ReportImportDialog
+          fileName={importReview.file.name}
+          result={importReview.result}
+          onImport={() => void saveImport(importReview.file, importReview.result)}
+          onClose={() => setImportReview(null)}
+        />
+      )}
 
       {schedulesFor && (
         <ReportSchedulesDialog

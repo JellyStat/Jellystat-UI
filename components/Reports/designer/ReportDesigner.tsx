@@ -37,7 +37,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import ConfirmationDialog from "@/components/Core/ConfirmationDialog";
 import client from "@/lib/api";
-import type { ReportDataResult, ReportDefinition, ReportRenderModel } from "@/lib/models/reports";
+import type { ReportDataResult, ReportDefinition, ReportImportResult, ReportRenderModel } from "@/lib/models/reports";
+import { checkReportFile, downloadReportFile } from "@/lib/reports/transfer";
+import ReportImportDialog from "../ReportImportDialog";
 import { downloadBlob, exportFileName, exportPdf, exportPng } from "@/lib/reports/clientExport";
 import { normalizeDefinition } from "@/lib/reports/defaults";
 import { useReportFonts } from "@/lib/reports/fonts";
@@ -126,6 +128,7 @@ function DesignerShell() {
   const [showGrid, setShowGrid] = useState(true);
   const [previewMode, setPreviewMode] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [importReview, setImportReview] = useState<{ fileName: string; result: ReportImportResult } | null>(null);
   const [saving, setSaving] = useState(false);
   const [menu, setMenu] = useState<(ContextMenuRequest & { items: MenuEntry[] }) | null>(null);
   const [exportOpen, setExportOpen] = useState(false);
@@ -417,10 +420,7 @@ function DesignerShell() {
           await exportPdf(nodes, definition.page.width, definition.page.height, exportFileName(name, "pdf"), name);
         }
       } else if (kind === "definition") {
-        downloadBlob(
-          new Blob([JSON.stringify({ name: state.doc.name, description: state.doc.description, definition }, null, 2)], { type: "application/json" }),
-          exportFileName(name, "report.json"),
-        );
+        downloadReportFile(name, state.doc.description, definition);
       } else {
         const format = kind.replace("server-", "") as "pdf" | "png" | "svg" | "html" | "json";
         const blob = await client.Reports.render(
@@ -442,25 +442,34 @@ function DesignerShell() {
     }
   };
 
+  const applyImport = (result: ReportImportResult) => {
+    setImportReview(null);
+    const def = normalizeDefinition(result.definition!);
+    designer.change(
+      (doc) => {
+        doc.definition = def;
+        if (result.name && !doc.name) {
+          doc.name = result.name;
+        }
+        if (result.description && !doc.description) {
+          doc.description = result.description;
+        }
+      },
+      { pageIndex: 0, selection: [] },
+    );
+    toast.success("Report definition imported");
+  };
+
   const importDefinition = async (file: File) => {
     try {
-      const parsed = JSON.parse(await file.text());
-      const def = normalizeDefinition(parsed.definition ?? parsed);
-      designer.change(
-        (doc) => {
-          doc.definition = def;
-          if (parsed.name && !doc.name) {
-            doc.name = parsed.name;
-          }
-          if (parsed.description && !doc.description) {
-            doc.description = parsed.description;
-          }
-        },
-        { pageIndex: 0, selection: [] },
-      );
-      toast.success("Report definition imported");
-    } catch {
-      toast.error("That file isn't a report definition");
+      const result = await checkReportFile(file);
+      if (result.valid && result.warnings.length === 0) {
+        applyImport(result);
+      } else {
+        setImportReview({ fileName: file.name, result });
+      }
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to check the file");
     }
   };
 
@@ -751,6 +760,15 @@ function DesignerShell() {
       />
 
       {showHelp && <HelpDialog onClose={() => setShowHelp(false)} />}
+
+      {importReview && (
+        <ReportImportDialog
+          fileName={importReview.fileName}
+          result={importReview.result}
+          onImport={() => applyImport(importReview.result)}
+          onClose={() => setImportReview(null)}
+        />
+      )}
 
       {showSchedules && state.doc.id && (
         <ReportSchedulesDialog
