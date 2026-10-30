@@ -360,6 +360,15 @@ export interface ReportCapabilities {
   maxRows: number;
 }
 
+export interface ReportImportResult {
+  valid: boolean;
+  errors: string[];
+  warnings: string[];
+  name?: string | null;
+  description?: string | null;
+  definition?: ReportDefinition | null;
+}
+
 export interface ReportSummary {
   id: string;
   name: string;

@@ -305,7 +305,10 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
             ["HTML (server)", "A standalone page with all pages, fonts and links."],
             ["Data as JSON (server)", "The data behind the report."],
             ["PNG / PDF (in browser)", "Captures what you see; no clickable links."],
-            ["Report definition (.json)", "The design itself, to back up or import elsewhere."],
+            [
+              "Report definition (.json)",
+              "The design itself, to back up or import elsewhere. Also on the Reports screen. Imports are checked first, and schedules aren't included.",
+            ],
           ]}
         />
         <P>Saved reports can be delivered on a schedule or by webhook (generic, Discord or JSON) with Schedules &amp; webhooks in the toolbar.</P>
