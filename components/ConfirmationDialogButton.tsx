@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import ConfirmButton from "@/components/ui/overlay/ConfirmButton";
-import type { ConfirmTone } from "@/components/ui/overlay/ConfirmDialog";
+import type { ConfirmDialogProps, ConfirmTone } from "@/components/ui/overlay/ConfirmDialog";
 
 // App wrapper around the kit's ConfirmButton: keeps the original props and supplies
 // translated Yes/No defaults. Prefer ConfirmButton from "@/components/ui" in new code.
@@ -18,6 +18,7 @@ type ConfirmationDialogButtonProps = {
   disabled?: boolean;
   tooltip?: string;
   tone?: ConfirmTone;
+  confirmPhrase?: ConfirmDialogProps["confirmPhrase"];
 };
 
 export default function ConfirmationDialogButton({

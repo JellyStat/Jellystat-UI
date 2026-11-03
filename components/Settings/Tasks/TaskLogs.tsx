@@ -192,7 +192,7 @@ export default function TasksLogsPage() {
   };
 
   return (
-    <div className="animate-in fade-in duration-500 max-w-[1600px] mx-auto">
+    <div id="task-logs" className="animate-in fade-in duration-500 max-w-[1600px] mx-auto scroll-mt-4">
       {/* Header Container */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6">
         <div className="flex items-center gap-4">

@@ -384,7 +384,9 @@
     "backup_uploaded": "Backup hochgeladen",
     "backup_upload_failed": "Hochladen fehlgeschlagen: {{error}}",
     "remote_auth_on_short": "Remote-Anmeldung an",
-    "remote_auth_off_short": "Remote-Anmeldung aus"
+    "remote_auth_off_short": "Remote-Anmeldung aus",
+    "backups_restore_phrase": "wiederherstellen",
+    "backups_restore_phrase_label": "Gib \"{{phrase}}\" zur Bestätigung ein"
   },
   "setup": {
     "btn_add_server": "Server hinzufügen",
@@ -495,7 +497,8 @@
     "task_queued": "{{taskName}} erfolgreich in Warteschlange eingefügt",
     "task_toggled": "Aufgabe {{taskName}} {{action}}",
     "toggle_task": "{{action}} Aufgabe {{taskName}}",
-    "update_failed": "Fehler beim Aktualisieren der Aufgabe {{taskName}}"
+    "update_failed": "Fehler beim Aktualisieren der Aufgabe {{taskName}}",
+    "view_logs": "Protokolle ansehen"
   },
   "timeline": {
     "empty_message": "Für die ausgewählten Bibliotheken wurde keine Wiedergabe gefunden",

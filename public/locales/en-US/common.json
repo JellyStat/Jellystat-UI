@@ -411,7 +411,9 @@
     "backup_uploaded": "Backup uploaded",
     "backup_upload_failed": "Upload failed: {{error}}",
     "remote_auth_on_short": "Remote auth on",
-    "remote_auth_off_short": "Remote auth off"
+    "remote_auth_off_short": "Remote auth off",
+    "backups_restore_phrase": "restore",
+    "backups_restore_phrase_label": "Type \"{{phrase}}\" to confirm"
   },
   "setup": {
     "btn_add_server": "Add Server",
@@ -522,7 +524,8 @@
     "task_queued": "{{taskName}} queued successfully",
     "task_toggled": "Task {{taskName}} {{action}}",
     "toggle_task": "{{action}} task {{taskName}}",
-    "update_failed": "Failed to update task {{taskName}}"
+    "update_failed": "Failed to update task {{taskName}}",
+    "view_logs": "View logs"
   },
   "timeline": {
     "empty_message": "No qualifying playback found for the selected libraries",

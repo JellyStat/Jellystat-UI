@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { cn } from '../cn';
 import { iconButtonClass } from '../primitives/IconButton';
 import { focusRing } from '../tones';
-import ConfirmDialog, { type ConfirmTone } from './ConfirmDialog';
+import ConfirmDialog, { type ConfirmDialogProps, type ConfirmTone } from './ConfirmDialog';
 
 export type ConfirmButtonProps = {
   // Trigger content (icon and/or text).
@@ -15,6 +15,7 @@ export type ConfirmButtonProps = {
   // Fired when the trigger is clicked, before the dialog opens.
   onClick?: () => void;
   tone?: ConfirmTone;
+  confirmPhrase?: ConfirmDialogProps['confirmPhrase'];
   disabled?: boolean;
   tooltip?: string;
   // Replaces the default trigger style entirely.
@@ -33,6 +34,7 @@ export default function ConfirmButton({
   onConfirm,
   onClick,
   tone,
+  confirmPhrase,
   disabled,
   tooltip,
   className,
@@ -70,6 +72,7 @@ export default function ConfirmButton({
         confirmText={confirmText}
         cancelText={cancelText}
         tone={tone}
+        confirmPhrase={confirmPhrase}
       />
     </>
   );
