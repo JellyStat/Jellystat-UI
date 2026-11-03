@@ -1,8 +1,9 @@
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
-import { Play, Pause, Tv } from "lucide-react";
+import { Play, Pause, Tv, User } from "lucide-react";
 
 import { API_BASE } from "@/lib/api";
 import SessionItem from "@/lib/models/sessionItem";
@@ -145,6 +146,7 @@ function LabeledText({ label, value }: { label: string; value: string | undefine
 export default function SessionCard({ session }: SessionCardProps) {
   const router = useRouter();
   const { t } = useTranslation("common");
+  const [failedUserImage, setFailedUserImage] = useState<string | null>(null);
 
   if (!session || !session.nowPlayingItem) return null;
 
@@ -288,16 +290,20 @@ export default function SessionCard({ session }: SessionCardProps) {
           >
             {session.userName}
           </Link>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={userImage}
-            alt={session.userName}
-            className="w-6 h-6 rounded-full object-cover border border-white/10"
-            onError={(e) => {
-              // Fallback if user avatar fails to load
-              (e.currentTarget as HTMLImageElement).style.display = "none";
-            }}
-          />
+          {failedUserImage !== userImage ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={userImage}
+              alt={session.userName}
+              className="w-6 h-6 rounded-full object-cover border border-white/10"
+              onError={() => setFailedUserImage(userImage)}
+            />
+          ) : (
+            // Fallback avatar icon for users without a profile image
+            <div className="w-6 h-6 rounded-full flex items-center justify-center bg-surface border border-white/10 text-gray-400 shrink-0">
+              <User size={14} />
+            </div>
+          )}
         </div>
       </div>
     </div>
