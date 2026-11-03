@@ -130,7 +130,7 @@ For each file: swap the markup for the kit component, delete the class string, a
 - [x] Phase 0: cn/variants/barrel (branch `refactor/ui-kit`)
 - [ ] Phase 0b: Storybook. Skipped for now: the package is installed but there is no `.storybook/` config yet
 - [x] Phase 1: Spinner, Label, FieldError, Input (+ InputAction), Field, Button, IconButton, Badge, Skeleton, with tests in `components/ui/__tests__/kit.test.tsx`
-- [ ] Phase 2: Page, PageHeader, SectionTitle, Card, IconChip, Modal, Table, ErrorAlert, EmptyState
+- [x] Phase 2: Page, PageHeader, SectionTitle, Card, IconChip, Modal (+ ModalPanel/ModalHeader/ModalFooter), Table (+ TableHead/Th/TableBody/Td/TableMessageRow), ErrorAlert, EmptyState, with tests in `components/ui/__tests__/layout.test.tsx`
 - [ ] Phase 3: Core moved into the kit, with re-exports at the old paths
 - [ ] Phase 4.1: setup + settings/Users
 - [ ] Phase 4.2: remaining settings pages
