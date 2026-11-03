@@ -125,7 +125,7 @@ export default function WatchTrendsCard() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
           <div className="flex items-center gap-3">
             <BarChart3 size={28} className="text-primary shrink-0" />
-            <h2 className="text-xl sm:text-xl font-black text-white tracking-tight">
+            <h2 className="text-xl sm:text-xl font-bold text-white tracking-tight">
               {t("stats.watch_trends", "Watch Trends")}
             </h2>
           </div>
@@ -288,7 +288,7 @@ const CustomTooltip = ({ active, payload, label, formatValue, metricType, timeGr
 
     return (
       <div className="bg-surface/95 backdrop-blur-xl border border-border p-4 rounded-2xl shadow-2xl shadow-black/60 min-w-[180px]">
-        <p className="text-gray-200 font-black mb-3 pb-3 border-b border-border/50 text-sm tracking-tight flex justify-between">
+        <p className="text-gray-200 font-bold mb-3 pb-3 border-b border-border/50 text-sm tracking-tight flex justify-between">
           <span>{displayLabel}</span>
           <span className="text-accent ml-4">{formatValue(total)}</span>
         </p>

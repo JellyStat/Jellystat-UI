@@ -63,7 +63,7 @@ export default function BooleanFilter({
             aria-checked={isActive}
             onClick={() => setQuery(option.value)}
             className={cn(
-              "px-2 py-1 rounded-md text-[11px] font-bold whitespace-nowrap transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary",
+              "px-2 py-1 rounded-md text-xs font-bold whitespace-nowrap transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary",
               isActive ? option.active : "text-gray-500 hover:text-gray-200"
             )}
           >

@@ -6,7 +6,8 @@
     "title": "Aktivitätsprotokoll",
     "title_col": "Titel",
     "total_playback": "Gesamtwiedergabe",
-    "total_records": "Gesamtdatensätze:"
+    "total_records": "Gesamtdatensätze:",
+    "clear_filters": "Filter zurücksetzen ({{count}})"
   },
   "app": {
     "connecting": "Verbindung zu Jellystat wird hergestellt",

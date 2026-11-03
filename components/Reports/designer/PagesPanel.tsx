@@ -74,7 +74,7 @@ export default function PagesPanel() {
           ) : (
             <span className="flex-1 truncate">{p.name}</span>
           )}
-          <span className="text-[10px] text-gray-500">{p.elements.length}</span>
+          <span className="text-xs text-gray-500">{p.elements.length}</span>
           <button
             type="button"
             title="Duplicate page"

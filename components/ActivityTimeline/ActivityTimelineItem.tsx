@@ -79,9 +79,9 @@ export default function ActivityTimelineItem({ entry, side }: Props) {
         </div>
 
         <div className={`flex flex-col gap-1 min-w-0 ${textAlign}`}>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-accent">{dateLabel}</span>
+          <span className="text-xs font-bold uppercase tracking-wider text-accent">{dateLabel}</span>
           <h3
-            className="text-base md:text-lg font-black text-gray-200 leading-tight line-clamp-2 hover:text-primary transition-colors cursor-pointer"
+            className="text-base md:text-lg font-bold text-gray-200 leading-tight line-clamp-2 hover:text-primary-soft transition-colors cursor-pointer"
             onClick={goToItem}
           >
             {entry.title}
@@ -90,7 +90,7 @@ export default function ActivityTimelineItem({ entry, side }: Props) {
           {entry.isSeries && entry.episodeCount > 0 && (
             <p className="text-xs text-gray-400">{t("timeline.episodes", "{{episodeCount}} Episodes", { episodeCount: entry.episodeCount })}</p>
           )}
-          <p className="flex items-center gap-1.5 text-[11px] text-gray-500 uppercase tracking-wider">
+          <p className="flex items-center gap-1.5 text-xs text-gray-500 uppercase tracking-wider">
             <Clock size={12} />
             {durationLabel}
           </p>

@@ -232,7 +232,7 @@ export default function WatchStatCards() {
       {/* Header & Controls */}
       <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
         <div>
-          <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-3">
+          <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-3">
             <Activity className="text-primary" size={28} />
             {t("watch_stat_cards.watch_statistics", "Watch Statistics")}
           </h2>

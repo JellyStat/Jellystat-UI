@@ -177,7 +177,7 @@ export default function ItemPage() {
                 <div className="flex flex-col flex-1 items-start min-w-0 w-full">
                   <button
                     onClick={() => router.push(`/libraries/${item.libraryId}`)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent/10 text-accent hover:bg-accent hover:text-black border border-accent/20 transition-colors text-xs font-black uppercase tracking-widest mb-4 cursor-pointer"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent/10 text-accent hover:bg-accent hover:text-black border border-accent/20 transition-colors text-xs font-bold uppercase tracking-widest mb-4 cursor-pointer"
                   >
                     <ChevronLeft size={14} />
                     {item.library?.name || t("item.library", "Library")}
@@ -210,7 +210,7 @@ export default function ItemPage() {
                   {isValidParent && (
                     <div className="flex flex-wrap items-center gap-2 text-lg font-bold text-gray-300 mb-4 drop-shadow">
                       {parentIndexUnit && (
-                        <Link href={`/libraries/items/${item.parentId}`} className="hover:text-primary transition-colors">
+                        <Link href={`/libraries/items/${item.parentId}`} className="hover:text-primary-soft transition-colors">
                           {parentIndexUnit} {item.parentIndex}
                         </Link>
                       )}

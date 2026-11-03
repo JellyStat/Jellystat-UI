@@ -40,7 +40,7 @@ export function PagesSection({ e }: { e: ReportElement }) {
                   <NumberInput value={e.continueTop ?? 40} min={0} max={e.y} onChange={(v) => set({ continueTop: v ?? 40 }, "continueTop")} />
                 </div>
               </Field>
-              <p className="text-[11px] text-gray-500">
+              <p className="text-xs text-gray-500">
                 The extra pages repeat everything above the header line and everything below this element, like page headers and footers. Elements in
                 between only appear on the first page. This element starts at the header line there.
               </p>
@@ -50,7 +50,7 @@ export function PagesSection({ e }: { e: ReportElement }) {
       )}
       {!isGrowing(e) && zones && (
         <>
-          <p className="text-[11px] text-gray-500">
+          <p className="text-xs text-gray-500">
             {!inZone
               ? "Between the header line and the growing element: first page only."
               : e.firstPageOnly
@@ -86,7 +86,7 @@ export function ConditionsSection({ e, columns }: { e: ReportElement; columns: R
 
   return (
     <Section title="Conditional formatting" defaultOpen={conditions.length > 0}>
-      <p className="text-[11px] text-gray-500">
+      <p className="text-xs text-gray-500">
         {e.type === "metric"
           ? "Checked against the first row; styles the value."
           : e.type === "cards"
@@ -153,7 +153,7 @@ export function ConditionsSection({ e, columns }: { e: ReportElement; columns: R
       })}
       <button
         type="button"
-        className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-white cursor-pointer"
+        className="flex items-center gap-1 text-xs text-gray-400 hover:text-white cursor-pointer"
         onClick={() =>
           setAll(
             [
@@ -259,7 +259,7 @@ export function CardsSection({ e, columns, picker }: { e: ReportElement; columns
           </div>
         </Field>
       ))}
-      <p className="text-[11px] text-gray-500">{ROW_TOKEN_HELP}</p>
+      <p className="text-xs text-gray-500">{ROW_TOKEN_HELP}</p>
 
       <Field label="Card fill">
         <ColorInput value={o.cardBackground} allowNone onChange={(v) => set({ cardBackground: v }, "cardBackground")} />

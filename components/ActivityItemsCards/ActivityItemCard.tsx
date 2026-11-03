@@ -55,17 +55,17 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 160, height = 
         {/* Meta Row: Timestamp & User */}
         <div className="flex flex-col items-start gap-2 mb-1">
           {differenceString && (
-            <span className="flex items-center gap-1 text-[10px] font-bold text-primary uppercase tracking-wider">
+            <span className="flex items-center gap-1 text-xs font-bold text-primary-soft uppercase tracking-wider">
               <Clock size={10} />
               {differenceString}
             </span>
           )}
 
-          <span className="flex items-center gap-1 text-[12px] font-bold text-gray-400 bg-background/80 rounded border border-border/50 truncate max-w-[80px] shadow-inner">
+          <span className="flex items-center gap-1 text-xs font-bold text-gray-400 bg-background/80 rounded border border-border/50 truncate max-w-[80px] shadow-inner">
             <User size={12} className="shrink-0" />
             <Link
               href={`/users/${encodeURIComponent(item.latestActivity?.userId ?? "")}`}
-              className="truncate hover:text-primary transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
+              className="truncate hover:text-primary-soft transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
             >
               {item.latestActivity?.userName ?? t("common.na", "N/A")}
             </Link>
@@ -73,10 +73,10 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 160, height = 
         </div>
 
         {/* Title */}
-        <h4 className="text-sm font-black text-gray-200 leading-tight line-clamp-2">
+        <h4 className="text-sm font-bold text-gray-200 leading-tight line-clamp-2">
           <Link
             href={`/libraries/items/${encodeURIComponent(item.parent?.id ?? "")}`}
-            className="hover:text-primary transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
+            className="hover:text-primary-soft transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
           >
             {title}
           </Link>
@@ -86,7 +86,7 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 160, height = 
         {isValidParent && (
           <Link
             href={`/libraries/items/${encodeURIComponent(item.id ?? "")}`}
-            className="block text-xs text-gray-300 line-clamp-1 hover:text-primary transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
+            className="block text-xs text-gray-300 line-clamp-1 hover:text-primary-soft transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
           >
             {item.name}
           </Link>
@@ -94,7 +94,7 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 160, height = 
 
         {/* Season / Episode Index */}
         {item.parentIndex != null && (
-          <p className="text-[11px] text-gray-400 tracking-wider uppercase mt-auto pt-1">{indexString}</p>
+          <p className="text-xs text-gray-400 tracking-wider uppercase mt-auto pt-1">{indexString}</p>
         )}
       </div>
     </div>

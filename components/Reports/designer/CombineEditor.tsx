@@ -47,7 +47,7 @@ export default function CombineEditor({
 
       {derive.mode === "join" ? (
         <>
-          <p className="text-[11px] text-gray-500">
+          <p className="text-xs text-gray-500">
             Adds the right source&apos;s columns to each matching row of the left source, e.g. this month&apos;s plays next to last month&apos;s per
             user.
           </p>
@@ -99,7 +99,7 @@ export default function CombineEditor({
               <button
                 type="button"
                 disabled={!left || !right}
-                className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-white cursor-pointer disabled:opacity-40"
+                className="flex items-center gap-1 text-xs text-gray-400 hover:text-white cursor-pointer disabled:opacity-40"
                 onClick={() => {
                   // Suggest a column both sides share
                   const shared = leftColumns.find((c) => rightColumns.some((r) => r.name.toLowerCase() === c.name.toLowerCase()));
@@ -130,7 +130,7 @@ export default function CombineEditor({
         </>
       ) : (
         <>
-          <p className="text-[11px] text-gray-500">All rows of each chosen source, one after another; columns with the same name line up.</p>
+          <p className="text-xs text-gray-500">All rows of each chosen source, one after another; columns with the same name line up.</p>
           <Field label="Sources">
             <div className="grid grid-cols-2 gap-1">
               {others.map((o) => (

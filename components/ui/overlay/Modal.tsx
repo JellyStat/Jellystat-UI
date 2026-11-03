@@ -57,7 +57,7 @@ export function ModalTitle({ className, ...rest }: ComponentProps<'h2'>) {
   return (
     <DialogTitle
       as="h2"
-      className={cn('text-xl font-black text-white tracking-tight', className)}
+      className={cn('text-xl font-bold text-white tracking-tight', className)}
       {...rest}
     />
   );
@@ -82,7 +82,7 @@ export function ModalHeader({
     <div className={cn('mb-6', className)}>
       <div className="flex items-center gap-3">
         {icon && <IconChip tone={iconTone}>{icon}</IconChip>}
-        <DialogTitle as="h2" className="text-2xl font-black text-white tracking-tight">
+        <DialogTitle as="h2" className="text-2xl font-bold text-white tracking-tight">
           {title}
         </DialogTitle>
       </div>

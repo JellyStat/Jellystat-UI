@@ -150,7 +150,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
     <Modal open onClose={onClose}>
         <ModalPanel className="p-0 md:p-0 max-w-3xl max-h-[92dvh] flex flex-col overflow-hidden">
           <div className="flex items-center justify-between px-5 py-3 border-b border-border">
-            <ModalTitle className="flex items-center gap-2 text-lg font-black text-white">
+            <ModalTitle className="flex items-center gap-2 text-lg font-bold text-white">
               <CalendarClock size={20} className="text-accent" /> {t("reports.schedules_title", "Schedules & webhooks")}
             </ModalTitle>
             <button
@@ -210,7 +210,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                             </span>
                           )}
                         </div>
-                        {s.lastSuccess === false && s.lastError && <p className="text-[11px] text-danger mt-1 break-words">{s.lastError}</p>}
+                        {s.lastSuccess === false && s.lastError && <p className="text-xs text-danger mt-1 break-words">{s.lastError}</p>}
                       </div>
                       <div className="flex gap-1.5 shrink-0">
                         <button
@@ -289,7 +289,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                     <Select value={editing.format} options={FORMATS} onChange={(v) => set({ format: v })} />
                   </Field>
                 </div>
-                <p className="text-[11px] text-gray-500 -mt-1">{WEBHOOK_TYPES.find((w) => w.value === editing.webhookType)?.help}</p>
+                <p className="text-xs text-gray-500 -mt-1">{WEBHOOK_TYPES.find((w) => w.value === editing.webhookType)?.help}</p>
                 <Field label={t("reports.schedule_webhook_url", "Webhook URL")}>
                   <TextInput
                     value={editing.webhookUrl}

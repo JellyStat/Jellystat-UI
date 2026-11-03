@@ -43,7 +43,7 @@ export default function LibraryOverview() {
       {/* Section Header */}
       <div className="flex items-center mb-4">
         <Database size={20} className="text-primary mr-2" />
-        <h2 className="text-xl font-black text-white tracking-tight">{t("library.overview_title", "Libraries")}</h2>
+        <h2 className="text-xl font-bold text-white tracking-tight">{t("library.overview_title", "Libraries")}</h2>
       </div>
 
       {/* Content Area */}

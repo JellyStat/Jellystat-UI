@@ -166,7 +166,7 @@ export default function SettingsPage() {
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-6">
                   <Settings size={24} className="text-accent" />
-                  <h3 className="text-xl font-black text-white tracking-tight">
+                  <h3 className="text-xl font-bold text-white tracking-tight">
                     {t("settings.general_title", "General Settings")}
                   </h3>
                 </div>
@@ -210,7 +210,7 @@ export default function SettingsPage() {
               <div>
                 <div className="flex items-center gap-3 mb-6">
                   <Info size={24} className="text-accent" />
-                  <h3 className="text-xl font-black text-white tracking-tight">
+                  <h3 className="text-xl font-bold text-white tracking-tight">
                     {t("settings.version_title", "Version Info")}
                   </h3>
                 </div>

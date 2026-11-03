@@ -235,7 +235,7 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
               value={draft.payloadTemplate ?? ""}
               onChange={(e) => set({ payloadTemplate: e.target.value })}
             />
-            <p className="text-[11px] text-gray-500">
+            <p className="text-xs text-gray-500">
               {t(
                 "settings.webhook_template_help",
                 "Tokens like {{data.user.name}} or {{data.items.0.name}} are paths into the payload below. Text is JSON-escaped, so put text tokens inside quotes; numbers and objects go in as JSON.",
@@ -244,7 +244,7 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
               )}
             </p>
             {sample !== undefined && (
-              <pre className="max-h-56 overflow-auto rounded-xl border border-border bg-background p-4 text-[11px] text-gray-400 shadow-inner">
+              <pre className="max-h-56 overflow-auto rounded-xl border border-border bg-background p-4 text-xs text-gray-400 shadow-inner">
                 {JSON.stringify(sample, null, 2)}
               </pre>
             )}

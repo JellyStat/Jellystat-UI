@@ -38,7 +38,7 @@ export default function Toolbox() {
 
   return (
     <div className="p-3">
-      <p className="text-[11px] text-gray-500 mb-3">Drag onto the page, or click to add.</p>
+      <p className="text-xs text-gray-500 mb-3">Drag onto the page, or click to add.</p>
       <div className="grid grid-cols-2 gap-2">
         {TOOLBOX.map((tool) => {
           const Icon = ICONS[tool.key] ?? Square;
@@ -63,7 +63,7 @@ export default function Toolbox() {
               className="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-border bg-background hover:border-primary hover:bg-primary/5 text-gray-300 hover:text-white transition-colors cursor-grab active:cursor-grabbing"
             >
               <Icon size={20} className="text-primary" />
-              <span className="text-[11px] font-semibold">{tool.label}</span>
+              <span className="text-xs font-semibold">{tool.label}</span>
             </button>
           );
         })}

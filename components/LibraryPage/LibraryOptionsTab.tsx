@@ -45,7 +45,7 @@ export default function LibraryOptions({ library }: Props) {
             <AlertTriangle className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-2xl font-black tracking-tight text-gray-200">{t("library.DangerZone", "Danger Zone")}</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-gray-200">{t("library.DangerZone", "Danger Zone")}</h2>
           </div>
         </div>
 
@@ -53,7 +53,7 @@ export default function LibraryOptions({ library }: Props) {
           <div className="space-y-0 px-5 py-3">
             <div className="flex items-center justify-between gap-6 py-4">
               <div className="min-w-0 flex-1">
-                <h5 className="text-2xl font-black tracking-tight text-gray-200">
+                <h5 className="text-2xl font-bold tracking-tight text-gray-200">
                   {t("library.deleteArchivedLibrary", "Delete Archived Library")}
                 </h5>
                 <p className="mt-1 max-w-2xl text-sm text-gray-400">
@@ -91,7 +91,7 @@ export default function LibraryOptions({ library }: Props) {
           <div className="space-y-0 px-5 py-3">
             <div className="flex items-center justify-between gap-6 py-4">
               <div className="min-w-0 flex-1">
-                <h5 className="text-2xl font-black tracking-tight text-gray-200">
+                <h5 className="text-2xl font-bold tracking-tight text-gray-200">
                   {t("library.deleteArchivedItems", "Delete Archived Items")}
                 </h5>
                 <p className="mt-1 max-w-2xl text-sm text-gray-400">

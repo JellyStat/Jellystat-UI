@@ -181,7 +181,7 @@ export default function WebhooksPage() {
                       )}
                     </div>
                     {w.lastSuccess === false && w.lastError && (
-                      <p className="text-[11px] text-danger break-words">{w.lastError}</p>
+                      <p className="text-xs text-danger break-words">{w.lastError}</p>
                     )}
                   </div>
 

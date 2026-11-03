@@ -7,10 +7,10 @@ const variantGroups = {
   variant: {
     // Filled variants use the *-solid fills so white labels meet WCAG AA.
     primary:
-      'bg-primary-solid hover:bg-primary-solid-hover text-on-primary font-black shadow-lg shadow-primary/20',
-    accent: 'bg-accent hover:bg-accent-hover text-on-accent font-black shadow-lg shadow-accent/20',
+      'bg-primary-solid hover:bg-primary-solid-hover text-on-primary font-bold shadow-lg shadow-primary/20',
+    accent: 'bg-accent hover:bg-accent-hover text-on-accent font-bold shadow-lg shadow-accent/20',
     danger:
-      'bg-danger-solid hover:bg-danger-solid-hover text-white font-black shadow-lg shadow-danger/20',
+      'bg-danger-solid hover:bg-danger-solid-hover text-white font-bold shadow-lg shadow-danger/20',
     // Low-emphasis destructive action, e.g. a Delete button in a list row.
     dangerSoft:
       'bg-danger/10 border border-danger/60 text-danger hover:bg-danger-solid hover:text-white shadow-inner',

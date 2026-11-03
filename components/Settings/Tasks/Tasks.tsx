@@ -11,14 +11,14 @@ export const getTaskBadge = (taskName: string, label: string) => {
         : taskName === "PartialSync"
           ? "bg-warning/10 text-warning border-warning/20"
           : taskName === "Restore"
-            ? "bg-primary/10 text-primary border-primary/20"
+            ? "bg-primary/10 text-primary-soft border-primary/20"
             : taskName === "PlaybackReportingPluginSync"
               ? "bg-info/10 text-info border-info/20"
               : "bg-surface text-gray-300 border-border";
 
   return (
     <span
-      className={`${colorClass} inline-block whitespace-nowrap px-2 sm:px-2.5 py-1 rounded-md text-[11px] sm:text-xs font-bold uppercase tracking-wider`}
+      className={`${colorClass} inline-block whitespace-nowrap px-2 sm:px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider`}
     >
       {label}
     </span>

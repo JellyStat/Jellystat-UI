@@ -22,7 +22,7 @@ export function LeaderboardCard({
 
   function getAvatarCss(index: number) {
     if (index === 0) {
-      return "bg-primary/20 text-primary border-primary/30";
+      return "bg-primary/20 text-primary-soft border-primary/30";
     }
     if (index === 1) {
       return "bg-accent/10 text-accent border-accent/20";
@@ -72,7 +72,7 @@ export function LeaderboardCard({
                 >
                   <div className="flex items-center gap-3 overflow-hidden">
                     <div
-                      className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-black text-[10px] shadow-inner border ${getAvatarCss(
+                      className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs shadow-inner border ${getAvatarCss(
                         index,
                       )}`}
                     >
@@ -90,7 +90,7 @@ export function LeaderboardCard({
 
                   <div className="flex flex-col items-end shrink-0 ml-2">
                     <span className="text font-black text-gray-200 leading-none">{item.value}</span>
-                    <span className="text-[11px] uppercase tracking-wider text-gray-400 mt-1">{unit}</span>
+                    <span className="text-xs uppercase tracking-wider text-gray-400 mt-1">{unit}</span>
                   </div>
                 </div>
               ))}

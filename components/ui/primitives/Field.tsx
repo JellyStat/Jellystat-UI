@@ -35,7 +35,7 @@ export default function Field({
             {label}
             {required && (
               <>
-                <span aria-hidden="true" className="ml-0.5 text-primary">
+                <span aria-hidden="true" className="ml-0.5 text-primary-soft">
                   *
                 </span>
                 <span className="sr-only"> (required)</span>
@@ -49,7 +49,7 @@ export default function Field({
       {error ? (
         <FieldError>{error}</FieldError>
       ) : (
-        description && <p className="text-[11px] text-gray-500 ml-1">{description}</p>
+        description && <p className="text-xs text-gray-500 ml-1">{description}</p>
       )}
     </div>
   );

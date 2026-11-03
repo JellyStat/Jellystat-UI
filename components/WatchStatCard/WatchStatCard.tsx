@@ -102,7 +102,7 @@
 
 //                 {/* Left Side: Rank & Title */}
 //                 <div className="flex items-center gap-2.5 flex-1 min-w-0">
-//                   <span className="text-[10px] font-bold text-gray-500 w-3 shrink-0">
+//                   <span className="text-xs font-bold text-gray-500 w-3 shrink-0">
 //                     {idx + 1}
 //                   </span>
 

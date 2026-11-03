@@ -85,7 +85,7 @@ export default function CodecStatsCard({ gridify }: Props) {
         <div className="flex justify-between gap-3 mb-6">
           <div className="flex items-center gap-3">
             <PieChartIcon size={28} className="text-primary" />
-            <h2 className="text-2xl font-black text-white tracking-tight">{t("stats.codec_stats", "Codec Statistics")}</h2>
+            <h2 className="text-2xl font-bold text-white tracking-tight">{t("stats.codec_stats", "Codec Statistics")}</h2>
           </div>
         </div>
 

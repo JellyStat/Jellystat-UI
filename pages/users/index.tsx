@@ -230,7 +230,7 @@ export default function UsersPage() {
                     <div className="text-xs text-gray-400 truncate mt-0.5">
                       {user.latestActivity?.itemId ? formatLastWatched(user) : "-"}
                     </div>
-                    <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 text-[11px] font-mono text-gray-500">
+                    <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 text-xs font-mono text-gray-500">
                       <span>
                         <span className="text-gray-300 font-bold">{user.playCount || 0}</span> {t("common.unit.plays", "Plays")}
                       </span>
@@ -247,7 +247,7 @@ export default function UsersPage() {
           <div className="hidden md:block overflow-x-auto custom-scrollbar flex-1">
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
-                <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
+                <tr className="bg-background/80 border-b border-border text-xs font-bold text-gray-500 uppercase tracking-wider select-none">
                   <th className="p-3 w-16 text-center">{t("users.avatar", "Avatar")}</th>
                   <SortableHeader
                     label={t("common.user", "User")}

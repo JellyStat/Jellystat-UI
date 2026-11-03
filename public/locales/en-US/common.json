@@ -7,7 +7,8 @@
     "title_col": "Title",
     "total_playback": "Total Playback",
     "total_records": "Total Records:",
-    "view_stream_info": "View stream details"
+    "view_stream_info": "View stream details",
+    "clear_filters": "Clear filters ({{count}})"
   },
   "app": {
     "connecting": "Connecting to Jellystat",

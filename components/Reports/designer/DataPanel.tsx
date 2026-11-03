@@ -82,7 +82,7 @@ function LookupSettings({
         </Field>
       </div>
       <Toggle label="Allow several choices" checked={!!lookup.multiple} onChange={(v) => onChange({ ...lookup, multiple: v }, "multiple")} />
-      <p className="text-[11px] text-gray-500">
+      <p className="text-xs text-gray-500">
         {usedBy === 0
           ? `Not used yet: in a data source filter, pick @${parameter.name} as the value (use 'equals' / 'is one of').`
           : `Used by ${usedBy} data source filter(s). Leaving it empty switches those filters off.`}
@@ -192,7 +192,7 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
                   <Trash2 size={12} />
                 </button>
               </div>
-              <div className="mt-1 flex items-center gap-2 text-[11px] text-gray-500">
+              <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
                 <span>{label}</span>
                 {result?.error ? (
                   <span className="flex items-center gap-1 text-danger truncate" title={result.error}>
@@ -232,7 +232,7 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
           </button>
         }
       >
-        <p className="text-[11px] text-gray-500">
+        <p className="text-xs text-gray-500">
           Use in filters (pick @name as the value) and text as {"{{param.name}}"}. Viewers and schedules can change them.
         </p>
         {definition.parameters.map((p, i) => (

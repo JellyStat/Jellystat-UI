@@ -68,6 +68,10 @@ const rules: Rule[] = [
     pattern: /role=["']switch["']/,
   },
   {
+    name: 'text is at least 12px (text-xs); no text-[9px] / [10px] / [11px]',
+    pattern: /\btext-\[(?:[0-9]|1[01])(?:\.\d+)?px\]/,
+  },
+  {
     name: 'use <Link> or <button>, not router.push on a div/span/p/h* (keyboard users cannot reach it)',
     pattern: /<(?:div|span|p|h[1-6])\b[^>]*onClick=\{\(\) => router\.push/,
   },

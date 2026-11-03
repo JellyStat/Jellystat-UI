@@ -46,7 +46,7 @@ export default function LibraryOverviewCard({ library }: LibraryOverviewCardProp
 
       <div className="flex flex-col flex-1 min-w-0">
         <h3 className="text-sm font-bold text-gray-100 truncate group-hover:text-white transition-colors">{library.name}</h3>
-        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mt-0.5">
+        <span className="text-xs font-bold uppercase tracking-widest text-gray-500 mt-0.5">
           {library.type || t("libraries.mixed_content", "Mixed Content")}
         </span>
       </div>

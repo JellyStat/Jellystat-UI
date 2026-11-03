@@ -40,7 +40,7 @@ export default function Sessions() {
           pulse={sessions.length > 0}
           label={sessions.length == 0 ? t("sessions.none_active", "No active streams") : t("sessions.live", "Live")}
         />
-        <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
+        <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
           {t("sessions.active_streams", "Active Streams")}
         </h2>
       </div>

@@ -503,7 +503,7 @@ function DesignerShell() {
           }
           className="w-40 sm:w-56 bg-transparent border border-transparent hover:border-border focus:border-primary rounded-md px-2 py-1 text-sm font-bold text-white outline-none"
         />
-        {dirty && <span className="text-[10px] text-warning shrink-0">unsaved</span>}
+        {dirty && <span className="text-xs text-warning shrink-0">unsaved</span>}
         <div className="w-px h-6 bg-border mx-1 shrink-0" />
         <ToolButton title="Toggle left panel" onClick={() => setShowLeft(!showLeft)} active={showLeft}>
           <PanelLeft size={16} />
@@ -638,8 +638,8 @@ function DesignerShell() {
                   type="button"
                   onClick={() => setLeftTab(t.key)}
                   className={clsx(
-                    "flex flex-col items-center gap-0.5 py-2 text-[10px] font-bold cursor-pointer border-b-2",
-                    leftTab === t.key ? "text-primary border-primary" : "text-gray-500 border-transparent hover:text-gray-200",
+                    "flex flex-col items-center gap-0.5 py-2 text-xs font-bold cursor-pointer border-b-2",
+                    leftTab === t.key ? "text-primary-soft border-primary" : "text-gray-500 border-transparent hover:text-gray-200",
                   )}
                 >
                   <t.icon size={15} />
@@ -679,7 +679,7 @@ function DesignerShell() {
             <DesignerCanvas model={renderModel} settings={{ zoom, setZoom, snap, showGrid, gridSize: 8 }} onContextMenu={openMenu} />
           )}
           {/* Status bar */}
-          <div className="h-7 shrink-0 flex items-center gap-4 px-3 border-t border-border bg-surface text-[11px] text-gray-500">
+          <div className="h-7 shrink-0 flex items-center gap-4 px-3 border-t border-border bg-surface text-xs text-gray-500">
             <span>
               Page {state.pageIndex + 1} of {definition.pages.length}
             </span>
@@ -704,7 +704,7 @@ function DesignerShell() {
                     title={p.name}
                     onClick={() => designer.setPage(i)}
                     className={clsx(
-                      "w-5 h-5 rounded text-[10px] cursor-pointer",
+                      "w-5 h-5 rounded text-xs cursor-pointer",
                       i === state.pageIndex ? "bg-primary-solid text-white" : "hover:bg-surface-hover",
                     )}
                   >

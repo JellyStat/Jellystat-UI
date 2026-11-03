@@ -117,7 +117,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
     <div className="w-full animate-in fade-in duration-500">
       {/* Header & Controls */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
-        <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3 shrink-0">
+        <h2 className="text-2xl font-bold text-white tracking-tight flex items-center gap-3 shrink-0">
           <Film className="text-accent" size={28} />
           {t("common.media", "Media")}
         </h2>

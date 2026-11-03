@@ -42,12 +42,12 @@ function ItemLabel({ item }: { item: ItemsWithParentData }) {
   return (
     <>
       {code && (
-        <span className="shrink-0 font-mono text-[11px] font-bold text-gray-300 bg-surface-raised border border-border rounded-lg px-1.5 py-0.5">
+        <span className="shrink-0 font-mono text-xs font-bold text-gray-300 bg-surface-raised border border-border rounded-lg px-1.5 py-0.5">
           {code}
         </span>
       )}
       <span className="truncate">{item.name}</span>
-      {item.library?.name && <span className="shrink-0 text-[11px] font-medium text-gray-400">· {item.library.name}</span>}
+      {item.library?.name && <span className="shrink-0 text-xs font-medium text-gray-400">· {item.library.name}</span>}
     </>
   );
 }

@@ -19,6 +19,7 @@ import {
   RefreshCcw,
   RefreshCw,
   Trash2,
+  FilterX,
 } from "lucide-react";
 
 import Activity from "@/lib/models/activity";
@@ -119,7 +120,11 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
   };
 
   // Filter Hook
-  const { filter, addOrReplaceFilter, removeFilter, getFilterValueOrDefault, applyFiltersToQuery } = useFilters();
+  const { filter, addOrReplaceFilter, removeFilter, clearFilters, getFilterValueOrDefault, applyFiltersToQuery } =
+    useFilters();
+  // Bumped on "Clear filters" to remount the filter inputs, which keep their own text.
+  const [filterResetKey, setFilterResetKey] = useState(0);
+  const activeFilterCount = filter.filter((f) => f.value != null).length;
 
   // --- DATA FETCHING ---
   const fetchPage = useCallback(
@@ -298,13 +303,13 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
     if (!transcodingInfo) {
       if (isTranscoding) {
         return (
-          <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-warning bg-warning/10 border border-warning/20 px-2 py-0.5 rounded shadow-inner">
+          <span className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-warning bg-warning/10 border border-warning/20 px-2 py-0.5 rounded shadow-inner">
             <Cpu size={10} className="mr-1" /> {t("common.transcode", "Transcode")}
           </span>
         );
       }
       return (
-        <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-accent bg-accent/10 border border-accent/20 px-2 py-0.5 rounded shadow-inner">
+        <span className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-accent bg-accent/10 border border-accent/20 px-2 py-0.5 rounded shadow-inner">
           <CheckCircle2 size={10} className="mr-1" /> {t("common.direct", "Direct")}
         </span>
       );
@@ -315,7 +320,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
     if (transcodingInfo.isAudioDirect === false) display += " (A)";
 
     return (
-      <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-warning bg-warning/10 border border-warning/20 px-2 py-0.5 rounded shadow-inner">
+      <span className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-warning bg-warning/10 border border-warning/20 px-2 py-0.5 rounded shadow-inner">
         <Cpu size={10} className="mr-1" /> {display}
       </span>
     );
@@ -442,7 +447,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
         <div className="flex items-center gap-2 text-xs min-w-0">
           <Link
             href={`/users/${activity.userId}`}
-            className="font-bold text-primary hover:text-accent transition-colors truncate"
+            className="font-bold text-primary-soft hover:text-accent transition-colors truncate"
             title={activity.userName}
           >
             {activity.userName}
@@ -517,7 +522,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-xl sm:text-2xl font-black text-gray-200 flex items-center gap-3 shrink-0">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-200 flex items-center gap-3 shrink-0">
           <ActivityIcon className="text-primary" size={28} />
           {t("activity.title", "Activity Log")}
         </h2>
@@ -554,6 +559,19 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
               {t("activity.clear_selection", "Clear selection")}
             </button>
           )}
+          {activeFilterCount > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                clearFilters();
+                setFilterResetKey((k) => k + 1);
+              }}
+              className="flex items-center gap-2 py-2 px-3 rounded-xl text-sm font-bold text-gray-300 hover:text-white border border-border hover:border-gray-500 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+            >
+              <FilterX size={16} />
+              {t("activity.clear_filters", "Clear filters ({{count}})", { count: activeFilterCount })}
+            </button>
+          )}
           {showLibraryFilter && (
             <LibraryFilter libraries={libraries} value={libraryIds} onChange={changeLibraryFilter} disabled={loading} />
           )}
@@ -562,7 +580,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
             onClick={() => fetchPage(page)}
             title={t("common.refresh", "Refresh")}
             aria-label={t("common.refresh", "Refresh")}
-            className="flex items-center px-2.5 py-1 rounded-md shrink-0 cursor-pointer hover:text-primary"
+            className="flex items-center px-2.5 py-1 rounded-md shrink-0 cursor-pointer hover:text-primary-soft"
           >
             <RefreshCw />
           </button>
@@ -597,6 +615,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
         {/* Mobile: search + sort toolbar */}
         <div className="md:hidden flex flex-col gap-2 p-3 bg-background/60 border-b border-border">
           <TextFilter
+            key={filterResetKey}
             keyName="fullName"
             value={getFilterValueOrDefault("fullName", "") as string}
             onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("fullName"))}
@@ -651,7 +670,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
         <div className="hidden md:block overflow-x-auto custom-scrollbar flex-1">
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
-              <tr className="group/row bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
+              <tr className="group/row bg-background/80 border-b border-border text-xs font-bold text-gray-500 uppercase tracking-wider select-none">
                 {isAdmin && (
                   <th className="w-10 pl-4 pr-1 text-center">
                     <input
@@ -722,7 +741,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
               </tr>
 
               {/* Filter Row */}
-              <tr className="bg-background/40 border-b border-border shadow-inner">
+              <tr key={filterResetKey} className="bg-background/40 border-b border-border shadow-inner">
                 {isAdmin && <th className="p-2"></th>}
                 <th className="p-2 border-r border-border/50"></th>
 

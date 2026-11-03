@@ -27,7 +27,7 @@ export default function ReportImportDialog({
     <Modal open onClose={onClose}>
         <ModalPanel className="p-0 md:p-0 max-w-lg max-h-[80dvh] flex flex-col">
           <div className="px-5 py-4 border-b border-border">
-            <ModalTitle className="text-lg font-black text-white">
+            <ModalTitle className="text-lg font-bold text-white">
               {blocked ? "This report can't be imported" : "Check before importing"}
             </ModalTitle>
             <p className="text-xs text-gray-500 mt-1 break-all">{fileName}</p>

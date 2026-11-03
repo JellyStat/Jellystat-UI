@@ -5,7 +5,7 @@ import { Modal, ModalPanel, ModalTitle } from "@/components/ui";
 
 /** Inline code. */
 const C = ({ children }: { children: ReactNode }) => (
-  <code className="px-1 py-0.5 rounded bg-background text-primary text-[12px] whitespace-nowrap">{children}</code>
+  <code className="px-1 py-0.5 rounded bg-background text-primary-soft text-xs whitespace-nowrap">{children}</code>
 );
 
 const Table = ({ head, rows }: { head: string[]; rows: ReactNode[][] }) => (
@@ -351,7 +351,7 @@ export default function HelpDialog({ onClose }: { onClose: () => void }) {
     <Modal open onClose={onClose}>
         <ModalPanel className="p-0 md:p-0 max-w-4xl h-full max-h-[86dvh] flex flex-col overflow-hidden">
           <div className="flex items-center justify-between gap-4 px-5 py-3 border-b border-border">
-            <ModalTitle className="flex items-center gap-2 text-lg font-black text-white">
+            <ModalTitle className="flex items-center gap-2 text-lg font-bold text-white">
               <CircleHelp size={20} className="text-primary" /> Report designer help
             </ModalTitle>
             <button type="button" onClick={onClose} className="p-1 text-gray-400 hover:text-white cursor-pointer" aria-label="Close">
@@ -375,7 +375,7 @@ export default function HelpDialog({ onClose }: { onClose: () => void }) {
               ))}
             </nav>
             <div className="flex-1 min-w-0 overflow-y-auto p-5">
-              <h2 className="text-base font-black text-white mb-3">{section.title}</h2>
+              <h2 className="text-base font-bold text-white mb-3">{section.title}</h2>
               {section.body}
             </div>
           </div>

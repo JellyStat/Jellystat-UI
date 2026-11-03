@@ -118,7 +118,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
         <div className="flex flex-wrap items-end gap-3">
           {parameters.map((p) => (
             <label key={p.name} className="flex flex-col gap-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">{p.label || p.name}</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">{p.label || p.name}</span>
               <ParameterInput
                 parameter={p}
                 className="w-48"
@@ -133,7 +133,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
           <button
             type="button"
             onClick={() => (JSON.stringify(values) === JSON.stringify(applied) ? load() : setApplied(values))}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 border border-primary/40 text-primary hover:bg-primary hover:text-white text-sm font-bold cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 border border-primary/40 text-primary-soft hover:bg-primary hover:text-white text-sm font-bold cursor-pointer"
           >
             <RefreshCw size={14} className={clsx(loading && "animate-spin")} /> {parameters.length ? "Apply" : "Refresh"}
           </button>

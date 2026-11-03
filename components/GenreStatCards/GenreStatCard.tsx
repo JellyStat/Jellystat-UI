@@ -16,7 +16,7 @@ export default function GenreStatCard({ data, dataKey }: Props) {
     if (active && payload && payload.length) {
       return (
         <div className="bg-surface/90 border border-border rounded-xl p-3 text-sm shadow-2xl shadow-black/40">
-          <p className="text-sm font-bold text-primary">{label}</p>
+          <p className="text-sm font-bold text-primary-soft">{label}</p>
           <p>
             {dataKey == "playDuration"
               ? (Number(payload[0].value ?? 0).secondsToDurationString?.() ?? "0")

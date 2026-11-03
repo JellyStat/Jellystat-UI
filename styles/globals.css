@@ -15,6 +15,9 @@
   /* Semantic roles (see UI_AUDIT.md). Prefer these over brand-* in new code. */
   --color-primary: var(--color-brand-purple);
   --color-primary-hover: #9a2cee;
+  /* Purple for small text: #aa3bff is 4.3:1 on cards, this is 5.0-6.1:1 on every surface.
+     Icons, borders, fills and focus rings keep --color-primary. */
+  --color-primary-soft: #b866ff;
   --color-on-primary: #ffffff;
   --color-accent: var(--color-brand-cyan);
   --color-accent-hover: #0090c2;

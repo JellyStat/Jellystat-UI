@@ -1,7 +1,7 @@
 // Shared semantic tones for tinted components (Badge, IconChip, alerts).
 // Full class strings so Tailwind can see them at build time.
 export const tintClass = {
-  primary: 'bg-primary/10 border-primary/20 text-primary',
+  primary: 'bg-primary/10 border-primary/20 text-primary-soft',
   accent: 'bg-accent/10 border-accent/20 text-accent',
   success: 'bg-success/10 border-success/20 text-success',
   danger: 'bg-danger/10 border-danger/20 text-danger',

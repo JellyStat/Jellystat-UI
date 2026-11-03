@@ -49,7 +49,7 @@ export default function RecentlyAdded({ gridify, grouped = true }: Props) {
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Sparkles size={28} className="text-accent" />
-        <h2 className="text-xl font-black text-white tracking-tight">{t("recently_added.title", "Recently Added")}</h2>
+        <h2 className="text-xl font-bold text-white tracking-tight">{t("recently_added.title", "Recently Added")}</h2>
       </div>
 
       <div className="relative w-full">

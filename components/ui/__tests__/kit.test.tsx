@@ -70,7 +70,7 @@ describe('Button standards', () => {
     expect(screen.getByRole('button', { name: 'Create' })).toHaveClass(
       'bg-primary-solid',
       'text-on-primary',
-      'font-black',
+      'font-bold',
       'px-5',
       'py-2.5'
     );

@@ -138,7 +138,7 @@ export default function TasksLogsPage() {
             <Clock size={14} className="mr-2 text-gray-500 hidden sm:block" />
             {formatDateTime(log.dateCreated)}
           </div>
-          <div className="sm:hidden text-[11px] font-mono text-gray-500 mt-1">{log.duration.secondsToDurationString()}</div>
+          <div className="sm:hidden text-xs font-mono text-gray-500 mt-1">{log.duration.secondsToDurationString()}</div>
         </td>
 
         {/* Duration */}

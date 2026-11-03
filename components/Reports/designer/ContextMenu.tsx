@@ -69,7 +69,7 @@ export default function ContextMenu({ x, y, items, onClose }: { x: number; y: nu
           >
             <span className="w-4 flex justify-center">{item.icon}</span>
             <span className="flex-1">{item.label}</span>
-            {item.shortcut && <span className="text-[10px] text-gray-500">{item.shortcut}</span>}
+            {item.shortcut && <span className="text-xs text-gray-500">{item.shortcut}</span>}
           </button>
         ),
       )}

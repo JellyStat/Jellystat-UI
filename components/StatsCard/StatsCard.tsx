@@ -136,7 +136,7 @@ export default function StatsCard({ type, id }: Props) {
     <div className="w-full animate-in fade-in duration-500">
       {/* Header & Settings */}
       <div className="flex items-center justify-between mb-4 relative">
-        <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
+        <h2 className="text-2xl font-bold text-white tracking-tight flex items-center gap-3">
           <Activity className="text-primary" size={28} />
           {title}
         </h2>
@@ -245,7 +245,7 @@ export default function StatsCard({ type, id }: Props) {
                     </div>
                     <div className="flex flex-col">
                       <span className="text-2xl font-black text-white leading-none">{stat?.plays ?? 0}</span>
-                      <span className="text-[10px] uppercase tracking-wider text-gray-500 mt-0.5">
+                      <span className="text-xs uppercase tracking-wider text-gray-500 mt-0.5">
                         {t("common.unit.plays", "Plays")}
                       </span>
                     </div>
@@ -261,7 +261,7 @@ export default function StatsCard({ type, id }: Props) {
                           ? ((stat.seconds as any).secondsToDurationString?.() ?? `${stat.seconds} sec`)
                           : t("stats_card.zero_seconds", "0 Seconds")}
                       </span>
-                      <span className="text-[10px] uppercase tracking-wider text-gray-500 mt-0.5">
+                      <span className="text-xs uppercase tracking-wider text-gray-500 mt-0.5">
                         {t("stats_card.duration", "Duration")}
                       </span>
                     </div>

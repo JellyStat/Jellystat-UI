@@ -156,7 +156,7 @@ function App({ Component, pageProps }: AppProps) {
                     <div className="mx-auto w-16 h-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mb-6 border border-danger/20 shadow-inner">
                       <AlertTriangle size={32} />
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-black text-white mb-3 tracking-tight">
+                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">
                       {t("app.connection_failed", "Connection Failed")}
                     </h2>
                     <p className="text-gray-400 text-sm mb-8">

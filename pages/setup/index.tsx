@@ -115,7 +115,7 @@ export default function SetupPage() {
             <div className="mx-auto w-16 h-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mb-6 border border-danger/20 shadow-inner">
               <AlertTriangle size={32} />
             </div>
-            <h2 className="text-2xl font-black text-white mb-2">{t("setup.config_error_title", "Configuration Error")}</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">{t("setup.config_error_title", "Configuration Error")}</h2>
             <p className="text-gray-400 text-sm mb-6">{error}</p>
             <button
               onClick={() => void fetchSystem()}
@@ -161,7 +161,7 @@ export default function SetupPage() {
                         >
                           {step.label}
                         </p>
-                        <p className="text-[10px] uppercase tracking-wider text-gray-500 mt-0.5 hidden sm:block">
+                        <p className="text-xs uppercase tracking-wider text-gray-500 mt-0.5 hidden sm:block">
                           {step.description}
                         </p>
                       </div>

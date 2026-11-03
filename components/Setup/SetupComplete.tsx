@@ -51,7 +51,7 @@ export default function SetupCompletePage() {
 
             {/* Inner Button Content */}
             <div className="relative flex items-center justify-center bg-surface hover:bg-transparent backdrop-blur-sm px-6 py-4 rounded-xl transition-colors">
-              <span className="font-black text-white tracking-wide text-lg">{t("setup.launch_button", "Launch Jellystat")}</span>
+              <span className="font-bold text-white tracking-wide text-lg">{t("setup.launch_button", "Launch Jellystat")}</span>
               <ArrowRight size={20} className="text-white ml-2 group-hover:translate-x-1.5 transition-transform" />
             </div>
           </button>

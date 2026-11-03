@@ -73,14 +73,14 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
         <div className="absolute inset-0 bg-linear-to-t from-surface via-surface/80 to-transparent"></div>
 
         {lib.archived && (
-          <div className="absolute top-2 right-2 z-20 bg-black/80 backdrop-blur-md text-[10px] font-bold text-gray-300 px-2 py-1 rounded-md border border-white/10 uppercase tracking-widest shadow-lg">
+          <div className="absolute top-2 right-2 z-20 bg-black/80 backdrop-blur-md text-xs font-bold text-gray-300 px-2 py-1 rounded-md border border-white/10 uppercase tracking-widest shadow-lg">
             {t("common.archived", "Archived")}
           </div>
         )}
 
         {/* Title Overlay */}
         <div className="absolute bottom-0 left-0 w-full p-5 flex justify-between items-end">
-          <h2 className="text-2xl font-black text-gray-200 tracking-tight drop-shadow-lg truncate pr-4">{lib.name}</h2>
+          <h2 className="text-2xl font-bold text-gray-200 tracking-tight drop-shadow-lg truncate pr-4">{lib.name}</h2>
           <Badge shape="square">{lib.type}</Badge>
         </div>
       </div>
@@ -119,11 +119,11 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
           <div className="flex items-start gap-2 text-sm">
             <History size={16} className="text-gray-500 shrink-0 mt-0.5" />
             <div className="flex flex-col min-w-0">
-              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+              <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
                 {t("library.last_played", "Last Played")}
               </span>
               <span className="font-medium text-gray-200 truncate">{lastPlayed}</span>
-              <span className="text-[10px] font-mono text-gray-400 mt-0.5">{lastActivityDate}</span>
+              <span className="text-xs font-mono text-gray-400 mt-0.5">{lastActivityDate}</span>
             </div>
           </div>
 
@@ -133,7 +133,7 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
               {lib.typeCounts.map((tItem) => (
                 <div
                   key={tItem.type}
-                  className="flex items-center bg-background border border-border px-2 py-1 rounded text-[11px] font-bold text-gray-300 shadow-inner"
+                  className="flex items-center bg-background border border-border px-2 py-1 rounded text-xs font-bold text-gray-300 shadow-inner"
                 >
                   <span className="text-gray-500 mr-1.5">{tItem.type}:</span>
                   {tItem.count ?? 0}
@@ -150,10 +150,10 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
 function StatBlock({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div className="flex flex-col">
-      <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">
+      <div className="flex items-center gap-1.5 text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
         {icon} {label}
       </div>
-      <span className="text-sm font-black text-gray-200 tracking-tight truncate">{value}</span>
+      <span className="text-sm font-bold text-gray-200 tracking-tight truncate">{value}</span>
     </div>
   );
 }
