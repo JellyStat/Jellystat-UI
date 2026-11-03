@@ -131,7 +131,7 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
                     <NumberField
                       value={query as number | undefined}
                       onChange={(val) => handleSingleChange(val)}
-                      className="bg-background border border-transparent hover:border-gray-500 focus:border-accent rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-accent"
+                      className="bg-background border border-transparent hover:border-gray-500 focus:border-primary rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
                 )}
@@ -142,7 +142,7 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
                       <NumberField
                         value={(query as NumberRangeValue)?.min ?? undefined}
                         onChange={(val) => handleRangeChange(val as number | null, true)}
-                        className="bg-background border border-transparent hover:border-gray-500 focus:border-accent rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-accent"
+                        className="bg-background border border-transparent hover:border-gray-500 focus:border-primary rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-primary"
                       />
                     </div>
                     <div className="flex flex-col gap-2">
@@ -150,7 +150,7 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
                       <NumberField
                         value={(query as NumberRangeValue)?.max ?? undefined}
                         onChange={(val) => handleRangeChange(val as number | null, false)}
-                        className="bg-background border border-transparent hover:border-gray-500 focus:border-accent rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-accent"
+                        className="bg-background border border-transparent hover:border-gray-500 focus:border-primary rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-primary"
                       />
                     </div>
                   </div>

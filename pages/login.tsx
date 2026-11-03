@@ -188,7 +188,7 @@ export default function LoginPage() {
             <div className="space-y-1.5">
               <Label htmlFor="login-username">{t("common.username", "Username")}</Label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-accent transition-colors">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-primary transition-colors">
                   <User size={18} />
                 </div>
                 <input
@@ -203,7 +203,7 @@ export default function LoginPage() {
                   className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-1 transition-all ${
                     usernameError
                       ? "border-danger/50 focus:border-danger focus:ring-danger"
-                      : "border-border focus:border-accent focus:ring-accent"
+                      : "border-border focus:border-primary focus:ring-primary"
                   }`}
                   disabled={loading}
                 />
@@ -219,7 +219,7 @@ export default function LoginPage() {
             <div className="space-y-1.5">
               <Label htmlFor="login-password">{t("common.password", "Password")}</Label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-accent transition-colors">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-primary transition-colors">
                   <Lock size={18} />
                 </div>
                 <input
@@ -234,7 +234,7 @@ export default function LoginPage() {
                   className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-1 transition-all ${
                     passwordError
                       ? "border-danger/50 focus:border-danger focus:ring-danger"
-                      : "border-border focus:border-accent focus:ring-accent"
+                      : "border-border focus:border-primary focus:ring-primary"
                   }`}
                   disabled={loading}
                 />

@@ -166,7 +166,7 @@ export default function UsersPage() {
       role="switch"
       aria-checked={user.tracked}
       aria-label={t("common.tracked", "Tracked")}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background ${
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
         user.tracked ? "bg-success" : "bg-surface border border-border"
       }`}
     >

@@ -39,6 +39,16 @@
 }
 
 @layer base {
+  /* Focus is always the primary colour: the browser's default outline for elements without
+     their own focus style, and native checkboxes, radios and range inputs. */
+  :root {
+    accent-color: var(--color-primary);
+  }
+
+  :focus-visible {
+    outline-color: var(--color-primary);
+  }
+
   html,
   body {
     @apply bg-background text-gray-100 antialiased h-full w-full overflow-hidden;
