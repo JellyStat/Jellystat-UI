@@ -1,6 +1,9 @@
 # Jellystat Web UI
 
-A fast, responsive, and lightweight web dashboard for [Jellystat](https://github.com/CyferShepard/Jellystat). Built with Next.js and Tailwind CSS, this interface is designed to provide real-time telemetry, user management, and activity tracking for your Jellyfin or Emby media servers without the overhead of heavy component libraries.
+> [!TIP]
+> **Looking to install Jellystat?** Head to [JellyStat/Jellystat](https://github.com/JellyStat/Jellystat) for install instructions, and to report bugs or request features. This repo is for developing the web interface.
+
+A fast, responsive, and lightweight web dashboard for [Jellystat](https://github.com/JellyStat/Jellystat). Built with Next.js and Tailwind CSS, this interface is designed to provide real-time telemetry, user management, and activity tracking for your Jellyfin or Emby media servers without the overhead of heavy component libraries.
 
 ## Features
 
