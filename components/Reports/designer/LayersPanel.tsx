@@ -19,6 +19,7 @@ import {
 import { useState } from "react";
 import type { ReportElement } from "@/lib/models/reports";
 import { useDesigner } from "./designerStore";
+import { dt } from "./i18n";
 
 const ICONS: Record<string, LucideIcon> = {
   text: Type,
@@ -43,7 +44,7 @@ export default function LayersPanel() {
   const rows = [...page.elements].reverse();
 
   if (!rows.length) {
-    return <p className="p-4 text-xs text-gray-500">This page is empty. Add elements from the Insert tab.</p>;
+    return <p className="p-4 text-xs text-gray-500">{dt("reports.designer.this_page_is_empty_add_elements_from_the_insert", "This page is empty. Add elements from the Insert tab.")}</p>;
   }
 
   return (
@@ -128,7 +129,7 @@ export default function LayersPanel() {
             )}
             <button
               type="button"
-              title={e.locked ? "Unlock" : "Lock"}
+              title={e.locked ? dt("reports.designer.unlock", "Unlock") : dt("reports.designer.lock", "Lock")}
               className={clsx("p-0.5 hover:text-white cursor-pointer", e.locked ? "text-warning" : "opacity-0 group-hover:opacity-100")}
               onClick={(ev) => {
                 ev.stopPropagation();
@@ -141,7 +142,7 @@ export default function LayersPanel() {
             </button>
             <button
               type="button"
-              title={e.hidden ? "Show" : "Hide"}
+              title={e.hidden ? dt("reports.designer.show", "Show") : dt("reports.designer.hide", "Hide")}
               className={clsx("p-0.5 hover:text-white cursor-pointer", e.hidden ? "text-gray-300" : "opacity-0 group-hover:opacity-100")}
               onClick={(ev) => {
                 ev.stopPropagation();

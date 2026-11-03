@@ -11,6 +11,7 @@ import { formatValue } from "@/lib/reports/format";
 import { Field, inputClass, NumberInput, Select, TextInput, useCapabilities } from "./controls";
 import FilterBuilder from "./FilterBuilder";
 import { Modal, ModalPanel, ModalTitle, Spinner } from "@/components/ui";
+import { dt } from "./i18n";
 
 interface Props {
   source: ReportDataSource;
@@ -24,21 +25,21 @@ interface Props {
 }
 
 const AGGREGATE_LABELS: Record<string, string> = {
-  count: "Count",
-  countDistinct: "Count distinct",
-  sum: "Sum",
-  avg: "Average",
-  min: "Minimum",
-  max: "Maximum",
+  get count() { return dt("reports.designer.count", "Count"); },
+  get countDistinct() { return dt("reports.designer.count_distinct", "Count distinct"); },
+  get sum() { return dt("reports.designer.sum", "Sum"); },
+  get avg() { return dt("reports.designer.average", "Average"); },
+  get min() { return dt("reports.designer.minimum", "Minimum"); },
+  get max() { return dt("reports.designer.maximum", "Maximum"); },
 };
 
 const BUCKET_LABELS: Record<string, string> = {
-  hour: "Hour",
-  day: "Day",
-  weekday: "Day of week",
-  hourOfDay: "Hour of day",
-  month: "Month",
-  year: "Year",
+  get hour() { return dt("reports.designer.hour", "Hour"); },
+  get day() { return dt("reports.designer.day", "Day"); },
+  get weekday() { return dt("reports.designer.day_of_week", "Day of week"); },
+  get hourOfDay() { return dt("reports.designer.hour_of_day", "Hour of day"); },
+  get month() { return dt("reports.designer.month", "Month"); },
+  get year() { return dt("reports.designer.year", "Year"); },
 };
 
 export default function DataSourceEditor({ source, allSources, parameters, timeZone, onApply, onClose }: Props) {
@@ -81,7 +82,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
         }),
       );
     } catch (err: any) {
-      setError(err?.message ?? "Query failed");
+      setError(err?.message ?? dt("reports.designer.query_failed", "Query failed"));
       setPreview(null);
     } finally {
       setRunning(false);
@@ -103,9 +104,9 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
         <ModalPanel className="p-0 md:p-0 max-w-6xl h-full max-h-[92dvh] flex flex-col overflow-hidden">
           <div className="flex items-center justify-between gap-4 px-5 py-3 border-b border-border">
             <ModalTitle className="flex items-center gap-2 text-lg font-bold text-white">
-              <Database size={20} className="text-primary" /> Data source
+              <Database size={20} className="text-primary" /> {dt("reports.designer.data_source", "Data source")}
             </ModalTitle>
-            <button type="button" onClick={onClose} className="p-1 text-gray-400 hover:text-white cursor-pointer" aria-label="Close">
+            <button type="button" onClick={onClose} className="p-1 text-gray-400 hover:text-white cursor-pointer" aria-label={dt("reports.designer.close", "Close")}>
               <X size={18} />
             </button>
           </div>
@@ -115,8 +116,8 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
             <div className="overflow-y-auto p-5 space-y-5 border-b lg:border-b-0 lg:border-r border-border">
               <div className="flex rounded-lg border border-border overflow-hidden text-xs font-bold w-fit">
                 {[
-                  { value: false, label: "Query a dataset" },
-                  { value: true, label: "Combine data sources" },
+                  { value: false, label: dt("reports.designer.query_a_dataset", "Query a dataset") },
+                  { value: true, label: dt("reports.designer.combine_data_sources", "Combine data sources") },
                 ].map((m) => (
                   <button
                     key={m.label}
@@ -133,11 +134,11 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Name">
+                <Field label={dt("reports.designer.name", "Name")}>
                   <TextInput value={draft.name} onChange={(v) => set({ name: v })} />
                 </Field>
                 {!derived && (
-                  <Field label="Dataset">
+                  <Field label={dt("reports.designer.dataset", "Dataset")}>
                     <Select
                       value={draft.dataset}
                       options={(caps?.datasets ?? []).map((d) => ({ value: d.key, label: d.label }))}
@@ -173,7 +174,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                 <>
                   {dataset && <p className="text-xs text-gray-500 -mt-3">{dataset.description}</p>}
 
-                  <Field label="Calculated fields" hint="Computed per row in the database; use them like any other field">
+                  <Field label={dt("reports.designer.calculated_fields", "Calculated fields")} hint={dt("reports.designer.computed_per_row_in_the_database_use_them_like_a", "Computed per row in the database; use them like any other field")}>
                     <CalculatedFieldsEditor
                       calculated={draft.calculated ?? []}
                       fields={dataset?.fields ?? []}
@@ -181,7 +182,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                     />
                   </Field>
 
-                  <Field label="Filter">
+                  <Field label={dt("reports.designer.filter", "Filter")}>
                     <FilterBuilder
                       node={draft.filter ?? { combinator: "and", rules: [] }}
                       fields={fields}
@@ -197,21 +198,21 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                         removed:
                       </p>
                       <code className="block break-all text-gray-200">{draft.gridifyFilter}</code>
-                      <p>Add the same conditions to the filter above, then remove this one.</p>
+                      <p>{dt("reports.designer.add_the_same_conditions_to_the_filter_above_then", "Add the same conditions to the filter above, then remove this one.")}</p>
                       <button
                         type="button"
                         className="font-bold underline cursor-pointer hover:text-white"
                         onClick={() => set({ gridifyFilter: null })}
                       >
-                        Remove the raw filter
+                        {dt("reports.designer.remove_the_raw_filter", "Remove the raw filter")}
                       </button>
                     </div>
                   )}
 
                   <div className="flex rounded-lg border border-border overflow-hidden text-xs font-bold w-fit">
                     {[
-                      { value: false, label: "Rows" },
-                      { value: true, label: "Summary (group & aggregate)" },
+                      { value: false, label: dt("reports.designer.rows", "Rows") },
+                      { value: true, label: dt("reports.designer.summary_group_and_aggregate", "Summary (group & aggregate)") },
                     ].map((m) => (
                       <button
                         key={m.label}
@@ -231,7 +232,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                   </div>
 
                   {!grouped && (
-                    <Field label="Columns (none ticked = all)">
+                    <Field label={dt("reports.designer.columns_none_ticked_all", "Columns (none ticked = all)")}>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-1">
                         {fields.map((f) => (
                           <label
@@ -258,7 +259,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
 
                   {grouped && (
                     <>
-                      <Field label="Group by">
+                      <Field label={dt("reports.designer.group_by", "Group by")}>
                         <div className="space-y-1.5">
                           {draft.groupBy.map((g, i) => {
                             const f = fields.find((x) => x.key === g.field);
@@ -299,7 +300,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                                 )}
                                 <TextInput
                                   value={g.alias ?? ""}
-                                  placeholder="column name"
+                                  placeholder={dt("reports.designer.column_name", "column name")}
                                   onChange={(v) =>
                                     set({
                                       groupBy: draft.groupBy.map((x, j) => (j === i ? { ...x, alias: v || null } : x)),
@@ -329,13 +330,13 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                                 }
                               }}
                             >
-                              <Plus size={12} /> Group
+                              <Plus size={12} /> {dt("reports.designer.group", "Group")}
                             </button>
                           )}
                         </div>
                       </Field>
 
-                      <Field label="Values">
+                      <Field label={dt("reports.designer.values", "Values")}>
                         <div className="space-y-1.5">
                           {draft.aggregates.map((a, i) => (
                             <div key={i} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)_minmax(0,1fr)_auto] gap-1.5">
@@ -374,7 +375,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                               />
                               <TextInput
                                 value={a.alias ?? ""}
-                                placeholder="column name"
+                                placeholder={dt("reports.designer.column_name", "column name")}
                                 onChange={(v) =>
                                   set({
                                     aggregates: draft.aggregates.map((x, j) => (j === i ? { ...x, alias: v || null } : x)),
@@ -405,14 +406,14 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                               })
                             }
                           >
-                            <Plus size={12} /> Value
+                            <Plus size={12} /> {dt("reports.designer.value", "Value")}
                           </button>
                         </div>
                       </Field>
                     </>
                   )}
 
-                  <Field label="Sort">
+                  <Field label={dt("reports.designer.sort", "Sort")}>
                     <div className="space-y-1.5">
                       {draft.sort.map((s, i) => (
                         <div key={i} className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] gap-1.5 items-center">
@@ -439,8 +440,8 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                               })
                             }
                           >
-                            <option value="asc">Ascending</option>
-                            <option value="desc">Descending</option>
+                            <option value="asc">{dt("reports.designer.ascending", "Ascending")}</option>
+                            <option value="desc">{dt("reports.designer.descending", "Descending")}</option>
                           </select>
                           <button
                             type="button"
@@ -475,14 +476,14 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                           }
                         }}
                       >
-                        <Plus size={12} /> Sort
+                        <Plus size={12} /> {dt("reports.designer.sort", "Sort")}
                       </button>
                     </div>
                   </Field>
                 </>
               )}
 
-              <Field label="After the query" hint="Steps applied to the result, in order">
+              <Field label={dt("reports.designer.after_the_query", "After the query")} hint={dt("reports.designer.steps_applied_to_the_result_in_order", "Steps applied to the result, in order")}>
                 <TransformsEditor
                   transforms={draft.transforms ?? []}
                   columns={queryColumns}
@@ -493,7 +494,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
               </Field>
 
               {!derived && (
-                <Field label={`Row limit (max ${caps?.maxRows ?? 10000})`}>
+                <Field label={dt("reports.designer.row_limit_max", "Row limit (max {{max}})", { max: caps?.maxRows ?? 10000 })}>
                   <div className="w-32">
                     <NumberInput value={draft.limit ?? 1000} min={1} max={caps?.maxRows ?? 10000} onChange={(v) => set({ limit: v ?? 1000 })} />
                   </div>
@@ -506,7 +507,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
               <div className="flex items-start gap-3">
                 {/* Wraps (and scrolls past a few lines) so the button always stays in view */}
                 <div className="flex-1 min-w-0 flex flex-wrap items-center gap-x-1.5 gap-y-1 max-h-16 overflow-y-auto text-xs text-gray-400">
-                  <span>Columns:</span>
+                  <span>{dt("reports.designer.columns", "Columns:")}</span>
                   {outputColumns.map((c) => (
                     <code key={c.name} className="text-gray-300 break-all">
                       {c.name}
@@ -525,7 +526,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
               <div className="flex-1 min-h-0 overflow-auto rounded-lg border border-border bg-background">
                 {error && <p className="p-4 text-xs text-danger">{error}</p>}
                 {preview?.error && <p className="p-4 text-xs text-danger">{preview.error}</p>}
-                {!preview && !error && <p className="p-4 text-xs text-gray-500">Run the query to see the first 100 rows.</p>}
+                {!preview && !error && <p className="p-4 text-xs text-gray-500">{dt("reports.designer.run_the_query_to_see_the_first_100_rows", "Run the query to see the first 100 rows.")}</p>}
                 {preview && !preview.error && (
                   <table className="w-full text-xs">
                     <thead className="sticky top-0 bg-surface">
@@ -565,7 +566,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
               onClick={onClose}
               className="px-4 py-2 rounded-lg bg-background border border-border text-gray-200 hover:text-white text-sm cursor-pointer"
             >
-              Cancel
+              {dt("reports.designer.cancel", "Cancel")}
             </button>
             <button
               type="button"
@@ -573,7 +574,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
               disabled={!draft.name.trim()}
               className="px-4 py-2 rounded-lg bg-primary-solid text-white text-sm font-bold hover:bg-primary-solid-hover cursor-pointer disabled:opacity-50"
             >
-              Apply
+              {dt("reports.designer.apply", "Apply")}
             </button>
           </div>
         </ModalPanel>

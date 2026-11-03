@@ -3,35 +3,41 @@ import type { ReportColumn, ReportParameter, ReportSort, ReportTransform, Report
 import { applyTransformColumns } from "@/lib/reports/columns";
 import { CALCULATED_TYPES } from "./CalculatedFieldsEditor";
 import { Field, inputClass, NumberInput, Select, TextInput, Toggle } from "./controls";
+import { dt } from "./i18n";
 
 export const TRANSFORM_LABELS: Record<ReportTransformType, { label: string; help: string }> = {
-  filter: { label: "Filter rows", help: "Keep rows matching a condition on the result, e.g. plays at least 10 (works on totals)." },
+  filter: { get label() { return dt("reports.designer.filter_rows", "Filter rows"); }, get help() { return dt("reports.designer.keep_rows_matching_a_condition_on_the_result_e_g", "Keep rows matching a condition on the result, e.g. plays at least 10 (works on totals)."); } },
   calculate: {
-    label: "Calculate column",
-    help: 'Add a column computed from the row\'s other columns, e.g. watch / plays / 60, or iif(plays >= 10, "Regular", "Casual").',
+    get label() { return dt("reports.designer.calculate_column", "Calculate column"); },
+    get help() {
+      return dt(
+        "reports.designer.calculate_column_help",
+        'Add a column computed from the row\'s other columns, e.g. watch / plays / 60, or iif(plays >= 10, "Regular", "Casual").',
+      );
+    },
   },
-  topN: { label: "Top N", help: 'Keep the highest (or lowest) rows, optionally per group, folding the rest into an "Other" row.' },
-  pivot: { label: "Pivot", help: "Turn the values of one column into columns, e.g. users down the side and months across." },
-  runningTotal: { label: "Running total", help: "Add a column that accumulates a value down the rows." },
-  percentOfTotal: { label: "Percent of total", help: "Add a column with each row's share of the total." },
-  rank: { label: "Rank", help: "Add a column ranking rows by a value (ties share a rank)." },
-  change: { label: "Change from previous", help: "Add a column with the difference (or % change) from the row above." },
-  fillDates: { label: "Fill missing dates", help: "Add zero rows for days, months, hours or weekdays with no data, so charts don't skip them." },
-  sort: { label: "Sort", help: "Sort the result, including columns added by earlier steps." },
-  limit: { label: "Limit", help: "Keep only the first N rows." },
+  topN: { get label() { return dt("reports.designer.top_n", "Top N"); }, get help() { return dt("reports.designer.top_n_help", 'Keep the highest (or lowest) rows, optionally per group, folding the rest into an "Other" row.'); } },
+  pivot: { get label() { return dt("reports.designer.pivot", "Pivot"); }, get help() { return dt("reports.designer.turn_the_values_of_one_column_into_columns_e_g_u", "Turn the values of one column into columns, e.g. users down the side and months across."); } },
+  runningTotal: { get label() { return dt("reports.designer.running_total", "Running total"); }, get help() { return dt("reports.designer.add_a_column_that_accumulates_a_value_down_the_r", "Add a column that accumulates a value down the rows."); } },
+  percentOfTotal: { get label() { return dt("reports.designer.percent_of_total", "Percent of total"); }, get help() { return dt("reports.designer.add_a_column_with_each_row_s_share_of_the_total", "Add a column with each row's share of the total."); } },
+  rank: { get label() { return dt("reports.designer.rank", "Rank"); }, get help() { return dt("reports.designer.add_a_column_ranking_rows_by_a_value_ties_share", "Add a column ranking rows by a value (ties share a rank)."); } },
+  change: { get label() { return dt("reports.designer.change_from_previous", "Change from previous"); }, get help() { return dt("reports.designer.add_a_column_with_the_difference_or_percent_chan", "Add a column with the difference (or % change) from the row above."); } },
+  fillDates: { get label() { return dt("reports.designer.fill_missing_dates", "Fill missing dates"); }, get help() { return dt("reports.designer.add_zero_rows_for_days_months_hours_or_weekdays", "Add zero rows for days, months, hours or weekdays with no data, so charts don't skip them."); } },
+  sort: { get label() { return dt("reports.designer.sort", "Sort"); }, get help() { return dt("reports.designer.sort_the_result_including_columns_added_by_earli", "Sort the result, including columns added by earlier steps."); } },
+  limit: { get label() { return dt("reports.designer.limit", "Limit"); }, get help() { return dt("reports.designer.keep_only_the_first_n_rows", "Keep only the first N rows."); } },
 };
 
 const FILTER_OPERATORS = [
   { value: "eq", label: "equals" },
-  { value: "neq", label: "does not equal" },
-  { value: "gt", label: "greater than" },
-  { value: "gte", label: "at least" },
-  { value: "lt", label: "less than" },
-  { value: "lte", label: "at most" },
+  { value: "neq", get label() { return dt("reports.designer.does_not_equal", "does not equal"); } },
+  { value: "gt", get label() { return dt("reports.designer.greater_than", "greater than"); } },
+  { value: "gte", get label() { return dt("reports.designer.at_least", "at least"); } },
+  { value: "lt", get label() { return dt("reports.designer.less_than", "less than"); } },
+  { value: "lte", get label() { return dt("reports.designer.at_most", "at most"); } },
   { value: "contains", label: "contains" },
-  { value: "notContains", label: "does not contain" },
-  { value: "isNull", label: "is empty" },
-  { value: "isNotNull", label: "is not empty" },
+  { value: "notContains", get label() { return dt("reports.designer.does_not_contain", "does not contain"); } },
+  { value: "isNull", get label() { return dt("reports.designer.is_empty", "is empty"); } },
+  { value: "isNotNull", get label() { return dt("reports.designer.is_not_empty", "is not empty"); } },
 ];
 
 const newStep = (type: ReportTransformType, columns: ReportColumn[]): ReportTransform => {
@@ -116,7 +122,7 @@ function StepFields({
                   onKeyDown={(ev) => ev.stopPropagation()}
                   onChange={(ev) => set({ parameter: ev.target.value || null })}
                 >
-                  <option value="">Value</option>
+                  <option value="">{dt("reports.designer.value", "Value")}</option>
                   {parameters.map((p) => (
                     <option key={p.name} value={p.name}>
                       @{p.name}
@@ -137,62 +143,62 @@ function StepFields({
     case "topN":
       return (
         <div className="grid grid-cols-2 gap-1.5">
-          <Field label="By">
+          <Field label={dt("reports.designer.by", "By")}>
             <ColumnSelect value={step.field} columns={columns} onChange={(v) => set({ field: v })} />
           </Field>
           <div className="grid grid-cols-[70px_1fr] gap-1.5">
             <Field label="N">
               <NumberInput value={step.count ?? 5} min={1} onChange={(v) => set({ count: v ?? 5 })} />
             </Field>
-            <Field label="Keep">
+            <Field label={dt("reports.designer.keep", "Keep")}>
               <Select
                 value={step.desc === false ? "lowest" : "highest"}
                 options={[
-                  { value: "highest", label: "Highest" },
-                  { value: "lowest", label: "Lowest" },
+                  { value: "highest", label: dt("reports.designer.highest", "Highest") },
+                  { value: "lowest", label: dt("reports.designer.lowest", "Lowest") },
                 ]}
                 onChange={(v) => set({ desc: v === "highest" })}
               />
             </Field>
           </div>
-          <Field label="Per group (optional)">
+          <Field label={dt("reports.designer.per_group_optional", "Per group (optional)")}>
             <ColumnSelect value={step.partitionBy} columns={columns} optional="Whole result" onChange={(v) => set({ partitionBy: v })} />
           </Field>
-          <Field label="Rest as (blank = drop)">
-            <TextInput value={step.otherLabel ?? ""} placeholder="Other" onChange={(v) => set({ otherLabel: v || null })} />
+          <Field label={dt("reports.designer.rest_as_blank_drop", "Rest as (blank = drop)")}>
+            <TextInput value={step.otherLabel ?? ""} placeholder={dt("reports.designer.other", "Other")} onChange={(v) => set({ otherLabel: v || null })} />
           </Field>
         </div>
       );
     case "pivot":
       return (
         <div className="grid grid-cols-2 gap-1.5">
-          <Field label="Rows">
+          <Field label={dt("reports.designer.rows", "Rows")}>
             <ColumnSelect value={step.rowField} columns={columns} onChange={(v) => set({ rowField: v })} />
           </Field>
-          <Field label="Columns from">
+          <Field label={dt("reports.designer.columns_from", "Columns from")}>
             <ColumnSelect value={step.columnField} columns={columns} onChange={(v) => set({ columnField: v })} />
           </Field>
-          <Field label="Values">
+          <Field label={dt("reports.designer.values", "Values")}>
             <ColumnSelect value={step.field} columns={columns} onChange={(v) => set({ field: v })} />
           </Field>
-          <Field label="Combine with">
+          <Field label={dt("reports.designer.combine_with", "Combine with")}>
             <Select
               value={step.aggregate ?? "sum"}
               options={["sum", "count", "avg", "min", "max", "first"].map((a) => ({ value: a, label: a }))}
               onChange={(v) => set({ aggregate: v })}
             />
           </Field>
-          <Toggle label="Empty cells as 0" checked={step.fillZero !== false} onChange={(v) => set({ fillZero: v })} />
-          <Toggle label="Sort columns" checked={step.sortColumns !== false} onChange={(v) => set({ sortColumns: v })} />
+          <Toggle label={dt("reports.designer.empty_cells_as_0", "Empty cells as 0")} checked={step.fillZero !== false} onChange={(v) => set({ fillZero: v })} />
+          <Toggle label={dt("reports.designer.sort_columns", "Sort columns")} checked={step.sortColumns !== false} onChange={(v) => set({ sortColumns: v })} />
         </div>
       );
     case "fillDates":
       return (
         <div className="grid grid-cols-2 gap-1.5">
-          <Field label="Date bucket column">
+          <Field label={dt("reports.designer.date_bucket_column", "Date bucket column")}>
             <ColumnSelect value={step.field} columns={columns} onChange={(v) => set({ field: v })} />
           </Field>
-          <Field label="Range" hint="Blank: from the first to the last date in the data">
+          <Field label={dt("reports.designer.range", "Range")} hint={dt("reports.designer.blank_from_the_first_to_the_last_date_in_the_dat", "Blank: from the first to the last date in the data")}>
             <div className="flex gap-1">
               {parameters.length > 0 && (
                 <select
@@ -201,7 +207,7 @@ function StepFields({
                   onKeyDown={(ev) => ev.stopPropagation()}
                   onChange={(ev) => set({ parameter: ev.target.value || null })}
                 >
-                  <option value="">Days</option>
+                  <option value="">{dt("reports.designer.days", "Days")}</option>
                   {parameters.map((p) => (
                     <option key={p.name} value={p.name}>
                       @{p.name}
@@ -209,7 +215,7 @@ function StepFields({
                   ))}
                 </select>
               )}
-              {!step.parameter && <NumberInput value={step.count ?? null} min={1} placeholder="last N days" onChange={(v) => set({ count: v })} />}
+              {!step.parameter && <NumberInput value={step.count ?? null} min={1} placeholder={dt("reports.designer.last_n_days", "last N days")} onChange={(v) => set({ count: v })} />}
             </div>
           </Field>
         </div>
@@ -227,8 +233,8 @@ function StepFields({
               <Select
                 value={s.desc ? "desc" : "asc"}
                 options={[
-                  { value: "asc", label: "Ascending" },
-                  { value: "desc", label: "Descending" },
+                  { value: "asc", label: dt("reports.designer.ascending", "Ascending") },
+                  { value: "desc", label: dt("reports.designer.descending", "Descending") },
                 ]}
                 onChange={(v) => set({ sort: (step.sort ?? []).map((x, j) => (j === i ? { ...x, desc: v === "desc" } : x)) })}
               />
@@ -246,7 +252,7 @@ function StepFields({
             className="flex items-center gap-1 text-xs text-gray-400 hover:text-white cursor-pointer"
             onClick={() => set({ sort: [...(step.sort ?? []), { field: columns[0]?.name ?? "", desc: true } as ReportSort] })}
           >
-            <Plus size={12} /> Sort column
+            <Plus size={12} /> {dt("reports.designer.sort_column", "Sort column")}
           </button>
         </div>
       );
@@ -254,14 +260,14 @@ function StepFields({
       return (
         <div className="space-y-1.5">
           <div className="grid grid-cols-2 gap-1.5">
-            <Field label="New column name">
+            <Field label={dt("reports.designer.new_column_name", "New column name")}>
               <TextInput value={step.alias ?? ""} onChange={(v) => set({ alias: v.replace(/[^A-Za-z0-9_]/g, "") || null })} />
             </Field>
-            <Field label="Type">
+            <Field label={dt("reports.designer.type", "Type")}>
               <Select value={step.mode ?? "auto"} options={CALCULATED_TYPES} onChange={(v) => set({ mode: v === "auto" ? null : v })} />
             </Field>
           </div>
-          <Field label="Expression">
+          <Field label={dt("reports.designer.expression", "Expression")}>
             <TextInput multiline rows={2} value={step.expression ?? ""} placeholder="watch / plays / 60" onChange={(v) => set({ expression: v })} />
           </Field>
           <p className="text-xs text-gray-500">
@@ -275,7 +281,7 @@ function StepFields({
       );
     case "limit":
       return (
-        <Field label="Rows" className="w-28">
+        <Field label={dt("reports.designer.rows", "Rows")} className="w-28">
           <NumberInput value={step.count ?? 10} min={0} onChange={(v) => set({ count: v ?? 10 })} />
         </Field>
       );
@@ -283,38 +289,38 @@ function StepFields({
       // runningTotal, percentOfTotal, rank, change
       return (
         <div className="grid grid-cols-2 gap-1.5">
-          <Field label="Of">
+          <Field label={dt("reports.designer.of", "Of")}>
             <ColumnSelect value={step.field} columns={columns} onChange={(v) => set({ field: v })} />
           </Field>
-          <Field label="New column name">
+          <Field label={dt("reports.designer.new_column_name", "New column name")}>
             <TextInput
               value={step.alias ?? ""}
               placeholder={`${step.field ?? "value"}_${step.type === "runningTotal" ? "running" : step.type === "percentOfTotal" ? "pct" : step.type}`}
               onChange={(v) => set({ alias: v || null })}
             />
           </Field>
-          <Field label="Restart for each (optional)">
+          <Field label={dt("reports.designer.restart_for_each_optional", "Restart for each (optional)")}>
             <ColumnSelect value={step.partitionBy} columns={columns} optional="Whole result" onChange={(v) => set({ partitionBy: v })} />
           </Field>
           {step.type === "rank" && (
-            <Field label="Rank 1 is">
+            <Field label={dt("reports.designer.rank_1_is", "Rank 1 is")}>
               <Select
                 value={step.desc === false ? "lowest" : "highest"}
                 options={[
-                  { value: "highest", label: "Highest" },
-                  { value: "lowest", label: "Lowest" },
+                  { value: "highest", label: dt("reports.designer.highest", "Highest") },
+                  { value: "lowest", label: dt("reports.designer.lowest", "Lowest") },
                 ]}
                 onChange={(v) => set({ desc: v === "highest" })}
               />
             </Field>
           )}
           {step.type === "change" && (
-            <Field label="As">
+            <Field label={dt("reports.designer.as", "As")}>
               <Select
                 value={step.mode ?? "difference"}
                 options={[
-                  { value: "difference", label: "Difference" },
-                  { value: "percent", label: "% change" },
+                  { value: "difference", label: dt("reports.designer.difference", "Difference") },
+                  { value: "percent", label: dt("reports.designer.percent_change", "% change") },
                 ]}
                 onChange={(v) => set({ mode: v })}
               />
@@ -365,15 +371,15 @@ export default function TransformsEditor({
             <span className="text-xs font-bold text-gray-200 flex-1" title={TRANSFORM_LABELS[step.type]?.help}>
               {TRANSFORM_LABELS[step.type]?.label ?? step.type}
             </span>
-            <button type="button" title="Move up" className="p-0.5 text-gray-500 hover:text-white cursor-pointer" onClick={() => move(i, -1)}>
+            <button type="button" title={dt("reports.designer.move_up", "Move up")} className="p-0.5 text-gray-500 hover:text-white cursor-pointer" onClick={() => move(i, -1)}>
               <ArrowUp size={12} />
             </button>
-            <button type="button" title="Move down" className="p-0.5 text-gray-500 hover:text-white cursor-pointer" onClick={() => move(i, 1)}>
+            <button type="button" title={dt("reports.designer.move_down", "Move down")} className="p-0.5 text-gray-500 hover:text-white cursor-pointer" onClick={() => move(i, 1)}>
               <ArrowDown size={12} />
             </button>
             <button
               type="button"
-              title="Remove step"
+              title={dt("reports.designer.remove_step", "Remove step")}
               className="p-0.5 text-gray-500 hover:text-danger cursor-pointer"
               onClick={() => onChange(transforms.filter((_, j) => j !== i))}
             >
@@ -394,7 +400,7 @@ export default function TransformsEditor({
           }
         }}
       >
-        <option value="">+ Add step...</option>
+        <option value="">{dt("reports.designer.add_step", "+ Add step...")}</option>
         {(Object.keys(TRANSFORM_LABELS) as ReportTransformType[]).map((t) => (
           <option key={t} value={t}>
             {TRANSFORM_LABELS[t].label}

@@ -1,6 +1,7 @@
 import { AlertCircle, AlertTriangle } from "lucide-react";
 import type { ReportImportResult } from "@/lib/models/reports";
 import { Modal, ModalPanel, ModalTitle } from "@/components/ui";
+import { dt } from "./designer/i18n";
 
 /** Shows what's wrong with an imported file. Errors block the import; warnings let the user decide. */
 export default function ReportImportDialog({
@@ -28,7 +29,7 @@ export default function ReportImportDialog({
         <ModalPanel className="p-0 md:p-0 max-w-lg max-h-[80dvh] flex flex-col">
           <div className="px-5 py-4 border-b border-border">
             <ModalTitle className="text-lg font-bold text-white">
-              {blocked ? "This report can't be imported" : "Check before importing"}
+              {blocked ? dt("reports.designer.this_report_can_t_be_imported", "This report can't be imported") : dt("reports.designer.check_before_importing", "Check before importing")}
             </ModalTitle>
             <p className="text-xs text-gray-500 mt-1 break-all">{fileName}</p>
           </div>
@@ -42,7 +43,7 @@ export default function ReportImportDialog({
               onClick={onClose}
               className="px-4 py-2 rounded-xl text-sm font-bold border border-border text-gray-300 hover:text-white cursor-pointer"
             >
-              {blocked ? "Close" : "Cancel"}
+              {blocked ? dt("reports.designer.close", "Close") : dt("reports.designer.cancel", "Cancel")}
             </button>
             {!blocked && (
               <button
@@ -50,7 +51,7 @@ export default function ReportImportDialog({
                 onClick={onImport}
                 className="px-4 py-2 rounded-xl text-sm font-bold bg-primary-solid hover:bg-primary-solid-hover text-white cursor-pointer"
               >
-                Import anyway
+                {dt("reports.designer.import_anyway", "Import anyway")}
               </button>
             )}
           </div>

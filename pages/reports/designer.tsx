@@ -60,7 +60,7 @@ export default function ReportDesignerPage() {
   return (
     <>
       <Head>
-        <title>{doc?.name || t("reports.designer", "Report designer")} | Jellystat</title>
+        <title>{doc?.name || t("reports.designer_title", "Report designer")} | Jellystat</title>
       </Head>
       {error && (
         <div className="p-6 flex items-center gap-3 text-gray-300">

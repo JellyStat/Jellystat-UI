@@ -2,12 +2,13 @@ import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@/compone
 import { Check, ChevronDown } from "lucide-react";
 import { FONT_FAMILIES } from "@/lib/reports/defaults";
 import { firstFamily, fontStack, useReportFonts } from "@/lib/reports/fonts";
+import { dt } from "./i18n";
 
 const CATEGORY_LABELS: Record<string, string> = {
-  "sans-serif": "Sans serif",
-  serif: "Serif",
-  display: "Display",
-  monospace: "Monospace",
+  get "sans-serif"() { return dt("reports.designer.sans_serif", "Sans serif"); },
+  get serif() { return dt("reports.designer.serif", "Serif"); },
+  get display() { return dt("reports.designer.display", "Display"); },
+  get monospace() { return dt("reports.designer.monospace", "Monospace"); },
 };
 
 /** Bundled report fonts (rendered identically by the server), each shown in its own face, then system fonts. */
@@ -18,7 +19,7 @@ export default function FontPicker({ value, onChange }: { value: string; onChang
     .map((category) => ({ category, items: families.filter((f) => f.category === category) }))
     .filter((g) => g.items.length > 0);
   const system = FONT_FAMILIES.find((f) => f.value === value);
-  const label = families.find((f) => f.family.toLowerCase() === current)?.family ?? system?.label ?? firstFamily(value) ?? "Font";
+  const label = families.find((f) => f.family.toLowerCase() === current)?.family ?? system?.label ?? firstFamily(value) ?? dt("reports.designer.font", "Font");
 
   return (
     <Listbox value={value} onChange={onChange}>
@@ -57,9 +58,9 @@ export default function FontPicker({ value, onChange }: { value: string; onChang
         ))}
         <div
           className="px-3 pt-2 pb-1 text-xs font-semibold uppercase tracking-wider text-gray-500"
-          title="Depends on the fonts installed where the report is viewed or rendered"
+          title={dt("reports.designer.depends_on_the_fonts_installed_where_the_report", "Depends on the fonts installed where the report is viewed or rendered")}
         >
-          System fonts
+          {dt("reports.designer.system_fonts", "System fonts")}
         </div>
         {FONT_FAMILIES.map((f) => (
           <ListboxOption

@@ -9,14 +9,15 @@ import type {
   ReportPage,
   ReportTableOptions,
 } from "@/lib/models/reports";
+import { dt } from "./i18n";
 
 export const DEFAULT_FONT = "Inter, Segoe UI, DejaVu Sans, Arial, sans-serif";
 
 /** System font stacks: they depend on what is installed where the report is viewed or rendered. */
 export const FONT_FAMILIES = [
-  { label: "System sans serif", value: "Segoe UI, DejaVu Sans, Arial, sans-serif" },
-  { label: "System serif", value: "Georgia, DejaVu Serif, Times New Roman, serif" },
-  { label: "System monospace", value: "Consolas, DejaVu Sans Mono, monospace" },
+  { get label() { return dt("reports.designer.system_sans_serif", "System sans serif"); }, value: "Segoe UI, DejaVu Sans, Arial, sans-serif" },
+  { get label() { return dt("reports.designer.system_serif", "System serif"); }, value: "Georgia, DejaVu Serif, Times New Roman, serif" },
+  { get label() { return dt("reports.designer.system_monospace", "System monospace"); }, value: "Consolas, DejaVu Sans Mono, monospace" },
 ];
 
 export const DEFAULT_PALETTE = ["#6366f1", "#22c55e", "#f59e0b", "#ef4444", "#06b6d4", "#a855f7", "#ec4899", "#84cc16", "#14b8a6", "#f97316"];
@@ -116,7 +117,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "heading",
     type: "text",
-    label: "Heading",
+    get label() { return dt("reports.designer.tool_heading", "Heading"); },
     create: () => ({
       type: "text",
       width: 360,
@@ -129,7 +130,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "text",
     type: "text",
-    label: "Text",
+    get label() { return dt("reports.designer.tool_text", "Text"); },
     create: () => ({
       type: "text",
       width: 260,
@@ -142,7 +143,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "metric",
     type: "metric",
-    label: "Metric",
+    get label() { return dt("reports.designer.tool_metric", "Metric"); },
     create: () => ({
       type: "metric",
       width: 220,
@@ -162,7 +163,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "table",
     type: "table",
-    label: "Table",
+    get label() { return dt("reports.designer.tool_table", "Table"); },
     create: () => ({
       type: "table",
       width: 520,
@@ -181,7 +182,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "cards",
     type: "cards",
-    label: "Card grid",
+    get label() { return dt("reports.designer.tool_card_grid", "Card grid"); },
     create: () => ({
       type: "cards",
       width: 680,
@@ -194,7 +195,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "bar",
     type: "chart",
-    label: "Bar chart",
+    get label() { return dt("reports.designer.tool_bar_chart", "Bar chart"); },
     create: () => ({
       type: "chart",
       width: 440,
@@ -207,7 +208,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "line",
     type: "chart",
-    label: "Line chart",
+    get label() { return dt("reports.designer.tool_line_chart", "Line chart"); },
     create: () => ({
       type: "chart",
       width: 440,
@@ -220,7 +221,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "pie",
     type: "chart",
-    label: "Pie chart",
+    get label() { return dt("reports.designer.tool_pie_chart", "Pie chart"); },
     create: () => ({
       type: "chart",
       width: 300,
@@ -233,7 +234,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "image",
     type: "image",
-    label: "Image",
+    get label() { return dt("reports.designer.tool_image", "Image"); },
     create: () => ({
       type: "image",
       width: 160,
@@ -247,7 +248,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "rect",
     type: "shape",
-    label: "Rectangle",
+    get label() { return dt("reports.designer.tool_rectangle", "Rectangle"); },
     create: () => ({
       type: "shape",
       shape: "rect",
@@ -260,7 +261,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "ellipse",
     type: "shape",
-    label: "Ellipse",
+    get label() { return dt("reports.designer.tool_ellipse", "Ellipse"); },
     create: () => ({
       type: "shape",
       shape: "ellipse",
@@ -273,7 +274,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "divider",
     type: "line",
-    label: "Line",
+    get label() { return dt("reports.designer.tool_line", "Line"); },
     create: () => ({
       type: "line",
       width: 260,

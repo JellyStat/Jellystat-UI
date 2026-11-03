@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import client from "@/lib/api";
 import type { ReportDefinition, ReportParameter, ReportParameterOption } from "@/lib/models/reports";
 import { Spinner } from "@/components/ui";
+import { dt } from "./designer/i18n";
 
 export type ParameterOptionsSource = { reportId: string } | { definition: ReportDefinition };
 
@@ -68,7 +69,7 @@ function useLookupOptions(parameter: ReportParameter, source: ParameterOptionsSo
         }
       } catch (err: any) {
         if (!cancelled) {
-          setError(err?.message ?? "Failed to load choices");
+          setError(err?.message ?? dt("reports.designer.failed_to_load_choices", "Failed to load choices"));
           setOptions([]);
         }
       } finally {
@@ -111,7 +112,7 @@ function LookupInput({ parameter, value, onChange, source, values, className, si
       <div className={clsx("relative min-w-0", className)}>
         <ComboboxInput
           className={clsx(inputClass, "pr-14")}
-          placeholder={loading ? "Loading..." : emptyLabel}
+          placeholder={loading ? dt("reports.designer.loading", "Loading...") : emptyLabel}
           displayValue={() => summary}
           onChange={(ev) => setQuery(ev.target.value)}
           onKeyDown={(ev) => ev.stopPropagation()}
@@ -119,7 +120,7 @@ function LookupInput({ parameter, value, onChange, source, values, className, si
         <div className="absolute inset-y-0 right-1 flex items-center gap-0.5">
           {loading && <Spinner size={12} className="text-gray-500" />}
           {selected.length > 0 && (
-            <button type="button" title="Clear" className="p-0.5 text-gray-500 hover:text-white cursor-pointer" onClick={() => onChange(null)}>
+            <button type="button" title={dt("reports.designer.clear", "Clear")} className="p-0.5 text-gray-500 hover:text-white cursor-pointer" onClick={() => onChange(null)}>
               <X size={12} />
             </button>
           )}
@@ -133,7 +134,7 @@ function LookupInput({ parameter, value, onChange, source, values, className, si
         className="z-[70] w-(--input-width) min-w-48 max-h-64 overflow-y-auto rounded-xl border border-border bg-surface p-1 shadow-2xl shadow-black/60 empty:invisible [--anchor-gap:4px]"
       >
         {error && <div className="px-3 py-2 text-xs text-danger">{error}</div>}
-        {!error && !loading && filtered.length === 0 && <div className="px-3 py-2 text-xs text-gray-500">No matches</div>}
+        {!error && !loading && filtered.length === 0 && <div className="px-3 py-2 text-xs text-gray-500">{dt("reports.designer.no_matches", "No matches")}</div>}
         {filtered.map((o) => (
           <ComboboxOption
             key={String(o.value)}
@@ -169,8 +170,8 @@ export default function ParameterInput(props: Props) {
         onChange={(ev) => onChange(ev.target.value === "" ? null : ev.target.value === "true")}
       >
         <option value="">{emptyLabel}</option>
-        <option value="true">Yes</option>
-        <option value="false">No</option>
+        <option value="true">{dt("reports.designer.yes", "Yes")}</option>
+        <option value="false">{dt("reports.designer.no", "No")}</option>
       </select>
     );
   }
