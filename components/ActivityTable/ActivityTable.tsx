@@ -271,7 +271,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
 
   // Hidden until the row is hovered or the box is ticked; always shown on touch screens (no hover)
   const checkboxClass =
-    "w-4 h-4 cursor-pointer accent-primary";
+    "w-4 h-4 cursor-pointer accent-primary transition-opacity opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100 checked:opacity-100 indeterminate:opacity-100 [@media(hover:none)]:opacity-100";
 
   const renderCheckbox = (entries: SelectionEntry[], label: string) => {
     const checked = entries.length > 0 && entries.every(([id]) => isSelected(id));
