@@ -56,7 +56,7 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
       {/* Image Container */}
       {/* Fixed-width cards use the explicit height; fluid (grid) cards keep the 2:3 poster ratio (16:9 for episode stills). */}
       <div
-        className={`relative shrink-0 overflow-hidden bg-background ${fluid ? `w-full ${isEpisodeStill ? "aspect-video" : "aspect-2/3"}` : ""}`}
+        className={`relative shrink-0 overflow-hidden bg-background/50 ${fluid ? `w-full ${isEpisodeStill ? "aspect-video" : "aspect-2/3"}` : ""}`}
         style={fluid ? undefined : { height }}
       >
         <ItemImage
@@ -77,7 +77,7 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
             title={t("media_grid.sort_size", "Size")}
           >
             <HardDrive size={10} className="text-primary" />
-            <span className="text-xs font-bold tabular-nums tracking-wide text-gray-200">{sizeLabel}</span>
+            <span className="text-xs font-bold tabular-nums tracking-wide text-gray-100">{sizeLabel}</span>
           </div>
         )}
       </div>
@@ -95,7 +95,7 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
 
         {isValidParent && (
           <p
-            className="text-xs text-gray-200 line-clamp-1 cursor-pointer hover:text-primary transition-colors"
+            className="text-xs text-gray-300 line-clamp-1 cursor-pointer hover:text-primary transition-colors"
             onClick={() => router.push(`/libraries/items/${encodeURIComponent(item.id ?? "")}`)}
           >
             {item.name}

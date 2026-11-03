@@ -40,7 +40,7 @@ export function LeaderboardCard({
 
   return (
     <div
-      className="bg-surface border border-border rounded-2xl flex flex-col relative overflow-hidden group hover:border-primary/30 transition-colors"
+      className="bg-surface/80 border border-border rounded-2xl flex flex-col relative overflow-hidden group hover:border-primary/30 transition-colors"
       style={{ backgroundImage: `url('${bgUrl}')`, backgroundSize: "cover", backgroundPosition: "center" }}
     >
       <div className="p-5 transition-colors bg-linear-to-t from-transparent via-surface/90 to-surface">
@@ -49,7 +49,7 @@ export function LeaderboardCard({
           <div className="p-2 bg-primary/10 rounded-lg text-primary">
             <Icon size={18} />
           </div>
-          <h3 className="font-bold text-gray-200 text-sm uppercase tracking-wider truncate">{title}</h3>
+          <h3 className="font-bold text-gray-100 text-sm uppercase tracking-wider truncate">{title}</h3>
         </div>
 
         {/* List Area */}
@@ -68,7 +68,7 @@ export function LeaderboardCard({
               {items.map((item, index) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between p-2 rounded-lg bg-background border border-transparent hover:border-primary/20 hover:bg-surface transition-all"
+                  className="flex items-center justify-between p-2 rounded-lg bg-background/80 border border-transparent hover:border-primary/20 hover:bg-surface transition-all"
                 >
                   <div className="flex items-center gap-3 overflow-hidden">
                     <div

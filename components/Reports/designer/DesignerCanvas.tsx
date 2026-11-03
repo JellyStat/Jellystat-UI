@@ -507,7 +507,7 @@ export default function DesignerCanvas({ model, settings, onContextMenu }: Props
           height: pageSettings.height * zoom + PAGE_GUTTER * 2,
         }}
       >
-        <div ref={pageRef} className="absolute shadow-2xl shadow-black/40" style={pageStyle}>
+        <div ref={pageRef} className="absolute shadow-2xl shadow-black/60" style={pageStyle}>
           {gridStyle && <div className="absolute inset-0 pointer-events-none" style={gridStyle} />}
           {pageSettings.margin > 0 && (
             <div

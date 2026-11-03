@@ -54,7 +54,7 @@ export default function Select<T>({
       >
         <ListboxButton
           className={cn(
-            'relative w-full flex items-center bg-background border border-border rounded-xl py-2.5 pr-10 text-sm font-medium text-gray-200 shadow-inner transition-all cursor-pointer hover:border-border-strong data-open:border-primary disabled:opacity-50 disabled:cursor-not-allowed',
+            'relative w-full flex items-center bg-surface/80 backdrop-blur-md border border-border rounded-xl py-2.5 pr-10 text-sm font-bold text-gray-200 shadow-sm transition-all cursor-pointer hover:border-border-strong data-open:border-primary disabled:opacity-50 disabled:cursor-not-allowed',
             hasLeftIcon ? 'pl-10' : 'pl-4',
             focusRing
           )}
@@ -76,7 +76,7 @@ export default function Select<T>({
         <ListboxOptions
           anchor="bottom start"
           transition
-          className="z-50 w-(--button-width) [--anchor-gap:8px] [--anchor-padding:16px] max-h-60 overflow-auto rounded-xl border border-border bg-surface p-1 shadow-2xl shadow-black/40 focus:outline-none transition duration-100 ease-in data-leave:data-closed:opacity-0"
+          className="z-50 w-(--button-width) [--anchor-gap:8px] [--anchor-padding:16px] max-h-60 overflow-auto rounded-lg border border-border bg-surface p-1 shadow-lg shadow-black/40 focus:outline-none transition duration-100 ease-in data-leave:data-closed:opacity-0"
         >
           {data.length === 0 && !loading && (
             <div className="px-3 py-2 text-sm text-gray-500">{emptyDataMessage}</div>
@@ -85,7 +85,7 @@ export default function Select<T>({
             <ListboxOption
               key={idx}
               value={item}
-              className="group flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-200 cursor-pointer select-none data-focus:bg-surface-hover data-selected:text-primary data-selected:font-bold"
+              className="group flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-200 cursor-pointer select-none data-focus:bg-primary/40 data-selected:text-white data-selected:font-bold"
             >
               {item.Icon && <item.Icon size={16} className="shrink-0" />}
               <span className="truncate">{labelFn(item.value)}</span>

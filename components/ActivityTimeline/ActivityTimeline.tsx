@@ -118,7 +118,7 @@ export default function ActivityTimeline({ userId }: Props) {
                 className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg border shrink-0 cursor-pointer transition-all duration-300 text-xs font-bold ${
                   active
                     ? "bg-accent/10 text-accent border-accent/20"
-                    : "bg-surface text-gray-400 border-border hover:text-white hover:border-border-strong"
+                    : "bg-surface text-gray-400 border-border hover:text-white hover:border-gray-500"
                 }`}
               >
                 {(() => {
@@ -168,7 +168,7 @@ export default function ActivityTimeline({ userId }: Props) {
             <button
               type="button"
               onClick={() => setVisible((v) => v + TIMELINE_PAGE_SIZE)}
-              className="self-center px-5 py-2 rounded-xl text-sm font-bold border border-border text-gray-200 hover:text-white hover:bg-surface-hover transition-colors"
+              className="self-center px-5 py-2 rounded-xl text-sm font-bold border border-border text-gray-300 hover:text-white hover:bg-surface-hover transition-colors"
             >
               {t("timeline.show_more", "Show more")}
             </button>

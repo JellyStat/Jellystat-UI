@@ -171,7 +171,7 @@ export default function WatchTrendsCard() {
             message={t("statistics.no_data_desc", "There is no playback history for the last 31 days.")}
           />
         ) : (
-          <div className="bg-surface border border-border rounded-2xl shadow-lg shadow-black/20 overflow-hidden flex flex-col p-6 sm:p-8">
+          <div className="bg-surface/40 border border-border rounded-3xl shadow-xl shadow-black/20 overflow-hidden flex flex-col p-6 sm:p-8">
             {loading ? (
               <div className="w-full h-[400px] flex flex-col items-center justify-center">
                 <Spinner size={40} className="text-primary mb-4" />
@@ -287,7 +287,7 @@ const CustomTooltip = ({ active, payload, label, formatValue, metricType, timeGr
     const total = payload.reduce((sum: number, entry: any) => sum + (entry.value || 0), 0);
 
     return (
-      <div className="bg-surface/60 backdrop-blur-xl border border-border p-4 rounded-2xl shadow-2xl shadow-black/40 min-w-[180px]">
+      <div className="bg-surface/95 backdrop-blur-xl border border-border p-4 rounded-2xl shadow-2xl shadow-black/60 min-w-[180px]">
         <p className="text-gray-200 font-black mb-3 pb-3 border-b border-border/50 text-sm tracking-tight flex justify-between">
           <span>{displayLabel}</span>
           <span className="text-accent ml-4">{formatValue(total)}</span>
@@ -318,7 +318,7 @@ const CustomLegend = ({ payload }: any) => {
       {payload.map((entry: any, index: number) => (
         <div
           key={`item-${index}`}
-          className="flex items-center gap-2 text-xs font-bold text-gray-200 transition-colors hover:text-white cursor-default"
+          className="flex items-center gap-2 text-xs font-bold text-gray-300 transition-colors hover:text-white cursor-default"
         >
           <span className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: entry.color }}></span>
           {entry.value}

@@ -63,6 +63,7 @@ export default function ServerSettingsPage() {
   return (
     <Page className="pt-4 sm:px-6 sm:pt-6">
       <PageHeader
+        iconTone="accent"
         icon={<Server size={28} />}
         title={t("settings.servers_auth_title", "Servers")}
         description={t(
@@ -74,18 +75,18 @@ export default function ServerSettingsPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-4">
           <SectionTitle className="flex items-center gap-2">
-            <Database size={20} className="text-primary" />
+            <Database size={20} className="text-accent" />
             {t("settings.connected_servers", "Connected Servers")}
           </SectionTitle>
           <Button variant="outline" onClick={() => setIsAddServerOpen(true)}>
-            <Plus size={16} className="text-primary" />
+            <Plus size={16} className="text-accent" />
             {t("settings.add_server", "Add Server")}
           </Button>
         </div>
 
         <Card padding="none" className="relative min-h-[200px]">
           {loading && (
-            <div className="absolute inset-0 z-20 bg-surface/60 backdrop-blur-sm flex items-center justify-center animate-in fade-in">
+            <div className="absolute inset-0 z-20 bg-surface/80 backdrop-blur-sm flex items-center justify-center animate-in fade-in">
               <Spinner size={32} tone="primary" />
             </div>
           )}

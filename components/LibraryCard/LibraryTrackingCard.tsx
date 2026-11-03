@@ -26,7 +26,7 @@ export default function LibraryTrackingCard({
   const Icon = LibraryTypeIcons[lib.type] ?? ImageIcon;
 
   return (
-    <div className="bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-lg shadow-black/20 overflow-hidden flex flex-col transition-all hover:border-border-strong hover:shadow-black/40 group relative">
+    <div className="bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-lg shadow-black/20 overflow-hidden flex flex-col transition-all hover:border-gray-600 hover:shadow-black/40 group relative">
       {/* Image Container */}
       <div
         className="h-48 md:h-56 relative cursor-pointer overflow-hidden bg-black/40"
@@ -46,7 +46,7 @@ export default function LibraryTrackingCard({
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
-            <Icon size={56} className="text-gray-500 drop-shadow-lg" />
+            <Icon size={56} className="text-gray-600 drop-shadow-lg" />
           </div>
         )}
       </div>
@@ -55,7 +55,7 @@ export default function LibraryTrackingCard({
       <div className="p-5 flex flex-col flex-1 gap-4 relative z-10 -mt-2 bg-gradient-to-b from-transparent to-surface/80">
         {/* Header: Name and Type Badge */}
         <div className="flex items-start justify-between gap-3 w-full">
-          <h3 className="text-lg font-bold text-gray-200 leading-tight line-clamp-2">{lib.name}</h3>
+          <h3 className="text-lg font-bold text-gray-100 leading-tight line-clamp-2">{lib.name}</h3>
           <Badge shape="square">{lib.type}</Badge>
         </div>
 

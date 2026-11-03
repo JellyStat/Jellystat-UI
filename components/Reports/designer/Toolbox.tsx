@@ -60,10 +60,10 @@ export default function Toolbox() {
                   name: tool.label,
                 });
               }}
-              className="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-border bg-background hover:border-primary hover:bg-primary/5 text-gray-200 hover:text-white transition-colors cursor-grab active:cursor-grabbing"
+              className="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-border bg-background hover:border-primary hover:bg-primary/5 text-gray-300 hover:text-white transition-colors cursor-grab active:cursor-grabbing"
             >
               <Icon size={20} className="text-primary" />
-              <span className="text-[11px] font-bold">{tool.label}</span>
+              <span className="text-[11px] font-semibold">{tool.label}</span>
             </button>
           );
         })}

@@ -141,7 +141,7 @@ export default function SettingsPage() {
                       onClick={() => setAndStoreActiveTab(tab.id)}
                       className={`flex items-center gap-2 sm:gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap lg:whitespace-normal transition-all duration-300 group ${
                         isActive
-                          ? "bg-accent text-black shadow-lg shadow-accent/20"
+                          ? "bg-accent text-black shadow-md shadow-accent/20"
                           : "text-gray-400 hover:text-white hover:bg-surface-hover"
                       }`}
                     >

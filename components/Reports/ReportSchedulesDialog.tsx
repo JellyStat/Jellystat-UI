@@ -149,7 +149,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
               <>
                 <p className="text-sm text-gray-400">
                   Render <span className="text-white font-bold">{reportName}</span> on the server and post it to a webhook on a schedule, or run one
-                  now to test it. Automations can also call <code className="text-gray-200">GET /Reports/Export?Id={reportId}&amp;Format=pdf</code>{" "}
+                  now to test it. Automations can also call <code className="text-gray-300">GET /Reports/Export?Id={reportId}&amp;Format=pdf</code>{" "}
                   with an API key.
                 </p>
                 {loading && <Spinner className="text-primary" />}
@@ -193,7 +193,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                           type="button"
                           disabled={busy !== null}
                           onClick={() => run(s.id!)}
-                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-border text-xs text-gray-200 hover:text-white hover:border-accent cursor-pointer disabled:opacity-50"
+                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-border text-xs text-gray-300 hover:text-white hover:border-accent cursor-pointer disabled:opacity-50"
                         >
                           {busy === s.id ? <Spinner size={13} className="" /> : <Play size={13} />} Run now
                         </button>

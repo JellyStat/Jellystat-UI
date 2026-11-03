@@ -117,7 +117,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
         <div className="flex flex-wrap items-end gap-3">
           {parameters.map((p) => (
             <label key={p.name} className="flex flex-col gap-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">{p.label || p.name}</span>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">{p.label || p.name}</span>
               <ParameterInput
                 parameter={p}
                 className="w-48"
@@ -166,7 +166,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
               type="button"
               onClick={() => setExportOpen(!exportOpen)}
               disabled={!model}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-sm font-bold text-gray-200 hover:text-white hover:border-border-strong cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-sm font-bold text-gray-300 hover:text-white hover:border-gray-500 cursor-pointer disabled:opacity-50"
             >
               {exporting ? <Spinner size={14} className="" /> : <Download size={14} />} Export <ChevronDown size={12} />
             </button>

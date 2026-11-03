@@ -250,16 +250,16 @@ export default function WatchStatCards() {
             min={1}
             max={999}
             onChange={(value) => setDays(value ?? 1)}
-            className="w-20 appearance-none bg-background border border-transparent hover:border-border-strong focus:border-primary rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-primary "
+            className="w-20 appearance-none bg-background border border-transparent hover:border-gray-500 focus:border-primary rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-primary "
           />
         </div>
       </div>
 
       {/* Main Grid */}
       {Object.values(loadingStates).every((v) => !v) && !hasData ? (
-        <div className="bg-surface border-2 border-dashed border-border rounded-2xl p-16 flex flex-col items-center justify-center text-center">
+        <div className="bg-surface/50 border-2 border-dashed border-border rounded-3xl p-16 flex flex-col items-center justify-center text-center">
           <Activity size={48} className="text-gray-500 opacity-30 mb-4" />
-          <h3 className="text-xl font-bold text-gray-200">{t("common.no_data", "No Data")}</h3>
+          <h3 className="text-xl font-bold text-gray-300">{t("common.no_data", "No Data")}</h3>
           <p className="text-sm text-gray-500">
             {t("watch_stat_cards.no_data_desc", "No watch statistics found for the selected period.")}
           </p>

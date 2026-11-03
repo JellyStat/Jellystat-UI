@@ -27,7 +27,7 @@ export default function Alert({ tone = 'info', title, icon, children, className 
   return (
     <div
       role={tone === 'danger' ? 'alert' : 'status'}
-      className={cn('p-4 rounded-xl border flex items-start gap-3', config.box, className)}
+      className={cn('p-3.5 rounded-xl border flex items-start gap-3', config.box, className)}
     >
       <Icon size={16} className={cn('shrink-0 mt-0.5', config.text)} />
       <div className="min-w-0">

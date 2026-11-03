@@ -125,7 +125,7 @@
 //                 </div>
 
 //                 {/* Right Side: Value */}
-//                 <span className="font-bold text-gray-200 shrink-0 tabular-nums">
+//                 <span className="font-bold text-gray-300 shrink-0 tabular-nums">
 //                   {it.value}
 //                 </span>
 

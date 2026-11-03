@@ -236,7 +236,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                         {fields.map((f) => (
                           <label
                             key={f.key}
-                            className="flex items-center gap-1.5 text-xs text-gray-200 cursor-pointer"
+                            className="flex items-center gap-1.5 text-xs text-gray-300 cursor-pointer"
                             title={f.description ?? undefined}
                           >
                             <input
@@ -508,7 +508,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                 <div className="flex-1 min-w-0 flex flex-wrap items-center gap-x-1.5 gap-y-1 max-h-16 overflow-y-auto text-xs text-gray-400">
                   <span>Columns:</span>
                   {outputColumns.map((c) => (
-                    <code key={c.name} className="text-gray-200 break-all">
+                    <code key={c.name} className="text-gray-300 break-all">
                       {c.name}
                     </code>
                   ))}
@@ -531,7 +531,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                     <thead className="sticky top-0 bg-surface">
                       <tr>
                         {preview.columns.map((c) => (
-                          <th key={c.name} className="text-left font-bold text-gray-200 px-2 py-1.5 border-b border-border whitespace-nowrap">
+                          <th key={c.name} className="text-left font-bold text-gray-300 px-2 py-1.5 border-b border-border whitespace-nowrap">
                             {c.name}
                           </th>
                         ))}

@@ -528,7 +528,7 @@ function DesignerShell() {
               setZoom(Number(ev.target.value));
             }
           }}
-          className="bg-background border border-border rounded-md px-1 py-1 text-xs text-gray-200 outline-none cursor-pointer shrink-0"
+          className="bg-background border border-border rounded-md px-1 py-1 text-xs text-gray-300 outline-none cursor-pointer shrink-0"
         >
           {!ZOOMS.includes(zoom) && <option value={String(zoom)}>{Math.round(zoom * 100)}%</option>}
           {ZOOMS.map((z) => (
@@ -567,7 +567,7 @@ function DesignerShell() {
           <button
             type="button"
             onClick={() => setExportOpen(!exportOpen)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-bold text-gray-200 hover:text-white hover:border-border-strong cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-bold text-gray-300 hover:text-white hover:border-gray-500 cursor-pointer"
           >
             {exporting ? <Spinner size={14} className="" /> : <Download size={14} />} Export <ChevronDown size={12} />
           </button>
@@ -662,7 +662,7 @@ function DesignerShell() {
               {layoutPages(renderModel).map((p, i) => (
                 <div
                   key={`${p.page}-${p.continuation}`}
-                  className="shadow-2xl shadow-black/40"
+                  className="shadow-2xl shadow-black/60"
                   style={{
                     width: definition.page.width * zoom,
                     height: definition.page.height * zoom,

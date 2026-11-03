@@ -19,7 +19,7 @@ export default function LibraryInfoOverviewCard({ library }: Props) {
           </div>
           <div className="flex flex-col">
             <span className="text-xs font-bold tracking-wider text-gray-400 uppercase">{t("libraries.total_storage", "Total Storage")}</span>
-            <span className="text-3xl font-bold text-white tracking-tight mt-0.5">{library.size?.formatBytes()}</span>
+            <span className="text-3xl font-extrabold text-white tracking-tight mt-0.5">{library.size?.formatBytes()}</span>
           </div>
         </div>
 
@@ -29,7 +29,7 @@ export default function LibraryInfoOverviewCard({ library }: Props) {
           </div>
           <div className="flex flex-col">
             <span className="text-xs font-bold tracking-wider text-gray-400 uppercase">{t("libraries.total_media", "Total Media")}</span>
-            <span className="text-3xl font-bold text-white tracking-tight mt-0.5">
+            <span className="text-3xl font-extrabold text-white tracking-tight mt-0.5">
               {library.typeCounts?.reduce((acc, count) => acc + (count.count ?? 0), 0)}
             </span>
           </div>
@@ -49,7 +49,7 @@ export default function LibraryInfoOverviewCard({ library }: Props) {
                 {/* Text Content */}
                 <div className="flex flex-col">
                   <span className="text-xs font-bold tracking-wider text-gray-400 uppercase">{count.type}</span>
-                  <span className="text-3xl font-bold text-white tracking-tight mt-0.5">{count.count}</span>
+                  <span className="text-3xl font-extrabold text-white tracking-tight mt-0.5">{count.count}</span>
                 </div>
               </div>
             );

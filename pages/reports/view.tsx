@@ -50,7 +50,7 @@ export default function ReportViewPage() {
               <FileBarChart size={24} className="text-primary" />
             </div>
             <div className="min-w-0">
-              <h1 className="text-xl font-black text-white tracking-tight truncate">{report?.name ?? "…"}</h1>
+              <h1 className="text-2xl font-black text-white tracking-tight truncate">{report?.name ?? "…"}</h1>
               {report?.description && <p className="text-sm text-gray-400 mt-1">{report.description}</p>}
             </div>
           </div>

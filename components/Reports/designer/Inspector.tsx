@@ -66,7 +66,7 @@ function TokenHelp() {
       <ul className="mt-1 space-y-0.5">
         {TOKEN_HELP.map((t) => (
           <li key={t.token}>
-            <code className="text-gray-200">{t.token}</code> {t.description}
+            <code className="text-gray-300">{t.token}</code> {t.description}
           </li>
         ))}
       </ul>
@@ -885,7 +885,7 @@ function ImageContent({ e }: { e: ReportElement }) {
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="w-full flex items-center justify-center gap-2 px-2 py-2 rounded-md border border-dashed border-border text-xs text-gray-200 hover:text-white hover:border-primary cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 px-2 py-2 rounded-md border border-dashed border-border text-xs text-gray-300 hover:text-white hover:border-primary cursor-pointer"
           >
             <Upload size={14} /> Upload image
           </button>

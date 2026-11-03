@@ -40,7 +40,7 @@ export default function ReportImportDialog({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-sm font-bold border border-border text-gray-200 hover:text-white cursor-pointer"
+              className="px-4 py-2 rounded-xl text-sm font-bold border border-border text-gray-300 hover:text-white cursor-pointer"
             >
               {blocked ? "Close" : "Cancel"}
             </button>

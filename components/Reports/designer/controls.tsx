@@ -15,7 +15,7 @@ export const inputClass =
 export function Field({ label, children, className, hint }: { label: string; children: ReactNode; className?: string; hint?: string }) {
   return (
     <label className={clsx("flex flex-col gap-1 min-w-0", className)} title={hint}>
-      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">{label}</span>
+      <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">{label}</span>
       {children}
     </label>
   );
@@ -39,7 +39,7 @@ export function Section({
         <button
           type="button"
           onClick={() => setOpen(!open)}
-          className="flex items-center gap-1 text-xs font-bold text-gray-200 hover:text-white cursor-pointer"
+          className="flex items-center gap-1 text-xs font-bold text-gray-300 hover:text-white cursor-pointer"
         >
           {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
           {title}
@@ -192,7 +192,7 @@ export function ColorInput({
 
 export function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
   return (
-    <label className="flex items-center gap-2 text-xs text-gray-200 cursor-pointer select-none">
+    <label className="flex items-center gap-2 text-xs text-gray-300 cursor-pointer select-none">
       <input type="checkbox" checked={checked} onChange={(ev) => onChange(ev.target.checked)} className="accent-primary cursor-pointer" />
       {label}
     </label>

@@ -39,7 +39,7 @@ export default function LibraryOptions({ library }: Props) {
 
   return (
     <div className="w-full pt-2">
-      <div className="overflow-hidden rounded-2xl border border-danger/60 bg-surface shadow-[0_0_0_1px_rgba(244,63,94,0.12)]">
+      <div className="overflow-hidden rounded-2xl border border-danger/60 bg-surface/90 shadow-[0_0_0_1px_rgba(244,63,94,0.12)]">
         <div className="flex items-center gap-3 border-b border-danger/35 bg-surface px-5 py-4">
           <div className="flex h-8 w-8 items-center justify-center rounded-md bg-danger/10 text-danger ring-1 ring-danger/35">
             <AlertTriangle className="h-5 w-5" />
@@ -79,7 +79,7 @@ export default function LibraryOptions({ library }: Props) {
                 cancelText={t("common.no", "No")}
                 onConfirm={deleteArchivedLibrary}
                 tone="danger"
-                className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger px-4 py-3 text-base font-bold text-white transition hover:bg-danger-hover"
+                className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger px-4 py-3 text-base font-semibold text-white transition hover:bg-danger-hover"
               />
             </div>
           </div>
@@ -120,7 +120,7 @@ export default function LibraryOptions({ library }: Props) {
                 cancelText={t("common.no", "No")}
                 onConfirm={deleteArchivedLibrary}
                 tone="danger"
-                className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger px-4 py-3 text-base font-bold text-white transition hover:bg-danger-hover"
+                className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger px-4 py-3 text-base font-semibold text-white transition hover:bg-danger-hover"
               />
             </div>
           </div>

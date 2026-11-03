@@ -5,22 +5,24 @@ import Spinner from './Spinner';
 
 const variantGroups = {
   variant: {
-    primary: 'bg-primary hover:bg-primary-hover text-on-primary shadow-lg shadow-primary/20',
-    accent: 'bg-accent hover:bg-accent-hover text-on-accent shadow-lg shadow-accent/20',
-    danger: 'bg-danger hover:bg-danger-hover text-white shadow-lg shadow-danger/20',
+    primary:
+      'bg-primary hover:bg-primary-hover text-on-primary font-black shadow-lg shadow-primary/20',
+    accent: 'bg-accent hover:bg-accent-hover text-on-accent font-black shadow-lg shadow-accent/20',
+    danger: 'bg-danger hover:bg-danger-hover text-white font-black shadow-lg shadow-danger/20',
     // Low-emphasis destructive action, e.g. a Delete button in a list row.
-    dangerSoft: 'bg-danger/10 border border-danger/40 text-danger hover:bg-danger hover:text-white',
+    dangerSoft:
+      'bg-danger/10 border border-danger/60 text-danger hover:bg-danger-hover hover:text-white shadow-inner',
     secondary:
-      'bg-background border border-border text-gray-200 hover:text-white hover:border-border-strong',
+      'bg-background border border-border text-gray-200 hover:text-white hover:border-border-strong font-medium',
     outline:
-      'bg-surface border border-border text-gray-200 hover:text-white hover:border-border-strong',
+      'bg-surface hover:bg-surface-hover border border-border text-gray-200 hover:text-white hover:border-border-strong shadow-inner',
     ghost: 'text-gray-400 hover:text-white hover:bg-surface-hover',
   },
   // Shared control heights; Input uses the md height.
   size: {
     sm: 'px-3 py-1.5 rounded-lg text-xs',
-    md: 'px-4 py-2.5 rounded-xl text-sm',
-    lg: 'px-5 py-3 rounded-xl text-sm',
+    md: 'px-5 py-2.5 rounded-xl text-sm',
+    lg: 'px-4 py-3.5 rounded-xl text-base',
   },
 };
 

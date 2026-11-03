@@ -107,8 +107,8 @@ const DEVICE_RULES = [
   // Generic Form Factors (Fallbacks)
   { regex: /(web|browser)/i, icon: Globe, color: "text-primary" },
   { regex: /(tv|bravia|vizio|hisense|tcl|smarttv|lg|webos|samsung|tizen)/i, icon: Tv, color: "text-accent" },
-  { regex: /(tablet)/i, icon: Tablet, color: "text-gray-200" },
-  { regex: /(mobile|phone)/i, icon: Smartphone, color: "text-gray-200" },
+  { regex: /(tablet)/i, icon: Tablet, color: "text-gray-300" },
+  { regex: /(mobile|phone)/i, icon: Smartphone, color: "text-gray-300" },
 ];
 
 export default function DeviceIcon({ client, deviceName, deviceIconUrl, className = "w-10 h-10" }: DeviceIconProps) {

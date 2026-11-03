@@ -34,7 +34,7 @@ export default function LibraryOverviewCard({ library }: LibraryOverviewCardProp
     <div
       onClick={() => router.push(`/libraries/${library.id}`)}
       className={cn(
-        "relative flex items-center p-4 bg-surface border border-border rounded-2xl cursor-pointer transition-all duration-300 group hover:-translate-y-0.5 shadow-lg shadow-black/20",
+        "relative flex items-center p-4 bg-surface/50 border border-border rounded-2xl cursor-pointer transition-all duration-300 group hover:-translate-y-0.5 shadow-md shadow-black/20",
         hover.border,
       )}
     >
@@ -43,8 +43,8 @@ export default function LibraryOverviewCard({ library }: LibraryOverviewCardProp
       </IconChip>
 
       <div className="flex flex-col flex-1 min-w-0">
-        <h3 className="text-sm font-bold text-gray-200 truncate group-hover:text-white transition-colors">{library.name}</h3>
-        <span className="text-[11px] font-bold uppercase tracking-widest text-gray-500 mt-0.5">
+        <h3 className="text-sm font-bold text-gray-100 truncate group-hover:text-white transition-colors">{library.name}</h3>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mt-0.5">
           {library.type || "Mixed Content"}
         </span>
       </div>

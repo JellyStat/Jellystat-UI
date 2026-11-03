@@ -22,7 +22,7 @@ export function TableHead({ className, ...rest }: ComponentProps<'tr'>) {
     <thead>
       <tr
         className={cn(
-          'bg-background border-b border-border text-xs font-bold text-gray-400 uppercase tracking-wider',
+          'bg-background/80 border-b border-border text-xs font-bold text-gray-500 uppercase tracking-wider',
           className
         )}
         {...rest}
@@ -65,7 +65,7 @@ export function SortableTh({
     <th
       aria-sort={sorted ? (sorted === 'desc' ? 'descending' : 'ascending') : 'none'}
       className={cn(
-        'px-4 py-3 group cursor-pointer select-none hover:bg-surface-hover transition-colors',
+        'p-3 group cursor-pointer select-none hover:bg-surface-hover transition-colors',
         a.cell,
         className
       )}
@@ -90,7 +90,7 @@ export function SortableTh({
 }
 
 export function TableBody({ className, ...rest }: ComponentProps<'tbody'>) {
-  return <tbody className={cn('divide-y divide-border/50', className)} {...rest} />;
+  return <tbody className={cn('divide-y divide-border', className)} {...rest} />;
 }
 
 export function Tr({ className, ...rest }: ComponentProps<'tr'>) {

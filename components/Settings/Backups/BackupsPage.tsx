@@ -212,6 +212,7 @@ export default function BackupsPage() {
   return (
     <Page className="pt-4 sm:px-6 sm:pt-6">
       <PageHeader
+        iconTone="accent"
         icon={<Archive size={28} />}
         title={t("settings.backups_title", "Backups")}
         description={t("settings.backups_subtitle", "Manage your backups.")}
@@ -225,9 +226,9 @@ export default function BackupsPage() {
 
       <Card padding="none" className="relative min-h-[400px] flex flex-col">
         {loading && (
-          <div className="absolute inset-0 z-20 bg-surface/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3 animate-in fade-in">
+          <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center gap-3 animate-in fade-in">
             <Spinner size={40} tone="primary" />
-            <span className="text-sm font-bold text-gray-200">{t("common.loading", "Loading")}</span>
+            <span className="text-sm font-bold text-gray-300">{t("common.loading", "Loading")}</span>
           </div>
         )}
 

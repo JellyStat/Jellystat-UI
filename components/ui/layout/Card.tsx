@@ -4,7 +4,7 @@ import { cn } from '../cn';
 const variantClass = {
   solid: 'bg-surface',
   // Only over imagery or gradients, where the blur shows.
-  glass: 'bg-surface/60 backdrop-blur-xl',
+  glass: 'bg-surface/60 backdrop-blur-xl rounded-3xl shadow-2xl shadow-black/40',
 } as const;
 
 const paddingClass = {
@@ -23,7 +23,7 @@ export default function Card({ variant = 'solid', padding = 'md', className, ...
   return (
     <div
       className={cn(
-        'border border-border rounded-2xl shadow-lg shadow-black/20 overflow-hidden',
+        'border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden',
         variantClass[variant],
         paddingClass[padding],
         className

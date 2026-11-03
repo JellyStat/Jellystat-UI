@@ -104,6 +104,7 @@ export default function WebhooksPage() {
   return (
     <Page className="pt-4 sm:px-6 sm:pt-6">
       <PageHeader
+        iconTone="accent"
         icon={<Webhook size={28} />}
         title={t("settings.webhooks_title", "Webhooks")}
         description={t(
@@ -115,18 +116,18 @@ export default function WebhooksPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-4">
           <SectionTitle className="flex items-center gap-2">
-            <Webhook size={20} className="text-primary" />
+            <Webhook size={20} className="text-accent" />
             {t("settings.webhooks", "Webhooks")}
           </SectionTitle>
           <Button variant="outline" onClick={() => setEditing(emptyWebhook())} disabled={events.length === 0}>
-            <Plus size={16} className="text-primary" />
+            <Plus size={16} className="text-accent" />
             {t("settings.add_webhook", "New webhook")}
           </Button>
         </div>
 
         <Card padding="none" className="relative min-h-[200px]">
           {loading && (
-            <div className="absolute inset-0 z-20 bg-surface/60 backdrop-blur-sm flex items-center justify-center animate-in fade-in">
+            <div className="absolute inset-0 z-20 bg-surface/80 backdrop-blur-sm flex items-center justify-center animate-in fade-in">
               <Spinner size={32} tone="primary" />
             </div>
           )}

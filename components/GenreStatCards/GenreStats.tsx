@@ -48,7 +48,7 @@ export default function GenreStatsCard({ gridify }: Props) {
       {/* Header & Controls */}
       <div className="flex items-center gap-3 mb-6">
         <PieChart className="text-success" size={28} />
-        <h2 className="text-xl font-black text-white tracking-tight">{t("library.genres", "Genres")}</h2>
+        <h2 className="text-2xl font-black text-white tracking-tight">{t("library.genres", "Genres")}</h2>
       </div>
 
       {/* Main Grid */}

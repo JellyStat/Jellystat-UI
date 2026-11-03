@@ -60,7 +60,7 @@ export default function CodecStatsCard({ gridify }: Props) {
     }
 
     return (
-      <div className="bg-surface border border-border rounded-2xl shadow-lg shadow-black/20 overflow-hidden flex flex-col h-full p-6 sm:p-8 ">
+      <div className="bg-surface/40 border border-border rounded-3xl shadow-xl shadow-black/20 overflow-hidden flex flex-col h-full p-6 sm:p-8 ">
         {loading ? (
           <div className="w-full h-[400px] flex flex-col items-center justify-center">
             <Spinner size={40} className="text-primary mb-4" />
@@ -85,7 +85,7 @@ export default function CodecStatsCard({ gridify }: Props) {
         <div className="flex justify-between gap-3 mb-6">
           <div className="flex items-center gap-3">
             <PieChartIcon size={28} className="text-primary" />
-            <h2 className="text-xl font-black text-white tracking-tight">{t("stats.codec_stats", "Codec Statistics")}</h2>
+            <h2 className="text-2xl font-black text-white tracking-tight">{t("stats.codec_stats", "Codec Statistics")}</h2>
           </div>
         </div>
 

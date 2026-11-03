@@ -154,7 +154,7 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
             ? `Combined (${ds.derive.mode}): ${ds.derive.sources.map((id) => definition.dataSources.find((d) => d.id === id)?.name ?? "?").join(", ")}`
             : (caps?.datasets.find((d) => d.key === ds.dataset)?.label ?? ds.dataset);
           return (
-            <div key={ds.id} className="group rounded-lg border border-border bg-background p-2.5 hover:border-border-strong">
+            <div key={ds.id} className="group rounded-lg border border-border bg-background p-2.5 hover:border-gray-600">
               <div className="flex items-center gap-2">
                 <Database size={14} className="text-accent shrink-0" />
                 <button

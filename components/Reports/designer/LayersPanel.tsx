@@ -99,7 +99,7 @@ export default function LayersPanel() {
               e.hidden && "opacity-50",
             )}
           >
-            <GripVertical size={12} className="text-gray-500 shrink-0 cursor-grab" />
+            <GripVertical size={12} className="text-gray-600 shrink-0 cursor-grab" />
             <Icon size={14} className="shrink-0 text-primary" />
             {renaming === e.id ? (
               <input
@@ -142,7 +142,7 @@ export default function LayersPanel() {
             <button
               type="button"
               title={e.hidden ? "Show" : "Hide"}
-              className={clsx("p-0.5 hover:text-white cursor-pointer", e.hidden ? "text-gray-200" : "opacity-0 group-hover:opacity-100")}
+              className={clsx("p-0.5 hover:text-white cursor-pointer", e.hidden ? "text-gray-300" : "opacity-0 group-hover:opacity-100")}
               onClick={(ev) => {
                 ev.stopPropagation();
                 updateElements([e.id], (x) => {

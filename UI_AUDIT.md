@@ -4,6 +4,22 @@ Written 2026-11-03 against `main` @ `d8dd991`. The counts cover every `.tsx` fil
 
 **Goal:** settle on one scale for colour, spacing, radius, type and elevation, and build it into the kit so that migrating a screen also brings it in line with the scale.
 
+> **Revised 2026-11-03:** applying sections 2.2–2.7 everywhere flattened deliberate parts of the original design, so those changes were rolled back:
+> - glass and translucent surfaces;
+> - `rounded-3xl` hero cards;
+> - heavy `font-black` buttons;
+> - `text-2xl` titles;
+> - the original grey shades.
+>
+> What stays from the audit:
+> - **Semantic colour names**, which use the same hex values, with purple as the primary colour.
+> - **Colour sources:** `chartColors`, and theme tokens in place of hex.
+> - **Overlays:** a single kit implementation for each.
+> - **Modal footers:** Cancel first, then the primary action.
+> - **Guard rules:** the ones in `components/ui/__tests__/guard.test.ts`.
+>
+> Kit components now default to the original classes. The activity and task tables are the original markup with only kit swaps that don't change the look.
+
 > The report designer and renderer (`components/Reports/**`) use hex colours that are **user data** (colours people pick for their reports, plus PDF export). Those stay as they are. Only the designer's own chrome (panels, toolbars) is in scope.
 
 ---

@@ -74,6 +74,8 @@ export default function CreateUserPage({ onComplete }: Props) {
 
   return (
     <SetupStep
+      gradient="from-primary to-success"
+      glow="-top-24 -left-24 bg-primary/10"
       icon={<UserPlus size={32} />}
       title={t("setup.create_account_title", "Create Account")}
       description={t("setup.create_account_desc", "Set up your local administrator credentials for Jellystat.")}

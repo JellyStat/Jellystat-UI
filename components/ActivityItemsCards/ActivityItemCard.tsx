@@ -37,7 +37,7 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 160, height = 
       style={{ width }}
     >
       {/* Image Container */}
-      <div className="shrink-0 overflow-hidden bg-background" style={{ height }}>
+      <div className="shrink-0 overflow-hidden bg-background/50" style={{ height }}>
         <ItemImage
           imageUrl={imageUrl}
           imageHash={item.imageHash}
@@ -60,7 +60,7 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 160, height = 
             </span>
           )}
 
-          <span className="flex items-center gap-1 text-[12px] font-bold text-gray-400 bg-background rounded border border-border/50 truncate max-w-[80px] shadow-inner">
+          <span className="flex items-center gap-1 text-[12px] font-bold text-gray-400 bg-background/80 rounded border border-border/50 truncate max-w-[80px] shadow-inner">
             <User size={12} className="shrink-0" />
             <span
               className="truncate hover:text-primary transition-colors cursor-pointer"
@@ -82,7 +82,7 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 160, height = 
         {/* Subtitle (Episode Name) */}
         {isValidParent && (
           <p
-            className="text-xs text-gray-200 line-clamp-1 cursor-pointer hover:text-primary transition-colors"
+            className="text-xs text-gray-300 line-clamp-1 cursor-pointer hover:text-primary transition-colors"
             onClick={() => router.push(`/libraries/items/${encodeURIComponent(item.id ?? "")}`)}
           >
             {item.name}

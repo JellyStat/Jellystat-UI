@@ -38,7 +38,7 @@ export default function MultiSelect<T>({
       <div className={cn('relative min-w-[180px] max-w-full', className)}>
         <ListboxButton
           className={cn(
-            'relative w-full flex items-center bg-background border border-border rounded-xl py-2.5 pr-10 text-sm font-medium text-gray-200 shadow-inner transition-all cursor-pointer hover:border-border-strong data-open:border-primary disabled:opacity-50 disabled:cursor-not-allowed',
+            'relative w-full flex items-center bg-surface/80 border border-border rounded-xl py-2.5 pr-10 text-sm font-bold text-gray-200 transition-all cursor-pointer hover:border-border-strong data-open:border-primary disabled:opacity-50 disabled:cursor-not-allowed',
             Icon ? 'pl-10' : 'pl-4',
             focusRing
           )}
@@ -58,14 +58,14 @@ export default function MultiSelect<T>({
         <ListboxOptions
           anchor="bottom end"
           transition
-          className="z-50 w-64 [--anchor-gap:8px] [--anchor-padding:16px] max-h-72 overflow-auto rounded-xl border border-border bg-surface p-1 shadow-2xl shadow-black/40 focus:outline-none transition duration-100 ease-in data-leave:data-closed:opacity-0"
+          className="z-50 w-64 [--anchor-gap:8px] [--anchor-padding:16px] max-h-72 overflow-auto rounded-lg border border-border bg-surface p-1 shadow-lg shadow-black/40 focus:outline-none transition duration-100 ease-in data-leave:data-closed:opacity-0"
         >
           {header && <div className="px-3 py-2 mb-1 border-b border-border/50">{header}</div>}
           {options.map((option, idx) => (
             <ListboxOption
               key={idx}
               value={option.value}
-              className="group flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-gray-200 cursor-pointer select-none data-focus:bg-surface-hover"
+              className="group flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-gray-200 cursor-pointer select-none data-focus:bg-primary/40"
             >
               <span className="size-4 shrink-0 rounded border border-border bg-background flex items-center justify-center group-data-selected:bg-primary group-data-selected:border-primary">
                 <Check

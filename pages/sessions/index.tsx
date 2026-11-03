@@ -16,6 +16,7 @@ export default function SessionsPage() {
       <div className="space-y-8 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12">
         {/* Header */}
         <PageHeader
+          iconTone="accent"
           icon={<PlaySquare size={28} />}
           title={t("nav.live_sessions", "Live Sessions")}
           description={t("live_sessions.live_sessions_desc", "Monitor real-time server playback and user streams.")}

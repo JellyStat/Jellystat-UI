@@ -136,7 +136,7 @@ export default function StatsCard({ type, id }: Props) {
     <div className="w-full animate-in fade-in duration-500">
       {/* Header & Settings */}
       <div className="flex items-center justify-between mb-4 relative">
-        <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-3">
+        <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
           <Activity className="text-primary" size={28} />
           {title}
         </h2>
@@ -155,7 +155,7 @@ export default function StatsCard({ type, id }: Props) {
           </button>
 
           {open && (
-            <div className="absolute right-0 top-full mt-2 w-56 bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-2xl z-50 p-3 flex flex-col gap-1.5 animate-in slide-in-from-top-2 zoom-in-95">
+            <div className="absolute right-0 top-full mt-2 w-56 bg-surface/95 backdrop-blur-xl border border-border rounded-2xl shadow-2xl z-50 p-3 flex flex-col gap-1.5 animate-in slide-in-from-top-2 zoom-in-95">
               <span className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 px-2">
                 {t("stats_card.timeframes", "Timeframes")}
               </span>
@@ -217,7 +217,7 @@ export default function StatsCard({ type, id }: Props) {
           return (
             <div
               key={p.key}
-              className="bg-surface/60 backdrop-blur-md border border-border rounded-2xl p-5 shadow-lg shadow-black/20 flex flex-col relative overflow-hidden group hover:border-primary/40 transition-colors"
+              className="bg-surface/60 backdrop-blur-md border border-border rounded-2xl p-5 shadow-xl shadow-black/20 flex flex-col relative overflow-hidden group hover:border-primary/40 transition-colors"
             >
               {/* Subtle ambient background glow */}
               <div className="absolute -bottom-12 -right-12 w-24 h-24 bg-accent/10 blur-[40px] rounded-full pointer-events-none group-hover:bg-primary/10 transition-colors duration-500"></div>

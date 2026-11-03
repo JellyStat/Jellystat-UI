@@ -64,7 +64,7 @@ function DataRow({
   const valueClass = isSame ? "text-gray-500" : "text-white";
   return (
     <tr>
-      <td className="py-2 pr-3 sm:pr-5 text-xs font-bold text-gray-400 uppercase tracking-wider w-20 sm:w-24 shrink-0">{label}</td>
+      <td className="py-2 pr-3 sm:pr-5 text-xs font-semibold text-gray-400 uppercase tracking-wider w-20 sm:w-24 shrink-0">{label}</td>
       <td className={cn("py-2 pr-3 sm:pr-5 font-mono text-xs sm:text-sm tabular-nums leading-tight w-[110px] sm:w-[180px]", valueClass)}>
         {current}
       </td>
@@ -168,7 +168,7 @@ export function StreamInfoModal({ activity, open, onClose }: Props) {
         <div className="px-4 sm:px-6 py-3 overflow-x-auto custom-scrollbar">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="text-xs font-black text-gray-500 uppercase tracking-wider">
+              <tr className="text-xs font-black text-gray-600 uppercase tracking-wider">
                 <th className="py-2 pr-3 sm:pr-5 w-20 sm:w-24 shrink-0"></th>
                 <th className="py-2 pr-5 text-primary text-left min-w-[100px] sm:min-w-[280px] align-middle">
                   {t("common.playback_stream", "Playback Stream")}
@@ -249,8 +249,8 @@ export function StreamInfoModal({ activity, open, onClose }: Props) {
 
               <DataRow
                 label={t("stream.language", "Language")}
-                current={<span className="font-bold">{langVal}</span>}
-                source={<span className="font-bold">{langVal}</span>}
+                current={<span className="font-semibold">{langVal}</span>}
+                source={<span className="font-semibold">{langVal}</span>}
               />
 
               {ti?.transcodeReasons && ti.transcodeReasons.length > 0 && (
@@ -274,7 +274,7 @@ export function StreamInfoModal({ activity, open, onClose }: Props) {
         </div>
 
         {/* ---- FOOTER ---- */}
-        <div className="flex items-center justify-end gap-2 border-t border-border px-4 sm:px-6 py-3 bg-background rounded-b-2xl">
+        <div className="flex items-center justify-end gap-2 border-t border-border px-4 sm:px-6 py-3 bg-background/40 rounded-b-2xl">
           <Button variant="secondary" size="sm" onClick={close} autoFocus>
             {t("common.close", "Close")}
           </Button>

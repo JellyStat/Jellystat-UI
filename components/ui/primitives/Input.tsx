@@ -5,7 +5,7 @@ export type InputSize = 'sm' | 'md';
 
 const sizeClass = {
   // Matches the md Button height.
-  md: { field: 'rounded-xl px-4 py-2.5 text-sm', left: 'pl-11', right: 'pr-12', icon: 'pl-3.5' },
+  md: { field: 'rounded-xl px-4 py-3 text-sm', left: 'pl-11', right: 'pr-12', icon: 'pl-3.5' },
   // Compact, for table header filters and dense toolbars.
   sm: { field: 'rounded-lg px-3 py-1.5 text-xs', left: 'pl-8', right: 'pr-8', icon: 'pl-2.5' },
 } as const;

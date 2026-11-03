@@ -146,7 +146,7 @@ export default function LoginPage() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
 
         {/* Login Card */}
-        <div className="w-full max-w-md p-8 sm:p-10 bg-surface/60 backdrop-blur-2xl border border-border rounded-2xl shadow-2xl shadow-black/40 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out m-4">
+        <div className="w-full max-w-md p-8 sm:p-10 bg-surface/80 backdrop-blur-2xl border border-border rounded-3xl shadow-2xl shadow-black/60 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out m-4">
           {/* Logo & Header */}
           <div className="flex flex-col items-center text-center mb-10">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-primary p-[1px] shadow-lg shadow-accent/20 mb-6">
@@ -195,7 +195,7 @@ export default function LoginPage() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder={t("login.username_placeholder", "Username")}
-                  className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all ${
+                  className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-100 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all ${
                     usernameError
                       ? "border-danger/50 focus:border-danger focus:ring-danger"
                       : "border-border focus:border-accent focus:ring-accent"
@@ -217,7 +217,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t("login.password_placeholder", "Password")}
-                  className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all ${
+                  className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-100 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all ${
                     passwordError
                       ? "border-danger/50 focus:border-danger focus:ring-danger"
                       : "border-border focus:border-accent focus:ring-accent"

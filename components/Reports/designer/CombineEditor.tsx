@@ -134,7 +134,7 @@ export default function CombineEditor({
           <Field label="Sources">
             <div className="grid grid-cols-2 gap-1">
               {others.map((o) => (
-                <label key={o.id} className="flex items-center gap-1.5 text-xs text-gray-200 cursor-pointer">
+                <label key={o.id} className="flex items-center gap-1.5 text-xs text-gray-300 cursor-pointer">
                   <input
                     type="checkbox"
                     className="accent-primary"

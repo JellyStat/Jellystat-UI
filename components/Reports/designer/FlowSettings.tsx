@@ -97,7 +97,7 @@ export function ConditionsSection({ e, columns }: { e: ReportElement; columns: R
         const numeric = ["gt", "gte", "lt", "lte"].includes(c.operator);
         const noValue = c.operator === "isNull" || c.operator === "isNotNull";
         return (
-          <div key={i} className="rounded-lg border border-border bg-background p-2 space-y-1.5">
+          <div key={i} className="rounded-lg border border-border bg-background/40 p-2 space-y-1.5">
             <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-1">
               <Select value={c.field} placeholder="Column" options={columnOptions} onChange={(v) => set(i, { field: v }, "field")} />
               <Select value={c.operator} options={CONDITION_OPERATORS} onChange={(v) => set(i, { operator: v }, "op")} />

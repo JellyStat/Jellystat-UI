@@ -125,7 +125,7 @@ export function SelectAsync<T>({
   const borderClass =
     variant === "missing"
       ? "border-dashed border-danger/45 hover:border-danger data-open:border-primary"
-      : "border-border hover:border-border-strong data-open:border-primary";
+      : "border-border hover:border-gray-500 data-open:border-primary";
 
   return (
     <Popover className="relative w-full">
@@ -163,7 +163,7 @@ export function SelectAsync<T>({
 
           <PopoverPanel
             anchor={{ to: "bottom start", gap: 8 }}
-            className="z-50 w-(--button-width) min-w-64 bg-surface border border-border rounded-xl shadow-2xl shadow-black/40 focus:outline-none"
+            className="z-50 w-(--button-width) min-w-64 bg-surface/95 border border-border rounded-xl shadow-2xl shadow-black/50 focus:outline-none"
           >
             {header && (
               <div className="px-3 pt-3 pb-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider">{header}</div>
@@ -186,7 +186,7 @@ export function SelectAsync<T>({
                       className={`w-full text-left flex items-center justify-between gap-2 px-3 py-2.5 text-sm rounded-lg transition-colors cursor-pointer ${
                         isSelected
                           ? "bg-primary/10 text-primary font-bold"
-                          : "text-gray-200 hover:bg-surface-hover hover:text-white"
+                          : "text-gray-300 hover:bg-surface-hover hover:text-white"
                       }`}
                     >
                       <span className="min-w-0 flex-1 flex items-center gap-2">

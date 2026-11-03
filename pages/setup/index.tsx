@@ -111,7 +111,7 @@ export default function SetupPage() {
             </p>
           </div>
         ) : error ? (
-          <div className="bg-surface/60 backdrop-blur-md border border-danger/20 p-8 rounded-2xl shadow-2xl shadow-danger/10 max-w-lg w-full text-center relative z-10 animate-in zoom-in-95">
+          <div className="bg-surface/80 backdrop-blur-md border border-danger/20 p-8 rounded-3xl shadow-2xl shadow-danger/10 max-w-lg w-full text-center relative z-10 animate-in zoom-in-95">
             <div className="mx-auto w-16 h-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mb-6 border border-danger/20 shadow-inner">
               <AlertTriangle size={32} />
             </div>
@@ -157,7 +157,7 @@ export default function SetupPage() {
                       </div>
                       <div className="text-center w-full">
                         <p
-                          className={`text-sm font-bold transition-colors duration-300 ${isActive ? "text-white" : isCompleted ? "text-gray-200" : "text-gray-500"}`}
+                          className={`text-sm font-bold transition-colors duration-300 ${isActive ? "text-white" : isCompleted ? "text-gray-300" : "text-gray-500"}`}
                         >
                           {step.label}
                         </p>
@@ -175,7 +175,7 @@ export default function SetupPage() {
             <div className="w-full relative transition-all duration-500 ease-in-out flex justify-center">
               {/* Global Transition Overlay */}
               {isTransitioning && (
-                <div className="absolute inset-0 z-50 bg-background backdrop-blur-md rounded-2xl flex flex-col items-center justify-center animate-in fade-in">
+                <div className="absolute inset-0 z-50 bg-background/50 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center animate-in fade-in">
                   <Spinner size={40} className="text-primary mb-3" />
                   <span className="text-sm font-bold text-white tracking-wide">{t("common.loading", "Loading")}</span>
                 </div>

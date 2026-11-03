@@ -48,6 +48,7 @@ export default function LibrariesPage() {
       <div className="space-y-8 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12">
         {/* Header */}
         <PageHeader
+          iconTone="accent"
           icon={<Database size={28} />}
           title={t("nav.libraries", "Libraries")}
           description={t("libraries.libraries_desc", "Manage, track, and analyze your media collections")}
@@ -63,7 +64,7 @@ export default function LibrariesPage() {
 
         {/* Error State */}
         {error && (
-          <div className="p-5 rounded-2xl bg-danger/10 border border-danger/20 flex items-start gap-4 shadow-lg shadow-danger/5">
+          <div className="p-5 rounded-2xl bg-danger/10 border border-danger/20 flex items-start gap-4 shadow-xl shadow-danger/5">
             <AlertCircle size={24} className="text-danger shrink-0 mt-0.5" />
             <div className="flex flex-col">
               <h3 className="text-lg font-bold text-danger mb-1">{t("libraries.failed_load", "Failed to load libraries")}</h3>
@@ -74,7 +75,7 @@ export default function LibrariesPage() {
 
         {/* Empty State */}
         {!loading && !error && libs.length === 0 && (
-          <div className="w-full py-24 bg-surface border-2 border-dashed border-border rounded-2xl flex flex-col items-center justify-center text-gray-500">
+          <div className="w-full py-24 bg-surface/30 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-gray-500">
             <Database size={48} className="mb-4 opacity-20" />
             <span className="font-bold text-lg tracking-wide text-gray-400">
               {t("common.no_libraries_found", "No libraries found")}

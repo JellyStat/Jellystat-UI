@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Calendar } from "lucide-react";
+import { Calendar, X } from "lucide-react";
 import FilterItem, { DatesRangeValue } from "./FilterItem";
-import { DateRangePicker, Popover, PopoverField, PopoverPanel } from "@/components/ui";
+import { HeadlessPopover as Popover, HeadlessPopoverPanel as PopoverPanel, PopoverButton } from "@/components/ui/headless";
 import { DateRange } from "react-day-picker";
 import { useDebounce } from "@/lib/hooks/useDebounce";
+import { DateRangePicker } from "@/components/ui";
 
 interface DateFilterProps {
   keyName: string;
@@ -55,6 +56,11 @@ export default function DateFilter({ keyName, value, onChange }: DateFilterProps
     onChange(new FilterItem(keyName, debounced));
   }, [debounced, value, keyName, onChange]);
 
+  // --- HANDLERS ---
+  const handleClear = () => {
+    setQuery([null, null]);
+  };
+
   const isEmpty = !query || (query[0] === null && query[1] === null);
 
   const displayText = () => {
@@ -65,21 +71,35 @@ export default function DateFilter({ keyName, value, onChange }: DateFilterProps
   };
 
   return (
-    <Popover className="relative">
-      <PopoverField
-        icon={<Calendar size={14} />}
-        empty={isEmpty}
-        onClear={() => setQuery([null, null])}
-        clearLabel={t("common.clear", "Clear")}
-      >
-        {displayText()}
-      </PopoverField>
-      <PopoverPanel>
-        <DateRangePicker
-          value={{ from: query[0] ?? undefined, to: query[1] ?? undefined }}
-          onChange={(value: DateRange | undefined) => setQuery([value?.from ?? null, value?.to ?? null])}
-        />
-      </PopoverPanel>
-    </Popover>
+    <div className="relative">
+      <Popover className="relative w-full flex items-center min-w-50">
+        <PopoverButton className="w-full flex items-center gap-2 bg-surface/50 border border-transparent hover:border-border rounded py-1.5 px-3 text-xs text-gray-200 placeholder:text-gray-600  transition-all shadow-inner">
+          <div className="text-gray-500">
+            <Calendar size={14} />
+          </div>
+          <div
+            className={`flex-1 text-left text-xs tracking-tight font-normal ${isEmpty ? "text-gray-600" : "text-gray-200"}`}
+            role="input"
+          >
+            {displayText()}
+          </div>
+        </PopoverButton>
+        {!isEmpty && (
+          <button
+            onClick={handleClear}
+            className="absolute right-2 text-gray-500 hover:text-danger transition-colors focus:outline-none"
+            title="Clear filter"
+          >
+            <X size={14} />
+          </button>
+        )}
+        <PopoverPanel anchor="bottom" className="flex flex-col absolute z-50 my-2">
+          <DateRangePicker
+            value={{ from: query[0] ?? undefined, to: query[1] ?? undefined }}
+            onChange={(value: DateRange | undefined) => setQuery([value?.from ?? null, value?.to ?? null])}
+          />
+        </PopoverPanel>
+      </Popover>
+    </div>
   );
 }

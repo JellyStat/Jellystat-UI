@@ -74,6 +74,8 @@ export default function CreateServerPage({ onComplete }: Props) {
 
   return (
     <SetupStep
+      gradient="from-accent to-primary"
+      glow="-top-24 -right-24 bg-accent/10"
       icon={<Database size={32} />}
       title={t("setup.connect_server_title", "Connect Server")}
       description={t("setup.connect_server_desc", "Link your Jellyfin or Emby instance to begin tracking telemetry.")}

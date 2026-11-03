@@ -86,7 +86,7 @@ export default function ActivityTimelineItem({ entry, side }: Props) {
           >
             {entry.title}
           </h3>
-          {seasons && <p className="text-sm text-gray-200">{seasons}</p>}
+          {seasons && <p className="text-sm text-gray-300">{seasons}</p>}
           {entry.isSeries && entry.episodeCount > 0 && (
             <p className="text-xs text-gray-400">{t("timeline.episodes", "{{episodeCount}} Episodes", { episodeCount: entry.episodeCount })}</p>
           )}

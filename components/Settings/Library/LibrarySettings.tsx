@@ -69,6 +69,7 @@ export default function LibrarySettingsPage() {
   return (
     <Page className="pt-4 sm:px-6 sm:pt-6">
       <PageHeader
+        iconTone="success"
         icon={<Library size={28} />}
         title={t("settings.library_title", "Library Settings")}
         description={t("settings.library_subtitle", "Select which media libraries you want to track statistics for.")}
@@ -78,7 +79,7 @@ export default function LibrarySettingsPage() {
         {loading && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 animate-in fade-in">
             <Spinner size={48} tone="primary" />
-            <span className="text-sm font-bold text-gray-200">{t("common.loading", "Loading")}</span>
+            <span className="text-sm font-bold text-gray-300">{t("common.loading", "Loading")}</span>
           </div>
         )}
 

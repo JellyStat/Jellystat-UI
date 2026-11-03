@@ -166,7 +166,7 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
                   onClick={() => setPermission(opt.value)}
                   className={cn(
                     "text-left p-4 rounded-xl border transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary",
-                    active ? "border-primary bg-primary/10" : "border-border bg-background hover:border-border-strong",
+                    active ? "border-primary bg-primary/10" : "border-border bg-background hover:border-gray-500",
                   )}
                 >
                   <div className="flex items-center gap-2 font-bold text-sm text-white">

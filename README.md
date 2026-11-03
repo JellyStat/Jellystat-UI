@@ -29,7 +29,12 @@ import { Button, Card, Field, Input, Modal, ModalPanel, PageHeader } from "@/com
   - `surface`, `surface-raised` and `border` for panels and borders.
 
   Use these rather than `brand-*`, raw Tailwind palettes or hex values. Charts read the same colours from `chartColors` / `chartSeries`.
-- **Scale:** controls come in `sm`, `md` and `lg`, sharing one height per size. Cards use `rounded-2xl`, and modals come in `sm`, `md`, `lg`, `xl` and `workspace`. The full set of standards is in [UI_AUDIT.md](UI_AUDIT.md).
+- **Look:** kit defaults reproduce the app's original styling.
+  - Solid cards are `rounded-2xl`, and `Card variant="glass"` is the translucent, blurred `rounded-3xl` panel.
+  - Primary, accent and danger buttons use `font-black`.
+  - Modals come in `sm`, `md`, `lg`, `xl` and `workspace`.
+
+  Background and the parts of the audit that were kept are in [UI_AUDIT.md](UI_AUDIT.md).
 - **What's in it:**
 
   | Group | Components |

@@ -171,7 +171,7 @@ export default function SideNav() {
   return (
     <>
       {/* Mobile Top Bar (hidden on desktop) */}
-      <header className="lg:hidden flex-none h-16 flex items-center justify-between gap-3 px-4 bg-surface/60 backdrop-blur-md border-b border-border z-30 pt-[env(safe-area-inset-top)] box-content">
+      <header className="lg:hidden flex-none h-16 flex items-center justify-between gap-3 px-4 bg-surface/95 backdrop-blur-md border-b border-border z-30 pt-[env(safe-area-inset-top)] box-content">
         <Link href="/" className="flex items-center min-w-0">
           {brand}
         </Link>
@@ -188,7 +188,7 @@ export default function SideNav() {
             aria-label={t("nav.open_menu", "Open menu")}
             aria-expanded={mobileOpen}
             aria-controls="jellystat-sidenav"
-            className="w-11 h-11 -mr-1.5 flex items-center justify-center rounded-xl text-gray-200 hover:text-white hover:bg-surface-hover active:scale-95 transition-all cursor-pointer"
+            className="w-11 h-11 -mr-1.5 flex items-center justify-center rounded-xl text-gray-300 hover:text-white hover:bg-surface-hover active:scale-95 transition-all cursor-pointer"
           >
             <Menu size={24} />
           </button>
@@ -211,7 +211,7 @@ export default function SideNav() {
         }`}
       >
         {/* Brand Header */}
-        <div className="h-16 lg:h-20 flex-none flex items-center justify-between px-6 border-b border-border bg-background pt-[env(safe-area-inset-top)] box-content lg:pt-0 lg:box-border">
+        <div className="h-16 lg:h-20 flex-none flex items-center justify-between px-6 border-b border-border bg-background/50 pt-[env(safe-area-inset-top)] box-content lg:pt-0 lg:box-border">
           <div className="flex items-center min-w-0">{brand}</div>
           <button
             type="button"

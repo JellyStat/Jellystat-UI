@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Hash } from "lucide-react";
+import { Hash, X } from "lucide-react";
 import FilterItem, { NumberFilterType, NumberRangeValue } from "./FilterItem";
+import { HeadlessPopover as Popover, HeadlessPopoverPanel as PopoverPanel, PopoverButton } from "@/components/ui/headless";
 import { useDebounce } from "@/lib/hooks/useDebounce";
-import { inputClass, Label, NumberField, Popover, PopoverField, PopoverPanel, Select } from "@/components/ui";
+import { NumberField, Select } from "@/components/ui";
 
 interface NumberFilterProps {
   keyName: string;
@@ -11,8 +12,6 @@ interface NumberFilterProps {
   filterType?: NumberFilterType;
   onChange: (value: FilterItem | null) => void;
 }
-
-const numberInputClass = inputClass({ size: "sm" }, "text-center font-bold");
 
 export default function NumberFilter({ keyName, value, filterType, onChange }: NumberFilterProps) {
   const { t } = useTranslation("common");
@@ -53,6 +52,7 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
   };
 
   const handleRangeChange = (val: number | null, minVal: boolean = true) => {
+    console.log(`Handling range change: val=${val}, minVal=${minVal}`);
     setQuery((prev) => ({
       min: minVal ? val : (prev as NumberRangeValue)?.min,
       max: minVal ? (prev as NumberRangeValue)?.max : val,
@@ -82,61 +82,83 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
   };
 
   return (
-    <Popover className="relative">
-      <PopoverField icon={<Hash size={14} />} empty={isEmpty} onClear={handleClear} clearLabel={t("common.clear", "Clear")}>
-        {displayText()}
-      </PopoverField>
-      <PopoverPanel>
-        <div className="p-4 w-64 space-y-4 border border-border rounded-xl bg-surface shadow-2xl shadow-black/40">
-          {!filterType && (
-            <div className="space-y-1.5">
-              <Label>{t("filter.number_type", "Type")}</Label>
-              <Select
-                data={[{ value: NumberFilterType.SINGLE }, { value: NumberFilterType.RANGE }]}
-                value={type}
-                onChange={(val) => setType(val as NumberFilterType)}
-                labelFn={(val) => {
-                  if (val === NumberFilterType.SINGLE) return t("filter.single_number", "Exact");
-                  if (val === NumberFilterType.RANGE) return t("filter.number_range", "Range");
-                  return "";
-                }}
-                widthPx={0}
-                className="w-full"
-              />
-            </div>
-          )}
-          {type === NumberFilterType.SINGLE && (
-            <div className="space-y-1.5">
-              <Label>{t("common.value", "Value")}</Label>
-              <NumberField
-                value={query as number | undefined}
-                onChange={(val) => handleSingleChange(val)}
-                className={numberInputClass}
-              />
-            </div>
-          )}
-          {type === NumberFilterType.RANGE && (
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label>{t("common.min", "Min")}</Label>
-                <NumberField
-                  value={(query as NumberRangeValue)?.min ?? undefined}
-                  onChange={(val) => handleRangeChange(val as number | null, true)}
-                  className={numberInputClass}
-                />
+    <div className="relative">
+      <Popover className="relative w-full flex items-center min-w-50">
+        <PopoverButton className="w-full flex items-center gap-2 bg-surface/50 border border-transparent hover:border-border rounded py-1.5 px-3 text-xs text-gray-200 placeholder:text-gray-600  transition-all shadow-inner">
+          <div className="text-gray-500">
+            <Hash size={14} />
+          </div>
+          <div
+            className={`flex-1 text-left text-xs tracking-tight font-normal ${isEmpty ? "text-gray-600" : "text-gray-200"}`}
+            role="input"
+          >
+            {displayText()}
+          </div>
+        </PopoverButton>
+        {!isEmpty && (
+          <button
+            onClick={handleClear}
+            className="absolute right-2 text-gray-500 hover:text-danger transition-colors focus:outline-none"
+            title="Clear filter"
+          >
+            <X size={14} />
+          </button>
+        )}
+        <PopoverPanel anchor="bottom" className="flex flex-col absolute z-50 my-2">
+          <div className="p-4 border border-border rounded-lg max-w-sm bg-surface shadow-sm">
+            <div>
+              {/* Number filter inputs go here */}
+              {!filterType && (
+                <div className="mb-4 flex flex-row items-center gap-2">
+                  <div>{t("filter.number_type", "Type")}</div>
+                  <Select
+                    data={[{ value: NumberFilterType.SINGLE }, { value: NumberFilterType.RANGE }]}
+                    value={type}
+                    onChange={(val) => setType(val as NumberFilterType)}
+                    labelFn={(val) => {
+                      if (val === NumberFilterType.SINGLE) return t("filter.single_number", "Exact");
+                      if (val === NumberFilterType.RANGE) return t("filter.number_range", "Range");
+                      return "";
+                    }}
+                  />
+                </div>
+              )}
+              <div className="">
+                {type === NumberFilterType.SINGLE && (
+                  <div className="flex flex-col gap-2">
+                    <div>{t("common.value", "Value")}</div>
+                    <NumberField
+                      value={query as number | undefined}
+                      onChange={(val) => handleSingleChange(val)}
+                      className="bg-background border border-transparent hover:border-gray-500 focus:border-accent rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-accent"
+                    />
+                  </div>
+                )}
+                {type === NumberFilterType.RANGE && (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2">
+                      <div>{t("common.min", "Min")}</div>
+                      <NumberField
+                        value={(query as NumberRangeValue)?.min ?? undefined}
+                        onChange={(val) => handleRangeChange(val as number | null, true)}
+                        className="bg-background border border-transparent hover:border-gray-500 focus:border-accent rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-accent"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <div>{t("common.max", "Max")}</div>
+                      <NumberField
+                        value={(query as NumberRangeValue)?.max ?? undefined}
+                        onChange={(val) => handleRangeChange(val as number | null, false)}
+                        className="bg-background border border-transparent hover:border-gray-500 focus:border-accent rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-accent"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="space-y-1.5">
-                <Label>{t("common.max", "Max")}</Label>
-                <NumberField
-                  value={(query as NumberRangeValue)?.max ?? undefined}
-                  onChange={(val) => handleRangeChange(val as number | null, false)}
-                  className={numberInputClass}
-                />
-              </div>
             </div>
-          )}
-        </div>
-      </PopoverPanel>
-    </Popover>
+          </div>
+        </PopoverPanel>
+      </Popover>
+    </div>
   );
 }

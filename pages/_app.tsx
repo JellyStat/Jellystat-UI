@@ -116,7 +116,7 @@ function App({ Component, pageProps }: AppProps) {
             {/* Error State */}
             {showError && (
               <div className="h-full w-full flex items-center justify-center p-4 sm:p-6 animate-in fade-in zoom-in-95 duration-300">
-                <div className="bg-surface border border-danger/20 p-6 sm:p-8 md:p-10 rounded-2xl shadow-2xl shadow-danger/10 max-w-2xl w-full text-center relative overflow-hidden">
+                <div className="bg-surface border border-danger/20 p-6 sm:p-8 md:p-10 rounded-3xl shadow-2xl shadow-danger/10 max-w-2xl w-full text-center relative overflow-hidden">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-danger/10 blur-[80px] pointer-events-none rounded-full z-0"></div>
 
                   <div className="relative z-10">

@@ -168,7 +168,7 @@ export default function ReportsPage() {
 
         <Card padding="none" className="relative min-h-[240px]">
           {loading && (
-            <div className="absolute inset-0 z-20 bg-surface/60 backdrop-blur-sm flex items-center justify-center">
+            <div className="absolute inset-0 z-20 bg-surface/80 backdrop-blur-sm flex items-center justify-center">
               <Spinner size={32} tone="primary" />
             </div>
           )}

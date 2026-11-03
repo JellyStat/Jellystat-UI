@@ -30,7 +30,7 @@ export default function SegmentedControl<T extends string>({
       <div
         role="tablist"
         aria-label={label}
-        className="flex items-center gap-1 p-1 bg-surface border border-border rounded-xl shadow-inner w-max"
+        className="flex items-center p-1.5 bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-inner w-max"
       >
         {options.map((option) => {
           const isActive = value === option.value;
@@ -42,9 +42,9 @@ export default function SegmentedControl<T extends string>({
               aria-selected={isActive}
               onClick={() => onChange(option.value)}
               className={cn(
-                'px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-all cursor-pointer',
+                'px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 cursor-pointer',
                 isActive
-                  ? 'bg-primary text-on-primary shadow-lg shadow-primary/20'
+                  ? 'bg-accent text-on-accent shadow-md shadow-accent/20'
                   : 'text-gray-400 hover:text-white hover:bg-surface-hover',
                 focusRing
               )}

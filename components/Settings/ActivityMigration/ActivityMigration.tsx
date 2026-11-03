@@ -42,7 +42,7 @@ function ItemLabel({ item }: { item: ItemsWithParentData }) {
   return (
     <>
       {code && (
-        <span className="shrink-0 font-mono text-[11px] font-bold text-gray-200 bg-surface-raised border border-border rounded-lg px-1.5 py-0.5">
+        <span className="shrink-0 font-mono text-[11px] font-bold text-gray-300 bg-surface-raised border border-border rounded-lg px-1.5 py-0.5">
           {code}
         </span>
       )}
@@ -509,7 +509,7 @@ export default function ActivityMigrationPage() {
             <span className="text-sm font-bold text-gray-200 truncate">{activity.name}</span>
           </div>
         </td>
-        <td className="text-gray-500" aria-hidden="true">
+        <td className="text-gray-600" aria-hidden="true">
           <ArrowRight size={16} className="mx-auto" />
         </td>
         <td className="px-4 py-2">{itemSelect(activity)}</td>
@@ -528,7 +528,7 @@ export default function ActivityMigrationPage() {
         <tr className="border-b border-border/50 bg-surface-raised hover:bg-surface-hover transition-colors">
           <td className="px-4 py-3 text-center">{groupCheckbox(group)}</td>
           <td className="px-4 py-3">{seriesInfo(group)}</td>
-          <td className="text-gray-500" aria-hidden="true">
+          <td className="text-gray-600" aria-hidden="true">
             <ArrowRight size={16} className="mx-auto" />
           </td>
           <td className="px-4 py-2">{seriesSelect(group, seriesItem)}</td>
@@ -662,9 +662,9 @@ export default function ActivityMigrationPage() {
       {/* Table */}
       <Card padding="none" className="flex flex-col relative min-h-[400px]">
         {loading && (
-          <div className="absolute inset-0 z-20 bg-surface/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3 animate-in fade-in">
+          <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center gap-3 animate-in fade-in">
             <Spinner size={40} tone="primary" />
-            <span className="text-sm font-bold text-gray-200">{t("settings.migration_scanning", "Scanning activity...")}</span>
+            <span className="text-sm font-bold text-gray-300">{t("settings.migration_scanning", "Scanning activity...")}</span>
           </div>
         )}
 
@@ -679,7 +679,7 @@ export default function ActivityMigrationPage() {
         {/* Mobile: cards */}
         <div className="md:hidden flex-1 flex flex-col">
           {groups.length > 0 && (
-            <label className="flex items-center gap-3 px-4 py-3 bg-background border-b border-border text-xs font-bold text-gray-400 uppercase tracking-wider select-none cursor-pointer">
+            <label className="flex items-center gap-3 px-4 py-3 bg-background/80 border-b border-border text-xs font-bold text-gray-400 uppercase tracking-wider select-none cursor-pointer">
               <input
                 type="checkbox"
                 className={checkboxClass}
@@ -710,7 +710,7 @@ export default function ActivityMigrationPage() {
               <col className="w-16" />
             </colgroup>
             <thead>
-              <tr className="bg-background border-b border-border text-xs font-bold text-gray-400 uppercase tracking-wider select-none">
+              <tr className="bg-background/80 border-b border-border text-xs font-bold text-gray-400 uppercase tracking-wider select-none">
                 <th className="px-4 py-3 text-center">
                   <input
                     type="checkbox"

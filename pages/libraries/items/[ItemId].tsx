@@ -149,7 +149,7 @@ export default function ItemPage() {
         {!loading && !error && item && (
           <div className="flex flex-col gap-8">
             {/* Header Backdrop Card */}
-            <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl shadow-black/40 border border-border/50 bg-surface">
+            <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl shadow-black/40 border border-border/50 bg-surface">
               {/* CSS Background Image */}
               <div
                 className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-screen"
@@ -199,7 +199,7 @@ export default function ItemPage() {
                         href={`${externalURLBase}/web/index.html#/details?id=${item.id}&serverId=${item.serverId}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="mt-1 sm:mt-2 shrink-0 p-2 bg-surface hover:bg-accent text-gray-200 hover:text-black border border-border hover:border-accent rounded-xl transition-all shadow-inner"
+                        className="mt-1 sm:mt-2 shrink-0 p-2 bg-surface/50 hover:bg-accent text-gray-300 hover:text-black border border-border hover:border-accent rounded-xl transition-all shadow-inner"
                         title={t("item.open_in_server", "Open in Media Server")}
                       >
                         <ExternalLink size={20} />
@@ -208,7 +208,7 @@ export default function ItemPage() {
                   </div>
 
                   {isValidParent && (
-                    <div className="flex flex-wrap items-center gap-2 text-lg font-bold text-gray-200 mb-4 drop-shadow">
+                    <div className="flex flex-wrap items-center gap-2 text-lg font-bold text-gray-300 mb-4 drop-shadow">
                       {parentIndexUnit && (
                         <Link href={`/libraries/items/${item.parentId}`} className="hover:text-primary transition-colors">
                           {parentIndexUnit} {item.parentIndex}
@@ -266,7 +266,7 @@ export default function ItemPage() {
                         onClick={() => setAndStoreActiveTab(tab.id)}
                         className={`flex flex-1 sm:flex-none justify-center items-center gap-2 sm:gap-2.5 px-3 sm:px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 group ${
                           isActive
-                            ? "bg-accent text-black shadow-lg shadow-accent/20"
+                            ? "bg-accent text-black shadow-md shadow-accent/20"
                             : "text-gray-400 hover:text-white hover:bg-surface-hover"
                         }`}
                       >

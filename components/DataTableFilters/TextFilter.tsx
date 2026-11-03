@@ -3,7 +3,6 @@ import { Search, X } from "lucide-react";
 import FilterItem from "./FilterItem";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import { useTranslation } from "react-i18next";
-import { Input, InputAction } from "@/components/ui";
 
 export default function TextFilter({
   keyName,
@@ -42,22 +41,31 @@ export default function TextFilter({
   };
 
   return (
-    <Input
-      size="sm"
-      type="text"
-      placeholder={t("common.filter", "Filter")}
-      aria-label={t("common.filter", "Filter")}
-      value={query}
-      onChange={(e) => setQuery(e.target.value)}
-      leftIcon={<Search size={14} />}
-      wrapperClassName="w-full min-w-[100px]"
-      rightSlot={
-        query ? (
-          <InputAction size="sm" onClick={clearQuery} title={t("common.clear", "Clear")} className="hover:text-danger">
-            <X size={14} />
-          </InputAction>
-        ) : undefined
-      }
-    />
+    <div className="relative flex items-center w-full group min-w-[100px]">
+      {/* Left Search Icon */}
+      <div className="absolute left-2.5 text-gray-500 transition-colors pointer-events-none">
+        <Search size={14} />
+      </div>
+
+      {/* Tailwind Input */}
+      <input
+        type="text"
+        placeholder={t("common.filter", "Filter")}
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        className="w-full bg-surface/80 border border-transparent hover:border-border rounded py-1.5 pl-8 pr-8 text-xs text-gray-200 placeholder:text-gray-600 focus:outline-none transition-all shadow-inner"
+      />
+
+      {/* Right Clear Icon (Only visible when there is text) */}
+      {query && (
+        <button
+          onClick={clearQuery}
+          className="absolute right-2 text-gray-500 hover:text-danger transition-colors focus:outline-none"
+          title="Clear filter"
+        >
+          <X size={14} />
+        </button>
+      )}
+    </div>
   );
 }

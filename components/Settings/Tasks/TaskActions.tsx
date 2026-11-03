@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Play, ServerCog, Clock, Square } from "lucide-react";
+import { Play, ServerCog, Clock, CheckCircle2, CircleDashed, Square } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
@@ -10,24 +10,10 @@ import WebSocketMessageTypes from "@/lib/models/enums/WebSocketMessageTypes";
 import { WebsocketMessage } from "@/lib/models/WebsocketMessage";
 import wsClient from "@/lib/wsClient";
 import { TaskQueueUpdate } from "@/lib/models/taskQueueUpdate";
+import TasksLogsPage from "./TaskLogs";
+import { getTaskBadge } from "./Tasks";
 import Tasks from "@/lib/models/enums/Tasks";
-import {
-  Badge,
-  Card,
-  IconButton,
-  PageHeader,
-  Select,
-  Spinner,
-  Switch,
-  Table,
-  TableBody,
-  TableHead,
-  TableMessageRow,
-  Td,
-  Th,
-  Tr,
-} from "@/components/ui";
-import TaskBadge from "./TaskBadge";
+import { Select, Spinner } from "@/components/ui";
 
 const taskOptionsBase = [{ value: 60 }, { value: 1440 }, { value: 720 }];
 
@@ -137,163 +123,211 @@ export default function TaskActionsPage() {
   }
 
   return (
-    <section className="space-y-6">
-      <PageHeader
-        icon={<ServerCog size={28} />}
-        title={t("tasks.background_tasks_title", "Background Tasks")}
-        description={t("tasks.background_tasks_desc", "Manage and execute scheduled system operations")}
-      />
+    <div className="animate-in fade-in duration-500 max-w-[1600px] mx-auto">
+      {/* Header Container */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3.5 bg-primary/10 rounded-2xl border border-primary/20 shadow-inner shrink-0">
+            <ServerCog className="text-primary" size={28} />
+          </div>
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                {t("tasks.background_tasks_title", "Background Tasks")}
+              </h1>
+            </div>
+            <p className="text-sm text-gray-400 mt-1 font-medium">
+              {t("tasks.background_tasks_desc", "Manage and execute scheduled system operations")}
+            </p>
+          </div>
+        </div>
+      </div>
 
-      <Card padding="none">
-        <Table>
-          <TableHead>
-            <Th className="w-1/5">{t("tasks.col_task", "Task")}</Th>
-            <Th className="w-1/5">{t("tasks.col_interval", "Interval")}</Th>
-            <Th className="w-1/5">{t("tasks.col_enabled", "Enabled")}</Th>
-            <Th className="hidden sm:table-cell w-1/5">{t("tasks.col_status", "Status")}</Th>
-            <Th className="text-right w-1/6">{t("tasks.col_actions", "Actions")}</Th>
-          </TableHead>
-          <TableBody>
-            {loading && tasks.length === 0 ? (
-              <TableMessageRow colSpan={5} loading>
-                {t("common.loading", "Loading tasks...")}
-              </TableMessageRow>
-            ) : tasks.length === 0 ? (
-              <TableMessageRow colSpan={5}>{t("tasks.no_configurable_tasks", "No configurable tasks found.")}</TableMessageRow>
-            ) : (
-              tasks.map((taskSetting) => {
-                const isRunning = taskStatus.currentTask?.task === taskSetting.task;
-                const isQueued = taskStatus.enqueuedTasks.some((t) => t.task === taskSetting.task);
+      {/* Task Table Card */}
+      <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col">
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-background/80 border-b border-border text-xs font-bold text-gray-500 uppercase tracking-wider">
+                <th className="hidden sm:table-cell p-3 w-12"></th>
+                <th className="p-3 sm:p-4 w-1/5">{t("tasks.col_task", "Task")}</th>
+                <th className="p-3 sm:p-4 w-1/5">{t("tasks.col_interval", "Interval")}</th>
+                <th className="p-3 sm:p-4 w-1/5">{t("tasks.col_enabled", "Enabled")}</th>
+                <th className="hidden sm:table-cell p-4 w-1/5">{t("tasks.col_status", "Status")}</th>
+                <th className="p-3 sm:p-4 pr-4 sm:pr-6 text-right w-1/6">{t("tasks.col_actions", "Actions")}</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {loading && tasks.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center">
+                    <Spinner size={24} className="text-primary mx-auto mb-2" />
+                    <span className="text-gray-500 text-sm font-medium">{t("common.loading", "Loading tasks...")}</span>
+                  </td>
+                </tr>
+              ) : tasks.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="p-8 text-center text-gray-500 text-sm font-medium">
+                    {t("tasks.no_configurable_tasks", "No configurable tasks found.")}
+                  </td>
+                </tr>
+              ) : (
+                tasks.map((taskSetting) => {
+                  const isRunning = taskStatus.currentTask?.task === taskSetting.task;
+                  const isQueued = taskStatus.enqueuedTasks.some((t) => t.task === taskSetting.task);
 
-                const interval = taskSetting.intervalMinutes || 0;
-                const isSaving = savingTask === taskSetting.task;
+                  const interval = taskSetting.intervalMinutes || 0;
+                  const isSaving = savingTask === taskSetting.task;
 
-                const isManualOnly = taskSetting.task === Tasks.PlaybackReportingPluginSync;
+                  const isManualOnly = taskSetting.task === Tasks.PlaybackReportingPluginSync;
 
-                const executeTask = async () => {
-                  toast.loading(t("tasks.starting_task", "Starting {{taskName}}...", { taskName: taskSetting.task }), {
-                    id: taskSetting.task,
-                  });
-                  try {
-                    const success = await client.Tasks.startTask(taskSetting.task);
-                    if (success) {
-                      toast.success(t("tasks.task_queued", "{{taskName}} queued successfully", { taskName: taskSetting.task }), {
-                        id: taskSetting.task,
-                      });
-                    } else {
+                  const executeTask = async () => {
+                    toast.loading(t("tasks.starting_task", "Starting {{taskName}}...", { taskName: taskSetting.task }), {
+                      id: taskSetting.task,
+                    });
+                    try {
+                      const success = await client.Tasks.startTask(taskSetting.task);
+                      if (success) {
+                        toast.success(
+                          t("tasks.task_queued", "{{taskName}} queued successfully", { taskName: taskSetting.task }),
+                          { id: taskSetting.task },
+                        );
+                      } else {
+                        toast.error(t("tasks.start_failed", "Failed to start {{taskName}}", { taskName: taskSetting.task }), {
+                          id: taskSetting.task,
+                        });
+                      }
+                    } catch (error) {
                       toast.error(t("tasks.start_failed", "Failed to start {{taskName}}", { taskName: taskSetting.task }), {
                         id: taskSetting.task,
                       });
                     }
-                  } catch (error) {
-                    toast.error(t("tasks.start_failed", "Failed to start {{taskName}}", { taskName: taskSetting.task }), {
-                      id: taskSetting.task,
-                    });
-                  }
-                };
+                  };
 
-                const stopTask = async () => {
-                  try {
-                    const serverId = client.getServerId();
-                    const isGlobalTask = taskSetting.task == Tasks.Backup || taskSetting.task == Tasks.RestoreTask;
-                    const success = await client.Tasks.stopRunningTask({
-                      Task: taskSetting.task,
-                      ServerId: isGlobalTask ? null : serverId,
-                    });
-                    if (success) {
-                      toast.success(
-                        t("tasks.stop_requested", "{{taskName}} stop requested successfully", { taskName: taskSetting.task }),
+                  const stopTask = async () => {
+                    try {
+                      const serverId = client.getServerId();
+                      const isGlobalTask = taskSetting.task == Tasks.Backup || taskSetting.task == Tasks.RestoreTask;
+                      const success = await client.Tasks.stopRunningTask({
+                        Task: taskSetting.task,
+                        ServerId: isGlobalTask ? null : serverId,
+                      });
+                      if (success) {
+                        toast.success(
+                          t("tasks.stop_requested", "{{taskName}} stop requested successfully", { taskName: taskSetting.task }),
+                          { id: taskSetting.task },
+                        );
+                      } else {
+                        toast.error(
+                          t("tasks.stop_failed", "Failed to request stop for {{taskName}}", { taskName: taskSetting.task }),
+                          { id: taskSetting.task },
+                        );
+                      }
+                    } catch (error) {
+                      toast.error(
+                        t("tasks.stop_failed", "Failed to request stop for {{taskName}}", { taskName: taskSetting.task }),
                         { id: taskSetting.task },
                       );
-                    } else {
-                      toast.error(t("tasks.stop_failed", "Failed to request stop for {{taskName}}", { taskName: taskSetting.task }), {
-                        id: taskSetting.task,
-                      });
                     }
-                  } catch (error) {
-                    toast.error(t("tasks.stop_failed", "Failed to request stop for {{taskName}}", { taskName: taskSetting.task }), {
-                      id: taskSetting.task,
-                    });
-                  }
-                };
+                  };
 
-                const statusBadge = isRunning ? (
-                  <Badge tone="success" shape="square" className="gap-1.5">
-                    <Spinner size={12} /> {t("tasks.running", "Running")}
-                  </Badge>
-                ) : isQueued ? (
-                  <Badge tone="accent" shape="square">
-                    {t("tasks.queued", "Queued")}
-                  </Badge>
-                ) : (
-                  <Badge tone="neutral" shape="square">
-                    {t("tasks.idle", "Idle")}
-                  </Badge>
-                );
+                  const taskBadgeLabels: Record<string, string> = {
+                    Backup: t("tasks.backup", "Backup"),
+                    FullSync: t("tasks.full_sync", "Full Sync"),
+                    PartialSync: t("tasks.partial_sync", "Partial Sync"),
+                    PlaybackReportingPluginSync: t("tasks.playback_reporting_import", "Playback Reporting Import"),
+                    Restore: t("common.restore", "Restore"),
+                  };
+                  const badgeLabel = taskBadgeLabels[taskSetting.task] ?? taskSetting.task;
 
-                return (
-                  <Tr key={taskSetting.task}>
-                    {/* Task Name (status shown underneath on small screens) */}
-                    <Td>
-                      <TaskBadge task={taskSetting.task} />
-                      <div className="sm:hidden mt-1.5">{statusBadge}</div>
-                    </Td>
+                  const statusBadge = isRunning ? (
+                    <span className="inline-flex items-center bg-success/10 text-success border border-success/20 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider">
+                      <Spinner size={12} className="mr-1.5" /> {t("tasks.running", "Running")}
+                    </span>
+                  ) : isQueued ? (
+                    <span className="inline-flex items-center bg-accent/10 text-accent border border-accent/20 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider">
+                      {t("tasks.queued", "Queued")}
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center bg-background text-gray-500 border border-border px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider">
+                      {t("tasks.idle", "Idle")}
+                    </span>
+                  );
 
-                    <Td>
-                      {interval > 0 ? (
-                        <Select<number>
-                          data={intervalOptionsFor(taskSetting)}
-                          value={interval}
-                          labelFn={formatInterval}
-                          onChange={(value) => void changeTaskInterval(taskSetting, value)}
-                          disabled={isSaving || isRunning || isQueued}
-                          loading={isSaving}
-                          leftIcon={Clock}
-                          widthPx={140}
-                        />
-                      ) : null}
-                    </Td>
+                  return (
+                    <tr key={taskSetting.task} className="hover:bg-surface-hover transition-colors group">
+                      <td className={`hidden sm:table-cell p-3 w-12 text-center`} />
+                      {/* Task Name (status shown underneath on small screens) */}
+                      <td className="p-3 sm:p-4">
+                        {getTaskBadge(taskSetting.task, badgeLabel)}
+                        <div className="sm:hidden mt-1.5">{statusBadge}</div>
+                      </td>
 
-                    <Td>
-                      <Switch
-                        checked={taskSetting.enabled}
-                        onChange={() => void toggleTaskEnabled(taskSetting)}
-                        disabled={isSaving || isRunning || isQueued || taskSetting.intervalMinutes <= 0}
-                        label={taskSetting.enabled ? t("common.yes", "Yes") : t("common.no", "No")}
-                      />
-                    </Td>
+                      {/* Interval */}
+                      <td className="p-3 sm:p-4">
+                        {interval > 0 ? (
+                          <Select<number>
+                            data={intervalOptionsFor(taskSetting)}
+                            value={interval}
+                            labelFn={formatInterval}
+                            onChange={(value) => void changeTaskInterval(taskSetting, value)}
+                            disabled={isSaving || isRunning || isQueued}
+                            loading={isSaving}
+                            leftIcon={Clock}
+                            widthPx={140}
+                          />
+                        ) : null}
+                      </td>
 
-                    <Td className="hidden sm:table-cell">{statusBadge}</Td>
-
-                    <Td className="text-right">
-                      {isRunning ? (
-                        <IconButton
-                          variant="danger"
-                          label={t("tasks.stop_task", "Stop {{taskName}}", { taskName: taskSetting.task })}
-                          onClick={stopTask}
-                          className="ml-auto text-danger"
+                      {/* Enabled Status */}
+                      <td className="p-3 sm:p-4">
+                        <button
+                          onClick={() => void toggleTaskEnabled(taskSetting)}
+                          disabled={isSaving || isRunning || isQueued || taskSetting.intervalMinutes <= 0}
+                          title={t("tasks.toggle_task", '{{action}} task "{{taskName}}"', {
+                            action: taskSetting.enabled ? t("common.disable", "Disable") : t("common.enable", "Enable"),
+                            taskName: taskSetting.task,
+                          })}
+                          className={`p-2 rounded-lg bg-background text-gray-400  border border-border ${taskSetting.enabled ? "hover:bg-danger/20 hover:border-danger/50 hover:text-danger" : "hover:bg-success/20 hover:border-success/50 hover:text-success"}  transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer`}
                         >
-                          <Square size={16} />
-                        </IconButton>
-                      ) : (
-                        <IconButton
-                          variant="bordered"
-                          label={t("tasks.run_now", "Run {{taskName}} now", { taskName: taskSetting.task })}
-                          onClick={executeTask}
+                          {taskSetting.enabled ? (
+                            <div className="flex items-center text-xs font-bold text-success">
+                              <CheckCircle2 size={14} className="mr-1.5" /> {t("common.yes", "Yes")}
+                            </div>
+                          ) : (
+                            <div className="flex items-center text-xs font-bold text-gray-500">
+                              <CircleDashed size={14} className="mr-1.5" /> {t("common.no", "No")}
+                            </div>
+                          )}
+                        </button>
+                      </td>
+
+                      {/* Live WebSocket Status */}
+                      <td className="hidden sm:table-cell p-4">{statusBadge}</td>
+
+                      {/* Action Button */}
+                      <td className="p-3 sm:p-4 pr-4 sm:pr-6 text-right">
+                        <button
+                          onClick={isRunning ? stopTask : executeTask}
                           disabled={isQueued || (!isManualOnly && taskSetting.intervalMinutes <= 0)}
-                          className="ml-auto text-success hover:text-success hover:border-success/50 hover:bg-success/10"
+                          title={t("tasks.run_now", "Run {{taskName}} now", { taskName: taskSetting.task })}
+                          className={`p-2 rounded-lg bg-background hover:bg-success/20 text-gray-400 ${isRunning ? "hover:text-danger hover:border-danger/50" : "hover:text-success hover:border-success/50"} border border-border transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 ml-auto flex cursor-pointer`}
                         >
-                          <Play size={16} />
-                        </IconButton>
-                      )}
-                    </Td>
-                  </Tr>
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
-      </Card>
-    </section>
+                          {isRunning ? (
+                            <Square size={16} className="opacity-100 text-danger" />
+                          ) : (
+                            <Play size={16} className={(isQueued ? "opacity-50" : "opacity-100") + " text-success"} />
+                          )}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   );
 }

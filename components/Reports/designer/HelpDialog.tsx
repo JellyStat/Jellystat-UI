@@ -13,7 +13,7 @@ const Table = ({ head, rows }: { head: string[]; rows: ReactNode[][] }) => (
     <thead>
       <tr>
         {head.map((h) => (
-          <th key={h} className="text-left font-bold text-gray-200 border-b border-border py-1.5 pr-3">
+          <th key={h} className="text-left font-bold text-gray-300 border-b border-border py-1.5 pr-3">
             {h}
           </th>
         ))}
@@ -53,14 +53,14 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
         <Ul
           items={[
             <>
-              <b className="text-gray-200">Data</b> tab: add a data source (what to query), then bind elements to it.
+              <b className="text-gray-300">Data</b> tab: add a data source (what to query), then bind elements to it.
             </>,
             <>
-              <b className="text-gray-200">Insert</b> tab: drag an element onto the page, or click it to drop it at the top left.
+              <b className="text-gray-300">Insert</b> tab: drag an element onto the page, or click it to drop it at the top left.
             </>,
             <>Select an element to edit it in the panel on the right; select several to align, distribute or style them together.</>,
             <>
-              <b className="text-gray-200">Preview</b> (eye icon) shows the finished pages with live data, including the extra pages growing tables
+              <b className="text-gray-300">Preview</b> (eye icon) shows the finished pages with live data, including the extra pages growing tables
               add.
             </>,
             <>Save, then use Schedules &amp; webhooks to deliver the report automatically.</>,
@@ -79,7 +79,7 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
           items={[
             <>Pick a dataset (playback activity, library items, users...), filter it, and return either rows or a summary (group by + totals).</>,
             <>
-              Filters can compare against a <b className="text-gray-200">parameter</b> (pick @name as the value), so viewers and schedules can change
+              Filters can compare against a <b className="text-gray-300">parameter</b> (pick @name as the value), so viewers and schedules can change
               them.
             </>,
           ]}
@@ -99,11 +99,11 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
         <Ul
           items={[
             <>
-              <b className="text-gray-200">Join</b>: add another source&apos;s columns to matching rows (left, inner or full), e.g. this month next to
+              <b className="text-gray-300">Join</b>: add another source&apos;s columns to matching rows (left, inner or full), e.g. this month next to
               last month per user.
             </>,
             <>
-              <b className="text-gray-200">Union</b>: stack rows from several sources, optionally with a column naming each row&apos;s source.
+              <b className="text-gray-300">Union</b>: stack rows from several sources, optionally with a column naming each row&apos;s source.
             </>,
             <>Combined sources can build on other combined sources.</>,
           ]}
@@ -169,22 +169,22 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
     body: (
       <>
         <P>
-          Turn on <b className="text-gray-200">Continue on new pages</b> (Pages section) for a table or card grid, and rows that don&apos;t fit go
+          Turn on <b className="text-gray-300">Continue on new pages</b> (Pages section) for a table or card grid, and rows that don&apos;t fit go
           onto extra pages added after that page, with the table header repeated.
         </P>
         <Ul
           items={[
             <>
-              A dashed green <b className="text-gray-200">Header</b> line appears; drag it (or set Header height). On the extra pages the table starts
+              A dashed green <b className="text-gray-300">Header</b> line appears; drag it (or set Header height). On the extra pages the table starts
               there.
             </>,
             <>
-              Everything entirely <b className="text-gray-200">above the header line</b> or <b className="text-gray-200">below the table</b> repeats
+              Everything entirely <b className="text-gray-300">above the header line</b> or <b className="text-gray-300">below the table</b> repeats
               on every extra page, like page headers and footers: titles, logos, page numbers.
             </>,
             <>Everything in between (intro text, metrics, charts) appears on the first page only.</>,
             <>
-              <b className="text-gray-200">First page only</b> keeps a header or footer element off the extra pages.
+              <b className="text-gray-300">First page only</b> keeps a header or footer element off the extra pages.
             </>,
           ]}
         />
@@ -204,13 +204,13 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
         <Ul
           items={[
             <>
-              <b className="text-gray-200">Tables</b>: style the whole row or one column, e.g. red text in Watch time when it&apos;s under 60.
+              <b className="text-gray-300">Tables</b>: style the whole row or one column, e.g. red text in Watch time when it&apos;s under 60.
             </>,
             <>
-              <b className="text-gray-200">Metrics</b>: checked against the first row; styles the value and fill.
+              <b className="text-gray-300">Metrics</b>: checked against the first row; styles the value and fill.
             </>,
             <>
-              <b className="text-gray-200">Card grids</b>: checked per card; styles the card.
+              <b className="text-gray-300">Card grids</b>: checked per card; styles the card.
             </>,
             <>Rules apply in order; when two set the same thing, the later one wins.</>,
           ]}
@@ -230,7 +230,7 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
         <Ul
           items={[
             <>
-              <b className="text-gray-200">Media id column</b>: the column holding the item (or user) id, e.g. ItemId.
+              <b className="text-gray-300">Media id column</b>: the column holding the item (or user) id, e.g. ItemId.
             </>,
             <>
               Text lines use <C>{"{{row.FIELD}}"}</C>, e.g. title <C>{"{{row.Name}}"}</C>, subtitle{" "}
@@ -256,7 +256,7 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
         <Ul
           items={[
             <>
-              Table columns and metrics: choose the <b className="text-gray-200">Hyperlink</b> format. Leave the URL empty if the value already is a
+              Table columns and metrics: choose the <b className="text-gray-300">Hyperlink</b> format. Leave the URL empty if the value already is a
               URL, or write a template with <C>{"{{value}}"}</C> and <C>{"{{row.FIELD}}"}</C>.
             </>,
             <>Text and images: set Link to make the whole element clickable. Placeholders work there too.</>,
@@ -284,7 +284,7 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
               Show one in text with <C>{"{{param.NAME}}"}</C>.
             </>,
             <>
-              A <b className="text-gray-200">lookup</b> is a dropdown of choices from a data source (value column + optional label column), optionally
+              A <b className="text-gray-300">lookup</b> is a dropdown of choices from a data source (value column + optional label column), optionally
               allowing several choices.
             </>,
           ]}

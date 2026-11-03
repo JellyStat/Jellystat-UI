@@ -41,12 +41,12 @@ export default function Pagination({
   return (
     <div
       className={cn(
-        'bg-background border-t border-border p-4 flex flex-wrap items-center justify-between gap-3',
+        'bg-background/80 border-t border-border p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3',
         className
       )}
     >
       {summary && (
-        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{summary}</span>
+        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{summary}</span>
       )}
       <div className="flex items-center gap-4 ml-auto">
         {loading && <Spinner size={14} tone="primary" />}

@@ -19,9 +19,9 @@ export default function NotFound({ title, message, enableGoBack = true }: NotFou
 
   return (
     <div className="flex items-center justify-center w-full h-full min-h-[300px] p-4 animate-in fade-in duration-500">
-      <div className="bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-lg shadow-black/20 max-w-2xl w-full flex flex-col sm:flex-row items-center sm:items-stretch overflow-hidden group">
+      <div className="bg-surface/60 backdrop-blur-xl border border-border rounded-3xl shadow-xl shadow-black/20 max-w-2xl w-full flex flex-col sm:flex-row items-center sm:items-stretch overflow-hidden group">
         {/* Left Icon Section */}
-        <div className="bg-background p-8 sm:p-10 flex items-center justify-center border-b sm:border-b-0 sm:border-r border-border shrink-0 relative overflow-hidden">
+        <div className="bg-background/50 p-8 sm:p-10 flex items-center justify-center border-b sm:border-b-0 sm:border-r border-border shrink-0 relative overflow-hidden">
           {/* Subtle glow behind the icon */}
           <div className="absolute inset-0 bg-accent/5 group-hover:bg-accent/10 transition-colors duration-500"></div>
 
@@ -32,7 +32,7 @@ export default function NotFound({ title, message, enableGoBack = true }: NotFou
 
         {/* Right Content Section */}
         <div className="p-8 sm:p-10 flex flex-col justify-center flex-1 text-center sm:text-left relative z-10">
-          <h3 className="text-xl font-black text-white tracking-tight mb-2">{displayTitle}</h3>
+          <h3 className="text-2xl font-black text-white tracking-tight mb-2">{displayTitle}</h3>
 
           <p className="text-gray-400 text-sm mb-8 leading-relaxed max-w-sm mx-auto sm:mx-0">{displayMessage}</p>
 

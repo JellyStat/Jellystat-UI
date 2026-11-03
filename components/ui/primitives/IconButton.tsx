@@ -8,10 +8,10 @@ const variantClass = {
     'p-1.5 border-transparent text-gray-400 hover:text-white hover:bg-surface-hover hover:border-border',
   // Row action in tables and lists: always-visible border, accent on hover.
   bordered:
-    'p-2 bg-background border-border text-gray-400 hover:text-accent hover:border-accent/50 hover:bg-accent/10',
+    'p-2 bg-background border-border text-gray-400 hover:text-accent hover:border-accent/50 hover:bg-accent/20',
   // Destructive row action.
   danger:
-    'p-2 bg-background border-border text-gray-400 hover:text-danger hover:border-danger/50 hover:bg-danger/10',
+    'p-2 bg-background border-border text-gray-400 hover:text-danger hover:border-danger/50 hover:bg-danger/20',
 } as const;
 
 export type IconButtonVariant = keyof typeof variantClass;

@@ -130,7 +130,7 @@ function LookupInput({ parameter, value, onChange, source, values, className, si
       </div>
       <ComboboxOptions
         anchor="bottom start"
-        className="z-[70] w-(--input-width) min-w-48 max-h-64 overflow-y-auto rounded-xl border border-border bg-surface p-1 shadow-2xl shadow-black/40 empty:invisible [--anchor-gap:4px]"
+        className="z-[70] w-(--input-width) min-w-48 max-h-64 overflow-y-auto rounded-xl border border-border bg-surface p-1 shadow-2xl shadow-black/60 empty:invisible [--anchor-gap:4px]"
       >
         {error && <div className="px-3 py-2 text-xs text-danger">{error}</div>}
         {!error && !loading && filtered.length === 0 && <div className="px-3 py-2 text-xs text-gray-500">No matches</div>}

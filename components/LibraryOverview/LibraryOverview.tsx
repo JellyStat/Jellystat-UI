@@ -49,7 +49,7 @@ export default function LibraryOverview() {
       {/* Content Area */}
       <div className="flex flex-col gap-3">
         {loading && (
-          <div className="w-full h-48 bg-surface border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse shadow-inner">
+          <div className="w-full h-48 bg-surface/30 border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse shadow-inner">
             <Spinner size={24} className="text-primary mb-3" />
             <span className="text-xs text-gray-500 font-medium">{t("library.scanning", "Scanning libraries...")}</span>
           </div>
@@ -65,7 +65,7 @@ export default function LibraryOverview() {
         {!loading && !error && libraries.length > 0 && libraries.map((lib) => <LibraryOverviewCard key={lib.id} library={lib} />)}
 
         {!loading && !error && libraries.length === 0 && (
-          <div className="w-full h-32 bg-surface border border-border border-dashed rounded-2xl flex flex-col items-center justify-center text-gray-500 shadow-inner">
+          <div className="w-full h-32 bg-surface/30 border border-border border-dashed rounded-2xl flex flex-col items-center justify-center text-gray-500 shadow-inner">
             <span className="font-medium text-sm">{t("common.no_libraries_found", "No libraries found")}</span>
           </div>
         )}

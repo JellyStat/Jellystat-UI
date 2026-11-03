@@ -172,7 +172,7 @@ export default function UsersPage() {
     >
       <span
         className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-          user.tracked ? "translate-x-6 shadow-lg" : "translate-x-1 opacity-70"
+          user.tracked ? "translate-x-6 shadow-md" : "translate-x-1 opacity-70"
         }`}
       />
     </button>
@@ -187,24 +187,25 @@ export default function UsersPage() {
       <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12">
         {/* Header */}
         <PageHeader
+          iconTone="accent"
           icon={<Users size={28} />}
           title={t("nav.users", "Users")}
           description={t("users.tracking_desc", "Manage tracked users and view individual playback statistics.")}
         />
 
         {/* Main Table Container */}
-        <div className="bg-surface border border-border rounded-2xl shadow-lg shadow-black/20 overflow-hidden flex flex-col relative min-h-[400px]">
+        <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col relative min-h-[400px]">
           {/* Loading Overlay */}
           {loading && (
-            <div className="absolute inset-0 z-20 bg-surface/60 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
+            <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
               <Spinner size={40} className="text-primary mb-3" />
-              <span className="text-sm font-bold text-gray-200">{t("common.loading", "Loading")}</span>
+              <span className="text-sm font-bold text-gray-300">{t("common.loading", "Loading")}</span>
             </div>
           )}
 
           {/* Error Overlay */}
           {error && (
-            <div className="absolute inset-0 z-20 bg-surface/60 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in p-6">
+            <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in p-6">
               <AlertCircle size={40} className="text-danger mb-3" />
               <span className="text-lg font-bold text-danger mb-1">{t("common.failed_to_load", "Failed to load")}</span>
               <span className="text-sm text-gray-400 text-center max-w-md">{error}</span>
@@ -212,7 +213,7 @@ export default function UsersPage() {
           )}
 
           {/* Mobile: filter + card list */}
-          <div className="md:hidden p-3 bg-background border-b border-border">
+          <div className="md:hidden p-3 bg-background/60 border-b border-border">
             <TextFilter
               keyName="userName"
               value={getFilterValueOrDefault("userName", "") as string}
@@ -232,7 +233,7 @@ export default function UsersPage() {
                   <div className="flex-1 min-w-0">
                     <Link
                       href={`/users/${user.id}`}
-                      className="block text-sm font-bold text-gray-200 hover:text-accent transition-colors truncate"
+                      className="block text-sm font-bold text-gray-100 hover:text-accent transition-colors truncate"
                     >
                       {user.username}
                     </Link>
@@ -241,7 +242,7 @@ export default function UsersPage() {
                     </div>
                     <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 text-[11px] font-mono text-gray-500">
                       <span>
-                        <span className="text-gray-200 font-bold">{user.playCount || 0}</span> {t("common.unit.plays", "Plays")}
+                        <span className="text-gray-300 font-bold">{user.playCount || 0}</span> {t("common.unit.plays", "Plays")}
                       </span>
                       <span>{user.playDuration?.secondsToDurationString?.() || "-"}</span>
                       <span>{formatLastActivityDate(user)}</span>
@@ -256,7 +257,7 @@ export default function UsersPage() {
           <div className="hidden md:block overflow-x-auto custom-scrollbar flex-1">
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
-                <tr className="bg-background border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
+                <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
                   <th className="p-3 w-16 text-center">{t("users.avatar", "Avatar")}</th>
                   <SortableHeader
                     label={t("common.user", "User")}
@@ -296,7 +297,7 @@ export default function UsersPage() {
                 </tr>
 
                 {/* Filter Row */}
-                <tr className="bg-background border-b border-border shadow-inner">
+                <tr className="bg-background/40 border-b border-border shadow-inner">
                   <th className="p-2 border-r border-border/50"></th>
                   <th className="p-2 border-r border-border/50 font-normal">
                     <TextFilter
@@ -334,7 +335,7 @@ export default function UsersPage() {
                       <td className="p-3 text-sm font-bold text-gray-200">
                         <Link
                           href={`/users/${user.id}`}
-                          className="text-sm font-bold text-gray-200 hover:text-accent transition-colors"
+                          className="text-sm font-bold text-gray-100 hover:text-accent transition-colors"
                         >
                           {user.username}
                         </Link>
@@ -347,7 +348,7 @@ export default function UsersPage() {
                         {user.latestActivity?.itemId ? (
                           <Link
                             href={`/libraries/items/${user.latestActivity.itemId}`}
-                            className="text-sm font-bold text-gray-200 hover:text-accent transition-colors"
+                            className="text-sm font-bold text-gray-100 hover:text-accent transition-colors"
                           >
                             {formatLastWatched(user)}
                           </Link>
@@ -373,7 +374,7 @@ export default function UsersPage() {
           </div>
 
           {/* Pagination Footer */}
-          <div className="bg-background border-t border-border p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
+          <div className="bg-background/80 border-t border-border p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
             <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
               {t("users.total_users", "Total Users:")} <span className="text-white">{pageCount}</span>
             </span>
@@ -385,14 +386,14 @@ export default function UsersPage() {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-border-strong hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
                 >
                   {t("common.prev", "Prev")}
                 </button>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-border-strong hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
                 >
                   {t("common.next", "Next")}
                 </button>

@@ -62,7 +62,7 @@ export default function ReportDesignerPage() {
         <title>{doc?.name || t("reports.designer", "Report designer")} | Jellystat</title>
       </Head>
       {error && (
-        <div className="p-6 flex items-center gap-3 text-gray-200">
+        <div className="p-6 flex items-center gap-3 text-gray-300">
           <AlertCircle className="text-danger" /> {error}
         </div>
       )}

@@ -71,6 +71,7 @@ export default function ApiKeysPage() {
   return (
     <Page className="pt-4 sm:px-6 sm:pt-6">
       <PageHeader
+        iconTone="accent"
         icon={<KeyRound size={28} />}
         title={t("settings.api_keys_title", "API Keys")}
         description={t("settings.api_keys_subtitle", "Let other apps read from Jellystat using the x-api-token header.")}
@@ -79,18 +80,18 @@ export default function ApiKeysPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-4">
           <SectionTitle className="flex items-center gap-2">
-            <KeyRound size={20} className="text-primary" />
+            <KeyRound size={20} className="text-accent" />
             {t("settings.api_keys", "Keys")}
           </SectionTitle>
           <Button variant="outline" onClick={() => setIsCreateOpen(true)}>
-            <Plus size={16} className="text-primary" />
+            <Plus size={16} className="text-accent" />
             {t("settings.add_api_key", "Create API Key")}
           </Button>
         </div>
 
         <Card padding="none" className="relative min-h-[200px]">
           {loading && (
-            <div className="absolute inset-0 z-20 bg-surface/60 backdrop-blur-sm flex items-center justify-center animate-in fade-in">
+            <div className="absolute inset-0 z-20 bg-surface/80 backdrop-blur-sm flex items-center justify-center animate-in fade-in">
               <Spinner size={32} tone="primary" />
             </div>
           )}

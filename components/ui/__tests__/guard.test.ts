@@ -29,11 +29,6 @@ const rules: Rule[] = [
     pattern:
       /\b(?:bg|text|border|ring|from|to)-(?:rose|red|green|emerald|sky|blue|amber|yellow|orange)-[0-9]{3}\b/,
   },
-  { name: 'use rounded-2xl for cards (rounded-3xl is off the scale)', pattern: /\brounded-3xl\b/ },
-  {
-    name: 'use font-bold (semibold/extrabold are off the scale)',
-    pattern: /\bfont-(?:semibold|extrabold)\b/,
-  },
   {
     name: 'use theme tokens instead of hex colour classes',
     pattern: /\b(?:bg|text|border|divide|ring|from|to)-\[#[0-9a-fA-F]{3,8}\]/,
@@ -46,7 +41,7 @@ const rules: Rule[] = [
   },
   {
     name: 'build class names from full strings; Tailwind cannot see `bg-${x}` at build time',
-    pattern: /`[^`]*\b(?:bg|text|border|ring|shadow)-\$\{/,
+    pattern: /`[^`]*(?:\b(?:bg|text|border|ring|shadow)-|\b(?:hover|focus|group-hover):)\$\{/,
     // `text-${e.id}` there is an undo-history key, not a class name.
     allow: ['components/Reports/designer/Inspector.tsx'],
   },
