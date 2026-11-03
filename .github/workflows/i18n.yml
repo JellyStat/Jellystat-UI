@@ -1,0 +1,48 @@
+name: Check translations
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Locale files match en-US
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "25.2.1"
+
+      # The check script has no dependencies, so there's no npm ci here.
+      - name: Check locale files against en-US
+        run: node scripts/i18n/check.mjs
+
+  extract:
+    name: Locale files are up to date with the code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "25.2.1"
+          cache: "npm"
+
+      - run: npm ci
+
+      # Fails when a t() key was added, renamed or removed in the code without running `npm run extract`.
+      - name: Run the extractor and look for changes
+        run: |
+          npm run extract
+          if ! git diff --exit-code --stat -- public/locales; then
+            echo "::error::public/locales is out of date. Run 'npm run extract' and commit the result."
+            exit 1
+          fi

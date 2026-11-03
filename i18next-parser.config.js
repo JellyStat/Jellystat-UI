@@ -1,6 +1,11 @@
 // i18next-parser.config.js
+const languages = require("./public/locales/languages.json");
+
+const SOURCE_LOCALE = "en-US";
+
 module.exports = {
-  locales: ["en-US", "de-DE"],
+  // en-US is the template; every other locale comes from public/locales/languages.json.
+  locales: languages.map((l) => l.code),
   defaultNamespace: "common",
   input: [
     "pages/**/*.{js,jsx,ts,tsx}",
@@ -19,8 +24,10 @@ module.exports = {
   indentation: 2,
   sort: true,
   // i18next-parser 9 passes (locale, namespace, key, value); value is the inline default from the code.
+  // Only the en-US template gets the English text. New keys in other locales start as "" so they show
+  // up as untranslated (npm run i18n:check, Weblate) while the app falls back to English for them.
   defaultValue: function (locale, namespace, key, value) {
-    return value ?? "";
+    return locale === SOURCE_LOCALE ? (value ?? "") : "";
   },
   keepRemoved: false,
   keySeparator: ".",

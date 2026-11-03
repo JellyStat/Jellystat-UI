@@ -11,7 +11,7 @@ This template comes with the following features:
 * **Real-Time WebSockets:** Live session monitoring and immediate UI updates without constant API polling.
 * **Modern Tooling:** Toast notifications powered by `sonner` and crisp, consistent iconography via `lucide-react`.
 * **Zero-Dependency Hooks:** Custom native React hooks (like `useDebounce`) to handle complex UI states while keeping JavaScript payloads small.
-* **Internationalization (i18n):** Built-in localization support using `next-i18next`.
+* **Internationalization (i18n):** Localized with `i18next` and `react-i18next`. English (`public/locales/en-US`) is the template for every other language. See [TRANSLATING.md](TRANSLATING.md) to help translate.
 * **Gridify Integration:** Advanced, server-side data table sorting and filtering.
 
 ## UI kit
