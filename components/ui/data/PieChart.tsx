@@ -80,6 +80,13 @@ const ChartTooltip = ({ active, payload }: any) => {
   );
 };
 
+// Whole percentages; a non-empty slice never reads as 0%.
+function formatShare(count: number, total: number) {
+  if (!total || !count) return "0%";
+  const pct = (count / total) * 100;
+  return pct < 1 ? "<1%" : `${Math.round(pct)}%`;
+}
+
 const ChartLegend = ({ items }: { items: (PieChartDatum & { fill: string })[] }) => {
   const totalCount = Math.max(
     items.reduce((s, it) => s + (it.count || 0), 0),
@@ -95,7 +102,7 @@ const ChartLegend = ({ items }: { items: (PieChartDatum & { fill: string })[] })
           <span className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.fill }} />
           {entry.name}
           <span className="text-gray-400">
-            ({(((entry.count || 0) / totalCount) * 100).toFixed(2)}%)
+            ({formatShare(entry.count || 0, totalCount)})
           </span>
         </div>
       ))}

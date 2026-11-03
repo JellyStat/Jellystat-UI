@@ -17,6 +17,7 @@ import {
   Select,
   Switch,
   Textarea,
+  useDiscardGuard,
 } from "@/components/ui";
 
 type Props = {
@@ -53,6 +54,21 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
   const [useTemplate, setUseTemplate] = useState(!!webhook.payloadTemplate);
   const [saving, setSaving] = useState(false);
 
+  const dirty =
+    JSON.stringify(draft) !== JSON.stringify(webhook) ||
+    JSON.stringify(headers) !== JSON.stringify(Object.entries(webhook.headers ?? {})) ||
+    useTemplate !== !!webhook.payloadTemplate;
+  const guard = useDiscardGuard({
+    dirty,
+    onClose,
+    labels: {
+      title: t("common.discard_changes_title", "Discard changes?"),
+      description: t("common.discard_changes_desc", "Your edits have not been saved."),
+      discard: t("common.discard", "Discard"),
+      keepEditing: t("common.keep_editing", "Keep editing"),
+    },
+  });
+
   const set = (patch: Partial<EventWebhook>) => setDraft((d) => ({ ...d, ...patch }));
   const toggleEvent = (key: WebhookEventKey, on: boolean) =>
     set({ events: on ? [...draft.events, key] : draft.events.filter((e) => e !== key) });
@@ -88,6 +104,7 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
 
   return (
     <ModalPanel size="xl">
+      {guard.dialog}
       <ModalHeader
         icon={<Webhook size={22} />}
         title={webhook.id ? t("settings.edit_webhook", "Edit webhook") : t("settings.add_webhook", "New webhook")}
@@ -95,7 +112,7 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
 
       <div className="space-y-5">
         <div className="grid sm:grid-cols-2 gap-4">
-          <Field label={t("settings.webhook_name", "Name")} htmlFor="webhook-name">
+          <Field label={t("settings.webhook_name", "Name")} required htmlFor="webhook-name">
             <Input id="webhook-name" value={draft.name} onChange={(e) => set({ name: e.target.value })} />
           </Field>
           <Field label={t("settings.webhook_type", "Type")}>
@@ -110,7 +127,7 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
           </Field>
         </div>
 
-        <Field label={t("settings.webhook_url", "URL")} htmlFor="webhook-url">
+        <Field label={t("settings.webhook_url", "URL")} required htmlFor="webhook-url">
           <Input
             id="webhook-url"
             value={draft.url}
@@ -119,7 +136,7 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
           />
         </Field>
 
-        <Field label={t("settings.webhook_events", "Events")}>
+        <Field label={t("settings.webhook_events", "Events")} required>
           <div className="grid gap-2 sm:grid-cols-3">
             {events.map((e) => (
               <Checkbox
@@ -218,7 +235,7 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
               value={draft.payloadTemplate ?? ""}
               onChange={(e) => set({ payloadTemplate: e.target.value })}
             />
-            <p className="text-[11px] text-gray-500">
+            <p className="text-xs text-gray-500">
               {t(
                 "settings.webhook_template_help",
                 "Tokens like {{data.user.name}} or {{data.items.0.name}} are paths into the payload below. Text is JSON-escaped, so put text tokens inside quotes; numbers and objects go in as JSON.",
@@ -227,7 +244,7 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
               )}
             </p>
             {sample !== undefined && (
-              <pre className="max-h-56 overflow-auto rounded-xl border border-border bg-background p-4 text-[11px] text-gray-400 shadow-inner">
+              <pre className="max-h-56 overflow-auto rounded-xl border border-border bg-background p-4 text-xs text-gray-400 shadow-inner">
                 {JSON.stringify(sample, null, 2)}
               </pre>
             )}

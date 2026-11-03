@@ -65,7 +65,7 @@ export default function ReportViewPage() {
               </button>
               <Link
                 href={{ pathname: "/reports/designer", query: { id } }}
-                className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-xl text-sm font-bold"
+                className="flex items-center gap-2 bg-primary-solid hover:bg-primary-solid-hover text-white px-4 py-2 rounded-xl text-sm font-bold"
               >
                 <Pencil size={16} /> {t("reports.edit", "Edit")}
               </Link>

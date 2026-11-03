@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { Image as ImageIcon } from "lucide-react";
 
@@ -15,7 +15,6 @@ export default function LibraryTrackingCard({
   lib: TrackedLibraries;
   toggleLibraryTracking: (libraryId: string, tracked: boolean) => void;
 }) {
-  const router = useRouter();
   const { t } = useTranslation("common");
   const [imageError, setImageError] = useState(false);
 
@@ -28,9 +27,9 @@ export default function LibraryTrackingCard({
   return (
     <div className="bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-lg shadow-black/20 overflow-hidden flex flex-col transition-all hover:border-gray-600 hover:shadow-black/40 group relative">
       {/* Image Container */}
-      <div
-        className="h-48 md:h-56 relative cursor-pointer overflow-hidden bg-black/40"
-        onClick={() => router.push(`/libraries/${encodeURIComponent(lib.id)}`)}
+      <Link
+        href={`/libraries/${encodeURIComponent(lib.id)}`}
+        className="block h-48 md:h-56 relative overflow-hidden bg-black/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
       >
         {imgUrl && !imageError ? (
           <>
@@ -46,10 +45,10 @@ export default function LibraryTrackingCard({
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
-            <Icon size={56} className="text-gray-600 drop-shadow-lg" />
+            <Icon size={56} className="text-gray-500 drop-shadow-lg" />
           </div>
         )}
-      </div>
+      </Link>
 
       {/* Details Footer */}
       <div className="p-5 flex flex-col flex-1 gap-4 relative z-10 -mt-2 bg-gradient-to-b from-transparent to-surface/80">

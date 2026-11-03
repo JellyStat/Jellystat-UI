@@ -84,10 +84,10 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
 
       {/* Metadata Container */}
       <div className="p-3.5 flex flex-col flex-1 w-full gap-1.5 bg-linear-to-b from-transparent to-background/30">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-accent mb-1 truncate">{formattedDate}</span>
+        <span className="text-xs font-bold uppercase tracking-wider text-accent mb-1 truncate">{formattedDate}</span>
 
         <h4
-          className="text-sm font-black text-gray-200 leading-tight line-clamp-2 hover:text-primary transition-colors cursor-pointer"
+          className="text-sm font-bold text-gray-200 leading-tight line-clamp-2 hover:text-primary-soft transition-colors cursor-pointer"
           onClick={() => router.push(`/libraries/items/${encodeURIComponent(item.parent?.id ?? item.id ?? "")}`)}
         >
           {title}
@@ -95,14 +95,14 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
 
         {isValidParent && (
           <p
-            className="text-xs text-gray-300 line-clamp-1 cursor-pointer hover:text-primary transition-colors"
+            className="text-xs text-gray-300 line-clamp-1 cursor-pointer hover:text-primary-soft transition-colors"
             onClick={() => router.push(`/libraries/items/${encodeURIComponent(item.id ?? "")}`)}
           >
             {item.name}
           </p>
         )}
-        {isValidParent && <p className="text-[11px] text-gray-400 tracking-wider uppercase mt-auto pt-1">{indexString}</p>}
-        {hasGroupedItems && <p className="text-[11px] text-gray-400 tracking-wider uppercase mt-auto pt-1">{episodesLabel}</p>}
+        {isValidParent && <p className="text-xs text-gray-400 tracking-wider uppercase mt-auto pt-1">{indexString}</p>}
+        {hasGroupedItems && <p className="text-xs text-gray-400 tracking-wider uppercase mt-auto pt-1">{episodesLabel}</p>}
       </div>
     </div>
   );

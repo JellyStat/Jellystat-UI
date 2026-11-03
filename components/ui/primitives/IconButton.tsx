@@ -18,7 +18,7 @@ export type IconButtonVariant = keyof typeof variantClass;
 
 export function iconButtonClass(variant: IconButtonVariant = 'plain', className?: string) {
   return cn(
-    'inline-flex items-center justify-center rounded-lg border transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none',
+    'inline-flex items-center justify-center rounded-lg border transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none [@media(pointer:coarse)]:min-w-10 [@media(pointer:coarse)]:min-h-10',
     variantClass[variant],
     focusRing,
     className

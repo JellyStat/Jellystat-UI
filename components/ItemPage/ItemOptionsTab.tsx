@@ -46,14 +46,14 @@ export default function ItemOptions({ item }: Props) {
             <AlertTriangle className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-2xl font-black tracking-tight text-gray-200">{t("library.DangerZone", "Danger Zone")}</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-gray-200">{t("library.DangerZone", "Danger Zone")}</h2>
           </div>
         </div>
 
         <div className="space-y-0 px-5 py-3">
           <div className="flex items-center justify-between gap-6 py-4">
             <div className="min-w-0 flex-1">
-              <h5 className="text-2xl font-black tracking-tight text-gray-200">
+              <h5 className="text-2xl font-bold tracking-tight text-gray-200">
                 {t("item.deleteArchivedItem", "Delete Archived Item")}
               </h5>
               <p className="mt-1 max-w-2xl text-sm text-gray-400">
@@ -75,11 +75,11 @@ export default function ItemOptions({ item }: Props) {
               }
               dialogTitle={t("item.deleteArchivedItem", "Delete Archived Item")}
               description={t("item.confirmDeleteArchivedItemDescription", "Are you sure you want to delete this archived item?")}
-              confirmText={t("common.yes", "Yes")}
-              cancelText={t("common.no", "No")}
+              confirmText={t("common.delete", "Delete")}
+              cancelText={t("common.cancel", "Cancel")}
               onConfirm={deleteArchivedItem}
               tone="danger"
-              className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger px-4 py-3 text-base font-semibold text-white transition hover:bg-danger-hover"
+              className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger-solid px-4 py-3 text-base font-semibold text-white transition hover:bg-danger-solid-hover"
             />
           </div>
         </div>

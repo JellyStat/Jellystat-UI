@@ -99,7 +99,7 @@ export default function LayersPanel() {
               e.hidden && "opacity-50",
             )}
           >
-            <GripVertical size={12} className="text-gray-600 shrink-0 cursor-grab" />
+            <GripVertical size={12} className="text-gray-500 shrink-0 cursor-grab" />
             <Icon size={14} className="shrink-0 text-primary" />
             {renaming === e.id ? (
               <input

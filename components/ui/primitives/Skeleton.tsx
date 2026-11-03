@@ -7,7 +7,7 @@ export default function Skeleton({ className, ...rest }: ComponentProps<'div'>) 
     <div
       aria-hidden="true"
       className={cn(
-        'w-full bg-surface border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse shadow-inner',
+        'w-full bg-surface border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse motion-reduce:animate-none shadow-inner',
         className
       )}
       {...rest}

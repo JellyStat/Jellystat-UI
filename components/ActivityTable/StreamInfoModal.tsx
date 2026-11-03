@@ -82,7 +82,7 @@ function DataRow({
 function SectionHeader({ title, badge }: { title: string; badge?: React.ReactNode }) {
   return (
     <tr>
-      <td className="pt-4 pb-1.5 pr-3 sm:pr-5 text-xs font-black uppercase tracking-wider text-primary sm:whitespace-nowrap">{title}</td>
+      <td className="pt-4 pb-1.5 pr-3 sm:pr-5 text-xs font-bold uppercase tracking-wider text-primary-soft sm:whitespace-nowrap">{title}</td>
       <td colSpan={2} className="pt-4 pb-1.5">
         {badge && <div className="flex items-center gap-1.5">{badge}</div>}
       </td>
@@ -168,9 +168,9 @@ export function StreamInfoModal({ activity, open, onClose }: Props) {
         <div className="px-4 sm:px-6 py-3 overflow-x-auto custom-scrollbar">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="text-xs font-black text-gray-600 uppercase tracking-wider">
+              <tr className="text-xs font-bold text-gray-500 uppercase tracking-wider">
                 <th className="py-2 pr-3 sm:pr-5 w-20 sm:w-24 shrink-0"></th>
-                <th className="py-2 pr-5 text-primary text-left min-w-[100px] sm:min-w-[280px] align-middle">
+                <th className="py-2 pr-5 text-primary-soft text-left min-w-[100px] sm:min-w-[280px] align-middle">
                   {t("common.playback_stream", "Playback Stream")}
                 </th>
                 <th className="py-2 pr-5 text-gray-400 text-left w-[110px] sm:w-[180px] shrink-0 align-middle">

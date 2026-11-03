@@ -42,12 +42,12 @@ function ItemLabel({ item }: { item: ItemsWithParentData }) {
   return (
     <>
       {code && (
-        <span className="shrink-0 font-mono text-[11px] font-bold text-gray-300 bg-surface-raised border border-border rounded-lg px-1.5 py-0.5">
+        <span className="shrink-0 font-mono text-xs font-bold text-gray-300 bg-surface-raised border border-border rounded-lg px-1.5 py-0.5">
           {code}
         </span>
       )}
       <span className="truncate">{item.name}</span>
-      {item.library?.name && <span className="shrink-0 text-[11px] font-medium text-gray-400">· {item.library.name}</span>}
+      {item.library?.name && <span className="shrink-0 text-xs font-medium text-gray-400">· {item.library.name}</span>}
     </>
   );
 }
@@ -509,7 +509,7 @@ export default function ActivityMigrationPage() {
             <span className="text-sm font-bold text-gray-200 truncate">{activity.name}</span>
           </div>
         </td>
-        <td className="text-gray-600" aria-hidden="true">
+        <td className="text-gray-500" aria-hidden="true">
           <ArrowRight size={16} className="mx-auto" />
         </td>
         <td className="px-4 py-2">{itemSelect(activity)}</td>
@@ -528,7 +528,7 @@ export default function ActivityMigrationPage() {
         <tr className="border-b border-border/50 bg-surface-raised hover:bg-surface-hover transition-colors">
           <td className="px-4 py-3 text-center">{groupCheckbox(group)}</td>
           <td className="px-4 py-3">{seriesInfo(group)}</td>
-          <td className="text-gray-600" aria-hidden="true">
+          <td className="text-gray-500" aria-hidden="true">
             <ArrowRight size={16} className="mx-auto" />
           </td>
           <td className="px-4 py-2">{seriesSelect(group, seriesItem)}</td>
@@ -661,10 +661,18 @@ export default function ActivityMigrationPage() {
 
       {/* Table */}
       <Card padding="none" className="flex flex-col relative min-h-[400px]">
-        {loading && (
+        {/* First load: nothing to show yet, so cover the table. */}
+        {loading && activityData.length === 0 && (
           <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center gap-3 animate-in fade-in">
             <Spinner size={40} tone="primary" />
             <span className="text-sm font-bold text-gray-300">{t("settings.migration_scanning", "Scanning activity...")}</span>
+          </div>
+        )}
+        {/* Later loads keep the current rows visible. */}
+        {loading && activityData.length > 0 && (
+          <div role="status" className="absolute top-3 right-3 z-20 flex items-center gap-2 bg-surface border border-border rounded-full px-3 py-1.5 shadow-lg shadow-black/40">
+            <Spinner size={14} className="text-primary" />
+            <span className="text-xs font-bold text-gray-300">{t("common.loading", "Loading")}</span>
           </div>
         )}
 

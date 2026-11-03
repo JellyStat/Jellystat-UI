@@ -15,7 +15,7 @@ export default function ErrorCard({ title, message, Icon = AlertCircle }: NoData
 
   return (
     <div className="w-full h-[400px] flex items-center justify-center">
-      <Alert tone="danger" icon={Icon} title={title || t("statistics.telemetry_error", "Telemetry Error")}>
+      <Alert tone="danger" icon={Icon} title={title || t("error_cards.failed_to_load", "Failed to load")}>
         {message || ""}
       </Alert>
     </div>

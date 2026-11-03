@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Archive, AlertCircle, Download, Trash, Clock, Upload } from "lucide-react";
+import { Archive, AlertCircle, Download, Trash, RotateCcw, Upload } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import client from "@/lib/api";
@@ -108,11 +108,11 @@ export default function BackupsPage() {
     setError(null);
     try {
       await client.Tasks.restoreTask({ FileName: backup });
-      toast.success(`${Tasks.RestoreTask} queued successfully`, { id: Tasks.RestoreTask });
+      toast.success(t("settings.backup_restore_queued", "Restore queued"), { id: Tasks.RestoreTask });
     } catch (err: any) {
       console.error(err);
       setError(err?.message ?? String(err));
-      toast.error(`Failed to queue ${Tasks.RestoreTask}: ${err?.message ?? String(err)}`);
+      toast.error(t("settings.backup_restore_failed", "Couldn't start the restore: {{error}}", { error: err?.message ?? String(err) }));
     } finally {
       setLoading(false);
     }
@@ -123,12 +123,12 @@ export default function BackupsPage() {
     setError(null);
     try {
       await client.Tasks.uploadBackup(file);
-      toast.success(`File uploaded successfully`);
+      toast.success(t("settings.backup_uploaded", "Backup uploaded"));
       await fetchBackups();
     } catch (err: any) {
       console.error(err);
       setError(err?.message ?? String(err));
-      toast.error(`Failed to upload file: ${err?.message ?? String(err)}`);
+      toast.error(t("settings.backup_upload_failed", "Upload failed: {{error}}", { error: err?.message ?? String(err) }));
     } finally {
       setLoading(false);
     }
@@ -162,7 +162,7 @@ export default function BackupsPage() {
   const renderActions = (backup: BackupModel) => (
     <>
       <ConfirmationDialogButton
-        buttonElement={<Clock size={16} />}
+        buttonElement={<RotateCcw size={16} />}
         dialogTitle={t("settings.backups_confirm_restore_title", "Restore this backup?")}
         description={t(
           "settings.backups_confirm_restore_desc",
@@ -172,6 +172,12 @@ export default function BackupsPage() {
         confirmText={t("common.restore", "Restore")}
         cancelText={t("common.cancel", "Cancel")}
         tooltip={t("common.restore", "Restore backup")}
+        confirmPhrase={{
+          text: t("settings.backups_restore_phrase", "restore"),
+          label: t("settings.backups_restore_phrase_label", "Type \"{{phrase}}\" to confirm", {
+            phrase: t("settings.backups_restore_phrase", "restore"),
+          }),
+        }}
         tone="danger"
         disabled={loading}
         onConfirm={() => restoreBackup(backup.fileName)}
@@ -186,10 +192,10 @@ export default function BackupsPage() {
       </IconButton>
       <ConfirmationDialogButton
         buttonElement={<Trash size={16} />}
-        dialogTitle={t("settings.backups_confirm_delete_title", "Confirm Delete")}
-        description={t("settings.backups_confirm_delete_desc", "Are you sure you want to delete this backup?")}
-        confirmText={t("common.yes", "Yes")}
-        cancelText={t("common.no", "No")}
+        dialogTitle={t("settings.backups_delete_title", "Delete this backup?")}
+        description={t("settings.backups_delete_named_desc", "{{fileName}} will be permanently deleted. This can't be undone.", { fileName: backup.fileName })}
+        confirmText={t("common.delete", "Delete")}
+        cancelText={t("common.cancel", "Cancel")}
         tooltip={t("common.delete", "Delete backup")}
         tone="danger"
         disabled={loading}
@@ -225,10 +231,18 @@ export default function BackupsPage() {
       />
 
       <Card padding="none" className="relative min-h-[400px] flex flex-col">
-        {loading && (
+        {/* First load: nothing to show yet, so cover the table. */}
+        {loading && backups.length === 0 && (
           <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center gap-3 animate-in fade-in">
             <Spinner size={40} tone="primary" />
             <span className="text-sm font-bold text-gray-300">{t("common.loading", "Loading")}</span>
+          </div>
+        )}
+        {/* Later loads keep the current rows visible. */}
+        {loading && backups.length > 0 && (
+          <div role="status" className="absolute top-3 right-3 z-20 flex items-center gap-2 bg-surface border border-border rounded-full px-3 py-1.5 shadow-lg shadow-black/40">
+            <Spinner size={14} className="text-primary" />
+            <span className="text-xs font-bold text-gray-300">{t("common.loading", "Loading")}</span>
           </div>
         )}
 

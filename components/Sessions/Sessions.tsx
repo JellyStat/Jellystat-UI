@@ -35,8 +35,12 @@ export default function Sessions() {
     <div className="flex flex-col w-full animate-in fade-in duration-500">
       {/* Section Header */}
       <div className="flex items-center gap-3 mb-6">
-        <StatusIndicator tone={sessions.length == 0 ? "danger" : "success"} />
-        <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
+        <StatusIndicator
+          tone={sessions.length == 0 ? "neutral" : "success"}
+          pulse={sessions.length > 0}
+          label={sessions.length == 0 ? t("sessions.none_active", "No active streams") : t("sessions.live", "Live")}
+        />
+        <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
           {t("sessions.active_streams", "Active Streams")}
         </h2>
       </div>

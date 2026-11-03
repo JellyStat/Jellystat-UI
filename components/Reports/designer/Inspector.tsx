@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useContext, useRef } from "react";
 import { toast } from "sonner";
+import i18next from "i18next";
 import type { ReportChartOptions, ReportElement, ReportElementStyle, ReportTableColumn, ReportTableOptions } from "@/lib/models/reports";
 import { dataSourceColumns } from "@/lib/reports/columns";
 import { DEFAULT_PALETTE, defaultChartOptions, defaultTableOptions, PAGE_PRESETS } from "@/lib/reports/defaults";
@@ -61,7 +62,7 @@ function ElementLink({ e }: { e: ReportElement }) {
 
 function TokenHelp() {
   return (
-    <details className="text-[11px] text-gray-500">
+    <details className="text-xs text-gray-500">
       <summary className="cursor-pointer hover:text-gray-200">Placeholders</summary>
       <ul className="mt-1 space-y-0.5">
         {TOKEN_HELP.map((t) => (
@@ -260,14 +261,14 @@ function Arrange() {
           <>
             <button
               type="button"
-              className="text-[10px] px-1.5 py-1 rounded text-gray-400 hover:text-white hover:bg-surface-hover cursor-pointer"
+              className="text-xs px-1.5 py-1 rounded text-gray-400 hover:text-white hover:bg-surface-hover cursor-pointer"
               onClick={() => matchSize("width")}
             >
               Same width
             </button>
             <button
               type="button"
-              className="text-[10px] px-1.5 py-1 rounded text-gray-400 hover:text-white hover:bg-surface-hover cursor-pointer"
+              className="text-xs px-1.5 py-1 rounded text-gray-400 hover:text-white hover:bg-surface-hover cursor-pointer"
               onClick={() => matchSize("height")}
             >
               Same height
@@ -409,7 +410,7 @@ function MetricContent({ e }: { e: ReportElement }) {
           <TextInput value={e.link ?? ""} placeholder="{{value}}" onChange={(v) => set("link", v || null)} />
         </Field>
       )}
-      <p className="text-[11px] text-gray-500">Shows the value from the first row. Use a Summary data source for totals.</p>
+      <p className="text-xs text-gray-500">Shows the value from the first row. Use a Summary data source for totals.</p>
     </Section>
   );
 }
@@ -533,7 +534,7 @@ function TableContent({ e }: { e: ReportElement }) {
           <div className="flex gap-2">
             <button
               type="button"
-              className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-white cursor-pointer"
+              className="flex items-center gap-1 text-xs text-gray-400 hover:text-white cursor-pointer"
               onClick={() => {
                 const next = columns.find((x) => !cols.some((c) => c.field === x.name)) ?? columns[0];
                 if (next) {
@@ -558,7 +559,7 @@ function TableContent({ e }: { e: ReportElement }) {
             {cols.length === 0 && columns.length > 0 && (
               <button
                 type="button"
-                className="text-[11px] text-gray-400 hover:text-white cursor-pointer"
+                className="text-xs text-gray-400 hover:text-white cursor-pointer"
                 onClick={() =>
                   setCols(
                     columns.map((x) => ({
@@ -695,7 +696,7 @@ function ChartContent({ e }: { e: ReportElement }) {
           {(!pie || c.series.length === 0) && (
             <button
               type="button"
-              className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-white cursor-pointer"
+              className="flex items-center gap-1 text-xs text-gray-400 hover:text-white cursor-pointer"
               onClick={() => {
                 const next = numeric.find((x) => !c.series.some((s) => s.field === x.name)) ?? numeric[0] ?? columns[0];
                 if (next) {
@@ -874,7 +875,7 @@ function ImageContent({ e }: { e: ReportElement }) {
                 return;
               }
               if (file.size > MAX_IMAGE_BYTES) {
-                toast.error("Images must be 5 MB or smaller");
+                toast.error(i18next.t("reports.designer_image_too_big", "Images must be 5 MB or smaller"));
                 return;
               }
               const reader = new FileReader();
@@ -892,9 +893,9 @@ function ImageContent({ e }: { e: ReportElement }) {
           <Field label="Or URL">
             <TextInput value={e.src?.startsWith("data:") ? "" : (e.src ?? "")} placeholder="https://..." onChange={(v) => setSrc(v || null)} />
           </Field>
-          {e.src?.startsWith("data:") && <p className="text-[11px] text-gray-500">Embedded image ({Math.round((e.src.length * 0.75) / 1024)} KB)</p>}
+          {e.src?.startsWith("data:") && <p className="text-xs text-gray-500">Embedded image ({Math.round((e.src.length * 0.75) / 1024)} KB)</p>}
           {e.src && !e.src.startsWith("data:") && (
-            <p className="text-[11px] text-warning">
+            <p className="text-xs text-warning">
               Server exports only fetch URLs from your Jellyfin/Emby server or Jellystat. For other sites, upload the image instead.
             </p>
           )}

@@ -53,14 +53,14 @@ export default function CalculatedFieldsEditor({
       <div className="flex items-center gap-3">
         <button
           type="button"
-          className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-white cursor-pointer"
+          className="flex items-center gap-1 text-xs text-gray-400 hover:text-white cursor-pointer"
           onClick={() => onChange([...calculated, { name: `Calc${calculated.length + 1}`, expression: "", type: null, label: null }])}
         >
           <Plus size={12} /> Calculated field
         </button>
       </div>
       {calculated.length > 0 && (
-        <details className="text-[11px] text-gray-500">
+        <details className="text-xs text-gray-500">
           <summary className="cursor-pointer hover:text-gray-200">Expression help</summary>
           <p className="mt-1">{EXPRESSION_HELP}</p>
           <p className="mt-1">

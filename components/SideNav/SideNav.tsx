@@ -180,7 +180,10 @@ export default function SideNav() {
             className="flex items-center"
             title={isConnected ? t("status.online", "System Online") : t("status.offline", "System Offline")}
           >
-            <StatusIndicator tone={isConnected ? "success" : "danger"} />
+            <StatusIndicator
+              tone={isConnected ? "success" : "danger"}
+              label={isConnected ? t("status.online", "System Online") : t("status.offline", "System Offline")}
+            />
           </span>
           <button
             type="button"
@@ -235,7 +238,7 @@ export default function SideNav() {
                 href={item.path}
                 className={`w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 font-medium group ${
                   isActive
-                    ? "bg-primary/10 text-primary shadow-inner border border-primary/20"
+                    ? "bg-primary/10 text-primary-soft shadow-inner border border-primary/20"
                     : "text-gray-400 hover:text-gray-200 hover:bg-surface-hover border border-transparent"
                 }`}
               >
@@ -269,7 +272,7 @@ export default function SideNav() {
               <span className="text-sm font-bold text-gray-200">
                 {isConnected ? t("status.online", "System Online") : t("status.offline", "System Offline")}
               </span>
-              <span className={`text-[11px] font-mono tracking-wider ${isConnected ? "text-gray-500" : "text-danger/80"}`}>
+              <span className={`text-xs font-mono tracking-wider ${isConnected ? "text-gray-500" : "text-danger/80"}`}>
                 {isConnected ? t("status.connected", "WS CONNECTED") : t("status.disconnected", "DISCONNECTED")}
               </span>
             </div>

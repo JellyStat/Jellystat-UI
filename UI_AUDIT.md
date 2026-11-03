@@ -66,6 +66,8 @@ Written 2026-11-03 against `main` @ `d8dd991`. The counts cover every `.tsx` fil
 
 ## 2. Proposed standards
 
+> **Later decisions (fix/ux-review):** text is never smaller than 12px (`text-xs`, enforced by the guard test); `font-black` is only for page titles (h1) and big stat numbers, everything else uses `font-bold`; purple text uses `text-primary-soft` (#b866ff, at least 5:1 on every surface) while icons, fills, borders and focus rings keep `primary`.
+
 These go into `styles/globals.css` `@theme` and into the kit's variants. Anything off the scale is a bug.
 
 ### 2.1 Colour roles

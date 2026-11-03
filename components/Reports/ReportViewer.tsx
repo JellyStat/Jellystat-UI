@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { ChevronDown, Download, Monitor, RefreshCw, Server } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import i18next from "i18next";
 import client from "@/lib/api";
 import type { ReportRenderModel } from "@/lib/models/reports";
 import { downloadBlob, exportFileName, exportPdf, exportPng } from "@/lib/reports/clientExport";
@@ -103,7 +104,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
         downloadBlob(await client.Reports.render({ reportId, format, parameters: params }, true), exportFileName(model.name, format));
       }
     } catch (err: any) {
-      toast.error(err?.message ?? "Export failed");
+      toast.error(err?.message ?? i18next.t("reports.export_failed", "Export failed"));
     } finally {
       setExporting(false);
     }
@@ -117,7 +118,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
         <div className="flex flex-wrap items-end gap-3">
           {parameters.map((p) => (
             <label key={p.name} className="flex flex-col gap-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">{p.label || p.name}</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">{p.label || p.name}</span>
               <ParameterInput
                 parameter={p}
                 className="w-48"
@@ -132,7 +133,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
           <button
             type="button"
             onClick={() => (JSON.stringify(values) === JSON.stringify(applied) ? load() : setApplied(values))}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 border border-primary/40 text-primary hover:bg-primary hover:text-white text-sm font-bold cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 border border-primary/40 text-primary-soft hover:bg-primary hover:text-white text-sm font-bold cursor-pointer"
           >
             <RefreshCw size={14} className={clsx(loading && "animate-spin")} /> {parameters.length ? "Apply" : "Refresh"}
           </button>

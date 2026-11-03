@@ -49,12 +49,12 @@ export default function RecentlyAdded({ gridify, grouped = true }: Props) {
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Sparkles size={28} className="text-accent" />
-        <h2 className="text-xl font-black text-white tracking-tight">{t("recently_added.title", "Recently Added")}</h2>
+        <h2 className="text-xl font-bold text-white tracking-tight">{t("recently_added.title", "Recently Added")}</h2>
       </div>
 
       <div className="relative w-full">
         {loading && (
-          <div className="w-full h-72 bg-surface/30 border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse shadow-inner">
+          <div className="w-full h-72 bg-surface/30 border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse motion-reduce:animate-none shadow-inner">
             <Spinner size={32} className="text-primary mb-3" />
             <span className="text-gray-500 font-medium">{t("common.loading", "Loading")}</span>
           </div>

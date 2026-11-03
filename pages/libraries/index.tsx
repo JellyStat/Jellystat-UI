@@ -80,7 +80,9 @@ export default function LibrariesPage() {
             <span className="font-bold text-lg tracking-wide text-gray-400">
               {t("common.no_libraries_found", "No libraries found")}
             </span>
-            <span className="text-sm mt-1">{t("common.no_libraries_found", "No libraries found")}</span>
+            <span className="text-sm mt-1 text-center max-w-sm">
+              {t("libraries.no_libraries_desc", "Make sure your server is connected and synced.")}
+            </span>
           </div>
         )}
 

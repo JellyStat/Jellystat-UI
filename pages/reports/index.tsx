@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import i18next from "i18next";
 import ConfirmationDialogButton from "@/components/ConfirmationDialogButton";
 import ReportImportDialog from "@/components/Reports/ReportImportDialog";
 import ReportSchedulesDialog from "@/components/Reports/ReportSchedulesDialog";
@@ -63,7 +64,7 @@ export default function ReportsPage() {
       await client.Reports.duplicate({ Id: id });
       await load();
     } catch (err: any) {
-      toast.error(err?.message ?? "Failed to duplicate the report");
+      toast.error(err?.message ?? i18next.t("reports.duplicate_failed", "Failed to duplicate the report"));
     }
   };
 
@@ -72,7 +73,7 @@ export default function ReportsPage() {
       await client.Reports.delete({ Id: id });
       await load();
     } catch (err: any) {
-      toast.error(err?.message ?? "Failed to delete the report");
+      toast.error(err?.message ?? i18next.t("reports.delete_failed", "Failed to delete the report"));
     }
   };
 
@@ -81,7 +82,7 @@ export default function ReportsPage() {
       const detail = await client.Reports.get({ Id: r.id });
       downloadReportFile(detail.name, detail.description, detail.definition);
     } catch (err: any) {
-      toast.error(err?.message ?? "Failed to export the report");
+      toast.error(err?.message ?? i18next.t("reports.export_report_failed", "Failed to export the report"));
     }
   };
 
@@ -93,10 +94,10 @@ export default function ReportsPage() {
         description: result.description ?? null,
         definition: result.definition!,
       });
-      toast.success(`Imported ${saved.name}`);
+      toast.success(t("reports.imported", "Imported {{name}}", { name: saved.name }));
       await router.push({ pathname: "/reports/designer", query: { id: saved.id } });
     } catch (err: any) {
-      toast.error(err?.message ?? "Failed to import the report");
+      toast.error(err?.message ?? i18next.t("reports.import_failed", "Failed to import the report"));
     }
   };
 
@@ -109,7 +110,7 @@ export default function ReportsPage() {
         setImportReview({ file, result });
       }
     } catch (err: any) {
-      toast.error(err?.message ?? "Failed to check the file");
+      toast.error(err?.message ?? i18next.t("reports.check_file_failed", "Failed to check the file"));
     }
   };
 

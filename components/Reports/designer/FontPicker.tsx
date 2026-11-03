@@ -37,7 +37,7 @@ export default function FontPicker({ value, onChange }: { value: string; onChang
       >
         {groups.map((g) => (
           <div key={g.category}>
-            <div className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-500">{CATEGORY_LABELS[g.category]}</div>
+            <div className="px-3 pt-2 pb-1 text-xs font-semibold uppercase tracking-wider text-gray-500">{CATEGORY_LABELS[g.category]}</div>
             {g.items.map((f) => {
               const stack = fontStack(f);
               return (
@@ -56,7 +56,7 @@ export default function FontPicker({ value, onChange }: { value: string; onChang
           </div>
         ))}
         <div
-          className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-500"
+          className="px-3 pt-2 pb-1 text-xs font-semibold uppercase tracking-wider text-gray-500"
           title="Depends on the fonts installed where the report is viewed or rendered"
         >
           System fonts

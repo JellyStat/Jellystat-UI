@@ -33,10 +33,26 @@ export default function ItemImage({
   const radiusStyle = borderRadius.map((r) => `${r}px`).join(" ");
   const { t } = useTranslation("common");
 
+  // A clickable image behaves as a button for keyboard and screen-reader users
+  // (a <button> can't hold the block-level layers inside).
+  const clickableProps = onClick
+    ? {
+        role: "button",
+        tabIndex: 0,
+        onClick,
+        onKeyDown: (e: React.KeyboardEvent) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onClick();
+          }
+        },
+      }
+    : {};
+
   return (
     <div
-      onClick={onClick}
-      className={`relative flex-none overflow-hidden bg-surface-hover transition-colors ${onClick ? "cursor-pointer group" : ""}`}
+      {...clickableProps}
+      className={`relative flex-none overflow-hidden bg-surface-hover transition-colors ${onClick ? "cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary" : ""}`}
       style={{
         width,
         height,
@@ -94,7 +110,7 @@ export default function ItemImage({
 
         {/* Archived Badge (if applicable) */}
         {archived && (
-          <div className="absolute top-2 right-2 z-20 bg-black/80 backdrop-blur-md text-[10px] font-bold text-gray-300 px-2 py-1 rounded-md border border-white/10 uppercase tracking-widest shadow-lg">
+          <div className="absolute top-2 right-2 z-20 bg-black/80 backdrop-blur-md text-xs font-bold text-gray-300 px-2 py-1 rounded-md border border-white/10 uppercase tracking-widest shadow-lg">
             {t("common.archived", "Archived")}
           </div>
         )}

@@ -34,6 +34,7 @@ import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import i18next from "i18next";
 import { ConfirmDialog, Spinner } from "@/components/ui";
 import client from "@/lib/api";
 import type { ReportDataResult, ReportDefinition, ReportImportResult, ReportRenderModel } from "@/lib/models/reports";
@@ -187,7 +188,7 @@ function DesignerShell() {
   const save = useCallback(async () => {
     const name = state.doc.name.trim();
     if (!name) {
-      toast.error("Give the report a name first (Report section, with nothing selected)");
+      toast.error(i18next.t("reports.designer_name_required", "Give the report a name first (Report section, with nothing selected)"));
       return;
     }
     setSaving(true);
@@ -199,14 +200,14 @@ function DesignerShell() {
         definition,
       });
       designer.markSaved(saved.id);
-      toast.success("Report saved");
+      toast.success(i18next.t("reports.designer_saved", "Report saved"));
       if (router.query.id !== saved.id) {
         void router.replace({ pathname: "/reports/designer", query: { id: saved.id } }, undefined, {
           shallow: true,
         });
       }
     } catch (err: any) {
-      toast.error(err?.message ?? "Failed to save the report");
+      toast.error(err?.message ?? i18next.t("reports.save_failed", "Failed to save the report"));
     } finally {
       setSaving(false);
     }
@@ -435,7 +436,7 @@ function DesignerShell() {
         downloadBlob(blob, exportFileName(name, format));
       }
     } catch (err: any) {
-      toast.error(err?.message ?? "Export failed");
+      toast.error(err?.message ?? i18next.t("reports.export_failed", "Export failed"));
     } finally {
       setExporting(null);
     }
@@ -456,7 +457,7 @@ function DesignerShell() {
       },
       { pageIndex: 0, selection: [] },
     );
-    toast.success("Report definition imported");
+    toast.success(i18next.t("reports.designer_imported", "Report definition imported"));
   };
 
   const importDefinition = async (file: File) => {
@@ -468,7 +469,7 @@ function DesignerShell() {
         setImportReview({ fileName: file.name, result });
       }
     } catch (err: any) {
-      toast.error(err?.message ?? "Failed to check the file");
+      toast.error(err?.message ?? i18next.t("reports.check_file_failed", "Failed to check the file"));
     }
   };
 
@@ -502,7 +503,7 @@ function DesignerShell() {
           }
           className="w-40 sm:w-56 bg-transparent border border-transparent hover:border-border focus:border-primary rounded-md px-2 py-1 text-sm font-bold text-white outline-none"
         />
-        {dirty && <span className="text-[10px] text-warning shrink-0">unsaved</span>}
+        {dirty && <span className="text-xs text-warning shrink-0">unsaved</span>}
         <div className="w-px h-6 bg-border mx-1 shrink-0" />
         <ToolButton title="Toggle left panel" onClick={() => setShowLeft(!showLeft)} active={showLeft}>
           <PanelLeft size={16} />
@@ -604,7 +605,7 @@ function DesignerShell() {
           type="button"
           onClick={save}
           disabled={saving}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-bold hover:bg-primary/90 cursor-pointer disabled:opacity-50 shrink-0"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-solid text-white text-xs font-bold hover:bg-primary-solid-hover cursor-pointer disabled:opacity-50 shrink-0"
         >
           {saving ? <Spinner size={14} className="" /> : <Save size={14} />} Save
         </button>
@@ -637,8 +638,8 @@ function DesignerShell() {
                   type="button"
                   onClick={() => setLeftTab(t.key)}
                   className={clsx(
-                    "flex flex-col items-center gap-0.5 py-2 text-[10px] font-bold cursor-pointer border-b-2",
-                    leftTab === t.key ? "text-primary border-primary" : "text-gray-500 border-transparent hover:text-gray-200",
+                    "flex flex-col items-center gap-0.5 py-2 text-xs font-bold cursor-pointer border-b-2",
+                    leftTab === t.key ? "text-primary-soft border-primary" : "text-gray-500 border-transparent hover:text-gray-200",
                   )}
                 >
                   <t.icon size={15} />
@@ -678,7 +679,7 @@ function DesignerShell() {
             <DesignerCanvas model={renderModel} settings={{ zoom, setZoom, snap, showGrid, gridSize: 8 }} onContextMenu={openMenu} />
           )}
           {/* Status bar */}
-          <div className="h-7 shrink-0 flex items-center gap-4 px-3 border-t border-border bg-surface text-[11px] text-gray-500">
+          <div className="h-7 shrink-0 flex items-center gap-4 px-3 border-t border-border bg-surface text-xs text-gray-500">
             <span>
               Page {state.pageIndex + 1} of {definition.pages.length}
             </span>
@@ -703,8 +704,8 @@ function DesignerShell() {
                     title={p.name}
                     onClick={() => designer.setPage(i)}
                     className={clsx(
-                      "w-5 h-5 rounded text-[10px] cursor-pointer",
-                      i === state.pageIndex ? "bg-primary text-white" : "hover:bg-surface-hover",
+                      "w-5 h-5 rounded text-xs cursor-pointer",
+                      i === state.pageIndex ? "bg-primary-solid text-white" : "hover:bg-surface-hover",
                     )}
                   >
                     {i + 1}
@@ -786,7 +787,7 @@ export default function ReportDesigner({ initial }: { initial: DesignerDoc }) {
   useEffect(() => {
     client.Reports.capabilities()
       .then(setCaps)
-      .catch((err) => toast.error(err?.message ?? "Failed to load report fields"));
+      .catch((err) => toast.error(err?.message ?? i18next.t("reports.fields_load_failed", "Failed to load report fields")));
   }, []);
 
   // Rendered on <body> so the full-screen designer sits above the app's side nav and page layout

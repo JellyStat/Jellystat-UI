@@ -11,7 +11,7 @@ export default function Badge({ tone = 'accent', shape = 'pill', className, ...r
   return (
     <span
       className={cn(
-        'inline-flex items-center px-2.5 py-1 border shrink-0 text-[10px] font-black uppercase tracking-widest',
+        'inline-flex items-center px-2.5 py-1 border shrink-0 text-xs font-bold uppercase tracking-widest',
         shape === 'pill' ? 'rounded-full' : 'rounded-md',
         tintClass[tone],
         className

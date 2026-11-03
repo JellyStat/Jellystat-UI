@@ -89,7 +89,7 @@ export default function LastWatched({ gridify }: Props) {
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <History className="text-primary" size={28} />
-        <h2 className="text-2xl font-black text-white tracking-tight">{t("last_watched.title", "Last Watched")}</h2>
+        <h2 className="text-2xl font-bold text-white tracking-tight">{t("last_watched.title", "Last Watched")}</h2>
       </div>
 
       {/* Loading State */}

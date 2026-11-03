@@ -102,7 +102,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
     <Modal open onClose={onClose}>
         <ModalPanel className="p-0 md:p-0 max-w-6xl h-full max-h-[92dvh] flex flex-col overflow-hidden">
           <div className="flex items-center justify-between gap-4 px-5 py-3 border-b border-border">
-            <ModalTitle className="flex items-center gap-2 text-lg font-black text-white">
+            <ModalTitle className="flex items-center gap-2 text-lg font-bold text-white">
               <Database size={20} className="text-primary" /> Data source
             </ModalTitle>
             <button type="button" onClick={onClose} className="p-1 text-gray-400 hover:text-white cursor-pointer" aria-label="Close">
@@ -124,7 +124,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                     onClick={() => set({ derive: m.value ? (draft.derive ?? { mode: "join", sources: [], on: [], joinType: "left" }) : null })}
                     className={clsx(
                       "px-3 py-1.5 cursor-pointer",
-                      derived === m.value ? "bg-primary text-white" : "text-gray-400 hover:text-white",
+                      derived === m.value ? "bg-primary-solid text-white" : "text-gray-400 hover:text-white",
                     )}
                   >
                     {m.label}
@@ -222,7 +222,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                         }}
                         className={clsx(
                           "px-3 py-1.5 cursor-pointer",
-                          grouped === m.value ? "bg-primary text-white" : "text-gray-400 hover:text-white",
+                          grouped === m.value ? "bg-primary-solid text-white" : "text-gray-400 hover:text-white",
                         )}
                       >
                         {m.label}
@@ -319,7 +319,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                           {draft.groupBy.length < 4 && (
                             <button
                               type="button"
-                              className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-white cursor-pointer"
+                              className="flex items-center gap-1 text-xs text-gray-400 hover:text-white cursor-pointer"
                               onClick={() => {
                                 const f = fields.find((x) => x.groupable);
                                 if (f) {
@@ -392,7 +392,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                           ))}
                           <button
                             type="button"
-                            className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-white cursor-pointer"
+                            className="flex items-center gap-1 text-xs text-gray-400 hover:text-white cursor-pointer"
                             onClick={() =>
                               set({
                                 aggregates: [
@@ -467,7 +467,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                       ))}
                       <button
                         type="button"
-                        className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-white cursor-pointer"
+                        className="flex items-center gap-1 text-xs text-gray-400 hover:text-white cursor-pointer"
                         onClick={() => {
                           const first = grouped ? queryColumns[0]?.name : fields[0]?.key;
                           if (first) {
@@ -517,7 +517,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                   type="button"
                   onClick={run}
                   disabled={running}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 border border-primary/40 text-primary hover:bg-primary hover:text-white text-xs font-bold cursor-pointer disabled:opacity-50 shrink-0"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 border border-primary/40 text-primary-soft hover:bg-primary hover:text-white text-xs font-bold cursor-pointer disabled:opacity-50 shrink-0"
                 >
                   {running ? <Spinner size={14} className="" /> : <Play size={14} />} Run preview
                 </button>
@@ -552,7 +552,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                 )}
               </div>
               {preview && !preview.error && (
-                <p className="text-[11px] text-gray-500">
+                <p className="text-xs text-gray-500">
                   {preview.rows.length} rows{preview.truncated ? " (more available)" : ""} in {preview.elapsedMs} ms
                 </p>
               )}
@@ -571,7 +571,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
               type="button"
               onClick={() => onApply(final())}
               disabled={!draft.name.trim()}
-              className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-bold hover:bg-primary/90 cursor-pointer disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-primary-solid text-white text-sm font-bold hover:bg-primary-solid-hover cursor-pointer disabled:opacity-50"
             >
               Apply
             </button>

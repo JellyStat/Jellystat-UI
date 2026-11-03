@@ -52,7 +52,7 @@ import type {
   SaveReport,
 } from "./models/reports";
 
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://10.0.0.199:5020";
 
 class ApiError extends Error {
   status: number;

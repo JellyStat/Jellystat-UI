@@ -12,7 +12,7 @@ import useFilters from "@/components/DataTableFilters/useFilters";
 import TextFilter from "@/components/DataTableFilters/TextFilter";
 import BooleanFilter from "@/components/DataTableFilters/BooleanFilter";
 import FilterItem from "@/components/DataTableFilters/FilterItem";
-import { PageHeader, SortableTh, Spinner } from "@/components/ui";
+import { PageHeader, Pagination, SortableTh, Spinner, Switch } from "@/components/ui";
 
 interface SortStatus {
   columnAccessor: string;
@@ -161,21 +161,11 @@ export default function UsersPage() {
   );
 
   const renderTrackedToggle = (user: TrackedUsers) => (
-    <button
-      onClick={() => toggleUserTracking(user.id, !user.tracked)}
-      role="switch"
-      aria-checked={user.tracked}
-      aria-label={t("common.tracked", "Tracked")}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background ${
-        user.tracked ? "bg-success" : "bg-surface border border-border"
-      }`}
-    >
-      <span
-        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-          user.tracked ? "translate-x-6 shadow-md" : "translate-x-1 opacity-70"
-        }`}
-      />
-    </button>
+    <Switch
+      checked={!!user.tracked}
+      onChange={(checked) => toggleUserTracking(user.id, checked)}
+      label={<span className="sr-only">{t("common.tracked", "Tracked")}</span>}
+    />
   );
 
   return (
@@ -240,7 +230,7 @@ export default function UsersPage() {
                     <div className="text-xs text-gray-400 truncate mt-0.5">
                       {user.latestActivity?.itemId ? formatLastWatched(user) : "-"}
                     </div>
-                    <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 text-[11px] font-mono text-gray-500">
+                    <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 text-xs font-mono text-gray-500">
                       <span>
                         <span className="text-gray-300 font-bold">{user.playCount || 0}</span> {t("common.unit.plays", "Plays")}
                       </span>
@@ -257,7 +247,7 @@ export default function UsersPage() {
           <div className="hidden md:block overflow-x-auto custom-scrollbar flex-1">
             <table className="w-full text-left border-collapse whitespace-nowrap">
               <thead>
-                <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
+                <tr className="bg-background/80 border-b border-border text-xs font-bold text-gray-500 uppercase tracking-wider select-none">
                   <th className="p-3 w-16 text-center">{t("users.avatar", "Avatar")}</th>
                   <SortableHeader
                     label={t("common.user", "User")}
@@ -309,7 +299,7 @@ export default function UsersPage() {
                   <th className="p-2 border-r border-border/50 font-normal">
                     <BooleanFilter
                       keyName="tracked"
-                      label=""
+                      label={t("common.tracked", "Tracked")}
                       value={getFilterValueOrDefault("tracked", null) as boolean | null}
                       onChange={(val) => applyFilter("tracked", val)}
                     />
@@ -359,7 +349,7 @@ export default function UsersPage() {
 
                       <td className="p-3 text-xs text-gray-400">{user.latestActivity?.client ?? "-"}</td>
 
-                      <td className="p-3 text-center text-sm font-bold text-gray-200">{user.playCount || 0}</td>
+                      <td className="p-3 text-center text-sm font-bold text-gray-200 tabular-nums">{user.playCount || 0}</td>
 
                       <td className="p-3 text-right text-xs font-mono text-gray-400">
                         {user.playDuration?.secondsToDurationString?.() || "-"}
@@ -373,33 +363,24 @@ export default function UsersPage() {
             </table>
           </div>
 
-          {/* Pagination Footer */}
-          <div className="bg-background/80 border-t border-border p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-              {t("users.total_users", "Total Users:")} <span className="text-white">{pageCount}</span>
-            </span>
-            <div className="flex items-center gap-4 ml-auto">
-              <span className="text-xs font-mono text-gray-400 whitespace-nowrap">
-                {t("common.page_of", "Page {{page}} of {{total}}", { page, total: totalPages })}
-              </span>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
-                >
-                  {t("common.prev", "Prev")}
-                </button>
-                <button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
-                >
-                  {t("common.next", "Next")}
-                </button>
-              </div>
-            </div>
-          </div>
+          <Pagination
+            className="shrink-0"
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            summary={
+              <>
+                {t("users.total_users", "Total Users:")} <span className="text-white">{pageCount}</span>
+              </>
+            }
+            labels={{
+              first: t("common.first", "First"),
+              prev: t("common.prev", "Prev"),
+              next: t("common.next", "Next"),
+              last: t("common.last", "Last"),
+              pageOf: t("common.page_info", "Page {{page}} of {{totalPages}}", { page, totalPages }),
+            }}
+          />
         </div>
       </div>
     </>

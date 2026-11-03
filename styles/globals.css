@@ -15,6 +15,9 @@
   /* Semantic roles (see UI_AUDIT.md). Prefer these over brand-* in new code. */
   --color-primary: var(--color-brand-purple);
   --color-primary-hover: #9a2cee;
+  /* Purple for small text: #aa3bff is 4.3:1 on cards, this is 5.0-6.1:1 on every surface.
+     Icons, borders, fills and focus rings keep --color-primary. */
+  --color-primary-soft: #b866ff;
   --color-on-primary: #ffffff;
   --color-accent: var(--color-brand-cyan);
   --color-accent-hover: #0090c2;
@@ -26,9 +29,29 @@
   --color-info: #38bdf8;
   --color-surface-raised: #1a1c23;
   --color-border-strong: #3f3f46;
+
+  /* Filled buttons: darker than the text/icon tones so white labels pass WCAG AA (4.5:1). */
+  --color-primary-solid: #9333ea; /* 5.4:1 with white */
+  --color-primary-solid-hover: #7e22ce;
+  --color-danger-solid: #e11d48; /* 4.7:1 with white */
+  --color-danger-solid-hover: #be123c;
+
+  /* Secondary text: Tailwind's gray-500 is 3.9:1 on cards; this is 6.0:1 (5.4:1 on hover rows).
+     gray-600 stays for borders and decoration only (the guard test blocks it on text). */
+  --color-gray-500: #8b93a1;
 }
 
 @layer base {
+  /* Focus is always the primary colour: the browser's default outline for elements without
+     their own focus style, and native checkboxes, radios and range inputs. */
+  :root {
+    accent-color: var(--color-primary);
+  }
+
+  :focus-visible {
+    outline-color: var(--color-primary);
+  }
+
   html,
   body {
     @apply bg-background text-gray-100 antialiased h-full w-full overflow-hidden;

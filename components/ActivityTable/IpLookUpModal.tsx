@@ -75,9 +75,10 @@ export function IpLookupModal({ ip }: Props) {
       <button
         type="button"
         onClick={open}
-        className="cursor-pointer hover:text-accent transition-colors focus:outline-none focus-visible:underline"
+        className="inline-flex items-center gap-1 cursor-pointer hover:text-accent transition-colors underline decoration-dotted decoration-gray-500 underline-offset-4 focus:outline-none focus-visible:ring-1 focus-visible:ring-primary"
         title={t("ip_lookup.lookup", "Look up location")}
       >
+        <MapPin size={12} aria-hidden="true" className="shrink-0" />
         {ip}
       </button>
       <Modal open={show} onClose={() => setShow(false)}>

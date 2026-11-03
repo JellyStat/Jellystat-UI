@@ -31,6 +31,8 @@ export default function useFilters(initial: FilterItem[] = []) {
     [filter],
   );
 
+  const clearFilters = useCallback(() => setFilter([]), []);
+
   const isFilterActive = useCallback((key: string) => filter.some((f) => f.key === key), [filter]);
 
   const applyFiltersToQuery = useCallback(
@@ -83,5 +85,5 @@ export default function useFilters(initial: FilterItem[] = []) {
     [filter],
   );
 
-  return { filter, addOrReplaceFilter, removeFilter, getFilterValueOrDefault, isFilterActive, setFilter, applyFiltersToQuery };
+  return { filter, addOrReplaceFilter, removeFilter, clearFilters, getFilterValueOrDefault, isFilterActive, setFilter, applyFiltersToQuery };
 }

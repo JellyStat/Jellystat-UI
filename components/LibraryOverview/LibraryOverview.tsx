@@ -43,13 +43,13 @@ export default function LibraryOverview() {
       {/* Section Header */}
       <div className="flex items-center mb-4">
         <Database size={20} className="text-primary mr-2" />
-        <h2 className="text-xl font-black text-white tracking-tight">{t("library.overview_title", "Libraries")}</h2>
+        <h2 className="text-xl font-bold text-white tracking-tight">{t("library.overview_title", "Libraries")}</h2>
       </div>
 
       {/* Content Area */}
       <div className="flex flex-col gap-3">
         {loading && (
-          <div className="w-full h-48 bg-surface/30 border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse shadow-inner">
+          <div className="w-full h-48 bg-surface/30 border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse motion-reduce:animate-none shadow-inner">
             <Spinner size={24} className="text-primary mb-3" />
             <span className="text-xs text-gray-500 font-medium">{t("library.scanning", "Scanning libraries...")}</span>
           </div>

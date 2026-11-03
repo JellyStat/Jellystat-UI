@@ -86,10 +86,10 @@ export default function LibrarySettingsPage() {
         {error && !loading && (
           <Card className="max-w-lg mx-auto mt-12 flex flex-col items-center text-center animate-in fade-in">
             <AlertCircle size={48} className="text-danger mb-4" />
-            <span className="text-lg font-bold text-white mb-2">{t("settings.sync_failed", "Sync Failed")}</span>
+            <span className="text-lg font-bold text-white mb-2">{t("libraries.failed_load", "Failed to load libraries")}</span>
             <span className="text-sm text-gray-400">{error}</span>
             <Button variant="outline" onClick={fetchPage} className="mt-6">
-              {t("common.retry_connection", "Retry Connection")}
+              {t("common.try_again", "Try again")}
             </Button>
           </Card>
         )}

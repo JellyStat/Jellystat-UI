@@ -15,9 +15,11 @@ import {
   CheckCircle2,
   AlertCircle,
   MonitorPlay,
+  Info,
   RefreshCcw,
   RefreshCw,
   Trash2,
+  FilterX,
 } from "lucide-react";
 
 import Activity from "@/lib/models/activity";
@@ -37,7 +39,7 @@ import permissionsManager from "@/lib/permissionsManager";
 import Permissions from "@/lib/models/enums/Permissions";
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import { formatDateTime } from "@/lib/dateFormat";
-import { NumberField, Select, SortableTh, Spinner } from "@/components/ui";
+import { Pagination, Select, SortableTh, Spinner } from "@/components/ui";
 
 const LIBRARY_FILTER_STORAGE_KEY = "PREF_ACTIVITY_LIBRARY_FILTER";
 
@@ -118,7 +120,11 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
   };
 
   // Filter Hook
-  const { filter, addOrReplaceFilter, removeFilter, getFilterValueOrDefault, applyFiltersToQuery } = useFilters();
+  const { filter, addOrReplaceFilter, removeFilter, clearFilters, getFilterValueOrDefault, applyFiltersToQuery } =
+    useFilters();
+  // Bumped on "Clear filters" to remount the filter inputs, which keep their own text.
+  const [filterResetKey, setFilterResetKey] = useState(0);
+  const activeFilterCount = filter.filter((f) => f.value != null).length;
 
   // --- DATA FETCHING ---
   const fetchPage = useCallback(
@@ -270,7 +276,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
 
   // Hidden until the row is hovered or the box is ticked; always shown on touch screens (no hover)
   const checkboxClass =
-    "w-4 h-4 cursor-pointer accent-danger transition-opacity opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100 checked:opacity-100 indeterminate:opacity-100 [@media(hover:none)]:opacity-100";
+    "w-4 h-4 cursor-pointer accent-primary transition-opacity opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100 checked:opacity-100 indeterminate:opacity-100 [@media(hover:none)]:opacity-100";
 
   const renderCheckbox = (entries: SelectionEntry[], label: string) => {
     const checked = entries.length > 0 && entries.every(([id]) => isSelected(id));
@@ -297,13 +303,13 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
     if (!transcodingInfo) {
       if (isTranscoding) {
         return (
-          <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-warning bg-warning/10 border border-warning/20 px-2 py-0.5 rounded shadow-inner">
+          <span className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-warning bg-warning/10 border border-warning/20 px-2 py-0.5 rounded shadow-inner">
             <Cpu size={10} className="mr-1" /> {t("common.transcode", "Transcode")}
           </span>
         );
       }
       return (
-        <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-accent bg-accent/10 border border-accent/20 px-2 py-0.5 rounded shadow-inner">
+        <span className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-accent bg-accent/10 border border-accent/20 px-2 py-0.5 rounded shadow-inner">
           <CheckCircle2 size={10} className="mr-1" /> {t("common.direct", "Direct")}
         </span>
       );
@@ -314,7 +320,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
     if (transcodingInfo.isAudioDirect === false) display += " (A)";
 
     return (
-      <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-warning bg-warning/10 border border-warning/20 px-2 py-0.5 rounded shadow-inner">
+      <span className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-warning bg-warning/10 border border-warning/20 px-2 py-0.5 rounded shadow-inner">
         <Cpu size={10} className="mr-1" /> {display}
       </span>
     );
@@ -379,16 +385,17 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
         <td className="p-3">
           <button
             onClick={() => openStreamModal(activity)}
-            className="text-xs text-gray-400 hover:text-accent transition-colors cursor-pointer focus:outline-none"
+            className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-accent transition-colors cursor-pointer underline decoration-dotted decoration-gray-500 underline-offset-4 focus:outline-none focus-visible:ring-1 focus-visible:ring-primary"
             title={t("activity.view_stream_info", "View stream details")}
           >
+            <Info size={12} aria-hidden="true" className="shrink-0" />
             {activity.client}
           </button>
         </td>
         <td className="p-3">
           <button
             onClick={() => openStreamModal(activity)}
-            className="cursor-pointer focus:outline-none"
+            className="cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-primary"
             title={t("activity.view_stream_info", "View stream details")}
           >
             {formatTranscode(activity)}
@@ -440,12 +447,12 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
         <div className="flex items-center gap-2 text-xs min-w-0">
           <Link
             href={`/users/${activity.userId}`}
-            className="font-bold text-primary hover:text-accent transition-colors truncate"
+            className="font-bold text-primary-soft hover:text-accent transition-colors truncate"
             title={activity.userName}
           >
             {activity.userName}
           </Link>
-          <span className="text-gray-600 shrink-0">&middot;</span>
+          <span className="text-gray-500 shrink-0">&middot;</span>
           <span className="text-gray-500 font-mono truncate">
             {formatDateTime(activity.dateCreated) || "-"}
           </span>
@@ -455,7 +462,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           <button
             type="button"
             onClick={() => openStreamModal(activity)}
-            className="cursor-pointer focus:outline-none"
+            className="cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-primary"
             title={t("activity.view_stream_info", "View stream details")}
           >
             {formatTranscode(activity)}
@@ -463,7 +470,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           <button
             type="button"
             onClick={() => openStreamModal(activity)}
-            className="min-w-0 max-w-full truncate hover:text-accent transition-colors cursor-pointer focus:outline-none text-left"
+            className="min-w-0 max-w-full truncate hover:text-accent transition-colors cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-primary text-left"
             title={t("activity.view_stream_info", "View stream details")}
           >
             {[activity.client, activity.device].filter(Boolean).join(" \u00b7 ")}
@@ -515,7 +522,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-xl sm:text-2xl font-black text-gray-200 flex items-center gap-3 shrink-0">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-200 flex items-center gap-3 shrink-0">
           <ActivityIcon className="text-primary" size={28} />
           {t("activity.title", "Activity Log")}
         </h2>
@@ -552,6 +559,19 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
               {t("activity.clear_selection", "Clear selection")}
             </button>
           )}
+          {activeFilterCount > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                clearFilters();
+                setFilterResetKey((k) => k + 1);
+              }}
+              className="flex items-center gap-2 py-2 px-3 rounded-xl text-sm font-bold text-gray-300 hover:text-white border border-border hover:border-gray-500 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+            >
+              <FilterX size={16} />
+              {t("activity.clear_filters", "Clear filters ({{count}})", { count: activeFilterCount })}
+            </button>
+          )}
           {showLibraryFilter && (
             <LibraryFilter libraries={libraries} value={libraryIds} onChange={changeLibraryFilter} disabled={loading} />
           )}
@@ -560,7 +580,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
             onClick={() => fetchPage(page)}
             title={t("common.refresh", "Refresh")}
             aria-label={t("common.refresh", "Refresh")}
-            className="flex items-center px-2.5 py-1 rounded-md shrink-0 cursor-pointer hover:text-primary"
+            className="flex items-center px-2.5 py-1 rounded-md shrink-0 cursor-pointer hover:text-primary-soft"
           >
             <RefreshCw />
           </button>
@@ -569,10 +589,18 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
 
       {/* Main Table Container */}
       <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col relative min-h-[400px]">
-        {loading && (
+        {/* First load: nothing to show yet, so cover the table. */}
+        {loading && activityData.length === 0 && (
           <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
             <Spinner size={40} className="text-primary mb-3" />
             <span className="text-sm font-bold text-gray-300">{t("common.loading", "Loading")}</span>
+          </div>
+        )}
+        {/* Later loads keep the current rows visible. */}
+        {loading && activityData.length > 0 && (
+          <div role="status" className="absolute top-3 right-3 z-20 flex items-center gap-2 bg-surface border border-border rounded-full px-3 py-1.5 shadow-lg shadow-black/40">
+            <Spinner size={14} className="text-primary" />
+            <span className="text-xs font-bold text-gray-300">{t("common.loading", "Loading")}</span>
           </div>
         )}
 
@@ -587,6 +615,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
         {/* Mobile: search + sort toolbar */}
         <div className="md:hidden flex flex-col gap-2 p-3 bg-background/60 border-b border-border">
           <TextFilter
+            key={filterResetKey}
             keyName="fullName"
             value={getFilterValueOrDefault("fullName", "") as string}
             onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("fullName"))}
@@ -612,7 +641,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                 setPage(1);
               }}
               className="shrink-0 w-11 h-11 flex items-center justify-center rounded-xl bg-surface/80 border border-border text-accent hover:border-gray-500 transition-colors cursor-pointer"
-              aria-label={sortStatus.direction === "desc" ? "Descending" : "Ascending"}
+              aria-label={sortStatus.direction === "desc" ? t("common.sort_descending", "Descending") : t("common.sort_ascending", "Ascending")}
             >
               {sortStatus.direction === "desc" ? <ArrowDown size={16} /> : <ArrowUp size={16} />}
             </button>
@@ -641,7 +670,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
         <div className="hidden md:block overflow-x-auto custom-scrollbar flex-1">
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
-              <tr className="group/row bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
+              <tr className="group/row bg-background/80 border-b border-border text-xs font-bold text-gray-500 uppercase tracking-wider select-none">
                 {isAdmin && (
                   <th className="w-10 pl-4 pr-1 text-center">
                     <input
@@ -712,7 +741,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
               </tr>
 
               {/* Filter Row */}
-              <tr className="bg-background/40 border-b border-border shadow-inner">
+              <tr key={filterResetKey} className="bg-background/40 border-b border-border shadow-inner">
                 {isAdmin && <th className="p-2"></th>}
                 <th className="p-2 border-r border-border/50"></th>
 
@@ -751,7 +780,9 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                 <th className="p-2 border-r border-border/50">
                   <BooleanFilter
                     keyName="directPlay"
-                    label=""
+                    label={t("common.transcode", "Transcode")}
+                    trueLabel={t("common.transcode", "Transcode")}
+                    falseLabel={t("common.direct", "Direct")}
                     isInverted={true}
                     value={getFilterValueOrDefault("directPlay", null) as boolean | null}
                     onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("directPlay"))}
@@ -813,50 +844,36 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           </table>
         </div>
 
-        {/* Pagination Footer */}
-        <div className="bg-background/80 border-t border-border p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
-          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-            {t("activity.total_records", "Total Records:")} <span className="text-white">{pageCount}</span>
-          </span>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4 ml-auto">
-            <Select
-              data={pageCountOptions.map((option) => ({ value: option }))}
-              value={recordsPerPage}
-              onChange={(value) => {
-                setRecordsPerPage(value);
-                localStorage.setItem("jellystat_recordsPerPage", value.toString());
-                setPage(1);
-              }}
-              labelFn={(option) => option.toString()}
-              widthPx={80}
-            />
-            <NumberField
-              value={page}
-              onChange={(val) => (val ? setPage(val) : val)}
-              min={1}
-              max={totalPages}
-              className="py-3 px-1 focus:outline-none hover:bg-surface border border-transparent hover:border-border rounded-xl shadow-lg overflow-auto text-xs text-center font-mono text-gray-400"
-            />
-            <span className="text-xs font-mono text-gray-400">/</span>
-            <span className="text-xs font-mono text-gray-400">{totalPages}</span>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
-              >
-                {t("common.prev", "Prev")}
-              </button>
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
-              >
-                {t("common.next", "Next")}
-              </button>
-            </div>
-          </div>
-        </div>
+        <Pagination
+          className="shrink-0"
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          jumpToPage
+          pageSize={{
+            value: recordsPerPage,
+            options: pageCountOptions,
+            onChange: (value) => {
+              setRecordsPerPage(value);
+              localStorage.setItem("jellystat_recordsPerPage", value.toString());
+              setPage(1);
+            },
+          }}
+          summary={
+            <>
+              {t("activity.total_records", "Total Records:")} <span className="text-white">{pageCount}</span>
+            </>
+          }
+          labels={{
+            first: t("common.first", "First"),
+            prev: t("common.prev", "Prev"),
+            next: t("common.next", "Next"),
+            last: t("common.last", "Last"),
+            pageOf: t("common.page_info", "Page {{page}} of {{totalPages}}", { page, totalPages }),
+            pageSize: t("common.page_size", "Rows per page"),
+            jumpToPage: t("common.jump_to_page", "Go to page"),
+          }}
+        />
       </div>
 
       {/* Stream Info Modal */}

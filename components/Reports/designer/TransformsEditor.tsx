@@ -243,7 +243,7 @@ function StepFields({
           ))}
           <button
             type="button"
-            className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-white cursor-pointer"
+            className="flex items-center gap-1 text-xs text-gray-400 hover:text-white cursor-pointer"
             onClick={() => set({ sort: [...(step.sort ?? []), { field: columns[0]?.name ?? "", desc: true } as ReportSort] })}
           >
             <Plus size={12} /> Sort column
@@ -264,7 +264,7 @@ function StepFields({
           <Field label="Expression">
             <TextInput multiline rows={2} value={step.expression ?? ""} placeholder="watch / plays / 60" onChange={(v) => set({ expression: v })} />
           </Field>
-          <p className="text-[11px] text-gray-500">
+          <p className="text-xs text-gray-500">
             Columns:{" "}
             {columns
               .filter((c) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(c.name))
@@ -361,7 +361,7 @@ export default function TransformsEditor({
       {transforms.map((step, i) => (
         <div key={i} className="rounded-lg border border-border bg-background/40 p-2 space-y-2">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono text-gray-600">{i + 1}</span>
+            <span className="text-xs font-mono text-gray-500">{i + 1}</span>
             <span className="text-xs font-bold text-gray-200 flex-1" title={TRANSFORM_LABELS[step.type]?.help}>
               {TRANSFORM_LABELS[step.type]?.label ?? step.type}
             </span>

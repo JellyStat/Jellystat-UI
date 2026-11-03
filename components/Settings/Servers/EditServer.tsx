@@ -87,7 +87,7 @@ export default function EditServerModal({ server, onClose, onSaved }: Props) {
           <Input id="edit-server-name" type="text" value={server.name} readOnly disabled leftIcon={<ServerIcon size={18} />} />
         </Field>
 
-        <Field label={t("common.url", "URL")} htmlFor="edit-server-url" error={fieldErrors.url}>
+        <Field label={t("common.url", "URL")} htmlFor="edit-server-url" required error={fieldErrors.url}>
           <Input
             id="edit-server-url"
             type="text"

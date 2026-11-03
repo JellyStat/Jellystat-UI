@@ -7,13 +7,16 @@
     "title_col": "Title",
     "total_playback": "Total Playback",
     "total_records": "Total Records:",
-    "view_stream_info": "View stream details"
+    "view_stream_info": "View stream details",
+    "clear_filters": "Clear filters ({{count}})"
   },
   "app": {
     "connecting": "Connecting to Jellystat",
     "connection_failed": "Connection Failed",
     "connection_failed_desc": "The application was unable to start due to an error contacting the API. Please ensure your backend is running.",
-    "retrying": "Retrying"
+    "retrying": "Retrying",
+    "timeout": "No response from {{url}} after 20 seconds.",
+    "connecting_slow": "Still waiting for {{url}}. Check that the Jellystat API is running."
   },
   "common": {
     "actions": "Actions",
@@ -105,7 +108,22 @@
     "transcode": "Transcode",
     "video": "VIDEO",
     "playback_stream": "Playback Stream",
-    "source": "Source"
+    "source": "Source",
+    "confirm": "Confirm",
+    "sort_descending": "Descending",
+    "sort_ascending": "Ascending",
+    "first": "First",
+    "last": "Last",
+    "page_size": "Rows per page",
+    "jump_to_page": "Go to page",
+    "all": "All",
+    "discard_changes_title": "Discard changes?",
+    "discard_changes_desc": "Your edits have not been saved.",
+    "discard": "Discard",
+    "keep_editing": "Keep editing",
+    "try_again": "Try again",
+    "edit": "Edit",
+    "back": "Back"
   },
   "error_cards": {
     "failed_to_load": "Failed to load",
@@ -149,7 +167,8 @@
     "libraries_desc": "Manage, track, and analyze your media collections",
     "total_media": "Total Media",
     "total_storage": "Total Storage",
-    "no_libraries_desc": "Make sure your server is connected and synced."
+    "no_libraries_desc": "Make sure your server is connected and synced.",
+    "mixed_content": "Mixed Content"
   },
   "library": {
     "confirmDeleteArchivedItems": "Delete all archived items in this library. This action cannot be rolled back.",
@@ -189,7 +208,8 @@
     "switch_local": "Switch to Local Account Login",
     "switch_server": "Login via Jellyfin/Emby",
     "username_placeholder": "Username",
-    "welcome_back": "Welcome Back"
+    "welcome_back": "Welcome Back",
+    "server": "Server"
   },
   "media_grid": {
     "filter_all": "All Media",
@@ -232,7 +252,9 @@
   "sessions": {
     "active_streams": "Active Streams",
     "no_active": "No active sessions",
-    "waiting": "Waiting for users to start playing media"
+    "waiting": "Waiting for users to start playing media",
+    "none_active": "No active streams",
+    "live": "Live"
   },
   "stream": {
     "aspect_ratio": "ASPECT RATIO",
@@ -384,7 +406,17 @@
     "users_title": "User Settings",
     "language_desc": "Select your preferred language",
     "language": "Language",
-    "toast_user_updated": "User updated successfully"
+    "toast_user_updated": "User updated successfully",
+    "backups_delete_title": "Delete this backup?",
+    "backups_delete_named_desc": "{{fileName}} will be permanently deleted. This can't be undone.",
+    "backup_restore_queued": "Restore queued",
+    "backup_restore_failed": "Couldn't start the restore: {{error}}",
+    "backup_uploaded": "Backup uploaded",
+    "backup_upload_failed": "Upload failed: {{error}}",
+    "remote_auth_on_short": "Remote auth on",
+    "remote_auth_off_short": "Remote auth off",
+    "backups_restore_phrase": "restore",
+    "backups_restore_phrase_label": "Type \"{{phrase}}\" to confirm"
   },
   "setup": {
     "btn_add_server": "Add Server",
@@ -495,7 +527,8 @@
     "task_queued": "{{taskName}} queued successfully",
     "task_toggled": "Task {{taskName}} {{action}}",
     "toggle_task": "{{action}} task {{taskName}}",
-    "update_failed": "Failed to update task {{taskName}}"
+    "update_failed": "Failed to update task {{taskName}}",
+    "view_logs": "View logs"
   },
   "timeline": {
     "empty_message": "No qualifying playback found for the selected libraries",
@@ -541,5 +574,68 @@
     "viewed_shows": "Most Viewed Shows",
     "watch_statistics": "Watch Statistics",
     "watch_stats_desc": "Leaderboards for your most heavily utilized media and users."
+  },
+  "reports": {
+    "imported": "Imported {{name}}",
+    "designer_needs_width": "The report designer needs a wider screen",
+    "designer_needs_width_desc": "Open it on a tablet or computer. You can still view and export reports here.",
+    "back_to_reports": "Back to reports",
+    "schedule_every_hour": "Every hour",
+    "schedule_every_6_hours": "Every 6 hours",
+    "schedule_every_day": "Every day",
+    "schedule_every_week": "Every week",
+    "schedule_every_30_days": "Every 30 days",
+    "schedule_manual_only": "Manual only",
+    "schedule_custom": "Custom...",
+    "schedule_every_n_min": "Every {{n}} min",
+    "format_png": "PNG image",
+    "format_html": "HTML page",
+    "format_json": "JSON data",
+    "webhook_discord_help": "Posts the message with the file attached.",
+    "webhook_generic": "Generic (multipart)",
+    "webhook_generic_help": "multipart/form-data with a JSON 'payload' part and the 'file'.",
+    "webhook_json_help": "application/json with metadata and the file as base64 (or the data rows for JSON).",
+    "schedules_load_failed": "Failed to load schedules",
+    "schedule_saved": "Schedule saved",
+    "schedule_save_failed": "Failed to save the schedule",
+    "schedule_delivered": "Delivered {{fileName}} in {{ms}} ms",
+    "schedule_delivery_failed": "Delivery failed",
+    "schedule_delete_failed": "Failed to delete the schedule",
+    "schedules_title": "Schedules & webhooks",
+    "schedules_intro": "Render {{name}} on the server and post it to a webhook on a schedule, or run one now to test it. Automations can also call the export endpoint below with an API key.",
+    "no_schedules": "No schedules yet.",
+    "schedule_on": "on",
+    "schedule_off": "off",
+    "schedule_next": "Next {{date}}",
+    "schedule_last": "Last {{date}}",
+    "schedule_run_now": "Run now",
+    "schedule_delete_title": "Delete this schedule?",
+    "schedule_delete_desc": "{{name}} will stop being delivered.",
+    "schedule_name_suffix": "delivery",
+    "new_schedule": "New schedule",
+    "schedule_name": "Name",
+    "schedule_repeat": "Repeat",
+    "schedule_webhook_type": "Webhook type",
+    "schedule_format": "File format",
+    "schedule_webhook_url": "Webhook URL",
+    "schedule_secret_saved": "Signing secret (saved; type to replace, clear the box and save to remove)",
+    "schedule_secret_optional": "Signing secret (optional)",
+    "schedule_message": "Message",
+    "schedule_parameters": "Parameters",
+    "parameter_default": "Default",
+    "schedule_enabled": "Enabled",
+    "save_schedule": "Save schedule",
+    "designer_image_too_big": "Images must be 5 MB or smaller",
+    "designer_name_required": "Give the report a name first (Report section, with nothing selected)",
+    "designer_saved": "Report saved",
+    "designer_imported": "Report definition imported",
+    "save_failed": "Failed to save the report",
+    "export_failed": "Export failed",
+    "check_file_failed": "Failed to check the file",
+    "fields_load_failed": "Failed to load report fields",
+    "duplicate_failed": "Failed to duplicate the report",
+    "delete_failed": "Failed to delete the report",
+    "export_report_failed": "Failed to export the report",
+    "import_failed": "Failed to import the report"
   }
 }

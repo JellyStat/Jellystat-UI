@@ -1,21 +1,30 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import FilterItem from "./FilterItem";
-import { Check, X, Minus } from "lucide-react";
 import { useDebounce } from "@/lib/hooks/useDebounce";
+import { cn } from "@/components/ui";
 
+// All / yes / no as three named buttons, so the current state reads without knowing what a
+// tick, cross or dash means.
 export default function BooleanFilter({
   keyName,
   label,
   value,
   isInverted = false,
+  trueLabel,
+  falseLabel,
   onChange,
 }: {
   keyName: string;
+  // Accessible name for the group, e.g. "Transcode".
   label: string;
   value: boolean | null;
   isInverted?: boolean;
+  trueLabel?: string;
+  falseLabel?: string;
   onChange: (value: FilterItem | null) => void;
 }) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState<boolean | null>(isInverted == true ? (value != null ? value == false : value) : value);
 
   const debounced = useDebounce(query, 100);
@@ -32,40 +41,36 @@ export default function BooleanFilter({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debounced]);
 
-  function cycleValue() {
-    setQuery((prev) => {
-      switch (prev) {
-        case null:
-          return true;
-        case true:
-          return false;
-        case false:
-          return null;
-        default:
-          return null;
-      }
-    });
-  }
-
-  const stateStyles = {
-    null: "bg-surface border-border text-gray-500",
-    true: "bg-success border-success text-black",
-    false: "bg-danger border-danger text-white",
-  };
-
-  const currentState = query === null ? "null" : query ? "true" : "false";
+  const options: { value: boolean | null; label: string; active: string }[] = [
+    { value: null, label: t("common.all", "All"), active: "bg-surface-hover text-white" },
+    { value: true, label: trueLabel ?? t("common.yes", "Yes"), active: "bg-success/15 text-success" },
+    { value: false, label: falseLabel ?? t("common.no", "No"), active: "bg-danger/15 text-danger" },
+  ];
 
   return (
-    <div className="flex items-center gap-3">
-      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">{label}</span>
-      <button
-        onClick={cycleValue}
-        className={`w-6 h-6 flex items-center justify-center rounded border transition-all duration-300 shadow-inner ${stateStyles[currentState as keyof typeof stateStyles]}`}
-      >
-        {query === null && <Minus size={14} />}
-        {query === true && <Check size={14} strokeWidth={3} />}
-        {query === false && <X size={14} strokeWidth={3} />}
-      </button>
+    <div
+      role="radiogroup"
+      aria-label={label}
+      className="inline-flex items-center p-0.5 bg-background border border-border rounded-lg"
+    >
+      {options.map((option) => {
+        const isActive = query === option.value;
+        return (
+          <button
+            key={String(option.value)}
+            type="button"
+            role="radio"
+            aria-checked={isActive}
+            onClick={() => setQuery(option.value)}
+            className={cn(
+              "px-2 py-1 rounded-md text-xs font-bold whitespace-nowrap transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary",
+              isActive ? option.active : "text-gray-500 hover:text-gray-200"
+            )}
+          >
+            {option.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

@@ -102,14 +102,14 @@
 
 //                 {/* Left Side: Rank & Title */}
 //                 <div className="flex items-center gap-2.5 flex-1 min-w-0">
-//                   <span className="text-[10px] font-bold text-gray-500 w-3 shrink-0">
+//                   <span className="text-xs font-bold text-gray-500 w-3 shrink-0">
 //                     {idx + 1}
 //                   </span>
 
 //                   {it.navLink ? (
 //                     <Link
 //                       href={it.navLink}
-//                       className="text-gray-200 hover:text-white font-medium truncate transition-colors focus:outline-none focus:text-accent"
+//                       className="text-gray-200 hover:text-white font-medium truncate transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary focus:text-primary"
 //                       title={it.name}
 //                     >
 //                       {it.name}

@@ -21,7 +21,7 @@ import WebSocketMessageTypes from "@/lib/models/enums/WebSocketMessageTypes";
 import { WebsocketMessage } from "@/lib/models/WebsocketMessage";
 import { wsClient } from "@/lib/wsClient";
 import { formatDateTime } from "@/lib/dateFormat";
-import { Spinner } from "@/components/ui";
+import { Pagination, Spinner } from "@/components/ui";
 
 const LOGS_PER_PAGE = 20;
 
@@ -138,12 +138,12 @@ export default function TasksLogsPage() {
             <Clock size={14} className="mr-2 text-gray-500 hidden sm:block" />
             {formatDateTime(log.dateCreated)}
           </div>
-          <div className="sm:hidden text-[11px] font-mono text-gray-500 mt-1">{log.duration.secondsToDurationString()}</div>
+          <div className="sm:hidden text-xs font-mono text-gray-500 mt-1">{log.duration.secondsToDurationString()}</div>
         </td>
 
         {/* Duration */}
         <td className="hidden sm:table-cell p-4">
-          <div className="flex items-center text-sm text-gray-300 font-medium">
+          <div className="flex items-center text-sm text-gray-300 font-medium tabular-nums">
             <Clock size={14} className="mr-2 text-gray-500" />
             {log.duration.secondsToDurationString()}
           </div>
@@ -192,7 +192,7 @@ export default function TasksLogsPage() {
   };
 
   return (
-    <div className="animate-in fade-in duration-500 max-w-[1600px] mx-auto">
+    <div id="task-logs" className="animate-in fade-in duration-500 max-w-[1600px] mx-auto scroll-mt-4">
       {/* Header Container */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6">
         <div className="flex items-center gap-4">
@@ -248,48 +248,26 @@ export default function TasksLogsPage() {
           </table>
         </div>
 
-        {/* Pagination Footer */}
-        <div className="bg-background/80 border-t border-border p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3">
-          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-            {t("tasks.total_logs", "Total Logs:")} <span className="text-white">{totalCount}</span>
-          </span>
-          <div className="flex items-center gap-4 ml-auto">
-            {loading && logs.length > 0 && <Spinner size={14} className="text-primary" />}
-            <span className="text-xs font-mono text-gray-400 whitespace-nowrap">
-              {t("common.page_of", "Page {{page}} of {{total}}", { page, total: totalPages })}
-            </span>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setPage(1)}
-                disabled={page === 1 || loading}
-                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer disabled:cursor-not-allowed"
-              >
-                {t("common.first", "First")}
-              </button>
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1 || loading}
-                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer disabled:cursor-not-allowed"
-              >
-                {t("common.prev", "Prev")}
-              </button>
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page >= totalPages || loading}
-                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer disabled:cursor-not-allowed"
-              >
-                {t("common.next", "Next")}
-              </button>
-              <button
-                onClick={() => setPage(totalPages)}
-                disabled={page >= totalPages || loading}
-                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer disabled:cursor-not-allowed"
-              >
-                {t("common.last", "Last")}
-              </button>
-            </div>
-          </div>
-        </div>
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          loading={loading && logs.length > 0}
+          summary={
+            <>
+              {t("tasks.total_logs", "Total Logs:")} <span className="text-white">{totalCount}</span>
+            </>
+          }
+          labels={{
+            first: t("common.first", "First"),
+            prev: t("common.prev", "Prev"),
+            next: t("common.next", "Next"),
+            last: t("common.last", "Last"),
+            pageOf: t("common.page_info", "Page {{page}} of {{totalPages}}", { page, totalPages }),
+            pageSize: t("common.page_size", "Rows per page"),
+            jumpToPage: t("common.jump_to_page", "Go to page"),
+          }}
+        />
       </div>
     </div>
   );

@@ -58,7 +58,7 @@ export default function ActivityMatchDialog({ open, onClose, activity, target, s
               {t("settings.migration_search_title", "Search Activity Match")}
             </ModalTitle>
             <div className="flex items-center gap-2 text-sm min-w-0">
-              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider shrink-0">
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider shrink-0">
                 {t("settings.migration_unlinked", "Unlinked")}
               </span>
               <span className="px-2.5 py-0.5 rounded-lg bg-background border border-border text-gray-200 font-bold truncate">
@@ -254,7 +254,7 @@ function MatchSearch({
           </button>
           {crumbs.map((crumb, i) => (
             <span key={crumb.id} className="flex items-center gap-2">
-              <span className="text-gray-600" aria-hidden="true">
+              <span className="text-gray-500" aria-hidden="true">
                 /
               </span>
               {i === crumbs.length - 1 ? (
@@ -369,7 +369,7 @@ function MatchSearch({
                           />
                         )}
                       </td>
-                      <td className="px-4 py-3">{code ? <EpisodeCode code={code} /> : <span className="text-gray-600">-</span>}</td>
+                      <td className="px-4 py-3">{code ? <EpisodeCode code={code} /> : <span className="text-gray-500">-</span>}</td>
                       <td className="px-4 py-3 text-sm font-bold text-gray-200">
                         {container ? (
                           <button

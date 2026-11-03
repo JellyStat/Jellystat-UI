@@ -34,7 +34,7 @@ export default function StatusIndicator({
       {pulse && (
         <span
           className={cn(
-            'animate-ping absolute inline-flex h-full w-full rounded-full opacity-75',
+            'animate-ping motion-reduce:animate-none absolute inline-flex h-full w-full rounded-full opacity-75',
             toneClass[tone]
           )}
         />

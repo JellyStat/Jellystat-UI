@@ -45,7 +45,7 @@ export default function LibraryOptions({ library }: Props) {
             <AlertTriangle className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-2xl font-black tracking-tight text-gray-200">{t("library.DangerZone", "Danger Zone")}</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-gray-200">{t("library.DangerZone", "Danger Zone")}</h2>
           </div>
         </div>
 
@@ -53,7 +53,7 @@ export default function LibraryOptions({ library }: Props) {
           <div className="space-y-0 px-5 py-3">
             <div className="flex items-center justify-between gap-6 py-4">
               <div className="min-w-0 flex-1">
-                <h5 className="text-2xl font-black tracking-tight text-gray-200">
+                <h5 className="text-2xl font-bold tracking-tight text-gray-200">
                   {t("library.deleteArchivedLibrary", "Delete Archived Library")}
                 </h5>
                 <p className="mt-1 max-w-2xl text-sm text-gray-400">
@@ -75,11 +75,11 @@ export default function LibraryOptions({ library }: Props) {
                 }
                 dialogTitle={t("library.deleteArchivedLibrary", "Delete Archived Library")}
                 description={t("library.confirmDeleteArchivedLibrary", "Are you sure you want to delete this archived library?")}
-                confirmText={t("common.yes", "Yes")}
-                cancelText={t("common.no", "No")}
+                confirmText={t("common.delete", "Delete")}
+                cancelText={t("common.cancel", "Cancel")}
                 onConfirm={deleteArchivedLibrary}
                 tone="danger"
-                className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger px-4 py-3 text-base font-semibold text-white transition hover:bg-danger-hover"
+                className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger-solid px-4 py-3 text-base font-semibold text-white transition hover:bg-danger-solid-hover"
               />
             </div>
           </div>
@@ -91,7 +91,7 @@ export default function LibraryOptions({ library }: Props) {
           <div className="space-y-0 px-5 py-3">
             <div className="flex items-center justify-between gap-6 py-4">
               <div className="min-w-0 flex-1">
-                <h5 className="text-2xl font-black tracking-tight text-gray-200">
+                <h5 className="text-2xl font-bold tracking-tight text-gray-200">
                   {t("library.deleteArchivedItems", "Delete Archived Items")}
                 </h5>
                 <p className="mt-1 max-w-2xl text-sm text-gray-400">
@@ -116,11 +116,11 @@ export default function LibraryOptions({ library }: Props) {
                   "library.confirmDeleteArchivedItems",
                   "Are you sure you want to delete all archived items in this library?",
                 )}
-                confirmText={t("common.yes", "Yes")}
-                cancelText={t("common.no", "No")}
+                confirmText={t("common.delete", "Delete")}
+                cancelText={t("common.cancel", "Cancel")}
                 onConfirm={deleteArchivedLibrary}
                 tone="danger"
-                className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger px-4 py-3 text-base font-semibold text-white transition hover:bg-danger-hover"
+                className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger-solid px-4 py-3 text-base font-semibold text-white transition hover:bg-danger-solid-hover"
               />
             </div>
           </div>

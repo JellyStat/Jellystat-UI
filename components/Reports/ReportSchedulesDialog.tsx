@@ -1,13 +1,14 @@
 import clsx from "clsx";
 import { AlertCircle, CalendarClock, CheckCircle2, Pencil, Play, Plus, Trash2, Webhook, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import client from "@/lib/api";
 import { formatDateTime } from "@/lib/dateFormat";
 import type { ExportFormat, ReportParameter, ReportSchedule, WebhookType } from "@/lib/models/reports";
 import { Field, NumberInput, Select, TextInput, Toggle } from "./designer/controls";
 import ParameterInput from "./ParameterInput";
-import { Modal, ModalPanel, ModalTitle, Spinner } from "@/components/ui";
+import { Badge, ConfirmButton, Modal, ModalPanel, ModalTitle, Spinner } from "@/components/ui";
 
 interface Props {
   reportId: string;
@@ -16,41 +17,9 @@ interface Props {
   onClose: () => void;
 }
 
-const INTERVALS = [
-  { value: "60", label: "Every hour" },
-  { value: "360", label: "Every 6 hours" },
-  { value: "1440", label: "Every day" },
-  { value: "10080", label: "Every week" },
-  { value: "43200", label: "Every 30 days" },
-  { value: "0", label: "Manual only" },
-  { value: "custom", label: "Custom..." },
-];
-
-const FORMATS: { value: ExportFormat; label: string }[] = [
-  { value: "pdf", label: "PDF" },
-  { value: "png", label: "PNG image" },
-  { value: "html", label: "HTML page" },
-  { value: "svg", label: "SVG" },
-  { value: "json", label: "JSON data" },
-];
-
-const WEBHOOK_TYPES: { value: WebhookType; label: string; help: string }[] = [
-  { value: "discord", label: "Discord", help: "Posts the message with the file attached." },
-  {
-    value: "generic",
-    label: "Generic (multipart)",
-    help: "multipart/form-data with a JSON 'payload' part and the 'file'.",
-  },
-  {
-    value: "json",
-    label: "JSON",
-    help: "application/json with metadata and the file as base64 (or the data rows for JSON).",
-  },
-];
-
-const emptySchedule = (reportId: string, reportName: string): ReportSchedule => ({
+const emptySchedule = (reportId: string, reportName: string, nameSuffix: string): ReportSchedule => ({
   reportId,
-  name: `${reportName} delivery`,
+  name: `${reportName} ${nameSuffix}`,
   enabled: true,
   intervalMinutes: 1440,
   format: "pdf",
@@ -63,21 +32,61 @@ const emptySchedule = (reportId: string, reportName: string): ReportSchedule => 
 
 /** Scheduled and on-demand delivery of a saved report to webhooks. Admin only. */
 export default function ReportSchedulesDialog({ reportId, reportName, parameters, onClose }: Props) {
+  const { t } = useTranslation("common");
   const [schedules, setSchedules] = useState<ReportSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<ReportSchedule | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+
+  const INTERVALS = [
+    { value: "60", label: t("reports.schedule_every_hour", "Every hour") },
+    { value: "360", label: t("reports.schedule_every_6_hours", "Every 6 hours") },
+    { value: "1440", label: t("reports.schedule_every_day", "Every day") },
+    { value: "10080", label: t("reports.schedule_every_week", "Every week") },
+    { value: "43200", label: t("reports.schedule_every_30_days", "Every 30 days") },
+    { value: "0", label: t("reports.schedule_manual_only", "Manual only") },
+    { value: "custom", label: t("reports.schedule_custom", "Custom...") },
+  ];
+
+  const FORMATS: { value: ExportFormat; label: string }[] = [
+    { value: "pdf", label: "PDF" },
+    { value: "png", label: t("reports.format_png", "PNG image") },
+    { value: "html", label: t("reports.format_html", "HTML page") },
+    { value: "svg", label: "SVG" },
+    { value: "json", label: t("reports.format_json", "JSON data") },
+  ];
+
+  const WEBHOOK_TYPES: { value: WebhookType; label: string; help: string }[] = [
+    {
+      value: "discord",
+      label: "Discord",
+      help: t("reports.webhook_discord_help", "Posts the message with the file attached."),
+    },
+    {
+      value: "generic",
+      label: t("reports.webhook_generic", "Generic (multipart)"),
+      help: t("reports.webhook_generic_help", "multipart/form-data with a JSON 'payload' part and the 'file'."),
+    },
+    {
+      value: "json",
+      label: "JSON",
+      help: t(
+        "reports.webhook_json_help",
+        "application/json with metadata and the file as base64 (or the data rows for JSON).",
+      ),
+    },
+  ];
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       setSchedules(await client.Reports.schedules.list({ ReportId: reportId }));
     } catch (err: any) {
-      toast.error(err?.message ?? "Failed to load schedules");
+      toast.error(err?.message ?? t("reports.schedules_load_failed", "Failed to load schedules"));
     } finally {
       setLoading(false);
     }
-  }, [reportId]);
+  }, [reportId, t]);
 
   useEffect(() => {
     void load();
@@ -90,11 +99,11 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
     setBusy("save");
     try {
       await client.Reports.schedules.save(editing);
-      toast.success("Schedule saved");
+      toast.success(t("reports.schedule_saved", "Schedule saved"));
       setEditing(null);
       await load();
     } catch (err: any) {
-      toast.error(err?.message ?? "Failed to save the schedule");
+      toast.error(err?.message ?? t("reports.schedule_save_failed", "Failed to save the schedule"));
     } finally {
       setBusy(null);
     }
@@ -105,13 +114,18 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
     try {
       const result = await client.Reports.schedules.run({ Id: id });
       if (result.success) {
-        toast.success(`Delivered ${result.fileName ?? ""} in ${result.elapsedMs} ms`);
+        toast.success(
+          t("reports.schedule_delivered", "Delivered {{fileName}} in {{ms}} ms", {
+            fileName: result.fileName ?? "",
+            ms: result.elapsedMs,
+          }),
+        );
       } else {
-        toast.error(result.error ?? "Delivery failed");
+        toast.error(result.error ?? t("reports.schedule_delivery_failed", "Delivery failed"));
       }
       await load();
     } catch (err: any) {
-      toast.error(err?.message ?? "Delivery failed");
+      toast.error(err?.message ?? t("reports.schedule_delivery_failed", "Delivery failed"));
     } finally {
       setBusy(null);
     }
@@ -123,7 +137,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
       await client.Reports.schedules.delete({ Id: id });
       await load();
     } catch (err: any) {
-      toast.error(err?.message ?? "Failed to delete the schedule");
+      toast.error(err?.message ?? t("reports.schedule_delete_failed", "Failed to delete the schedule"));
     } finally {
       setBusy(null);
     }
@@ -136,10 +150,15 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
     <Modal open onClose={onClose}>
         <ModalPanel className="p-0 md:p-0 max-w-3xl max-h-[92dvh] flex flex-col overflow-hidden">
           <div className="flex items-center justify-between px-5 py-3 border-b border-border">
-            <ModalTitle className="flex items-center gap-2 text-lg font-black text-white">
-              <CalendarClock size={20} className="text-accent" /> Schedules & webhooks
+            <ModalTitle className="flex items-center gap-2 text-lg font-bold text-white">
+              <CalendarClock size={20} className="text-accent" /> {t("reports.schedules_title", "Schedules & webhooks")}
             </ModalTitle>
-            <button type="button" onClick={onClose} className="p-1 text-gray-400 hover:text-white cursor-pointer" aria-label="Close">
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-1 text-gray-400 hover:text-white cursor-pointer"
+              aria-label={t("common.close", "Close")}
+            >
               <X size={18} />
             </button>
           </div>
@@ -148,12 +167,17 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
             {!editing && (
               <>
                 <p className="text-sm text-gray-400">
-                  Render <span className="text-white font-bold">{reportName}</span> on the server and post it to a webhook on a schedule, or run one
-                  now to test it. Automations can also call <code className="text-gray-300">GET /Reports/Export?Id={reportId}&amp;Format=pdf</code>{" "}
-                  with an API key.
+                  {t(
+                    "reports.schedules_intro",
+                    "Render {{name}} on the server and post it to a webhook on a schedule, or run one now to test it. Automations can also call the export endpoint below with an API key.",
+                    { name: reportName },
+                  )}{" "}
+                  <code className="text-gray-300 break-all">GET /Reports/Export?Id={reportId}&amp;Format=pdf</code>
                 </p>
                 {loading && <Spinner className="text-primary" />}
-                {!loading && schedules.length === 0 && <p className="text-sm text-gray-500">No schedules yet.</p>}
+                {!loading && schedules.length === 0 && (
+                  <p className="text-sm text-gray-500">{t("reports.no_schedules", "No schedules yet.")}</p>
+                )}
                 <div className="space-y-2">
                   {schedules.map((s) => (
                     <div key={s.id} className="rounded-xl border border-border bg-background p-3 flex flex-col sm:flex-row sm:items-center gap-3">
@@ -161,32 +185,32 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                         <div className="flex items-center gap-2">
                           <Webhook size={14} className="text-accent shrink-0" />
                           <span className="font-bold text-sm text-white truncate">{s.name}</span>
-                          <span
-                            className={clsx(
-                              "text-[10px] uppercase tracking-wider px-1.5 rounded border",
-                              s.enabled ? "text-success border-success/30" : "text-gray-500 border-border",
-                            )}
-                          >
-                            {s.enabled ? "on" : "off"}
-                          </span>
+                          <Badge tone={s.enabled ? "success" : "neutral"} shape="square">
+                            {s.enabled ? t("reports.schedule_on", "on") : t("reports.schedule_off", "off")}
+                          </Badge>
                         </div>
                         <div className="text-xs text-gray-500 mt-1 flex flex-wrap gap-x-3">
                           <span>
                             {s.format.toUpperCase()} → {s.webhookType}
                           </span>
-                          <span>{INTERVALS.find((i) => i.value === String(s.intervalMinutes))?.label ?? `Every ${s.intervalMinutes} min`}</span>
-                          {s.nextRunAt && s.enabled && s.intervalMinutes > 0 && <span>Next {formatDateTime(s.nextRunAt)}</span>}
+                          <span>
+                            {INTERVALS.find((i) => i.value === String(s.intervalMinutes))?.label ??
+                              t("reports.schedule_every_n_min", "Every {{n}} min", { n: s.intervalMinutes })}
+                          </span>
+                          {s.nextRunAt && s.enabled && s.intervalMinutes > 0 && (
+                            <span>{t("reports.schedule_next", "Next {{date}}", { date: formatDateTime(s.nextRunAt) })}</span>
+                          )}
                           {s.lastRunAt && (
                             <span
                               className={clsx("flex items-center gap-1", s.lastSuccess ? "text-success" : "text-danger")}
                               title={s.lastError ?? undefined}
                             >
                               {s.lastSuccess ? <CheckCircle2 size={11} /> : <AlertCircle size={11} />}
-                              Last {formatDateTime(s.lastRunAt)}
+                              {t("reports.schedule_last", "Last {{date}}", { date: formatDateTime(s.lastRunAt) })}
                             </span>
                           )}
                         </div>
-                        {s.lastSuccess === false && s.lastError && <p className="text-[11px] text-danger mt-1 break-words">{s.lastError}</p>}
+                        {s.lastSuccess === false && s.lastError && <p className="text-xs text-danger mt-1 break-words">{s.lastError}</p>}
                       </div>
                       <div className="flex gap-1.5 shrink-0">
                         <button
@@ -195,35 +219,41 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                           onClick={() => run(s.id!)}
                           className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-border text-xs text-gray-300 hover:text-white hover:border-accent cursor-pointer disabled:opacity-50"
                         >
-                          {busy === s.id ? <Spinner size={13} className="" /> : <Play size={13} />} Run now
+                          {busy === s.id ? <Spinner size={13} className="" /> : <Play size={13} />}{" "}
+                          {t("reports.schedule_run_now", "Run now")}
                         </button>
                         <button
                           type="button"
                           onClick={() => setEditing({ ...s, webhookSecret: null })}
                           className="p-1.5 rounded-lg border border-border text-gray-400 hover:text-white cursor-pointer"
-                          aria-label="Edit"
+                          aria-label={t("common.edit", "Edit")}
                         >
                           <Pencil size={13} />
                         </button>
-                        <button
-                          type="button"
+                        <ConfirmButton
                           disabled={busy !== null}
-                          onClick={() => remove(s.id!)}
-                          className="p-1.5 rounded-lg border border-border text-gray-400 hover:text-danger cursor-pointer disabled:opacity-50"
-                          aria-label="Delete"
+                          onConfirm={() => remove(s.id!)}
+                          tone="danger"
+                          tooltip={t("common.delete", "Delete")}
+                          title={t("reports.schedule_delete_title", "Delete this schedule?")}
+                          description={t("reports.schedule_delete_desc", "{{name}} will stop being delivered.", { name: s.name })}
+                          confirmText={t("common.delete", "Delete")}
+                          cancelText={t("common.cancel", "Cancel")}
+                          className="p-1.5 rounded-lg border border-border text-gray-400 hover:text-danger cursor-pointer"
                         >
                           <Trash2 size={13} />
-                        </button>
+                          <span className="sr-only">{t("common.delete", "Delete")}</span>
+                        </ConfirmButton>
                       </div>
                     </div>
                   ))}
                 </div>
                 <button
                   type="button"
-                  onClick={() => setEditing(emptySchedule(reportId, reportName))}
+                  onClick={() => setEditing(emptySchedule(reportId, reportName, t("reports.schedule_name_suffix", "delivery")))}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-background hover:border-accent text-sm font-bold text-gray-200 cursor-pointer"
                 >
-                  <Plus size={16} className="text-accent" /> New schedule
+                  <Plus size={16} className="text-accent" /> {t("reports.new_schedule", "New schedule")}
                 </button>
               </>
             )}
@@ -231,10 +261,10 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
             {editing && (
               <div className="space-y-3">
                 <div className="grid sm:grid-cols-2 gap-3">
-                  <Field label="Name">
+                  <Field label={t("reports.schedule_name", "Name")}>
                     <TextInput value={editing.name} onChange={(v) => set({ name: v })} />
                   </Field>
-                  <Field label="Repeat">
+                  <Field label={t("reports.schedule_repeat", "Repeat")}>
                     <div className="flex gap-2">
                       <Select
                         value={intervalValue(editing.intervalMinutes)}
@@ -248,19 +278,19 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                       )}
                     </div>
                   </Field>
-                  <Field label="Webhook type">
+                  <Field label={t("reports.schedule_webhook_type", "Webhook type")}>
                     <Select
                       value={editing.webhookType}
                       options={WEBHOOK_TYPES.map((w) => ({ value: w.value, label: w.label }))}
                       onChange={(v) => set({ webhookType: v })}
                     />
                   </Field>
-                  <Field label="File format">
+                  <Field label={t("reports.schedule_format", "File format")}>
                     <Select value={editing.format} options={FORMATS} onChange={(v) => set({ format: v })} />
                   </Field>
                 </div>
-                <p className="text-[11px] text-gray-500 -mt-1">{WEBHOOK_TYPES.find((w) => w.value === editing.webhookType)?.help}</p>
-                <Field label="Webhook URL">
+                <p className="text-xs text-gray-500 -mt-1">{WEBHOOK_TYPES.find((w) => w.value === editing.webhookType)?.help}</p>
+                <Field label={t("reports.schedule_webhook_url", "Webhook URL")}>
                   <TextInput
                     value={editing.webhookUrl}
                     placeholder="https://discord.com/api/webhooks/..."
@@ -270,7 +300,12 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                 {editing.webhookType !== "discord" && (
                   <Field
                     label={
-                      editing.hasSecret ? "Signing secret (saved; type to replace, clear the box and save to remove)" : "Signing secret (optional)"
+                      editing.hasSecret
+                        ? t(
+                            "reports.schedule_secret_saved",
+                            "Signing secret (saved; type to replace, clear the box and save to remove)",
+                          )
+                        : t("reports.schedule_secret_optional", "Signing secret (optional)")
                     }
                   >
                     <TextInput
@@ -280,11 +315,11 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                     />
                   </Field>
                 )}
-                <Field label="Message">
+                <Field label={t("reports.schedule_message", "Message")}>
                   <TextInput multiline rows={2} value={editing.message ?? ""} onChange={(v) => set({ message: v || null })} />
                 </Field>
                 {parameters.length > 0 && (
-                  <Field label="Parameters">
+                  <Field label={t("reports.schedule_parameters", "Parameters")}>
                     <div className="grid sm:grid-cols-2 gap-2">
                       {parameters.map((p) => (
                         <div key={p.name} className="flex items-center gap-2">
@@ -294,7 +329,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                             className="flex-1"
                             source={{ reportId }}
                             values={editing.parameters ?? {}}
-                            emptyLabel={p.type === "lookup" ? "All" : "Default"}
+                            emptyLabel={p.type === "lookup" ? t("common.all", "All") : t("reports.parameter_default", "Default")}
                             value={editing.parameters?.[p.name] ?? null}
                             onChange={(v) => {
                               const next = { ...(editing.parameters ?? {}) };
@@ -311,7 +346,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                     </div>
                   </Field>
                 )}
-                <Toggle label="Enabled" checked={editing.enabled} onChange={(v) => set({ enabled: v })} />
+                <Toggle label={t("reports.schedule_enabled", "Enabled")} checked={editing.enabled} onChange={(v) => set({ enabled: v })} />
               </div>
             )}
           </div>
@@ -323,15 +358,15 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                 onClick={() => setEditing(null)}
                 className="px-4 py-2 rounded-lg bg-background border border-border text-gray-200 hover:text-white text-sm cursor-pointer"
               >
-                Back
+                {t("common.back", "Back")}
               </button>
               <button
                 type="button"
                 onClick={save}
                 disabled={busy !== null || !editing.name.trim() || !editing.webhookUrl}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-white text-sm font-bold cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-solid hover:bg-primary-solid-hover text-white text-sm font-bold cursor-pointer disabled:opacity-50"
               >
-                {busy === "save" && <Spinner size={14} className="" />} Save schedule
+                {busy === "save" && <Spinner size={14} className="" />} {t("reports.save_schedule", "Save schedule")}
               </button>
             </div>
           )}

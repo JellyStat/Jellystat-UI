@@ -162,7 +162,7 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
       )}
     >
       <div className="flex flex-wrap items-center gap-2">
-        <div className="flex rounded-md border border-border overflow-hidden text-[11px] font-bold">
+        <div className="flex rounded-md border border-border overflow-hidden text-xs font-bold">
           {(["and", "or"] as const).map((c) => (
             <button
               key={c}
@@ -170,14 +170,14 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
               onClick={() => onChange({ ...node, combinator: c })}
               className={clsx(
                 "px-2 py-0.5 cursor-pointer uppercase",
-                (node.combinator ?? "and") === c ? "bg-primary text-white" : "text-gray-400 hover:text-white",
+                (node.combinator ?? "and") === c ? "bg-primary-solid text-white" : "text-gray-400 hover:text-white",
               )}
             >
               {c}
             </button>
           ))}
         </div>
-        <label className="flex items-center gap-1 text-[11px] text-gray-400 cursor-pointer">
+        <label className="flex items-center gap-1 text-xs text-gray-400 cursor-pointer">
           <input
             type="checkbox"
             className="accent-primary"
@@ -189,7 +189,7 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
         <div className="flex-1" />
         <button
           type="button"
-          className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-white cursor-pointer"
+          className="flex items-center gap-1 text-xs text-gray-400 hover:text-white cursor-pointer"
           onClick={() =>
             onChange({
               ...node,
@@ -201,7 +201,7 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
         </button>
         <button
           type="button"
-          className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-white cursor-pointer"
+          className="flex items-center gap-1 text-xs text-gray-400 hover:text-white cursor-pointer"
           onClick={() => onChange({ ...node, rules: [...rules, { combinator: "and", rules: [] }] })}
         >
           <FolderPlus size={12} /> Group
@@ -213,7 +213,7 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
         )}
       </div>
 
-      {rules.length === 0 && <p className="text-[11px] text-gray-500 px-1">No conditions: every row is included.</p>}
+      {rules.length === 0 && <p className="text-xs text-gray-500 px-1">No conditions: every row is included.</p>}
 
       {rules.map((rule, i) =>
         rule.rules ? (

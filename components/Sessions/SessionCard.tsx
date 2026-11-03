@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import { Play, Pause, Tv } from "lucide-react";
@@ -131,7 +132,7 @@ function LabeledText({ label, value }: { label: string; value: string | undefine
   if (!value) return null;
   return (
     <div className="flex items-center gap-2 w-full flex-nowrap">
-      <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider w-20 text-right shrink-0">{label}</span>
+      <span className="text-xs text-gray-500 font-bold uppercase tracking-wider w-20 text-right shrink-0">{label}</span>
       <span className="text-xs text-gray-200 font-medium truncate" title={value}>
         {value}
       </span>
@@ -235,7 +236,7 @@ export default function SessionCard({ session }: SessionCardProps) {
             <LabeledText label={t("session.ip_address", "IP ADDRESS")} value={ip} />
             <LabeledText label={t("session.eta", "ETA")} value={eta} />
             <div className="text-right w-full mt-1">
-              <span className="text-[10px] font-mono text-gray-400 bg-background/50 px-2 py-1 rounded shadow-inner border border-border">
+              <span className="text-xs font-mono text-gray-400 bg-background/50 px-2 py-1 rounded shadow-inner border border-border">
                 {session.playState?.positionTicks?.ticksToTimeString?.() || "0:00"} /{" "}
                 {item?.runtimeTicks?.ticksToTimeString?.() || "0:00"}
               </span>
@@ -262,15 +263,15 @@ export default function SessionCard({ session }: SessionCardProps) {
             {session.isPaused ? <Pause size={14} className="fill-current" /> : <Play size={14} className="fill-current" />}
           </div>
           <div className="flex flex-col min-w-0">
-            <span
-              className="text-sm font-bold text-white truncate drop-shadow-sm hover:text-primary transition-colors cursor-pointer"
-              onClick={() => router.push(`/libraries/items/${encodeURIComponent(item?.id ?? "")}`)}
+            <Link
+              href={`/libraries/items/${encodeURIComponent(item?.id ?? "")}`}
+              className="text-sm font-bold text-white truncate drop-shadow-sm hover:text-primary-soft transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
             >
               {item.seriesName ? `${item.seriesName} : ` : ""}
               {item?.name}
-            </span>
+            </Link>
             {item?.type === ItemTypes.Episode && (
-              <div className="flex items-center gap-1.5 text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">
+              <div className="flex items-center gap-1.5 text-xs text-gray-400 font-bold uppercase tracking-wider mt-0.5">
                 <TypeIcon size={10} />
                 {indexString && <span className="truncate">{indexString}</span>}
               </div>
@@ -280,12 +281,12 @@ export default function SessionCard({ session }: SessionCardProps) {
 
         {/* User Info */}
         <div className="flex items-center gap-2 shrink-0 bg-background/50 pl-3 pr-1 py-1 rounded-full border border-border shadow-inner">
-          <span
-            className="text-xs font-bold text-gray-200 hover:text-primary transition-colors cursor-pointer"
-            onClick={() => router.push(`/users/${encodeURIComponent(session.userId ?? "")}`)}
+          <Link
+            href={`/users/${encodeURIComponent(session.userId ?? "")}`}
+            className="text-xs font-bold text-gray-200 hover:text-primary-soft transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
           >
             {session.userName}
-          </span>
+          </Link>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={userImage}

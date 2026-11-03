@@ -15,6 +15,7 @@ import {
   PageHeader,
   SectionTitle,
   Spinner,
+  Switch,
 } from "@/components/ui";
 import client from "@/lib/api";
 import configManager from "@/lib/configManager";
@@ -151,18 +152,16 @@ export default function WebhooksPage() {
                   <div className="min-w-0 space-y-1.5">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="font-bold text-white break-all">{w.name}</h3>
-                      <button
-                        type="button"
+                      <Switch
+                        checked={w.enabled}
+                        onChange={() => handleToggle(w)}
                         disabled={busy !== null}
-                        onClick={() => handleToggle(w)}
-                        title={t("settings.webhook_toggle", "Turn on or off")}
-                        aria-pressed={w.enabled}
-                        className="cursor-pointer rounded-full disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
-                      >
-                        <Badge tone={w.enabled ? "success" : "neutral"}>
-                          {w.enabled ? t("settings.webhook_on", "On") : t("settings.webhook_off", "Off")}
-                        </Badge>
-                      </button>
+                        label={
+                          <span className="text-xs font-bold text-gray-400">
+                            {w.enabled ? t("settings.webhook_on", "On") : t("settings.webhook_off", "Off")}
+                          </span>
+                        }
+                      />
                       <Badge tone="accent">{w.type}</Badge>
                       <Badge tone="primary">{serverName(w.serverId)}</Badge>
                     </div>
@@ -182,7 +181,7 @@ export default function WebhooksPage() {
                       )}
                     </div>
                     {w.lastSuccess === false && w.lastError && (
-                      <p className="text-[11px] text-danger break-words">{w.lastError}</p>
+                      <p className="text-xs text-danger break-words">{w.lastError}</p>
                     )}
                   </div>
 

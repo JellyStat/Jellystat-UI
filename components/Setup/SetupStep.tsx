@@ -25,7 +25,7 @@ export default function SetupStep({ icon, title, description, gradient, glow, ch
         >
           {icon}
         </div>
-        <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">{title}</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-2">{title}</h2>
         <p className="text-sm text-gray-400 font-medium">{description}</p>
       </div>
 

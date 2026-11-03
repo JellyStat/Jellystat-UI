@@ -117,7 +117,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
     <div className="w-full animate-in fade-in duration-500">
       {/* Header & Controls */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
-        <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3 shrink-0">
+        <h2 className="text-2xl font-bold text-white tracking-tight flex items-center gap-3 shrink-0">
           <Film className="text-accent" size={28} />
           {t("common.media", "Media")}
         </h2>
@@ -157,7 +157,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
 
               <button
                 onClick={() => setSortDesc((s) => !s)}
-                className="flex items-center justify-center p-2 py-2.5 rounded-xl bg-surface/80 border border-border hover:border-gray-500 text-gray-400 transition-colors shadow-inner focus:outline-none cursor-pointer"
+                className="flex items-center justify-center p-2 py-2.5 rounded-xl bg-surface/80 border border-border hover:border-gray-500 text-gray-400 transition-colors shadow-inner focus:outline-none focus-visible:ring-1 focus-visible:ring-primary cursor-pointer"
                 aria-label="Toggle Sort Direction"
               >
                 {sortDesc ? <ArrowDownWideNarrow size={18} /> : <ArrowUpNarrowWide size={18} />}
@@ -175,7 +175,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
               placeholder={t("media_grid.search_placeholder", "Search media...")}
               value={input}
               onChange={(e) => setInput(e.currentTarget.value)}
-              className="w-full bg-background/50 border border-border hover:border-gray-500 rounded-xl py-2 pl-9 pr-4 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none transition-all shadow-inner"
+              className="w-full bg-background/50 border border-border hover:border-gray-500 rounded-xl py-2 pl-9 pr-4 text-sm text-gray-200 placeholder:text-gray-500 focus:outline-none focus-visible:ring-1 focus-visible:ring-primary transition-all shadow-inner"
             />
           </div>
         </div>

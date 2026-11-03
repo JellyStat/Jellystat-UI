@@ -6,13 +6,16 @@
     "title": "Aktivitätsprotokoll",
     "title_col": "Titel",
     "total_playback": "Gesamtwiedergabe",
-    "total_records": "Gesamtdatensätze:"
+    "total_records": "Gesamtdatensätze:",
+    "clear_filters": "Filter zurücksetzen ({{count}})"
   },
   "app": {
     "connecting": "Verbindung zu Jellystat wird hergestellt",
     "connection_failed": "Verbindung fehlgeschlagen",
     "connection_failed_desc": "Die Anwendung konnte aufgrund eines Fehlers bei der API-Verbindung nicht gestartet werden. Bitte stelle sicher, dass dein Backend läuft.",
-    "retrying": "Wird erneut versucht"
+    "retrying": "Wird erneut versucht",
+    "timeout": "Keine Antwort von {{url}} nach 20 Sekunden.",
+    "connecting_slow": "Warte weiterhin auf {{url}}. Prüfe, ob die Jellystat-API läuft."
   },
   "common": {
     "actions": "Aktionen",
@@ -101,7 +104,22 @@
     "transcode": "Transkodieren",
     "video": "VIDEO",
     "playback_stream": "Wiedergabestrom",
-    "source": "Quelle"
+    "source": "Quelle",
+    "confirm": "Bestätigen",
+    "sort_descending": "Absteigend",
+    "sort_ascending": "Aufsteigend",
+    "first": "Erste",
+    "last": "Letzte",
+    "page_size": "Zeilen pro Seite",
+    "jump_to_page": "Gehe zu Seite",
+    "all": "Alle",
+    "discard_changes_title": "Änderungen verwerfen?",
+    "discard_changes_desc": "Deine Änderungen wurden nicht gespeichert.",
+    "discard": "Verwerfen",
+    "keep_editing": "Weiter bearbeiten",
+    "try_again": "Erneut versuchen",
+    "edit": "Bearbeiten",
+    "back": "Zurück"
   },
   "error_cards": {
     "failed_to_load": "Fehler beim Laden",
@@ -145,7 +163,8 @@
     "libraries_desc": "Verwalte, tracke und analysiere deine Mediensammlungen",
     "total_media": "Medien gesamt",
     "total_storage": "Speicher gesamt",
-    "no_libraries_desc": "Stelle sicher, dass dein Server verbunden und synchronisiert ist."
+    "no_libraries_desc": "Stelle sicher, dass dein Server verbunden und synchronisiert ist.",
+    "mixed_content": "Gemischte Inhalte"
   },
   "library": {
     "confirmDeleteArchivedItems": "Lösche alle archivierten Elemente in dieser Bibliothek. Diese Aktion kann nicht rückgängig gemacht werden.",
@@ -185,7 +204,8 @@
     "switch_local": "Zum lokalen Login wechseln",
     "switch_server": "Login über Jellyfin/Emby",
     "username_placeholder": "Benutzername",
-    "welcome_back": "Willkommen zurück"
+    "welcome_back": "Willkommen zurück",
+    "server": "Server"
   },
   "media_grid": {
     "filter_all": "Alle Medien",
@@ -228,7 +248,9 @@
   "sessions": {
     "active_streams": "Aktive Streams",
     "no_active": "Keine aktiven Sitzungen",
-    "waiting": "Warten darauf, dass Benutzer Medien abspielen"
+    "waiting": "Warten darauf, dass Benutzer Medien abspielen",
+    "none_active": "Keine aktiven Streams",
+    "live": "Live"
   },
   "settings": {
     "api": "API",
@@ -357,7 +379,17 @@
     "users_subtitle": "Verwalte Benutzerkonten und Berechtigungen.",
     "users_title": "Benutzereinstellungen",
     "language_desc": "Wähle deine bevorzugte Sprache",
-    "language": "Sprache"
+    "language": "Sprache",
+    "backups_delete_title": "Dieses Backup löschen?",
+    "backups_delete_named_desc": "{{fileName}} wird dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden.",
+    "backup_restore_queued": "Wiederherstellung eingeplant",
+    "backup_restore_failed": "Wiederherstellung konnte nicht gestartet werden: {{error}}",
+    "backup_uploaded": "Backup hochgeladen",
+    "backup_upload_failed": "Hochladen fehlgeschlagen: {{error}}",
+    "remote_auth_on_short": "Remote-Anmeldung an",
+    "remote_auth_off_short": "Remote-Anmeldung aus",
+    "backups_restore_phrase": "wiederherstellen",
+    "backups_restore_phrase_label": "Gib \"{{phrase}}\" zur Bestätigung ein"
   },
   "setup": {
     "btn_add_server": "Server hinzufügen",
@@ -468,7 +500,8 @@
     "task_queued": "{{taskName}} erfolgreich in Warteschlange eingefügt",
     "task_toggled": "Aufgabe {{taskName}} {{action}}",
     "toggle_task": "{{action}} Aufgabe {{taskName}}",
-    "update_failed": "Fehler beim Aktualisieren der Aufgabe {{taskName}}"
+    "update_failed": "Fehler beim Aktualisieren der Aufgabe {{taskName}}",
+    "view_logs": "Protokolle ansehen"
   },
   "timeline": {
     "empty_message": "Für die ausgewählten Bibliotheken wurde keine Wiedergabe gefunden",
@@ -531,5 +564,68 @@
     "resolution": "Auflösung",
     "hdr": "HDR",
     "dynamic_range": "Dynamischer Bereich"
+  },
+  "reports": {
+    "imported": "{{name}} importiert",
+    "designer_needs_width": "Der Berichtsdesigner braucht einen breiteren Bildschirm",
+    "designer_needs_width_desc": "Öffne ihn auf einem Tablet oder Computer. Berichte ansehen und exportieren kannst du hier trotzdem.",
+    "back_to_reports": "Zurück zu den Berichten",
+    "schedule_every_hour": "Stündlich",
+    "schedule_every_6_hours": "Alle 6 Stunden",
+    "schedule_every_day": "Täglich",
+    "schedule_every_week": "Wöchentlich",
+    "schedule_every_30_days": "Alle 30 Tage",
+    "schedule_manual_only": "Nur manuell",
+    "schedule_custom": "Benutzerdefiniert...",
+    "schedule_every_n_min": "Alle {{n}} Min.",
+    "format_png": "PNG-Bild",
+    "format_html": "HTML-Seite",
+    "format_json": "JSON-Daten",
+    "webhook_discord_help": "Sendet die Nachricht mit der Datei als Anhang.",
+    "webhook_generic": "Allgemein (multipart)",
+    "webhook_generic_help": "multipart/form-data mit einem JSON-Teil 'payload' und der Datei 'file'.",
+    "webhook_json_help": "application/json mit Metadaten und der Datei als Base64 (bei JSON die Datenzeilen).",
+    "schedules_load_failed": "Zeitpläne konnten nicht geladen werden",
+    "schedule_saved": "Zeitplan gespeichert",
+    "schedule_save_failed": "Zeitplan konnte nicht gespeichert werden",
+    "schedule_delivered": "{{fileName}} in {{ms}} ms zugestellt",
+    "schedule_delivery_failed": "Zustellung fehlgeschlagen",
+    "schedule_delete_failed": "Zeitplan konnte nicht gelöscht werden",
+    "schedules_title": "Zeitpläne & Webhooks",
+    "schedules_intro": "{{name}} auf dem Server erstellen und nach Zeitplan an einen Webhook senden, oder jetzt zum Testen ausführen. Automatisierungen können auch den Export-Endpunkt unten mit einem API-Schlüssel aufrufen.",
+    "no_schedules": "Noch keine Zeitpläne.",
+    "schedule_on": "an",
+    "schedule_off": "aus",
+    "schedule_next": "Nächste {{date}}",
+    "schedule_last": "Letzte {{date}}",
+    "schedule_run_now": "Jetzt ausführen",
+    "schedule_delete_title": "Diesen Zeitplan löschen?",
+    "schedule_delete_desc": "{{name}} wird nicht mehr zugestellt.",
+    "schedule_name_suffix": "Zustellung",
+    "new_schedule": "Neuer Zeitplan",
+    "schedule_name": "Name",
+    "schedule_repeat": "Wiederholen",
+    "schedule_webhook_type": "Webhook-Typ",
+    "schedule_format": "Dateiformat",
+    "schedule_webhook_url": "Webhook-URL",
+    "schedule_secret_saved": "Signaturgeheimnis (gespeichert; zum Ersetzen neu eingeben, zum Entfernen leeren und speichern)",
+    "schedule_secret_optional": "Signaturgeheimnis (optional)",
+    "schedule_message": "Nachricht",
+    "schedule_parameters": "Parameter",
+    "parameter_default": "Standard",
+    "schedule_enabled": "Aktiviert",
+    "save_schedule": "Zeitplan speichern",
+    "designer_image_too_big": "Bilder dürfen höchstens 5 MB groß sein",
+    "designer_name_required": "Gib dem Bericht zuerst einen Namen (Bereich Bericht, ohne Auswahl)",
+    "designer_saved": "Bericht gespeichert",
+    "designer_imported": "Berichtsdefinition importiert",
+    "save_failed": "Bericht konnte nicht gespeichert werden",
+    "export_failed": "Export fehlgeschlagen",
+    "check_file_failed": "Datei konnte nicht geprüft werden",
+    "fields_load_failed": "Berichtsfelder konnten nicht geladen werden",
+    "duplicate_failed": "Bericht konnte nicht dupliziert werden",
+    "delete_failed": "Bericht konnte nicht gelöscht werden",
+    "export_report_failed": "Bericht konnte nicht exportiert werden",
+    "import_failed": "Bericht konnte nicht importiert werden"
   }
 }
