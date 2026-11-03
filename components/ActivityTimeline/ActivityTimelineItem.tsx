@@ -57,7 +57,7 @@ export default function ActivityTimelineItem({ entry, side }: Props) {
       {/* Center line + dot */}
       <div className="relative row-start-1 col-start-1 md:col-start-2 flex justify-center self-stretch">
         <div className="absolute inset-y-[-1rem] w-px bg-border" />
-        <div className="relative z-10 my-auto w-3 h-3 rounded-full bg-brand-cyan ring-4 ring-background shadow-[0_0_12px_rgba(0,164,220,0.5)]" />
+        <div className="relative z-10 my-auto w-3 h-3 rounded-full bg-accent ring-4 ring-background shadow-[0_0_12px_rgba(0,164,220,0.5)]" />
       </div>
 
       {/* Card */}
@@ -79,14 +79,14 @@ export default function ActivityTimelineItem({ entry, side }: Props) {
         </div>
 
         <div className={`flex flex-col gap-1 min-w-0 ${textAlign}`}>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-brand-cyan">{dateLabel}</span>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-accent">{dateLabel}</span>
           <h3
-            className="text-base md:text-lg font-black text-gray-200 leading-tight line-clamp-2 hover:text-brand-purple transition-colors cursor-pointer"
+            className="text-base md:text-lg font-black text-gray-200 leading-tight line-clamp-2 hover:text-primary transition-colors cursor-pointer"
             onClick={goToItem}
           >
             {entry.title}
           </h3>
-          {seasons && <p className="text-sm text-gray-300">{seasons}</p>}
+          {seasons && <p className="text-sm text-gray-200">{seasons}</p>}
           {entry.isSeries && entry.episodeCount > 0 && (
             <p className="text-xs text-gray-400">{t("timeline.episodes", "{{episodeCount}} Episodes", { episodeCount: entry.episodeCount })}</p>
           )}

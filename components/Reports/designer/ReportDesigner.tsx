@@ -14,7 +14,6 @@ import {
   Files,
   Grid3x3,
   Layers,
-  Loader2,
   Lock,
   Magnet,
   PanelLeft,
@@ -35,7 +34,7 @@ import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { ConfirmDialog } from "@/components/ui";
+import { ConfirmDialog, Spinner } from "@/components/ui";
 import client from "@/lib/api";
 import type { ReportDataResult, ReportDefinition, ReportImportResult, ReportRenderModel } from "@/lib/models/reports";
 import { checkReportFile, downloadReportFile } from "@/lib/reports/transfer";
@@ -501,9 +500,9 @@ function DesignerShell() {
               { coalesceKey: "report-name" },
             )
           }
-          className="w-40 sm:w-56 bg-transparent border border-transparent hover:border-border focus:border-brand-purple rounded-md px-2 py-1 text-sm font-bold text-white outline-none"
+          className="w-40 sm:w-56 bg-transparent border border-transparent hover:border-border focus:border-primary rounded-md px-2 py-1 text-sm font-bold text-white outline-none"
         />
-        {dirty && <span className="text-[10px] text-brand-amber shrink-0">unsaved</span>}
+        {dirty && <span className="text-[10px] text-warning shrink-0">unsaved</span>}
         <div className="w-px h-6 bg-border mx-1 shrink-0" />
         <ToolButton title="Toggle left panel" onClick={() => setShowLeft(!showLeft)} active={showLeft}>
           <PanelLeft size={16} />
@@ -529,7 +528,7 @@ function DesignerShell() {
               setZoom(Number(ev.target.value));
             }
           }}
-          className="bg-background border border-border rounded-md px-1 py-1 text-xs text-gray-300 outline-none cursor-pointer shrink-0"
+          className="bg-background border border-border rounded-md px-1 py-1 text-xs text-gray-200 outline-none cursor-pointer shrink-0"
         >
           {!ZOOMS.includes(zoom) && <option value={String(zoom)}>{Math.round(zoom * 100)}%</option>}
           {ZOOMS.map((z) => (
@@ -568,9 +567,9 @@ function DesignerShell() {
           <button
             type="button"
             onClick={() => setExportOpen(!exportOpen)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-bold text-gray-300 hover:text-white hover:border-gray-500 cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-bold text-gray-200 hover:text-white hover:border-border-strong cursor-pointer"
           >
-            {exporting ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />} Export <ChevronDown size={12} />
+            {exporting ? <Spinner size={14} className="" /> : <Download size={14} />} Export <ChevronDown size={12} />
           </button>
           {exportOpen && (
             <ContextMenu
@@ -605,9 +604,9 @@ function DesignerShell() {
           type="button"
           onClick={save}
           disabled={saving}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple text-white text-xs font-bold hover:bg-brand-purple/90 cursor-pointer disabled:opacity-50 shrink-0"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-bold hover:bg-primary/90 cursor-pointer disabled:opacity-50 shrink-0"
         >
-          {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save
+          {saving ? <Spinner size={14} className="" /> : <Save size={14} />} Save
         </button>
         <ToolButton title="Toggle right panel" onClick={() => setShowRight(!showRight)} active={showRight}>
           <PanelRight size={16} />
@@ -639,7 +638,7 @@ function DesignerShell() {
                   onClick={() => setLeftTab(t.key)}
                   className={clsx(
                     "flex flex-col items-center gap-0.5 py-2 text-[10px] font-bold cursor-pointer border-b-2",
-                    leftTab === t.key ? "text-brand-purple border-brand-purple" : "text-gray-500 border-transparent hover:text-gray-300",
+                    leftTab === t.key ? "text-primary border-primary" : "text-gray-500 border-transparent hover:text-gray-200",
                   )}
                 >
                   <t.icon size={15} />
@@ -659,11 +658,11 @@ function DesignerShell() {
         {/* Canvas */}
         <div ref={canvasHost} className="flex-1 min-w-0 flex flex-col">
           {previewMode ? (
-            <div className="flex-1 overflow-auto bg-[#16161a] p-10 flex flex-col items-center gap-8">
+            <div className="flex-1 overflow-auto bg-background p-10 flex flex-col items-center gap-8">
               {layoutPages(renderModel).map((p, i) => (
                 <div
                   key={`${p.page}-${p.continuation}`}
-                  className="shadow-2xl shadow-black/60"
+                  className="shadow-2xl shadow-black/40"
                   style={{
                     width: definition.page.width * zoom,
                     height: definition.page.height * zoom,
@@ -690,11 +689,11 @@ function DesignerShell() {
             <div className="flex-1" />
             {preview.loading && (
               <span className="flex items-center gap-1">
-                <Loader2 size={11} className="animate-spin" /> Loading data
+                <Spinner size={11} className="" /> Loading data
               </span>
             )}
-            {preview.error && <span className="text-brand-rose truncate">{preview.error}</span>}
-            {dataErrors > 0 && <span className="text-brand-rose">{dataErrors} data source error(s): see the Data tab</span>}
+            {preview.error && <span className="text-danger truncate">{preview.error}</span>}
+            {dataErrors > 0 && <span className="text-danger">{dataErrors} data source error(s): see the Data tab</span>}
             {definition.pages.length > 1 && (
               <div className="flex gap-1">
                 {definition.pages.map((p, i) => (
@@ -705,7 +704,7 @@ function DesignerShell() {
                     onClick={() => designer.setPage(i)}
                     className={clsx(
                       "w-5 h-5 rounded text-[10px] cursor-pointer",
-                      i === state.pageIndex ? "bg-brand-purple text-white" : "hover:bg-surface-hover",
+                      i === state.pageIndex ? "bg-primary text-white" : "hover:bg-surface-hover",
                     )}
                   >
                     {i + 1}

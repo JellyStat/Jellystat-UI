@@ -94,18 +94,18 @@ export default function LayersPanel() {
             onDoubleClick={() => setRenaming(e.id)}
             className={clsx(
               "group flex items-center gap-2 px-2 py-1.5 mx-1 rounded-md text-xs cursor-pointer border-t-2",
-              selected ? "bg-brand-purple/15 text-white" : "text-gray-400 hover:bg-surface-hover hover:text-gray-200",
-              dropIndex === row && dragId !== e.id ? "border-brand-purple" : "border-transparent",
+              selected ? "bg-primary/15 text-white" : "text-gray-400 hover:bg-surface-hover hover:text-gray-200",
+              dropIndex === row && dragId !== e.id ? "border-primary" : "border-transparent",
               e.hidden && "opacity-50",
             )}
           >
-            <GripVertical size={12} className="text-gray-600 shrink-0 cursor-grab" />
-            <Icon size={14} className="shrink-0 text-brand-purple" />
+            <GripVertical size={12} className="text-gray-500 shrink-0 cursor-grab" />
+            <Icon size={14} className="shrink-0 text-primary" />
             {renaming === e.id ? (
               <input
                 autoFocus
                 defaultValue={e.name ?? elementLabel(e)}
-                className="flex-1 min-w-0 bg-background border border-brand-purple rounded px-1 text-xs text-white outline-none"
+                className="flex-1 min-w-0 bg-background border border-primary rounded px-1 text-xs text-white outline-none"
                 onClick={(ev) => ev.stopPropagation()}
                 onKeyDown={(ev) => {
                   ev.stopPropagation();
@@ -129,7 +129,7 @@ export default function LayersPanel() {
             <button
               type="button"
               title={e.locked ? "Unlock" : "Lock"}
-              className={clsx("p-0.5 hover:text-white cursor-pointer", e.locked ? "text-brand-amber" : "opacity-0 group-hover:opacity-100")}
+              className={clsx("p-0.5 hover:text-white cursor-pointer", e.locked ? "text-warning" : "opacity-0 group-hover:opacity-100")}
               onClick={(ev) => {
                 ev.stopPropagation();
                 updateElements([e.id], (x) => {
@@ -142,7 +142,7 @@ export default function LayersPanel() {
             <button
               type="button"
               title={e.hidden ? "Show" : "Hide"}
-              className={clsx("p-0.5 hover:text-white cursor-pointer", e.hidden ? "text-gray-300" : "opacity-0 group-hover:opacity-100")}
+              className={clsx("p-0.5 hover:text-white cursor-pointer", e.hidden ? "text-gray-200" : "opacity-0 group-hover:opacity-100")}
               onClick={(ev) => {
                 ev.stopPropagation();
                 updateElements([e.id], (x) => {

@@ -1,7 +1,8 @@
 import { ReactNode, useEffect, useState } from "react";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
-import { ChevronDown, Loader2, Check, Lock } from "lucide-react";
+import { ChevronDown, Check, Lock } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Spinner } from "@/components/ui";
 
 export class DefaultSelectedItem {
   id: string;
@@ -123,8 +124,8 @@ export function SelectAsync<T>({
 
   const borderClass =
     variant === "missing"
-      ? "border-dashed border-brand-rose/45 hover:border-brand-rose data-open:border-brand-cyan"
-      : "border-border hover:border-gray-500 data-open:border-brand-cyan";
+      ? "border-dashed border-danger/45 hover:border-danger data-open:border-accent"
+      : "border-border hover:border-border-strong data-open:border-accent";
 
   return (
     <Popover className="relative w-full">
@@ -136,7 +137,7 @@ export function SelectAsync<T>({
             onClick={() => {
               if (!open) load();
             }}
-            className={`w-full flex items-center justify-between bg-surface/80 border rounded-xl py-2.5 pl-4 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-cyan transition-all shadow-inner cursor-pointer ${borderClass}`}
+            className={`w-full flex items-center justify-between bg-surface/80 border rounded-xl py-2.5 pl-4 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent transition-all shadow-inner cursor-pointer ${borderClass}`}
           >
             <span
               className={`min-w-0 flex items-center gap-2 mr-2 text-left ${isPlaceholder ? "text-gray-500" : "text-gray-200 font-medium"}`}
@@ -146,11 +147,11 @@ export function SelectAsync<T>({
 
             <span className="text-gray-500 shrink-0 pointer-events-none">
               {loading ? (
-                <Loader2 size={16} className="animate-spin text-brand-cyan" />
+                <Spinner size={16} className="text-primary" />
               ) : (
                 <ChevronDown
                   size={16}
-                  className={`transition-transform duration-300 ${open ? "rotate-180 text-brand-cyan" : ""}`}
+                  className={`transition-transform duration-300 ${open ? "rotate-180 text-accent" : ""}`}
                 />
               )}
             </span>
@@ -158,7 +159,7 @@ export function SelectAsync<T>({
 
           <PopoverPanel
             anchor={{ to: "bottom start", gap: 8 }}
-            className="z-50 w-(--button-width) min-w-64 bg-surface/95 backdrop-blur-xl border border-border rounded-xl shadow-2xl shadow-black/50 focus:outline-none"
+            className="z-50 w-(--button-width) min-w-64 bg-surface/60 backdrop-blur-xl border border-border rounded-xl shadow-2xl shadow-black/40 focus:outline-none"
           >
             {header && (
               <div className="px-3 pt-3 pb-1 text-[11px] font-bold text-gray-500 uppercase tracking-wider">{header}</div>
@@ -166,7 +167,7 @@ export function SelectAsync<T>({
             <div className="p-1 max-h-60 overflow-y-auto custom-scrollbar">
               {loading || data === null ? (
                 <div className="p-4 flex items-center justify-center text-sm text-gray-400 font-medium">
-                  <Loader2 size={16} className="animate-spin mr-2 text-brand-cyan" />
+                  <Spinner size={16} className="mr-2 text-primary" />
                   {t("common.loading", "Loading")}
                 </div>
               ) : data.length > 0 ? (
@@ -180,8 +181,8 @@ export function SelectAsync<T>({
                       onClick={() => handleSelect(item, close)}
                       className={`w-full text-left flex items-center justify-between gap-2 px-3 py-2.5 text-sm rounded-lg transition-colors cursor-pointer ${
                         isSelected
-                          ? "bg-brand-cyan/10 text-brand-cyan font-bold"
-                          : "text-gray-300 hover:bg-surface-hover hover:text-white"
+                          ? "bg-accent/10 text-accent font-bold"
+                          : "text-gray-200 hover:bg-surface-hover hover:text-white"
                       }`}
                     >
                       <span className="min-w-0 flex-1 flex items-center gap-2">

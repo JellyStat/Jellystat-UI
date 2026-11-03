@@ -1,11 +1,11 @@
-import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import clsx from "clsx";
 import { CircleHelp, X } from "lucide-react";
 import { useState, type ReactNode } from "react";
+import { Modal, ModalPanel, ModalTitle } from "@/components/ui";
 
 /** Inline code. */
 const C = ({ children }: { children: ReactNode }) => (
-  <code className="px-1 py-0.5 rounded bg-background text-brand-purple text-[12px] whitespace-nowrap">{children}</code>
+  <code className="px-1 py-0.5 rounded bg-background text-primary text-[12px] whitespace-nowrap">{children}</code>
 );
 
 const Table = ({ head, rows }: { head: string[]; rows: ReactNode[][] }) => (
@@ -13,7 +13,7 @@ const Table = ({ head, rows }: { head: string[]; rows: ReactNode[][] }) => (
     <thead>
       <tr>
         {head.map((h) => (
-          <th key={h} className="text-left font-bold text-gray-300 border-b border-border py-1.5 pr-3">
+          <th key={h} className="text-left font-bold text-gray-200 border-b border-border py-1.5 pr-3">
             {h}
           </th>
         ))}
@@ -53,14 +53,14 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
         <Ul
           items={[
             <>
-              <b className="text-gray-300">Data</b> tab: add a data source (what to query), then bind elements to it.
+              <b className="text-gray-200">Data</b> tab: add a data source (what to query), then bind elements to it.
             </>,
             <>
-              <b className="text-gray-300">Insert</b> tab: drag an element onto the page, or click it to drop it at the top left.
+              <b className="text-gray-200">Insert</b> tab: drag an element onto the page, or click it to drop it at the top left.
             </>,
             <>Select an element to edit it in the panel on the right; select several to align, distribute or style them together.</>,
             <>
-              <b className="text-gray-300">Preview</b> (eye icon) shows the finished pages with live data, including the extra pages growing tables
+              <b className="text-gray-200">Preview</b> (eye icon) shows the finished pages with live data, including the extra pages growing tables
               add.
             </>,
             <>Save, then use Schedules &amp; webhooks to deliver the report automatically.</>,
@@ -79,7 +79,7 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
           items={[
             <>Pick a dataset (playback activity, library items, users...), filter it, and return either rows or a summary (group by + totals).</>,
             <>
-              Filters can compare against a <b className="text-gray-300">parameter</b> (pick @name as the value), so viewers and schedules can change
+              Filters can compare against a <b className="text-gray-200">parameter</b> (pick @name as the value), so viewers and schedules can change
               them.
             </>,
           ]}
@@ -99,11 +99,11 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
         <Ul
           items={[
             <>
-              <b className="text-gray-300">Join</b>: add another source&apos;s columns to matching rows (left, inner or full), e.g. this month next to
+              <b className="text-gray-200">Join</b>: add another source&apos;s columns to matching rows (left, inner or full), e.g. this month next to
               last month per user.
             </>,
             <>
-              <b className="text-gray-300">Union</b>: stack rows from several sources, optionally with a column naming each row&apos;s source.
+              <b className="text-gray-200">Union</b>: stack rows from several sources, optionally with a column naming each row&apos;s source.
             </>,
             <>Combined sources can build on other combined sources.</>,
           ]}
@@ -169,22 +169,22 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
     body: (
       <>
         <P>
-          Turn on <b className="text-gray-300">Continue on new pages</b> (Pages section) for a table or card grid, and rows that don&apos;t fit go
+          Turn on <b className="text-gray-200">Continue on new pages</b> (Pages section) for a table or card grid, and rows that don&apos;t fit go
           onto extra pages added after that page, with the table header repeated.
         </P>
         <Ul
           items={[
             <>
-              A dashed green <b className="text-gray-300">Header</b> line appears; drag it (or set Header height). On the extra pages the table starts
+              A dashed green <b className="text-gray-200">Header</b> line appears; drag it (or set Header height). On the extra pages the table starts
               there.
             </>,
             <>
-              Everything entirely <b className="text-gray-300">above the header line</b> or <b className="text-gray-300">below the table</b> repeats
+              Everything entirely <b className="text-gray-200">above the header line</b> or <b className="text-gray-200">below the table</b> repeats
               on every extra page, like page headers and footers: titles, logos, page numbers.
             </>,
             <>Everything in between (intro text, metrics, charts) appears on the first page only.</>,
             <>
-              <b className="text-gray-300">First page only</b> keeps a header or footer element off the extra pages.
+              <b className="text-gray-200">First page only</b> keeps a header or footer element off the extra pages.
             </>,
           ]}
         />
@@ -204,13 +204,13 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
         <Ul
           items={[
             <>
-              <b className="text-gray-300">Tables</b>: style the whole row or one column, e.g. red text in Watch time when it&apos;s under 60.
+              <b className="text-gray-200">Tables</b>: style the whole row or one column, e.g. red text in Watch time when it&apos;s under 60.
             </>,
             <>
-              <b className="text-gray-300">Metrics</b>: checked against the first row; styles the value and fill.
+              <b className="text-gray-200">Metrics</b>: checked against the first row; styles the value and fill.
             </>,
             <>
-              <b className="text-gray-300">Card grids</b>: checked per card; styles the card.
+              <b className="text-gray-200">Card grids</b>: checked per card; styles the card.
             </>,
             <>Rules apply in order; when two set the same thing, the later one wins.</>,
           ]}
@@ -230,7 +230,7 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
         <Ul
           items={[
             <>
-              <b className="text-gray-300">Media id column</b>: the column holding the item (or user) id, e.g. ItemId.
+              <b className="text-gray-200">Media id column</b>: the column holding the item (or user) id, e.g. ItemId.
             </>,
             <>
               Text lines use <C>{"{{row.FIELD}}"}</C>, e.g. title <C>{"{{row.Name}}"}</C>, subtitle{" "}
@@ -256,7 +256,7 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
         <Ul
           items={[
             <>
-              Table columns and metrics: choose the <b className="text-gray-300">Hyperlink</b> format. Leave the URL empty if the value already is a
+              Table columns and metrics: choose the <b className="text-gray-200">Hyperlink</b> format. Leave the URL empty if the value already is a
               URL, or write a template with <C>{"{{value}}"}</C> and <C>{"{{row.FIELD}}"}</C>.
             </>,
             <>Text and images: set Link to make the whole element clickable. Placeholders work there too.</>,
@@ -284,7 +284,7 @@ const SECTIONS: { key: string; title: string; body: ReactNode }[] = [
               Show one in text with <C>{"{{param.NAME}}"}</C>.
             </>,
             <>
-              A <b className="text-gray-300">lookup</b> is a dropdown of choices from a data source (value column + optional label column), optionally
+              A <b className="text-gray-200">lookup</b> is a dropdown of choices from a data source (value column + optional label column), optionally
               allowing several choices.
             </>,
           ]}
@@ -348,14 +348,12 @@ export default function HelpDialog({ onClose }: { onClose: () => void }) {
   const section = SECTIONS.find((s) => s.key === active) ?? SECTIONS[0];
 
   return (
-    <Dialog open onClose={onClose} className="relative z-50">
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
-      <div className="fixed inset-0 flex items-center justify-center p-2 sm:p-6">
-        <DialogPanel className="w-full max-w-4xl h-full max-h-[86dvh] flex flex-col rounded-2xl border border-border bg-surface shadow-2xl shadow-black/40 overflow-hidden">
+    <Modal open onClose={onClose}>
+        <ModalPanel className="p-0 md:p-0 max-w-4xl h-full max-h-[86dvh] flex flex-col overflow-hidden">
           <div className="flex items-center justify-between gap-4 px-5 py-3 border-b border-border">
-            <DialogTitle className="flex items-center gap-2 text-lg font-black text-white">
-              <CircleHelp size={20} className="text-brand-purple" /> Report designer help
-            </DialogTitle>
+            <ModalTitle className="flex items-center gap-2 text-lg font-black text-white">
+              <CircleHelp size={20} className="text-primary" /> Report designer help
+            </ModalTitle>
             <button type="button" onClick={onClose} className="p-1 text-gray-400 hover:text-white cursor-pointer" aria-label="Close">
               <X size={18} />
             </button>
@@ -369,7 +367,7 @@ export default function HelpDialog({ onClose }: { onClose: () => void }) {
                   onClick={() => setActive(s.key)}
                   className={clsx(
                     "text-left whitespace-nowrap px-3 py-1.5 rounded-lg text-[13px] cursor-pointer",
-                    s.key === active ? "bg-brand-purple/15 text-white font-bold" : "text-gray-400 hover:text-white hover:bg-surface-hover",
+                    s.key === active ? "bg-primary/15 text-white font-bold" : "text-gray-400 hover:text-white hover:bg-surface-hover",
                   )}
                 >
                   {s.title}
@@ -381,8 +379,7 @@ export default function HelpDialog({ onClose }: { onClose: () => void }) {
               {section.body}
             </div>
           </div>
-        </DialogPanel>
-      </div>
-    </Dialog>
+        </ModalPanel>
+    </Modal>
   );
 }

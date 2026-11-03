@@ -1,11 +1,12 @@
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { AlertTriangle, Loader, Loader2 } from "lucide-react";
+import { AlertTriangle, Loader } from "lucide-react";
 import client from "@/lib/api";
 import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
 import { toast } from "sonner";
 import { ItemsWithStats } from "@/lib/models/itemsWithStats";
+import { Spinner } from "@/components/ui";
 
 type Props = {
   item: ItemsWithStats;
@@ -39,9 +40,9 @@ export default function ItemOptions({ item }: Props) {
 
   return (
     <div className="w-full pt-2">
-      <div className="overflow-hidden rounded-2xl border border-brand-rose/60 bg-surface/90 shadow-[0_0_0_1px_rgba(244,63,94,0.12)]">
-        <div className="flex items-center gap-3 border-b border-brand-rose/35 bg-surface px-5 py-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-brand-rose/10 text-brand-rose ring-1 ring-brand-rose/35">
+      <div className="overflow-hidden rounded-2xl border border-danger/60 bg-surface shadow-[0_0_0_1px_rgba(244,63,94,0.12)]">
+        <div className="flex items-center gap-3 border-b border-danger/35 bg-surface px-5 py-4">
+          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-danger/10 text-danger ring-1 ring-danger/35">
             <AlertTriangle className="h-5 w-5" />
           </div>
           <div>
@@ -67,7 +68,7 @@ export default function ItemOptions({ item }: Props) {
               disabled={loading}
               buttonElement={
                 loading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Spinner className="h-5 w-5" />
                 ) : (
                   <div>{t("item.deleteArchivedItem", "Delete Archived Item")}</div>
                 )
@@ -78,7 +79,7 @@ export default function ItemOptions({ item }: Props) {
               cancelText={t("common.no", "No")}
               onConfirm={deleteArchivedItem}
               tone="danger"
-              className="inline-flex items-center justify-center rounded-xl border border-brand-rose/60 bg-brand-rose px-4 py-3 text-base font-semibold text-white transition hover:bg-rose-600"
+              className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger px-4 py-3 text-base font-bold text-white transition hover:bg-danger-hover"
             />
           </div>
         </div>

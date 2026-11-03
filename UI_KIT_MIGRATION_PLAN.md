@@ -148,10 +148,19 @@ For each file: swap the markup for the kit component, delete the class string, a
   - LibraryOverviewCard used runtime-built Tailwind classes (`` `bg-${color}/10` ``), which Tailwind can't detect, so its colours probably never rendered. They're now a static tone map on `IconChip`.
   - NoData and ErrorCard are thin wrappers over `EmptyState` and `Alert`.
   - Still needs a visual check while signed in.
-- [ ] Phase 4.4b: the page-level tab components upstream added (`components/UserPage`, `LibraryPage`, `ItemPage`), plus Reports designer chrome. Fold these into 4.5.
-- [ ] Phase 4.5: page shells
+- [x] Phase 4.4b, folded into 4.5: token, surface and spinner passes over `pages/**`, `components/{UserPage,LibraryPage,ItemPage,ActivityTimeline,SideNav,Reports}` and `SelectAsync`.
+  - `components/Reports/render` is excluded on purpose: it draws the user's report content, and its colours are report data.
+- [x] Phase 4.5: page shells.
+  - Libraries, Sessions, Statistics, Users and Reports now use `PageHeader`.
+  - The item, library and user detail pages keep their large hero title over the backdrop. That's a deliberate separate style.
+  - The four Reports dialogs use kit `Modal`/`ModalPanel`/`ModalTitle`, and the reports list uses the new kit `DropdownMenu`.
+  - setup/index lost its unused `activeColor` strings, and its glow shadows use theme variables.
+  - Still needs a visual check while signed in.
 - [ ] Phase 4.6: SideNav
-- [ ] Phase 5: delete Core, lint guard, grep audit, README
+- [ ] Phase 5: delete Core, lint guard, grep audit, README. Still to handle:
+  - **Core wrappers:** `components/Core` still holds `DropdownSelector` and `NumberField` (re-exports) and `ConfirmationDialogButton` (i18n wrapper). Point their callers at the kit and delete the files.
+  - **Direct headlessui imports:** three remain, and each needs a new kit primitive rather than a restyle. `components/Reports/ParameterInput.tsx` needs a kit `Combobox` (async search with free text). `components/Reports/designer/FontPicker.tsx` needs `Select` to accept a `renderOption` so each font previews in itself. `components/SelectAsync.tsx` needs a kit `PopoverButton` re-export.
+  - **Hard-coded English:** LibraryInfoOverviewCard has "Total Storage" and "Total Media" as fixed English text.
 
 ## 5. Risks / notes
 - **Visual drift:** near-identical strings often differ by one class (`rounded-2xl` vs `rounded-3xl`, `px-4` vs `px-5`). Settle each one against `UI_AUDIT.md` rather than adding a variant to keep it. Make it a prop only when the difference has a real purpose, e.g. `pr-12` when an input has a trailing button.

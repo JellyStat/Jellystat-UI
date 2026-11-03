@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { ChevronDown, Download, Loader2, Monitor, RefreshCw, Server } from "lucide-react";
+import { ChevronDown, Download, Monitor, RefreshCw, Server } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import client from "@/lib/api";
@@ -9,6 +9,7 @@ import { useReportFonts } from "@/lib/reports/fonts";
 import ContextMenu from "./designer/ContextMenu";
 import ParameterInput from "./ParameterInput";
 import ReportPageView, { layoutPages } from "./render/ReportPageView";
+import { Spinner } from "@/components/ui";
 
 interface Props {
   reportId: string;
@@ -116,7 +117,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
         <div className="flex flex-wrap items-end gap-3">
           {parameters.map((p) => (
             <label key={p.name} className="flex flex-col gap-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">{p.label || p.name}</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">{p.label || p.name}</span>
               <ParameterInput
                 parameter={p}
                 className="w-48"
@@ -131,7 +132,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
           <button
             type="button"
             onClick={() => (JSON.stringify(values) === JSON.stringify(applied) ? load() : setApplied(values))}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 border border-brand-purple/40 text-brand-purple hover:bg-brand-purple hover:text-white text-sm font-bold cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 border border-primary/40 text-primary hover:bg-primary hover:text-white text-sm font-bold cursor-pointer"
           >
             <RefreshCw size={14} className={clsx(loading && "animate-spin")} /> {parameters.length ? "Apply" : "Refresh"}
           </button>
@@ -165,9 +166,9 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
               type="button"
               onClick={() => setExportOpen(!exportOpen)}
               disabled={!model}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-sm font-bold text-gray-300 hover:text-white hover:border-gray-500 cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-sm font-bold text-gray-200 hover:text-white hover:border-border-strong cursor-pointer disabled:opacity-50"
             >
-              {exporting ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />} Export <ChevronDown size={12} />
+              {exporting ? <Spinner size={14} className="" /> : <Download size={14} />} Export <ChevronDown size={12} />
             </button>
             {exportOpen && hostRef.current && (
               <ContextMenu
@@ -193,16 +194,16 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
       <div ref={hostRef} className="relative min-h-[200px]">
         {loading && !model && (
           <div className="flex items-center justify-center py-24">
-            <Loader2 size={32} className="text-brand-purple animate-spin" />
+            <Spinner size={32} className="text-primary" />
           </div>
         )}
-        {error && <div className="p-4 rounded-xl border border-brand-rose/30 bg-brand-rose/5 text-sm text-brand-rose">{error}</div>}
+        {error && <div className="p-4 rounded-xl border border-danger/30 bg-danger/5 text-sm text-danger">{error}</div>}
 
         {model &&
           Object.values(model.data)
             .filter((d) => d.error)
             .map((d) => (
-              <div key={d.dataSourceId} className="mb-3 p-3 rounded-lg border border-brand-amber/30 bg-brand-amber/5 text-xs text-brand-amber">
+              <div key={d.dataSourceId} className="mb-3 p-3 rounded-lg border border-warning/30 bg-warning/5 text-xs text-warning">
                 {model.definition.dataSources.find((s) => s.id === d.dataSourceId)?.name}: {d.error}
               </div>
             ))}

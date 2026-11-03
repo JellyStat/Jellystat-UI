@@ -38,7 +38,7 @@ export default function CombineEditor({
             key={m.value}
             type="button"
             onClick={() => set({ mode: m.value as ReportDerive["mode"], sources: m.value === "join" ? derive.sources.slice(0, 2) : derive.sources })}
-            className={clsx("px-3 py-1.5 cursor-pointer", derive.mode === m.value ? "bg-brand-purple text-white" : "text-gray-400 hover:text-white")}
+            className={clsx("px-3 py-1.5 cursor-pointer", derive.mode === m.value ? "bg-primary text-white" : "text-gray-400 hover:text-white")}
           >
             {m.label}
           </button>
@@ -89,7 +89,7 @@ export default function CombineEditor({
                   />
                   <button
                     type="button"
-                    className="p-1 text-gray-500 hover:text-brand-rose cursor-pointer"
+                    className="p-1 text-gray-500 hover:text-danger cursor-pointer"
                     onClick={() => set({ on: derive.on.filter((_, j) => j !== i) })}
                   >
                     <Trash2 size={12} />
@@ -134,10 +134,10 @@ export default function CombineEditor({
           <Field label="Sources">
             <div className="grid grid-cols-2 gap-1">
               {others.map((o) => (
-                <label key={o.id} className="flex items-center gap-1.5 text-xs text-gray-300 cursor-pointer">
+                <label key={o.id} className="flex items-center gap-1.5 text-xs text-gray-200 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="accent-brand-purple"
+                    className="accent-primary"
                     checked={derive.sources.includes(o.id)}
                     onChange={(ev) => set({ sources: ev.target.checked ? [...derive.sources, o.id] : derive.sources.filter((x) => x !== o.id) })}
                   />

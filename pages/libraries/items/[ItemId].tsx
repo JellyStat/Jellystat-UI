@@ -6,7 +6,6 @@ import { GridifyQueryBuilder } from "gridify-client";
 import {
   ExternalLink,
   Lock,
-  Loader2,
   AlertCircle,
   Info,
   Film,
@@ -30,6 +29,7 @@ import NotFound from "@/components/ErrorCards/NotFound";
 import ItemImage from "@/components/ItemImage/ItemImage";
 import Link from "next/link";
 import ItemOptions from "@/components/ItemPage/ItemOptionsTab";
+import { Spinner } from "@/components/ui";
 
 export default function ItemPage() {
   const router = useRouter();
@@ -134,13 +134,13 @@ export default function ItemPage() {
       <div className="w-full max-w-[1600px] mx-auto p-4 md:p-6 lg:p-8 animate-in fade-in duration-500 pb-20">
         {loading && (
           <div className="flex flex-col items-center justify-center h-64">
-            <Loader2 size={40} className="text-brand-cyan animate-spin mb-4" />
+            <Spinner size={40} className="text-primary mb-4" />
           </div>
         )}
 
         {error && (
-          <div className="p-6 rounded-2xl bg-brand-rose/10 border border-brand-rose/20 flex flex-col items-center justify-center text-center max-w-lg mx-auto mt-12">
-            <AlertCircle size={40} className="text-brand-rose mb-3" />
+          <div className="p-6 rounded-2xl bg-danger/10 border border-danger/20 flex flex-col items-center justify-center text-center max-w-lg mx-auto mt-12">
+            <AlertCircle size={40} className="text-danger mb-3" />
             <span className="text-xl font-bold text-white mb-2">{t("item.error_loading", "Error loading item")}</span>
             <span className="text-sm text-gray-400">{error}</span>
           </div>
@@ -149,7 +149,7 @@ export default function ItemPage() {
         {!loading && !error && item && (
           <div className="flex flex-col gap-8">
             {/* Header Backdrop Card */}
-            <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl shadow-black/40 border border-border/50 bg-surface">
+            <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl shadow-black/40 border border-border/50 bg-surface">
               {/* CSS Background Image */}
               <div
                 className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-screen"
@@ -177,16 +177,16 @@ export default function ItemPage() {
                 <div className="flex flex-col flex-1 items-start min-w-0 w-full">
                   <button
                     onClick={() => router.push(`/libraries/${item.libraryId}`)}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-cyan/10 text-brand-cyan hover:bg-brand-cyan hover:text-black border border-brand-cyan/20 transition-colors text-xs font-black uppercase tracking-widest mb-4 cursor-pointer"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent/10 text-accent hover:bg-accent hover:text-black border border-accent/20 transition-colors text-xs font-black uppercase tracking-widest mb-4 cursor-pointer"
                   >
                     <ChevronLeft size={14} />
                     {item.library?.name || t("item.library", "Library")}
                   </button>
 
                   <div className="flex items-start justify-between md:justify-start gap-4 mb-2 w-full">
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-md break-words">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-lg break-words">
                       {item.parentId ? (
-                        <Link href={`/libraries/items/${item.parentId}`} className="hover:text-brand-cyan transition-colors">
+                        <Link href={`/libraries/items/${item.parentId}`} className="hover:text-accent transition-colors">
                           {title}
                         </Link>
                       ) : (
@@ -199,7 +199,7 @@ export default function ItemPage() {
                         href={`${externalURLBase}/web/index.html#/details?id=${item.id}&serverId=${item.serverId}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="mt-1 sm:mt-2 shrink-0 p-2 bg-surface/50 hover:bg-brand-cyan text-gray-300 hover:text-black border border-border hover:border-brand-cyan rounded-xl transition-all shadow-inner"
+                        className="mt-1 sm:mt-2 shrink-0 p-2 bg-surface hover:bg-accent text-gray-200 hover:text-black border border-border hover:border-accent rounded-xl transition-all shadow-inner"
                         title={t("item.open_in_server", "Open in Media Server")}
                       >
                         <ExternalLink size={20} />
@@ -208,9 +208,9 @@ export default function ItemPage() {
                   </div>
 
                   {isValidParent && (
-                    <div className="flex flex-wrap items-center gap-2 text-lg font-bold text-gray-300 mb-4 drop-shadow">
+                    <div className="flex flex-wrap items-center gap-2 text-lg font-bold text-gray-200 mb-4 drop-shadow">
                       {parentIndexUnit && (
-                        <Link href={`/libraries/items/${item.parentId}`} className="hover:text-brand-purple transition-colors">
+                        <Link href={`/libraries/items/${item.parentId}`} className="hover:text-primary transition-colors">
                           {parentIndexUnit} {item.parentIndex}
                         </Link>
                       )}
@@ -266,13 +266,13 @@ export default function ItemPage() {
                         onClick={() => setAndStoreActiveTab(tab.id)}
                         className={`flex flex-1 sm:flex-none justify-center items-center gap-2 sm:gap-2.5 px-3 sm:px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 group ${
                           isActive
-                            ? "bg-brand-cyan text-black shadow-md shadow-brand-cyan/20"
+                            ? "bg-accent text-black shadow-lg shadow-accent/20"
                             : "text-gray-400 hover:text-white hover:bg-surface-hover"
                         }`}
                       >
                         <Icon
                           size={18}
-                          className={`transition-colors ${isActive ? "text-black" : "text-gray-500 group-hover:text-gray-300"}`}
+                          className={`transition-colors ${isActive ? "text-black" : "text-gray-500 group-hover:text-gray-200"}`}
                         />
                         {tab.label}
                       </button>

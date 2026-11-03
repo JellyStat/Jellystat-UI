@@ -46,7 +46,7 @@ export default function ContextMenu({ x, y, items, onClose }: { x: number; y: nu
     <div
       ref={ref}
       role="menu"
-      className="fixed z-[60] min-w-[210px] rounded-lg border border-border bg-surface py-1 shadow-2xl shadow-black/60"
+      className="fixed z-[60] min-w-[210px] rounded-lg border border-border bg-surface py-1 shadow-2xl shadow-black/40"
       style={{ left, top: Math.max(8, top) }}
     >
       {items.map((item, i) =>
@@ -64,7 +64,7 @@ export default function ContextMenu({ x, y, items, onClose }: { x: number; y: nu
             }}
             className={clsx(
               "w-full flex items-center gap-2 px-3 py-1.5 text-xs text-left cursor-pointer disabled:opacity-30 disabled:cursor-default",
-              item.danger ? "text-brand-rose hover:bg-brand-rose/10" : "text-gray-300 hover:bg-surface-hover hover:text-white",
+              item.danger ? "text-danger hover:bg-danger/10" : "text-gray-200 hover:bg-surface-hover hover:text-white",
             )}
           >
             <span className="w-4 flex justify-center">{item.icon}</span>

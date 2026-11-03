@@ -1,9 +1,10 @@
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from "@headlessui/react";
 import clsx from "clsx";
-import { Check, ChevronDown, Loader2, X } from "lucide-react";
+import { Check, ChevronDown, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import client from "@/lib/api";
 import type { ReportDefinition, ReportParameter, ReportParameterOption } from "@/lib/models/reports";
+import { Spinner } from "@/components/ui";
 
 export type ParameterOptionsSource = { reportId: string } | { definition: ReportDefinition };
 
@@ -23,8 +24,8 @@ interface Props {
 }
 
 const inputClasses = {
-  md: "w-full min-w-0 bg-background border border-border rounded-lg px-2.5 py-1.5 text-sm text-gray-200 outline-none focus:border-brand-purple",
-  sm: "w-full min-w-0 bg-background border border-border rounded-md px-2 py-1 text-xs text-gray-200 outline-none focus:border-brand-purple",
+  md: "w-full min-w-0 bg-background border border-border rounded-lg px-2.5 py-1.5 text-sm text-gray-200 outline-none focus:border-primary",
+  sm: "w-full min-w-0 bg-background border border-border rounded-md px-2 py-1 text-xs text-gray-200 outline-none focus:border-primary",
 };
 
 const same = (a: unknown, b: unknown) => String(a) === String(b);
@@ -116,7 +117,7 @@ function LookupInput({ parameter, value, onChange, source, values, className, si
           onKeyDown={(ev) => ev.stopPropagation()}
         />
         <div className="absolute inset-y-0 right-1 flex items-center gap-0.5">
-          {loading && <Loader2 size={12} className="animate-spin text-gray-500" />}
+          {loading && <Spinner size={12} className="text-gray-500" />}
           {selected.length > 0 && (
             <button type="button" title="Clear" className="p-0.5 text-gray-500 hover:text-white cursor-pointer" onClick={() => onChange(null)}>
               <X size={12} />
@@ -129,21 +130,21 @@ function LookupInput({ parameter, value, onChange, source, values, className, si
       </div>
       <ComboboxOptions
         anchor="bottom start"
-        className="z-[70] w-(--input-width) min-w-48 max-h-64 overflow-y-auto rounded-lg border border-border bg-surface py-1 shadow-2xl shadow-black/60 empty:invisible [--anchor-gap:4px]"
+        className="z-[70] w-(--input-width) min-w-48 max-h-64 overflow-y-auto rounded-lg border border-border bg-surface py-1 shadow-2xl shadow-black/40 empty:invisible [--anchor-gap:4px]"
       >
-        {error && <div className="px-3 py-2 text-xs text-brand-rose">{error}</div>}
+        {error && <div className="px-3 py-2 text-xs text-danger">{error}</div>}
         {!error && !loading && filtered.length === 0 && <div className="px-3 py-2 text-xs text-gray-500">No matches</div>}
         {filtered.map((o) => (
           <ComboboxOption
             key={String(o.value)}
             value={o.value}
             className={clsx(
-              "group flex items-center gap-2 px-3 text-gray-300",
+              "group flex items-center gap-2 px-3 text-gray-200",
               size === "sm" ? "py-1 text-xs" : "py-1.5 text-sm",
               "cursor-pointer data-focus:bg-surface-hover data-focus:text-white",
             )}
           >
-            <Check size={13} className="invisible text-brand-purple shrink-0 group-data-selected:visible" />
+            <Check size={13} className="invisible text-primary shrink-0 group-data-selected:visible" />
             <span className="truncate">{o.label}</span>
           </ComboboxOption>
         ))}

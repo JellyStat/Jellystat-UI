@@ -1,4 +1,4 @@
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -9,6 +9,7 @@ import client from "@/lib/api";
 import Permissions from "@/lib/models/enums/Permissions";
 import permissionsManager from "@/lib/permissionsManager";
 import { activitySummaryTemplate, emptyDefinition } from "@/lib/reports/defaults";
+import { Spinner } from "@/components/ui";
 
 /** /reports/designer?id=... edits a saved report; no id starts a new one (?template=activity for the sample). */
 export default function ReportDesignerPage() {
@@ -61,13 +62,13 @@ export default function ReportDesignerPage() {
         <title>{doc?.name || t("reports.designer", "Report designer")} | Jellystat</title>
       </Head>
       {error && (
-        <div className="p-6 flex items-center gap-3 text-gray-300">
-          <AlertCircle className="text-brand-rose" /> {error}
+        <div className="p-6 flex items-center gap-3 text-gray-200">
+          <AlertCircle className="text-danger" /> {error}
         </div>
       )}
       {!error && !doc && (
         <div className="flex justify-center py-24">
-          <Loader2 size={32} className="text-brand-purple animate-spin" />
+          <Spinner size={32} className="text-primary" />
         </div>
       )}
       {doc && <ReportDesigner key={doc.id ?? "new"} initial={doc} />}

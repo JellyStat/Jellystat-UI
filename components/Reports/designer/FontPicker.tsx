@@ -23,7 +23,7 @@ export default function FontPicker({ value, onChange }: { value: string; onChang
   return (
     <Listbox value={value} onChange={onChange}>
       <ListboxButton
-        className="w-full min-w-0 flex items-center justify-between gap-1 bg-background border border-border rounded-md px-2 py-1 text-xs text-gray-200 outline-none focus:border-brand-purple cursor-pointer"
+        className="w-full min-w-0 flex items-center justify-between gap-1 bg-background border border-border rounded-md px-2 py-1 text-xs text-gray-200 outline-none focus:border-primary cursor-pointer"
         onKeyDown={(ev) => ev.stopPropagation()}
       >
         <span className="truncate" style={{ fontFamily: value }}>
@@ -33,20 +33,20 @@ export default function FontPicker({ value, onChange }: { value: string; onChang
       </ListboxButton>
       <ListboxOptions
         anchor="bottom start"
-        className="z-[70] w-60 max-h-80 overflow-y-auto rounded-lg border border-border bg-surface py-1 shadow-2xl shadow-black/60 [--anchor-gap:4px] outline-none"
+        className="z-[70] w-60 max-h-80 overflow-y-auto rounded-lg border border-border bg-surface py-1 shadow-2xl shadow-black/40 [--anchor-gap:4px] outline-none"
       >
         {groups.map((g) => (
           <div key={g.category}>
-            <div className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-500">{CATEGORY_LABELS[g.category]}</div>
+            <div className="px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-gray-500">{CATEGORY_LABELS[g.category]}</div>
             {g.items.map((f) => {
               const stack = fontStack(f);
               return (
                 <ListboxOption
                   key={f.family}
                   value={stack}
-                  className="group flex items-center gap-2 px-3 py-1.5 text-sm text-gray-300 cursor-pointer data-focus:bg-surface-hover data-focus:text-white"
+                  className="group flex items-center gap-2 px-3 py-1.5 text-sm text-gray-200 cursor-pointer data-focus:bg-surface-hover data-focus:text-white"
                 >
-                  <Check size={13} className={f.family.toLowerCase() === current ? "text-brand-purple shrink-0" : "invisible shrink-0"} />
+                  <Check size={13} className={f.family.toLowerCase() === current ? "text-primary shrink-0" : "invisible shrink-0"} />
                   <span className="truncate" style={{ fontFamily: stack }}>
                     {f.family}
                   </span>
@@ -56,7 +56,7 @@ export default function FontPicker({ value, onChange }: { value: string; onChang
           </div>
         ))}
         <div
-          className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-500"
+          className="px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-gray-500"
           title="Depends on the fonts installed where the report is viewed or rendered"
         >
           System fonts
@@ -65,9 +65,9 @@ export default function FontPicker({ value, onChange }: { value: string; onChang
           <ListboxOption
             key={f.value}
             value={f.value}
-            className="group flex items-center gap-2 px-3 py-1.5 text-sm text-gray-300 cursor-pointer data-focus:bg-surface-hover data-focus:text-white"
+            className="group flex items-center gap-2 px-3 py-1.5 text-sm text-gray-200 cursor-pointer data-focus:bg-surface-hover data-focus:text-white"
           >
-            <Check size={13} className="invisible text-brand-purple shrink-0 group-data-selected:visible" />
+            <Check size={13} className="invisible text-primary shrink-0 group-data-selected:visible" />
             <span className="truncate" style={{ fontFamily: f.value }}>
               {f.label}
             </span>

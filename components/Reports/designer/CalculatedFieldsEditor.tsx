@@ -33,7 +33,7 @@ export default function CalculatedFieldsEditor({
   return (
     <div className="space-y-2">
       {calculated.map((c, i) => (
-        <div key={i} className="rounded-lg border border-border bg-background/40 p-2 space-y-1.5">
+        <div key={i} className="rounded-lg border border-border bg-background p-2 space-y-1.5">
           <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.9fr)_auto] gap-1.5">
             <TextInput value={c.name} placeholder="Name" onChange={(v) => set(i, { name: v.replace(/[^A-Za-z0-9_]/g, "") })} />
             <TextInput value={c.label ?? ""} placeholder="Label (optional)" onChange={(v) => set(i, { label: v || null })} />
@@ -41,7 +41,7 @@ export default function CalculatedFieldsEditor({
             <button
               type="button"
               title="Remove"
-              className="p-1 text-gray-500 hover:text-brand-rose cursor-pointer"
+              className="p-1 text-gray-500 hover:text-danger cursor-pointer"
               onClick={() => onChange(calculated.filter((_, j) => j !== i))}
             >
               <Trash2 size={12} />
@@ -61,15 +61,15 @@ export default function CalculatedFieldsEditor({
       </div>
       {calculated.length > 0 && (
         <details className="text-[11px] text-gray-500">
-          <summary className="cursor-pointer hover:text-gray-300">Expression help</summary>
+          <summary className="cursor-pointer hover:text-gray-200">Expression help</summary>
           <p className="mt-1">{EXPRESSION_HELP}</p>
           <p className="mt-1">
             Fields: <span className="text-gray-400">{fields.map((f) => f.key).join(", ")}</span>
           </p>
           <p className="mt-1">
-            Examples: <code className="text-gray-300">Duration / 3600.0</code> ·{" "}
-            <code className="text-gray-300">iif(CompletionPercentage &gt;= 90, &quot;Finished&quot;, &quot;Partial&quot;)</code> ·{" "}
-            <code className="text-gray-300">SeriesName ?? Name</code> · <code className="text-gray-300">DateCreated.Hour</code>
+            Examples: <code className="text-gray-200">Duration / 3600.0</code> ·{" "}
+            <code className="text-gray-200">iif(CompletionPercentage &gt;= 90, &quot;Finished&quot;, &quot;Partial&quot;)</code> ·{" "}
+            <code className="text-gray-200">SeriesName ?? Name</code> · <code className="text-gray-200">DateCreated.Hour</code>
           </p>
         </details>
       )}

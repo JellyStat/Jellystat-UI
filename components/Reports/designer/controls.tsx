@@ -10,12 +10,12 @@ export const useCapabilities = () => useContext(CapabilitiesContext);
 export const PreviewDataContext = createContext<Record<string, ReportDataResult>>({});
 
 export const inputClass =
-  "w-full min-w-0 bg-background border border-border rounded-md px-2 py-1 text-xs text-gray-200 outline-none focus:border-brand-purple transition-colors disabled:opacity-50";
+  "w-full min-w-0 bg-background border border-border rounded-md px-2 py-1 text-xs text-gray-200 outline-none focus:border-primary transition-colors disabled:opacity-50";
 
 export function Field({ label, children, className, hint }: { label: string; children: ReactNode; className?: string; hint?: string }) {
   return (
     <label className={clsx("flex flex-col gap-1 min-w-0", className)} title={hint}>
-      <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">{label}</span>
+      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">{label}</span>
       {children}
     </label>
   );
@@ -39,7 +39,7 @@ export function Section({
         <button
           type="button"
           onClick={() => setOpen(!open)}
-          className="flex items-center gap-1 text-xs font-bold text-gray-300 hover:text-white cursor-pointer"
+          className="flex items-center gap-1 text-xs font-bold text-gray-200 hover:text-white cursor-pointer"
         >
           {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
           {title}
@@ -192,8 +192,8 @@ export function ColorInput({
 
 export function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
   return (
-    <label className="flex items-center gap-2 text-xs text-gray-300 cursor-pointer select-none">
-      <input type="checkbox" checked={checked} onChange={(ev) => onChange(ev.target.checked)} className="accent-brand-purple cursor-pointer" />
+    <label className="flex items-center gap-2 text-xs text-gray-200 cursor-pointer select-none">
+      <input type="checkbox" checked={checked} onChange={(ev) => onChange(ev.target.checked)} className="accent-primary cursor-pointer" />
       {label}
     </label>
   );
@@ -223,7 +223,7 @@ export function ToolButton({
       disabled={disabled}
       className={clsx(
         "p-1.5 rounded-md transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-default",
-        active ? "bg-brand-purple/20 text-brand-purple" : "text-gray-400 hover:text-white hover:bg-surface-hover",
+        active ? "bg-primary/20 text-primary" : "text-gray-400 hover:text-white hover:bg-surface-hover",
         className,
       )}
     >

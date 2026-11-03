@@ -97,14 +97,14 @@ export function ConditionsSection({ e, columns }: { e: ReportElement; columns: R
         const numeric = ["gt", "gte", "lt", "lte"].includes(c.operator);
         const noValue = c.operator === "isNull" || c.operator === "isNotNull";
         return (
-          <div key={i} className="rounded-lg border border-border bg-background/40 p-2 space-y-1.5">
+          <div key={i} className="rounded-lg border border-border bg-background p-2 space-y-1.5">
             <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-1">
               <Select value={c.field} placeholder="Column" options={columnOptions} onChange={(v) => set(i, { field: v }, "field")} />
               <Select value={c.operator} options={CONDITION_OPERATORS} onChange={(v) => set(i, { operator: v }, "op")} />
               <button
                 type="button"
                 title="Remove"
-                className="p-1 text-gray-500 hover:text-brand-rose cursor-pointer"
+                className="p-1 text-gray-500 hover:text-danger cursor-pointer"
                 onClick={() =>
                   setAll(
                     conditions.filter((_, j) => j !== i),
@@ -245,7 +245,7 @@ export function CardsSection({ e, columns, picker }: { e: ReportElement; columns
               max={95}
               value={Math.round(o.imageSize * 100)}
               onChange={(ev) => set({ imageSize: Number(ev.target.value) / 100 }, "imageSize")}
-              className="w-full accent-brand-purple"
+              className="w-full accent-primary"
             />
           </Field>
         </>

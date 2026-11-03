@@ -1,6 +1,5 @@
-import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import clsx from "clsx";
-import { ArrowDown, ArrowUp, Database, Loader2, Play, Plus, Trash2, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Database, Play, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import client from "@/lib/api";
 import type { ReportDataResult, ReportDataSource, ReportParameter } from "@/lib/models/reports";
@@ -11,6 +10,7 @@ import TransformsEditor from "./TransformsEditor";
 import { formatValue } from "@/lib/reports/format";
 import { Field, inputClass, NumberInput, Select, TextInput, useCapabilities } from "./controls";
 import FilterBuilder from "./FilterBuilder";
+import { Modal, ModalPanel, ModalTitle, Spinner } from "@/components/ui";
 
 interface Props {
   source: ReportDataSource;
@@ -99,14 +99,12 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
   };
 
   return (
-    <Dialog open onClose={onClose} className="relative z-50">
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
-      <div className="fixed inset-0 flex items-center justify-center p-2 sm:p-6">
-        <DialogPanel className="w-full max-w-6xl h-full max-h-[92dvh] flex flex-col rounded-2xl border border-border bg-surface shadow-2xl shadow-black/40 overflow-hidden">
+    <Modal open onClose={onClose}>
+        <ModalPanel className="p-0 md:p-0 max-w-6xl h-full max-h-[92dvh] flex flex-col overflow-hidden">
           <div className="flex items-center justify-between gap-4 px-5 py-3 border-b border-border">
-            <DialogTitle className="flex items-center gap-2 text-lg font-black text-white">
-              <Database size={20} className="text-brand-purple" /> Data source
-            </DialogTitle>
+            <ModalTitle className="flex items-center gap-2 text-lg font-black text-white">
+              <Database size={20} className="text-primary" /> Data source
+            </ModalTitle>
             <button type="button" onClick={onClose} className="p-1 text-gray-400 hover:text-white cursor-pointer" aria-label="Close">
               <X size={18} />
             </button>
@@ -126,7 +124,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                     onClick={() => set({ derive: m.value ? (draft.derive ?? { mode: "join", sources: [], on: [], joinType: "left" }) : null })}
                     className={clsx(
                       "px-3 py-1.5 cursor-pointer",
-                      derived === m.value ? "bg-brand-purple text-white" : "text-gray-400 hover:text-white",
+                      derived === m.value ? "bg-primary text-white" : "text-gray-400 hover:text-white",
                     )}
                   >
                     {m.label}
@@ -193,7 +191,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                   </Field>
 
                   {draft.gridifyFilter && (
-                    <div className="rounded-lg border border-brand-amber/30 bg-brand-amber/5 p-3 space-y-1.5 text-xs text-brand-amber">
+                    <div className="rounded-lg border border-warning/30 bg-warning/5 p-3 space-y-1.5 text-xs text-warning">
                       <p>
                         This data source was saved with a raw Gridify filter, which is no longer supported, so it won&apos;t run until the filter is
                         removed:
@@ -224,7 +222,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                         }}
                         className={clsx(
                           "px-3 py-1.5 cursor-pointer",
-                          grouped === m.value ? "bg-brand-purple text-white" : "text-gray-400 hover:text-white",
+                          grouped === m.value ? "bg-primary text-white" : "text-gray-400 hover:text-white",
                         )}
                       >
                         {m.label}
@@ -238,12 +236,12 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                         {fields.map((f) => (
                           <label
                             key={f.key}
-                            className="flex items-center gap-1.5 text-xs text-gray-300 cursor-pointer"
+                            className="flex items-center gap-1.5 text-xs text-gray-200 cursor-pointer"
                             title={f.description ?? undefined}
                           >
                             <input
                               type="checkbox"
-                              className="accent-brand-purple"
+                              className="accent-primary"
                               checked={draft.fields.includes(f.key)}
                               onChange={(ev) =>
                                 set({
@@ -310,7 +308,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                                 />
                                 <button
                                   type="button"
-                                  className="p-1 text-gray-500 hover:text-brand-rose cursor-pointer"
+                                  className="p-1 text-gray-500 hover:text-danger cursor-pointer"
                                   onClick={() => set({ groupBy: draft.groupBy.filter((_, j) => j !== i) })}
                                 >
                                   <Trash2 size={12} />
@@ -385,7 +383,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                               />
                               <button
                                 type="button"
-                                className="p-1 text-gray-500 hover:text-brand-rose cursor-pointer"
+                                className="p-1 text-gray-500 hover:text-danger cursor-pointer"
                                 onClick={() => set({ aggregates: draft.aggregates.filter((_, j) => j !== i) })}
                               >
                                 <Trash2 size={12} />
@@ -460,7 +458,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                           </button>
                           <button
                             type="button"
-                            className="p-1 text-gray-500 hover:text-brand-rose cursor-pointer"
+                            className="p-1 text-gray-500 hover:text-danger cursor-pointer"
                             onClick={() => set({ sort: draft.sort.filter((_, j) => j !== i) })}
                           >
                             <Trash2 size={12} />
@@ -510,7 +508,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                 <div className="flex-1 min-w-0 flex flex-wrap items-center gap-x-1.5 gap-y-1 max-h-16 overflow-y-auto text-xs text-gray-400">
                   <span>Columns:</span>
                   {outputColumns.map((c) => (
-                    <code key={c.name} className="text-gray-300 break-all">
+                    <code key={c.name} className="text-gray-200 break-all">
                       {c.name}
                     </code>
                   ))}
@@ -519,21 +517,21 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                   type="button"
                   onClick={run}
                   disabled={running}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-purple/15 border border-brand-purple/40 text-brand-purple hover:bg-brand-purple hover:text-white text-xs font-bold cursor-pointer disabled:opacity-50 shrink-0"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 border border-primary/40 text-primary hover:bg-primary hover:text-white text-xs font-bold cursor-pointer disabled:opacity-50 shrink-0"
                 >
-                  {running ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />} Run preview
+                  {running ? <Spinner size={14} className="" /> : <Play size={14} />} Run preview
                 </button>
               </div>
               <div className="flex-1 min-h-0 overflow-auto rounded-lg border border-border bg-background">
-                {error && <p className="p-4 text-xs text-brand-rose">{error}</p>}
-                {preview?.error && <p className="p-4 text-xs text-brand-rose">{preview.error}</p>}
+                {error && <p className="p-4 text-xs text-danger">{error}</p>}
+                {preview?.error && <p className="p-4 text-xs text-danger">{preview.error}</p>}
                 {!preview && !error && <p className="p-4 text-xs text-gray-500">Run the query to see the first 100 rows.</p>}
                 {preview && !preview.error && (
                   <table className="w-full text-xs">
                     <thead className="sticky top-0 bg-surface">
                       <tr>
                         {preview.columns.map((c) => (
-                          <th key={c.name} className="text-left font-bold text-gray-300 px-2 py-1.5 border-b border-border whitespace-nowrap">
+                          <th key={c.name} className="text-left font-bold text-gray-200 px-2 py-1.5 border-b border-border whitespace-nowrap">
                             {c.name}
                           </th>
                         ))}
@@ -573,13 +571,12 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
               type="button"
               onClick={() => onApply(final())}
               disabled={!draft.name.trim()}
-              className="px-4 py-2 rounded-lg bg-brand-purple text-white text-sm font-bold hover:bg-brand-purple/90 cursor-pointer disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-bold hover:bg-primary/90 cursor-pointer disabled:opacity-50"
             >
               Apply
             </button>
           </div>
-        </DialogPanel>
-      </div>
-    </Dialog>
+        </ModalPanel>
+    </Modal>
   );
 }

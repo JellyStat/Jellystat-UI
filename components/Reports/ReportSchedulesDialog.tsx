@@ -1,6 +1,5 @@
-import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import clsx from "clsx";
-import { AlertCircle, CalendarClock, CheckCircle2, Loader2, Pencil, Play, Plus, Trash2, Webhook, X } from "lucide-react";
+import { AlertCircle, CalendarClock, CheckCircle2, Pencil, Play, Plus, Trash2, Webhook, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import client from "@/lib/api";
@@ -8,6 +7,7 @@ import { formatDateTime } from "@/lib/dateFormat";
 import type { ExportFormat, ReportParameter, ReportSchedule, WebhookType } from "@/lib/models/reports";
 import { Field, NumberInput, Select, TextInput, Toggle } from "./designer/controls";
 import ParameterInput from "./ParameterInput";
+import { Modal, ModalPanel, ModalTitle, Spinner } from "@/components/ui";
 
 interface Props {
   reportId: string;
@@ -133,14 +133,12 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
   const set = (patch: Partial<ReportSchedule>) => setEditing((s) => (s ? { ...s, ...patch } : s));
 
   return (
-    <Dialog open onClose={onClose} className="relative z-50">
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
-      <div className="fixed inset-0 flex items-center justify-center p-3 sm:p-6">
-        <DialogPanel className="w-full max-w-3xl max-h-[92dvh] flex flex-col rounded-2xl border border-border bg-surface shadow-2xl shadow-black/40 overflow-hidden">
+    <Modal open onClose={onClose}>
+        <ModalPanel className="p-0 md:p-0 max-w-3xl max-h-[92dvh] flex flex-col overflow-hidden">
           <div className="flex items-center justify-between px-5 py-3 border-b border-border">
-            <DialogTitle className="flex items-center gap-2 text-lg font-black text-white">
-              <CalendarClock size={20} className="text-brand-cyan" /> Schedules & webhooks
-            </DialogTitle>
+            <ModalTitle className="flex items-center gap-2 text-lg font-black text-white">
+              <CalendarClock size={20} className="text-accent" /> Schedules & webhooks
+            </ModalTitle>
             <button type="button" onClick={onClose} className="p-1 text-gray-400 hover:text-white cursor-pointer" aria-label="Close">
               <X size={18} />
             </button>
@@ -151,22 +149,22 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
               <>
                 <p className="text-sm text-gray-400">
                   Render <span className="text-white font-bold">{reportName}</span> on the server and post it to a webhook on a schedule, or run one
-                  now to test it. Automations can also call <code className="text-gray-300">GET /Reports/Export?Id={reportId}&amp;Format=pdf</code>{" "}
+                  now to test it. Automations can also call <code className="text-gray-200">GET /Reports/Export?Id={reportId}&amp;Format=pdf</code>{" "}
                   with an API key.
                 </p>
-                {loading && <Loader2 className="animate-spin text-brand-cyan" />}
+                {loading && <Spinner className="text-primary" />}
                 {!loading && schedules.length === 0 && <p className="text-sm text-gray-500">No schedules yet.</p>}
                 <div className="space-y-2">
                   {schedules.map((s) => (
                     <div key={s.id} className="rounded-xl border border-border bg-background p-3 flex flex-col sm:flex-row sm:items-center gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <Webhook size={14} className="text-brand-cyan shrink-0" />
+                          <Webhook size={14} className="text-accent shrink-0" />
                           <span className="font-bold text-sm text-white truncate">{s.name}</span>
                           <span
                             className={clsx(
                               "text-[10px] uppercase tracking-wider px-1.5 rounded border",
-                              s.enabled ? "text-brand-emerald border-brand-emerald/30" : "text-gray-500 border-border",
+                              s.enabled ? "text-success border-success/30" : "text-gray-500 border-border",
                             )}
                           >
                             {s.enabled ? "on" : "off"}
@@ -180,7 +178,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                           {s.nextRunAt && s.enabled && s.intervalMinutes > 0 && <span>Next {formatDateTime(s.nextRunAt)}</span>}
                           {s.lastRunAt && (
                             <span
-                              className={clsx("flex items-center gap-1", s.lastSuccess ? "text-brand-emerald" : "text-brand-rose")}
+                              className={clsx("flex items-center gap-1", s.lastSuccess ? "text-success" : "text-danger")}
                               title={s.lastError ?? undefined}
                             >
                               {s.lastSuccess ? <CheckCircle2 size={11} /> : <AlertCircle size={11} />}
@@ -188,16 +186,16 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                             </span>
                           )}
                         </div>
-                        {s.lastSuccess === false && s.lastError && <p className="text-[11px] text-brand-rose mt-1 break-words">{s.lastError}</p>}
+                        {s.lastSuccess === false && s.lastError && <p className="text-[11px] text-danger mt-1 break-words">{s.lastError}</p>}
                       </div>
                       <div className="flex gap-1.5 shrink-0">
                         <button
                           type="button"
                           disabled={busy !== null}
                           onClick={() => run(s.id!)}
-                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-border text-xs text-gray-300 hover:text-white hover:border-brand-cyan cursor-pointer disabled:opacity-50"
+                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-border text-xs text-gray-200 hover:text-white hover:border-accent cursor-pointer disabled:opacity-50"
                         >
-                          {busy === s.id ? <Loader2 size={13} className="animate-spin" /> : <Play size={13} />} Run now
+                          {busy === s.id ? <Spinner size={13} className="" /> : <Play size={13} />} Run now
                         </button>
                         <button
                           type="button"
@@ -211,7 +209,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                           type="button"
                           disabled={busy !== null}
                           onClick={() => remove(s.id!)}
-                          className="p-1.5 rounded-lg border border-border text-gray-400 hover:text-brand-rose cursor-pointer disabled:opacity-50"
+                          className="p-1.5 rounded-lg border border-border text-gray-400 hover:text-danger cursor-pointer disabled:opacity-50"
                           aria-label="Delete"
                         >
                           <Trash2 size={13} />
@@ -223,9 +221,9 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                 <button
                   type="button"
                   onClick={() => setEditing(emptySchedule(reportId, reportName))}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-background hover:border-brand-cyan text-sm font-bold text-gray-200 cursor-pointer"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-background hover:border-accent text-sm font-bold text-gray-200 cursor-pointer"
                 >
-                  <Plus size={16} className="text-brand-cyan" /> New schedule
+                  <Plus size={16} className="text-accent" /> New schedule
                 </button>
               </>
             )}
@@ -331,14 +329,13 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                 type="button"
                 onClick={save}
                 disabled={busy !== null || !editing.name.trim() || !editing.webhookUrl}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-cyan text-white text-sm font-bold cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-white text-sm font-bold cursor-pointer disabled:opacity-50"
               >
-                {busy === "save" && <Loader2 size={14} className="animate-spin" />} Save schedule
+                {busy === "save" && <Spinner size={14} className="" />} Save schedule
               </button>
             </div>
           )}
-        </DialogPanel>
-      </div>
-    </Dialog>
+        </ModalPanel>
+    </Modal>
   );
 }

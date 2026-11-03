@@ -68,6 +68,11 @@ export {
   type ConfirmDialogProps,
   type ConfirmTone,
 } from './overlay/ConfirmDialog';
+export {
+  default as DropdownMenu,
+  type DropdownMenuItem,
+  type DropdownMenuProps,
+} from './overlay/DropdownMenu';
 export { Popover, PopoverField, PopoverPanel, type PopoverFieldProps } from './overlay/Popover';
 
 export { default as Alert, type AlertProps, type AlertTone } from './data/Alert';

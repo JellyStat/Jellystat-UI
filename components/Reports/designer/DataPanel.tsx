@@ -54,7 +54,7 @@ function LookupSettings({
   const usedBy = definition.dataSources.filter((d) => JSON.stringify(d.filter ?? {}).includes(`"parameter":"${parameter.name}"`)).length;
 
   return (
-    <div className="rounded-md border border-brand-amber/20 bg-brand-amber/5 p-2 space-y-2">
+    <div className="rounded-md border border-warning/20 bg-warning/5 p-2 space-y-2">
       <Field label="Choices from">
         <Select
           value={lookup.dataSourceId}
@@ -154,9 +154,9 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
             ? `Combined (${ds.derive.mode}): ${ds.derive.sources.map((id) => definition.dataSources.find((d) => d.id === id)?.name ?? "?").join(", ")}`
             : (caps?.datasets.find((d) => d.key === ds.dataset)?.label ?? ds.dataset);
           return (
-            <div key={ds.id} className="group rounded-lg border border-border bg-background p-2.5 hover:border-gray-600">
+            <div key={ds.id} className="group rounded-lg border border-border bg-background p-2.5 hover:border-border-strong">
               <div className="flex items-center gap-2">
-                <Database size={14} className="text-brand-cyan shrink-0" />
+                <Database size={14} className="text-accent shrink-0" />
                 <button
                   type="button"
                   className="flex-1 min-w-0 text-left text-xs font-bold text-gray-200 truncate cursor-pointer hover:text-white"
@@ -186,7 +186,7 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
                 <button
                   type="button"
                   title="Delete"
-                  className="p-0.5 text-gray-500 hover:text-brand-rose cursor-pointer"
+                  className="p-0.5 text-gray-500 hover:text-danger cursor-pointer"
                   onClick={() => removeSource(ds.id)}
                 >
                   <Trash2 size={12} />
@@ -195,7 +195,7 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
               <div className="mt-1 flex items-center gap-2 text-[11px] text-gray-500">
                 <span>{label}</span>
                 {result?.error ? (
-                  <span className="flex items-center gap-1 text-brand-rose truncate" title={result.error}>
+                  <span className="flex items-center gap-1 text-danger truncate" title={result.error}>
                     <AlertCircle size={11} /> error
                   </span>
                 ) : result ? (
@@ -238,12 +238,12 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
         {definition.parameters.map((p, i) => (
           <div key={i} className="rounded-lg border border-border bg-background p-2.5 space-y-2">
             <div className="flex items-center gap-2">
-              <Variable size={14} className="text-brand-amber shrink-0" />
+              <Variable size={14} className="text-warning shrink-0" />
               <span className="flex-1 text-xs font-bold text-gray-200 truncate">@{p.name}</span>
               <button
                 type="button"
                 title="Delete"
-                className="p-0.5 text-gray-500 hover:text-brand-rose cursor-pointer"
+                className="p-0.5 text-gray-500 hover:text-danger cursor-pointer"
                 onClick={() =>
                   change((doc) => {
                     doc.definition.parameters.splice(i, 1);

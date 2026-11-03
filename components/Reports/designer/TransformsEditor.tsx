@@ -234,7 +234,7 @@ function StepFields({
               />
               <button
                 type="button"
-                className="p-1 text-gray-500 hover:text-brand-rose cursor-pointer"
+                className="p-1 text-gray-500 hover:text-danger cursor-pointer"
                 onClick={() => set({ sort: (step.sort ?? []).filter((_, j) => j !== i) })}
               >
                 <Trash2 size={12} />
@@ -359,9 +359,9 @@ export default function TransformsEditor({
   return (
     <div className="space-y-2">
       {transforms.map((step, i) => (
-        <div key={i} className="rounded-lg border border-border bg-background/40 p-2 space-y-2">
+        <div key={i} className="rounded-lg border border-border bg-background p-2 space-y-2">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono text-gray-600">{i + 1}</span>
+            <span className="text-[10px] font-mono text-gray-500">{i + 1}</span>
             <span className="text-xs font-bold text-gray-200 flex-1" title={TRANSFORM_LABELS[step.type]?.help}>
               {TRANSFORM_LABELS[step.type]?.label ?? step.type}
             </span>
@@ -374,7 +374,7 @@ export default function TransformsEditor({
             <button
               type="button"
               title="Remove step"
-              className="p-0.5 text-gray-500 hover:text-brand-rose cursor-pointer"
+              className="p-0.5 text-gray-500 hover:text-danger cursor-pointer"
               onClick={() => onChange(transforms.filter((_, j) => j !== i))}
             >
               <Trash2 size={12} />
