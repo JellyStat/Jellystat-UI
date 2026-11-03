@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import { API_BASE } from "@/lib/api";
 import { Image as ImageIcon, Film, Tv, Music, Folders, HardDrive, PlaySquare, Clock, Timer, History } from "lucide-react";
-import Badge from "../Core/Badge";
+import { Badge } from "@/components/ui";
 import LibraryTypes from "@/lib/models/enums/LibraryTypes";
 
 export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
@@ -82,7 +82,7 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
         {/* Title Overlay */}
         <div className="absolute bottom-0 left-0 w-full p-5 flex justify-between items-end">
           <h2 className="text-2xl font-black text-gray-200 tracking-tight drop-shadow-lg truncate pr-4">{lib.name}</h2>
-          <Badge value={lib.type} shape="square" />
+          <Badge shape="square">{lib.type}</Badge>
         </div>
       </div>
 

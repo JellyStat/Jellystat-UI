@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Calendar, X } from "lucide-react";
 import FilterItem, { DatesRangeValue } from "./FilterItem";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
-import DateRangePicker from "../Core/DateRangePicker";
+import { DateRangePicker } from "@/components/ui";
 import { DateRange } from "react-day-picker";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 

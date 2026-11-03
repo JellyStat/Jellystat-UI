@@ -22,7 +22,7 @@ import Permissions from "@/lib/models/enums/Permissions";
 import configManager from "@/lib/configManager";
 import { Server } from "@/lib/models/server";
 import { wsClient } from "@/lib/wsClient";
-import StatusIndicator from "../Core/StatusIndicator";
+import { StatusIndicator } from "@/components/ui";
 import DropdownSelector from "../Core/DropdownSelector";
 
 export default function SideNav() {
@@ -181,7 +181,7 @@ export default function SideNav() {
             className="flex items-center"
             title={isConnected ? t("status.online", "System Online") : t("status.offline", "System Offline")}
           >
-            <StatusIndicator color={isConnected ? "bg-brand-emerald" : "bg-brand-rose"} />
+            <StatusIndicator tone={isConnected ? "success" : "danger"} />
           </span>
           <button
             type="button"
@@ -265,7 +265,7 @@ export default function SideNav() {
         <div className="p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] border-t border-border bg-background/30 flex-none flex flex-col gap-4">
           {/* Dynamic Status Indicator */}
           <div className="flex items-center gap-3">
-            <StatusIndicator color={isConnected ? "bg-brand-emerald" : "bg-brand-rose"} />
+            <StatusIndicator tone={isConnected ? "success" : "danger"} />
             <div className="flex flex-col text-left">
               <span className="text-sm font-bold text-gray-200">
                 {isConnected ? t("status.online", "System Online") : t("status.offline", "System Offline")}

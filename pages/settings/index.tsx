@@ -24,7 +24,7 @@ import UsersSettingsPage from "@/components/Settings/Users/UsersSettings";
 import BackupsPage from "@/components/Settings/Backups/BackupsPage";
 import ApiKeysPage from "@/components/Settings/ApiKeys/ApiKeysPage";
 import WebhooksPage from "@/components/Settings/Webhooks/WebhooksPage";
-import LanguageSwitcher from "@/components/Core/LanguageSwitcher";
+import LanguageSwitcher from "@/components/Settings/LanguageSwitcher";
 import DropdownSelector from "@/components/Core/DropdownSelector";
 import { getHourFormat, setHourFormat, type HourFormat } from "@/lib/dateFormat";
 import { VersionInfo } from "@/lib/models/VersionInfo";

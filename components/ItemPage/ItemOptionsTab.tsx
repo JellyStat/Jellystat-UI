@@ -77,7 +77,7 @@ export default function ItemOptions({ item }: Props) {
               confirmText={t("common.yes", "Yes")}
               cancelText={t("common.no", "No")}
               onConfirm={deleteArchivedItem}
-              actionColor="bg-brand-rose"
+              tone="danger"
               className="inline-flex items-center justify-center rounded-xl border border-brand-rose/60 bg-brand-rose px-4 py-3 text-base font-semibold text-white transition hover:bg-rose-600"
             />
           </div>

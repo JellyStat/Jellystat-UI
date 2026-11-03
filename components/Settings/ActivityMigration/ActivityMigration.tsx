@@ -627,7 +627,7 @@ export default function ActivityMigrationPage() {
             )}
             confirmText={t("common.delete", "Delete")}
             cancelText={t("common.cancel", "Cancel")}
-            actionColor="bg-brand-rose"
+            tone="danger"
             disabled={selectedList.length === 0 || deleteLoading}
             onConfirm={deleteActivity}
             className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-brand-rose/10 hover:bg-brand-rose text-brand-rose hover:text-white border border-brand-rose/20 hover:border-brand-rose py-2 px-4 rounded-xl font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-inner"

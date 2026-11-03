@@ -136,7 +136,10 @@ For each file: swap the markup for the kit component, delete the class string, a
 - [x] Phase 2: Page, PageHeader, SectionTitle, Card, IconChip, Modal (+ ModalPanel/ModalHeader/ModalFooter), Table (+ TableHead/Th/TableBody/Td/TableMessageRow), ErrorAlert, EmptyState, with tests in `components/ui/__tests__/layout.test.tsx`
 - [x] Phase 2.5: semantic colour tokens in `globals.css`, kit components updated to the audit standards (shared `tones.ts`, focus ring, Card `padding`, Modal `size`, `Tr`), `lib/helpers/chartColors.ts`
 - [x] Pilot: `components/Settings/Users/AddUser.tsx` migrated to the kit (still needs a visual check while signed in)
-- [ ] Phase 3: Core moved into the kit, with re-exports at the old paths
+- [x] Phase 3: Core moved into the kit. Badge, StatusIndicator, IconButton, ConfirmationDialog, DateRangePicker and PieChart callers now use the kit directly, and the Core files are deleted. DateRangePickerButton was unused and is deleted. LanguageSwitcher moved to `components/Settings/`. Three files remain in `components/Core` and should be deleted in Phase 5:
+  - `DropdownSelector.tsx`: re-export of `Select`, 13 callers
+  - `NumberField.tsx`: re-export, 3 callers
+  - `ConfirmationDialogButton.tsx`: i18n wrapper over `ConfirmButton`, 9 callers
 - [ ] Phase 4.1: setup + settings/Users
 - [ ] Phase 4.2: remaining settings pages
 - [ ] Phase 4.3: ActivityTable + DataTableFilters

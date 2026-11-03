@@ -143,7 +143,7 @@ export default function BackupsPage() {
         confirmText={t("common.restore", "Restore")}
         cancelText={t("common.cancel", "Cancel")}
         tooltip={t("common.restore", "Restore backup")}
-        actionColor="bg-brand-rose"
+        tone="danger"
         disabled={loading}
         onConfirm={() => restoreBackup(backup.fileName)}
       />
@@ -163,7 +163,7 @@ export default function BackupsPage() {
         confirmText={t("common.yes", "Yes")}
         cancelText={t("common.no", "No")}
         tooltip={t("common.delete", "Delete backup")}
-        actionColor="bg-brand-rose"
+        tone="danger"
         disabled={loading}
         onClick={() => setBackupToDelete(backup.fileName)}
         onConfirm={deleteBackup}

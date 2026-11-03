@@ -34,7 +34,7 @@ import BooleanFilter from "../DataTableFilters/BooleanFilter";
 import NumberFilter from "../DataTableFilters/NumberFilter";
 import DropdownSelector from "../Core/DropdownSelector";
 import NumberField from "../Core/NumberField";
-import IconButton from "../Core/IconButton";
+import { IconButton } from "@/components/ui";
 import ConfirmationDialogButton from "../Core/ConfirmationDialogButton";
 import LibraryFilter from "./LibraryFilter";
 import permissionsManager from "@/lib/permissionsManager";
@@ -539,7 +539,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
               )}
               confirmText={t("common.delete", "Delete")}
               cancelText={t("common.cancel", "Cancel")}
-              actionColor="bg-brand-rose"
+              tone="danger"
               disabled={deleting}
               onConfirm={deleteSelected}
               className="flex items-center gap-2 bg-brand-rose/10 hover:bg-brand-rose text-brand-rose hover:text-white border border-brand-rose/20 hover:border-brand-rose py-2 px-4 rounded-xl text-sm font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed"
@@ -558,12 +558,9 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           {showLibraryFilter && (
             <LibraryFilter libraries={libraries} value={libraryIds} onChange={changeLibraryFilter} disabled={loading} />
           )}
-          <IconButton
-            icon={RefreshCw}
-            tooltip={t("common.refresh", "Refresh")}
-            onClick={() => fetchPage(page)}
-            className="hover:text-brand-purple"
-          />
+          <IconButton label={t("common.refresh", "Refresh")} onClick={() => fetchPage(page)}>
+            <RefreshCw size={18} />
+          </IconButton>
         </div>
       </div>
 

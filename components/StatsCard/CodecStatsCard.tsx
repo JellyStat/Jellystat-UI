@@ -5,7 +5,7 @@ import { Loader2, AlertCircle, PieChartIcon } from "lucide-react";
 import client from "@/lib/api";
 import NoData from "@/components/ErrorCards/NoData";
 import { CountModel } from "@/lib/models/countModel";
-import JPieChart from "../Core/PieChart";
+import { PieChart } from "@/components/ui";
 import ErrorCard from "../ErrorCards/ErrorCard";
 import { IGridifyQuery } from "gridify-client";
 import { CountModelWithSize } from "@/lib/models/countModelWithSize";
@@ -70,7 +70,7 @@ export default function CodecStatsCard({ gridify }: Props) {
           <ErrorCard message={error} />
         ) : (
           <div>
-            <JPieChart data={stats} />
+            <PieChart data={stats} />
             <StatSizeListCard data={stats} />
           </div>
         )}

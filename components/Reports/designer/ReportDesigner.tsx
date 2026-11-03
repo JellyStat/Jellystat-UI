@@ -35,7 +35,7 @@ import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import ConfirmationDialog from "@/components/Core/ConfirmationDialog";
+import { ConfirmDialog } from "@/components/ui";
 import client from "@/lib/api";
 import type { ReportDataResult, ReportDefinition, ReportImportResult, ReportRenderModel } from "@/lib/models/reports";
 import { checkReportFile, downloadReportFile } from "@/lib/reports/transfer";
@@ -744,14 +744,14 @@ function DesignerShell() {
         </div>
       )}
 
-      <ConfirmationDialog
+      <ConfirmDialog
         open={confirmLeave}
-        Title="Leave without saving?"
-        Description="Your changes to this report haven't been saved."
-        YesText="Leave"
-        NoText="Stay"
-        ActionColor="bg-brand-rose"
-        onSubmit={(yes) => {
+        title="Leave without saving?"
+        description="Your changes to this report haven't been saved."
+        confirmText="Leave"
+        cancelText="Stay"
+        tone="danger"
+        onResult={(yes) => {
           setConfirmLeave(false);
           if (yes) {
             void router.push("/reports");

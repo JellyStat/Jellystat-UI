@@ -6,7 +6,7 @@ import { Image as ImageIcon } from "lucide-react";
 import { API_BASE } from "@/lib/api";
 import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
 import { TrackedLibraries } from "@/lib/models/trackedLibraries";
-import Badge from "../Core/Badge";
+import { Badge } from "@/components/ui";
 
 export default function LibraryTrackingCard({
   lib,
@@ -56,7 +56,7 @@ export default function LibraryTrackingCard({
         {/* Header: Name and Type Badge */}
         <div className="flex items-start justify-between gap-3 w-full">
           <h3 className="text-lg font-bold text-gray-100 leading-tight line-clamp-2">{lib.name}</h3>
-          <Badge value={lib.type} shape="square" />
+          <Badge shape="square">{lib.type}</Badge>
         </div>
 
         <div className="flex-1"></div>

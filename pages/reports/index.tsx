@@ -265,7 +265,7 @@ export default function ReportsPage() {
                       })}
                       description={t("reports.delete_confirm", "The report and its schedules will be deleted. This cannot be undone.")}
                       onConfirm={() => remove(r.id)}
-                      actionColor="bg-brand-rose"
+                      tone="danger"
                       className="px-3 py-1.5 text-xs font-bold text-brand-rose hover:text-white border-brand-rose/60 bg-brand-rose/10 border hover:bg-rose-600 rounded-lg transition-all"
                     />
                   </div>

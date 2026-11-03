@@ -159,7 +159,7 @@ export default function ApiKeysPage() {
                         "Apps using this key will immediately lose access. This cannot be undone.",
                       )}
                       onConfirm={() => handleDelete(key.id)}
-                      actionColor="bg-brand-rose"
+                      tone="danger"
                       className="px-3 py-1.5 text-xs font-bold text-brand-rose hover:text-white border-brand-rose/60 bg-brand-rose/10 border hover:bg-rose-600 rounded-lg transition-all shadow-inner"
                     />
                   </div>

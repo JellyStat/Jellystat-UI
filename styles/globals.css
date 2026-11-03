@@ -71,7 +71,7 @@
   }
 }
 .rdp-root {
-  --rdp-accent-color: var(--color-brand-cyan) !important; /* Change the accent color to indigo. */
-  --rdp-accent-background-color: var(--color-border) !important; /* Change the accent background color. */
-  /* Add more CSS variables here. */
+  /* Calendar (react-day-picker) follows the primary colour. */
+  --rdp-accent-color: var(--color-primary) !important;
+  --rdp-accent-background-color: var(--color-border) !important;
 }

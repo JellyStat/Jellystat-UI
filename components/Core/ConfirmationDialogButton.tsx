@@ -1,8 +1,11 @@
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
-import ConfirmationDialog from "./ConfirmationDialog";
-import { Button } from "@headlessui/react";
+import ConfirmButton from "@/components/ui/overlay/ConfirmButton";
+import type { ConfirmTone } from "@/components/ui/overlay/ConfirmDialog";
 
+// App wrapper around the kit's ConfirmButton: keeps the original props and supplies
+// translated Yes/No defaults. Prefer ConfirmButton from "@/components/ui" in new code.
 type ConfirmationDialogButtonProps = {
   buttonElement: ReactNode;
   dialogTitle: string;
@@ -14,58 +17,26 @@ type ConfirmationDialogButtonProps = {
   className?: string;
   disabled?: boolean;
   tooltip?: string;
-  actionColor?: "bg-brand-rose" | "bg-brand-cyan" | "bg-brand-purple" | "bg-brand-emerald";
+  tone?: ConfirmTone;
 };
 
 export default function ConfirmationDialogButton({
   buttonElement,
   dialogTitle,
-  description,
   confirmText,
   cancelText,
-  onClick,
-  onConfirm,
-  className,
-  disabled,
-  tooltip,
-  actionColor,
+  ...rest
 }: ConfirmationDialogButtonProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const defaultClassAttributes = "cursor-pointer w-fit self-start shrink-0";
-  const compiledClassName =
-    defaultClassAttributes +
-    " " +
-    (className ??
-      `p-2 rounded-lg bg-background hover:bg-brand-cyan/20 text-gray-400 hover:text-brand-cyan border border-border hover:border-brand-cyan/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex`);
+  const { t } = useTranslation("common");
 
   return (
-    <>
-      <button
-        onClick={() => {
-          setIsOpen(true);
-          onClick?.();
-        }}
-        className={compiledClassName}
-        disabled={disabled}
-        title={tooltip}
-      >
-        {buttonElement}
-      </button>
-      <ConfirmationDialog
-        open={isOpen}
-        onSubmit={(confirmed) => {
-          setIsOpen(false);
-          if (confirmed) {
-            onConfirm();
-          }
-        }}
-        Title={dialogTitle}
-        Description={description}
-        YesText={confirmText}
-        NoText={cancelText}
-        ActionColor={actionColor}
-      />
-    </>
+    <ConfirmButton
+      title={dialogTitle}
+      confirmText={confirmText ?? t("common.yes", "Yes")}
+      cancelText={cancelText ?? t("common.no", "No")}
+      {...rest}
+    >
+      {buttonElement}
+    </ConfirmButton>
   );
 }
