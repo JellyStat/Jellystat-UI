@@ -43,6 +43,7 @@ export {
   type ConfirmTone,
 } from './overlay/ConfirmDialog';
 
+export { default as Alert, type AlertProps, type AlertTone } from './data/Alert';
 export { default as EmptyState, type EmptyStateProps } from './data/EmptyState';
 export { default as PieChart, type PieChartDatum, type PieChartProps } from './data/PieChart';
 export { default as ErrorAlert, type ErrorAlertProps } from './data/ErrorAlert';
