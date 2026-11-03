@@ -18,7 +18,7 @@ export default function LibraryInfoOverviewCard({ library }: Props) {
             <HardDrive className="w-6 h-6 stroke-[1.5]" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xs font-bold tracking-wider text-gray-400 uppercase">Total Storage</span>
+            <span className="text-xs font-bold tracking-wider text-gray-400 uppercase">{t("libraries.total_storage", "Total Storage")}</span>
             <span className="text-3xl font-bold text-white tracking-tight mt-0.5">{library.size?.formatBytes()}</span>
           </div>
         </div>
@@ -28,7 +28,7 @@ export default function LibraryInfoOverviewCard({ library }: Props) {
             <Clapperboard className="w-6 h-6 stroke-[1.5]" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xs font-bold tracking-wider text-gray-400 uppercase">Total Media</span>
+            <span className="text-xs font-bold tracking-wider text-gray-400 uppercase">{t("libraries.total_media", "Total Media")}</span>
             <span className="text-3xl font-bold text-white tracking-tight mt-0.5">
               {library.typeCounts?.reduce((acc, count) => acc + (count.count ?? 0), 0)}
             </span>

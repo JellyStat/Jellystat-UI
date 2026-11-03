@@ -2,7 +2,7 @@ import { AlertCircle, CheckCircle2, Pencil, Plus, Send, Webhook } from "lucide-r
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
+import ConfirmationDialogButton from "@/components/ConfirmationDialogButton";
 import {
   Badge,
   Button,

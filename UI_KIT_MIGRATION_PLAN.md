@@ -157,10 +157,15 @@ For each file: swap the markup for the kit component, delete the class string, a
   - setup/index lost its unused `activeColor` strings, and its glow shadows use theme variables.
   - Still needs a visual check while signed in.
 - [ ] Phase 4.6: SideNav
-- [ ] Phase 5: delete Core, lint guard, grep audit, README. Still to handle:
-  - **Core wrappers:** `components/Core` still holds `DropdownSelector` and `NumberField` (re-exports) and `ConfirmationDialogButton` (i18n wrapper). Point their callers at the kit and delete the files.
-  - **Direct headlessui imports:** three remain, and each needs a new kit primitive rather than a restyle. `components/Reports/ParameterInput.tsx` needs a kit `Combobox` (async search with free text). `components/Reports/designer/FontPicker.tsx` needs `Select` to accept a `renderOption` so each font previews in itself. `components/SelectAsync.tsx` needs a kit `PopoverButton` re-export.
-  - **Hard-coded English:** LibraryInfoOverviewCard has "Total Storage" and "Total Media" as fixed English text.
+- [x] Phase 5: lock-in.
+  - **`components/Core` deleted.** The re-exports had no callers left, and `ConfirmationDialogButton` (the i18n wrapper) moved to `components/ConfirmationDialogButton.tsx`.
+  - **headlessui is now imported only inside `components/ui`.** `ParameterInput`, `FontPicker` and `SelectAsync` take its unstyled parts from the new `@/components/ui/headless`.
+  - **Guards:**
+    - `components/ui/__tests__/guard.test.ts` runs in `npm run jest` and covers direct headlessui imports, Core imports, `brand-*` and raw palette colours, hex colour classes, off-scale radius and weights, `<Loader2>`, and runtime-built class names.
+    - The same headlessui rule is in `oxlint.config.ts` (`no-restricted-imports`, off for `components/ui/**`).
+  - **New kit piece:** `SortableTh`. It replaced two copies of a sortable header, and the users page copy had the runtime `` text-${align} `` bug.
+  - **README and translations:** the README has a UI kit section, and "Total Storage" / "Total Media" are translated.
+  - **Raw elements left:** these use theme tokens but are not kit components. About 115 `<button>`, 28 `<input>`, 8 `<select>` and 8 `<table>` remain outside the kit, mostly in the Reports designer, which has its own compact controls in `designer/controls.tsx`. A possible follow-up is to move that control set onto the kit's `sm` size. The three remaining `animate-spin` uses are intentional rotating refresh icons.
 
 ## 5. Risks / notes
 - **Visual drift:** near-identical strings often differ by one class (`rounded-2xl` vs `rounded-3xl`, `px-4` vs `px-5`). Settle each one against `UI_AUDIT.md` rather than adding a variant to keep it. Make it a prop only when the difference has a real purpose, e.g. `pr-12` when an input has a trailing button.

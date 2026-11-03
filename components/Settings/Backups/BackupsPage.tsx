@@ -6,7 +6,7 @@ import client from "@/lib/api";
 import { formatDateTime } from "@/lib/dateFormat";
 import { toast } from "sonner";
 import Tasks from "@/lib/models/enums/Tasks";
-import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
+import ConfirmationDialogButton from "@/components/ConfirmationDialogButton";
 import { BackupModel } from "@/lib/models/backupModel";
 import {
   Button,

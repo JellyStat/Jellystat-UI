@@ -87,11 +87,14 @@ export { default as ErrorAlert, type ErrorAlertProps } from './data/ErrorAlert';
 export {
   default as Table,
   TableBody,
+  SortableTh,
   TableHead,
   TableMessageRow,
   Td,
   Th,
   Tr,
+  type SortableThProps,
+  type SortDirection,
   type TableMessageRowProps,
   type TableProps,
 } from './data/Table';

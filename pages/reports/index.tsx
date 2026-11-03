@@ -15,7 +15,7 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
+import ConfirmationDialogButton from "@/components/ConfirmationDialogButton";
 import ReportImportDialog from "@/components/Reports/ReportImportDialog";
 import ReportSchedulesDialog from "@/components/Reports/ReportSchedulesDialog";
 import client from "@/lib/api";

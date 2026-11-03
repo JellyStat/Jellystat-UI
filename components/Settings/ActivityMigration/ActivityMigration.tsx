@@ -4,7 +4,7 @@ import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
-import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
+import ConfirmationDialogButton from "@/components/ConfirmationDialogButton";
 import { DefaultSelectedItem, SelectAsync } from "@/components/SelectAsync";
 import {
   Button,

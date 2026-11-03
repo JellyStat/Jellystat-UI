@@ -1,4 +1,4 @@
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from "@headlessui/react";
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from "@/components/ui/headless";
 import clsx from "clsx";
 import { Check, ChevronDown, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -25,7 +25,7 @@ interface Props {
 
 const inputClasses = {
   md: "w-full min-w-0 bg-background border border-border rounded-lg px-2.5 py-1.5 text-sm text-gray-200 outline-none focus:border-primary",
-  sm: "w-full min-w-0 bg-background border border-border rounded-md px-2 py-1 text-xs text-gray-200 outline-none focus:border-primary",
+  sm: "w-full min-w-0 bg-background border border-border rounded-lg px-2 py-1 text-xs text-gray-200 outline-none focus:border-primary",
 };
 
 const same = (a: unknown, b: unknown) => String(a) === String(b);
@@ -130,7 +130,7 @@ function LookupInput({ parameter, value, onChange, source, values, className, si
       </div>
       <ComboboxOptions
         anchor="bottom start"
-        className="z-[70] w-(--input-width) min-w-48 max-h-64 overflow-y-auto rounded-lg border border-border bg-surface py-1 shadow-2xl shadow-black/40 empty:invisible [--anchor-gap:4px]"
+        className="z-[70] w-(--input-width) min-w-48 max-h-64 overflow-y-auto rounded-xl border border-border bg-surface p-1 shadow-2xl shadow-black/40 empty:invisible [--anchor-gap:4px]"
       >
         {error && <div className="px-3 py-2 text-xs text-danger">{error}</div>}
         {!error && !loading && filtered.length === 0 && <div className="px-3 py-2 text-xs text-gray-500">No matches</div>}
@@ -139,7 +139,7 @@ function LookupInput({ parameter, value, onChange, source, values, className, si
             key={String(o.value)}
             value={o.value}
             className={clsx(
-              "group flex items-center gap-2 px-3 text-gray-200",
+              "group flex items-center gap-2 px-3 rounded-lg text-gray-200",
               size === "sm" ? "py-1 text-xs" : "py-1.5 text-sm",
               "cursor-pointer data-focus:bg-surface-hover data-focus:text-white",
             )}

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import { Users, ArrowUpDown, ArrowUp, ArrowDown, User as UserIcon, AlertCircle } from "lucide-react";
+import { Users, User as UserIcon, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { GridifyQueryBuilder } from "gridify-client";
 
@@ -12,7 +12,7 @@ import useFilters from "@/components/DataTableFilters/useFilters";
 import TextFilter from "@/components/DataTableFilters/TextFilter";
 import BooleanFilter from "@/components/DataTableFilters/BooleanFilter";
 import FilterItem from "@/components/DataTableFilters/FilterItem";
-import { PageHeader, Spinner } from "@/components/ui";
+import { PageHeader, SortableTh, Spinner } from "@/components/ui";
 
 interface SortStatus {
   columnAccessor: string;
@@ -408,22 +408,12 @@ export default function UsersPage() {
 // --- SUB-COMPONENTS ---
 function SortableHeader({ label, accessor, currentSort, onSort, align = "left" }: any) {
   return (
-    <th
-      className={`p-3 group cursor-pointer hover:bg-surface-hover transition-colors text-${align}`}
-      onClick={() => onSort(accessor)}
+    <SortableTh
+      sorted={currentSort.columnAccessor === accessor ? currentSort.direction : undefined}
+      onSort={() => onSort(accessor)}
+      align={align}
     >
-      <div
-        className={`flex items-center gap-2 ${align === "right" ? "justify-end" : align === "center" ? "justify-center" : ""}`}
-      >
-        {label}
-        {currentSort.columnAccessor !== accessor ? (
-          <ArrowUpDown size={14} className="opacity-30 group-hover:opacity-100 transition-opacity" />
-        ) : currentSort.direction === "desc" ? (
-          <ArrowDown size={14} className="text-accent" />
-        ) : (
-          <ArrowUp size={14} className="text-accent" />
-        )}
-      </div>
-    </th>
+      {label}
+    </SortableTh>
   );
 }

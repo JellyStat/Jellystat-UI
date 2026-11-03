@@ -14,6 +14,45 @@ This template comes with the following features:
 * **Internationalization (i18n):** Built-in localization support using `next-i18next`.
 * **Gridify Integration:** Advanced, server-side data table sorting and filtering.
 
+## UI kit
+
+All shared UI lives in `components/ui` and is imported from one place:
+
+```tsx
+import { Button, Card, Field, Input, Modal, ModalPanel, PageHeader } from "@/components/ui";
+```
+
+- **Tokens:** colours are semantic theme tokens defined in `styles/globals.css`:
+  - `primary` (purple, main actions and focus);
+  - `accent` (cyan, links and highlights);
+  - `danger`, `success`, `warning` and `info` for status;
+  - `surface`, `surface-raised` and `border` for panels and borders.
+
+  Use these rather than `brand-*`, raw Tailwind palettes or hex values. Charts read the same colours from `chartColors` / `chartSeries`.
+- **Scale:** controls come in `sm`, `md` and `lg`, sharing one height per size. Cards use `rounded-2xl`, and modals come in `sm`, `md`, `lg`, `xl` and `workspace`. The full set of standards is in [UI_AUDIT.md](UI_AUDIT.md).
+- **What's in it:**
+
+  | Group | Components |
+  |---|---|
+  | Primitives | `Button`, `IconButton`, `Input`, `Textarea`, `NumberField`, `Checkbox`, `Switch`, `Badge`, `Spinner`, `Skeleton`, `StatusIndicator` |
+  | Forms | `Field` (label + control + error), `Label`, `FieldError`, `Select`, `MultiSelect`, `SegmentedControl`, `DateRangePicker` |
+  | Layout | `Page`, `PageHeader`, `SectionTitle`, `Card`, `IconChip` |
+  | Overlays | `Modal` + `ModalPanel` / `ModalHeader` / `ModalFooter` / `ModalTitle`, `ConfirmDialog`, `ConfirmButton`, `DropdownMenu`, `Popover` + `PopoverField` / `PopoverPanel` |
+  | Data | `Table` parts (incl. `SortableTh`, `TableMessageRow`), `Pagination`, `EmptyState`, `Alert` / `ErrorAlert`, `PieChart` |
+
+- **Rules:**
+  - **No translated text inside the kit.** Text arrives through props. App wrappers such as `components/ConfirmationDialogButton.tsx` and `components/ErrorCards/NoData.tsx` supply translated defaults.
+  - **Permission checks stay at the call site.**
+  - **Overriding styles:** every component accepts `className`, merged last with `cn()`, so a call site can override. Prefer adding a variant over repeating an override.
+  - **headlessui:** import it only from the kit. Use the styled components, or the unstyled building blocks in `@/components/ui/headless` for something the styled ones can't do.
+- **Enforcement:** `components/ui/__tests__/guard.test.ts` runs with `npm run jest` and fails if app code reintroduces:
+  - direct headlessui imports;
+  - `brand-*` or raw palette colours;
+  - hex colour classes;
+  - off-scale radius or weights;
+  - `<Loader2>` spinners;
+  - class names built at runtime (`` `bg-${x}` ``), which Tailwind can't see.
+
 ## npm scripts
 
 ### Build and dev scripts

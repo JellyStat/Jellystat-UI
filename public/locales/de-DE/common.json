@@ -143,6 +143,8 @@
   "libraries": {
     "failed_load": "Bibliotheken konnten nicht geladen werden",
     "libraries_desc": "Verwalte, tracke und analysiere deine Mediensammlungen",
+    "total_media": "Medien gesamt",
+    "total_storage": "Speicher gesamt",
     "no_libraries_desc": "Stelle sicher, dass dein Server verbunden und synchronisiert ist."
   },
   "library": {

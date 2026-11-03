@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { AlertTriangle, Loader } from "lucide-react";
 import client from "@/lib/api";
-import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
+import ConfirmationDialogButton from "@/components/ConfirmationDialogButton";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui";
 

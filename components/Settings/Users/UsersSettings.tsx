@@ -9,7 +9,7 @@ import { Server } from "@/lib/models/server";
 
 import AddUserModal from "./AddUser";
 import UpdateUserModal from "./UpdateUser";
-import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
+import ConfirmationDialogButton from "@/components/ConfirmationDialogButton";
 import {
   Badge,
   Button,

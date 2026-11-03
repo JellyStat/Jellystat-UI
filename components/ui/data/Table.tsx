@@ -1,3 +1,4 @@
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '../cn';
 import Spinner from '../primitives/Spinner';
@@ -32,6 +33,60 @@ export function TableHead({ className, ...rest }: ComponentProps<'tr'>) {
 
 export function Th({ className, ...rest }: ComponentProps<'th'>) {
   return <th className={cn('px-4 py-3', className)} {...rest} />;
+}
+
+const alignClass = {
+  left: { cell: 'text-left', row: '' },
+  center: { cell: 'text-center', row: 'justify-center' },
+  right: { cell: 'text-right', row: 'justify-end' },
+} as const;
+
+export type SortDirection = 'asc' | 'desc';
+
+export type SortableThProps = {
+  children: ReactNode;
+  // Direction when this column is the active sort, otherwise undefined.
+  sorted?: SortDirection;
+  onSort: () => void;
+  align?: keyof typeof alignClass;
+  className?: string;
+};
+
+// Clickable header cell with a sort indicator and aria-sort.
+export function SortableTh({
+  children,
+  sorted,
+  onSort,
+  align = 'left',
+  className,
+}: SortableThProps) {
+  const a = alignClass[align];
+  return (
+    <th
+      aria-sort={sorted ? (sorted === 'desc' ? 'descending' : 'ascending') : 'none'}
+      className={cn(
+        'px-4 py-3 group cursor-pointer select-none hover:bg-surface-hover transition-colors',
+        a.cell,
+        className
+      )}
+      onClick={onSort}
+    >
+      <div className={cn('flex items-center gap-2', a.row)}>
+        {children}
+        {!sorted ? (
+          <ArrowUpDown
+            size={14}
+            aria-hidden="true"
+            className="opacity-30 group-hover:opacity-100 transition-opacity"
+          />
+        ) : sorted === 'desc' ? (
+          <ArrowDown size={14} aria-hidden="true" className="text-accent" />
+        ) : (
+          <ArrowUp size={14} aria-hidden="true" className="text-accent" />
+        )}
+      </div>
+    </th>
+  );
 }
 
 export function TableBody({ className, ...rest }: ComponentProps<'tbody'>) {

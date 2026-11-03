@@ -8,7 +8,7 @@ import configManager from "@/lib/configManager";
 import Permissions from "@/lib/models/enums/Permissions";
 import type { ApiKeyInfo } from "@/lib/models/apiKey";
 import type { Server } from "@/lib/models/server";
-import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
+import ConfirmationDialogButton from "@/components/ConfirmationDialogButton";
 import {
   Badge,
   Button,

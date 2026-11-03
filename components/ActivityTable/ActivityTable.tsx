@@ -42,9 +42,10 @@ import {
   NumberField,
   Select,
   SectionTitle,
+  SortableTh,
   Spinner,
 } from "@/components/ui";
-import ConfirmationDialogButton from "../Core/ConfirmationDialogButton";
+import ConfirmationDialogButton from "@/components/ConfirmationDialogButton";
 import LibraryFilter from "./LibraryFilter";
 import permissionsManager from "@/lib/permissionsManager";
 import Permissions from "@/lib/models/enums/Permissions";
@@ -870,31 +871,14 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
 
 // --- SUB-COMPONENTS ---
 
-const alignClass = {
-  left: { cell: "text-left", row: "" },
-  center: { cell: "text-center", row: "justify-center" },
-  right: { cell: "text-right", row: "justify-end" },
-} as const;
-
 function SortableHeader({ label, accessor, currentSort, onSort, align = "left" }: any) {
-  const active = currentSort.columnAccessor === accessor;
-  const a = alignClass[align as keyof typeof alignClass] ?? alignClass.left;
   return (
-    <th
-      aria-sort={active ? (currentSort.direction === "desc" ? "descending" : "ascending") : "none"}
-      className={cn("px-4 py-3 group cursor-pointer hover:bg-surface-hover transition-colors", a.cell)}
-      onClick={() => onSort(accessor)}
+    <SortableTh
+      sorted={currentSort.columnAccessor === accessor ? currentSort.direction : undefined}
+      onSort={() => onSort(accessor)}
+      align={align}
     >
-      <div className={cn("flex items-center gap-2", a.row)}>
-        {label}
-        {!active ? (
-          <ArrowUpDown size={14} className="opacity-30 group-hover:opacity-100 transition-opacity" />
-        ) : currentSort.direction === "desc" ? (
-          <ArrowDown size={14} className="text-accent" />
-        ) : (
-          <ArrowUp size={14} className="text-accent" />
-        )}
-      </div>
-    </th>
+      {label}
+    </SortableTh>
   );
 }

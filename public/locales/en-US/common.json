@@ -147,6 +147,8 @@
   "libraries": {
     "failed_load": "Failed to load libraries",
     "libraries_desc": "Manage, track, and analyze your media collections",
+    "total_media": "Total Media",
+    "total_storage": "Total Storage",
     "no_libraries_desc": "Make sure your server is connected and synced."
   },
   "library": {

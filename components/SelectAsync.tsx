@@ -1,8 +1,8 @@
 import { ReactNode, useEffect, useState } from "react";
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
+import { HeadlessPopover as Popover, HeadlessPopoverPanel as PopoverPanel, PopoverButton } from "@/components/ui/headless";
 import { ChevronDown, Check, Lock } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Spinner } from "@/components/ui";
+import { cn, focusRing, Spinner } from "@/components/ui";
 
 export class DefaultSelectedItem {
   id: string;
@@ -124,8 +124,8 @@ export function SelectAsync<T>({
 
   const borderClass =
     variant === "missing"
-      ? "border-dashed border-danger/45 hover:border-danger data-open:border-accent"
-      : "border-border hover:border-border-strong data-open:border-accent";
+      ? "border-dashed border-danger/45 hover:border-danger data-open:border-primary"
+      : "border-border hover:border-border-strong data-open:border-primary";
 
   return (
     <Popover className="relative w-full">
@@ -137,7 +137,11 @@ export function SelectAsync<T>({
             onClick={() => {
               if (!open) load();
             }}
-            className={`w-full flex items-center justify-between bg-surface/80 border rounded-xl py-2.5 pl-4 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent transition-all shadow-inner cursor-pointer ${borderClass}`}
+            className={cn(
+              "w-full flex items-center justify-between bg-background border rounded-xl py-2.5 pl-4 pr-3 text-sm transition-all shadow-inner cursor-pointer",
+              focusRing,
+              borderClass,
+            )}
           >
             <span
               className={`min-w-0 flex items-center gap-2 mr-2 text-left ${isPlaceholder ? "text-gray-500" : "text-gray-200 font-medium"}`}
@@ -151,7 +155,7 @@ export function SelectAsync<T>({
               ) : (
                 <ChevronDown
                   size={16}
-                  className={`transition-transform duration-300 ${open ? "rotate-180 text-accent" : ""}`}
+                  className={`transition-transform duration-300 ${open ? "rotate-180 text-primary" : ""}`}
                 />
               )}
             </span>
@@ -159,10 +163,10 @@ export function SelectAsync<T>({
 
           <PopoverPanel
             anchor={{ to: "bottom start", gap: 8 }}
-            className="z-50 w-(--button-width) min-w-64 bg-surface/60 backdrop-blur-xl border border-border rounded-xl shadow-2xl shadow-black/40 focus:outline-none"
+            className="z-50 w-(--button-width) min-w-64 bg-surface border border-border rounded-xl shadow-2xl shadow-black/40 focus:outline-none"
           >
             {header && (
-              <div className="px-3 pt-3 pb-1 text-[11px] font-bold text-gray-500 uppercase tracking-wider">{header}</div>
+              <div className="px-3 pt-3 pb-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider">{header}</div>
             )}
             <div className="p-1 max-h-60 overflow-y-auto custom-scrollbar">
               {loading || data === null ? (
@@ -181,7 +185,7 @@ export function SelectAsync<T>({
                       onClick={() => handleSelect(item, close)}
                       className={`w-full text-left flex items-center justify-between gap-2 px-3 py-2.5 text-sm rounded-lg transition-colors cursor-pointer ${
                         isSelected
-                          ? "bg-accent/10 text-accent font-bold"
+                          ? "bg-primary/10 text-primary font-bold"
                           : "text-gray-200 hover:bg-surface-hover hover:text-white"
                       }`}
                     >
