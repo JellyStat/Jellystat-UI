@@ -8,7 +8,12 @@ export { default as Button, buttonClass, type ButtonProps } from './primitives/B
 export { default as Checkbox, type CheckboxProps } from './primitives/Checkbox';
 export { default as Field, type FieldProps } from './primitives/Field';
 export { default as FieldError } from './primitives/FieldError';
-export { default as IconButton, type IconButtonProps } from './primitives/IconButton';
+export {
+  default as IconButton,
+  iconButtonClass,
+  type IconButtonProps,
+  type IconButtonVariant,
+} from './primitives/IconButton';
 export { default as Input, InputAction, type InputProps } from './primitives/Input';
 export { default as Label } from './primitives/Label';
 export { default as NumberField, type NumberFieldProps } from './primitives/NumberField';

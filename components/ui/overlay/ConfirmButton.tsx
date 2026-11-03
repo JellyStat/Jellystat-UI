@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { cn } from '../cn';
+import { iconButtonClass } from '../primitives/IconButton';
 import { focusRing } from '../tones';
 import ConfirmDialog, { type ConfirmTone } from './ConfirmDialog';
 
@@ -20,8 +21,7 @@ export type ConfirmButtonProps = {
   className?: string;
 };
 
-const defaultTrigger =
-  'inline-flex items-center justify-center p-2 rounded-lg bg-background border border-border text-gray-400 hover:text-accent hover:border-accent/50 hover:bg-accent/10 transition-all';
+const defaultTrigger = iconButtonClass('bordered');
 
 // Button that asks for confirmation in a dialog before running onConfirm.
 export default function ConfirmButton({

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Archive, Loader2, AlertCircle, Download, Delete, Trash, Clock, Upload } from "lucide-react";
+import { Archive, AlertCircle, Download, Trash, Clock, Upload } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import client from "@/lib/api";
@@ -8,9 +8,25 @@ import { toast } from "sonner";
 import Tasks from "@/lib/models/enums/Tasks";
 import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
 import { BackupModel } from "@/lib/models/backupModel";
+import {
+  Button,
+  Card,
+  EmptyState,
+  IconButton,
+  iconButtonClass,
+  Page,
+  PageHeader,
+  Spinner,
+  Table,
+  TableBody,
+  TableHead,
+  Td,
+  Th,
+  Tr,
+} from "@/components/ui";
 
 export default function BackupsPage() {
-  const { t, i18n } = useTranslation("common");
+  const { t } = useTranslation("common");
 
   // --- STATE ---
 
@@ -118,6 +134,19 @@ export default function BackupsPage() {
     }
   };
 
+  const pickBackupFile = () => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".bac,.jsonl,.json";
+    fileInput.onchange = (e: any) => {
+      const file = e.target.files[0];
+      if (file) {
+        uploadBackup(file);
+      }
+    };
+    fileInput.click();
+  };
+
   const formatBackupDate = (backup: BackupModel) =>
     backup.date
       ? formatDateTime(backup.date, {
@@ -147,15 +176,14 @@ export default function BackupsPage() {
         disabled={loading}
         onConfirm={() => restoreBackup(backup.fileName)}
       />
-      <button
+      <IconButton
+        variant="bordered"
+        label={t("common.download", "Download backup")}
         onClick={() => downloadBackup(backup.fileName)}
-        title={t("common.download", "Download backup")}
-        className="p-2 rounded-lg bg-background hover:bg-brand-cyan/20 text-gray-400 hover:text-brand-cyan border border-border hover:border-brand-cyan/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer"
         disabled={loading}
       >
         <Download size={16} />
-      </button>
-
+      </IconButton>
       <ConfirmationDialogButton
         buttonElement={<Trash size={16} />}
         dialogTitle={t("settings.backups_confirm_delete_title", "Confirm Delete")}
@@ -165,139 +193,96 @@ export default function BackupsPage() {
         tooltip={t("common.delete", "Delete backup")}
         tone="danger"
         disabled={loading}
+        className={iconButtonClass("danger")}
         onClick={() => setBackupToDelete(backup.fileName)}
         onConfirm={deleteBackup}
       />
     </>
   );
 
+  const empty = (
+    <EmptyState
+      bordered={false}
+      Icon={Archive}
+      title={t("settings.backups_empty_title", "No backups found")}
+      message={t("settings.backups_empty_desc", "No backups have been created yet.")}
+    />
+  );
+
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 py-4 sm:p-6">
-      {/* Header Container */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6">
-        <div className="flex items-center gap-4">
-          <div className="p-3.5 bg-brand-cyan/10 rounded-2xl border border-brand-cyan/20 shadow-inner shrink-0">
-            <Archive size={28} className="text-brand-cyan" />
-          </div>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                {t("settings.backups_title", "Backups")}
-              </h1>
-            </div>
-            <p className="text-sm text-gray-400 mt-1 font-medium">{t("settings.backups_subtitle", "Manage your backups.")}</p>
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <button
-            onClick={() => {
-              const fileInput = document.createElement("input");
-              fileInput.type = "file";
-              fileInput.accept = ".bac,.jsonl,.json";
-              fileInput.onchange = (e: any) => {
-                const file = e.target.files[0];
-                if (file) {
-                  uploadBackup(file);
-                }
-              };
-              fileInput.click();
-            }}
-            disabled={loading}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-brand-cyan/10 hover:bg-brand-cyan text-brand-cyan hover:text-white border border-brand-cyan/20 hover:border-brand-cyan py-2 px-4 rounded-xl font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-inner"
-          >
-            {loading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
+    <Page className="pt-4 sm:px-6 sm:pt-6">
+      <PageHeader
+        icon={<Archive size={28} />}
+        title={t("settings.backups_title", "Backups")}
+        description={t("settings.backups_subtitle", "Manage your backups.")}
+        actions={
+          <Button onClick={pickBackupFile} loading={loading} className="w-full md:w-auto">
+            {!loading && <Upload size={16} />}
             {t("common.upload", "Upload Backup")}
-          </button>
-        </div>
-      </div>
+          </Button>
+        }
+      />
 
-      {/* Main Table Container */}
-      <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col relative min-h-[400px]">
-        {/* Loading Overlay */}
+      <Card padding="none" className="relative min-h-[400px] flex flex-col">
         {loading && (
-          <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
-            <Loader2 size={40} className="text-brand-cyan animate-spin mb-3" />
-            <span className="text-sm font-bold text-gray-300">{t("common.loading", "Loading")}</span>
+          <div className="absolute inset-0 z-20 bg-surface/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3 animate-in fade-in">
+            <Spinner size={40} tone="primary" />
+            <span className="text-sm font-bold text-gray-200">{t("common.loading", "Loading")}</span>
           </div>
         )}
 
-        {/* Error Overlay */}
         {error && (
-          <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in p-6">
-            <AlertCircle size={40} className="text-brand-rose mb-3" />
-            <span className="text-lg font-bold text-brand-rose mb-1">
-              {t("settings.backups_error_load", "Failed to load data")}
-            </span>
+          <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center gap-1 p-6 animate-in fade-in">
+            <AlertCircle size={40} className="text-danger mb-2" />
+            <span className="text-lg font-bold text-danger">{t("settings.backups_error_load", "Failed to load data")}</span>
             <span className="text-sm text-gray-400 text-center max-w-md">{error}</span>
           </div>
         )}
 
         {/* Mobile: card list */}
-        <div className="md:hidden flex-1 divide-y divide-border">
-          {!loading && backups.length === 0 ? (
-            <div className="p-12 text-center text-gray-500">
-              <Archive size={40} className="mx-auto mb-3 opacity-20" />
-              <span className="font-medium">{t("settings.backups_empty_title", "No backups found")}</span>
-              <p className="text-sm mt-1">{t("settings.backups_empty_desc", "No backups have been created yet.")}</p>
-            </div>
-          ) : (
-            backups.map((backup) => (
-              <div key={backup.fileName} className="p-4 flex flex-col gap-3">
-                <div className="min-w-0">
-                  <div className="text-sm font-bold text-gray-200 break-all">{backup.fileName}</div>
-                  <div className="text-xs text-gray-500 mt-1">
-                    {formatBackupDate(backup)} &middot; {backup.size.formatBytes()}
+        <div className="md:hidden flex-1 divide-y divide-border/50">
+          {!loading && backups.length === 0
+            ? empty
+            : backups.map((backup) => (
+                <div key={backup.fileName} className="p-4 flex flex-col gap-3">
+                  <div className="min-w-0">
+                    <div className="text-sm font-bold text-gray-200 break-all">{backup.fileName}</div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {formatBackupDate(backup)} &middot; {backup.size.formatBytes()}
+                    </div>
                   </div>
+                  <div className="flex items-center gap-2">{renderActions(backup)}</div>
                 </div>
-                <div className="flex items-center gap-2">{renderActions(backup)}</div>
-              </div>
-            ))
-          )}
+              ))}
         </div>
 
-        <div className="hidden md:block overflow-x-auto custom-scrollbar flex-1">
-          <table className="w-full text-left border-collapse whitespace-nowrap">
-            <thead>
-              <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
-                <th className="p-3 w-32">{t("common.title", "File")}</th>
-                <th className="p-3 w-48">{t("common.date", "Date")}</th>
-                <th className="p-3 w-32">{t("common.size", "Size")}</th>
-                <th className="p-3 w-64">{t("common.actions", "Actions")}</th>
+        <Table wrapperClassName="hidden md:block flex-1" className="whitespace-nowrap">
+          <TableHead>
+            <Th className="w-32">{t("common.title", "File")}</Th>
+            <Th className="w-48">{t("common.date", "Date")}</Th>
+            <Th className="w-32">{t("common.size", "Size")}</Th>
+            <Th className="w-64">{t("common.actions", "Actions")}</Th>
+          </TableHead>
+          <TableBody>
+            {!loading && backups.length === 0 ? (
+              <tr>
+                <td colSpan={4}>{empty}</td>
               </tr>
-            </thead>
-
-            <tbody>
-              {!loading && backups.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="p-16 text-center text-gray-500">
-                    <Archive size={48} className="mx-auto mb-4 opacity-20" />
-                    <span className="font-medium text-lg">{t("settings.backups_empty_title", "No backups found")}</span>
-                    <p className="text-sm mt-1">{t("settings.backups_empty_desc", "No backups have been created yet.")}</p>
-                  </td>
-                </tr>
-              ) : (
-                backups.map((backup) => {
-                  const formattedDate = formatBackupDate(backup);
-                  return (
-                    <tr key={backup.fileName} className={`border-b border-border transition-colors hover:bg-surface-hover`}>
-                      <td className="p-3 text-sm font-bold text-gray-200">{backup.fileName}</td>
-                      <td className="p-3 text-sm font-bold text-gray-200">{formattedDate}</td>
-                      <td className="p-3 text-sm font-bold text-gray-200">{backup.size.formatBytes()}</td>
-
-                      {/* Actions */}
-                      <td className="p-3 text-sm font-bold text-gray-200">
-                        {<div className="flex items-end gap-2">{renderActions(backup)}</div>}
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+            ) : (
+              backups.map((backup) => (
+                <Tr key={backup.fileName}>
+                  <Td className="font-bold">{backup.fileName}</Td>
+                  <Td>{formatBackupDate(backup)}</Td>
+                  <Td>{backup.size.formatBytes()}</Td>
+                  <Td>
+                    <div className="flex items-center gap-2">{renderActions(backup)}</div>
+                  </Td>
+                </Tr>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </Card>
+    </Page>
   );
 }
