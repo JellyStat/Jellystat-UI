@@ -33,11 +33,11 @@ export default function ConfirmDialog({
         <ModalHeader icon={<Icon size={22} />} iconTone={tone} title={title} />
         <p className="-mt-2 mb-6 text-sm text-gray-400 font-medium">{description}</p>
         <ModalFooter>
-          <Button variant={tone} onClick={() => onResult(true)}>
-            {confirmText}
-          </Button>
           <Button variant="secondary" onClick={() => onResult(false)}>
             {cancelText}
+          </Button>
+          <Button variant={tone} onClick={() => onResult(true)}>
+            {confirmText}
           </Button>
         </ModalFooter>
       </ModalPanel>

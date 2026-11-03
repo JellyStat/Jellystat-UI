@@ -78,6 +78,8 @@ export function ModalHeader({
   );
 }
 
+// Put Cancel first and the primary action last: primary lands on the right on desktop
+// and on top on mobile (flex-col-reverse).
 export function ModalFooter({ className, ...rest }: ComponentProps<'div'>) {
   return (
     <div

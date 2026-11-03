@@ -207,11 +207,11 @@ export default function UpdateUserModal({ userId, onClose, onCreated }: Props) {
           {error && <ErrorAlert>{error}</ErrorAlert>}
 
           <ModalFooter>
-            <Button type="submit" loading={loading} disabled={!passwordEntered && !serverChanged}>
-              {loading ? t("settings.updating_user", "Updating") : t("settings.update_user", "Update")}
-            </Button>
             <Button variant="secondary" onClick={onClose} disabled={loading}>
               {t("common.cancel", "Cancel")}
+            </Button>
+            <Button type="submit" loading={loading} disabled={!passwordEntered && !serverChanged}>
+              {loading ? t("settings.updating_user", "Updating") : t("settings.update_user", "Update")}
             </Button>
           </ModalFooter>
         </form>

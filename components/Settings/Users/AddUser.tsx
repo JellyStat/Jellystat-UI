@@ -98,11 +98,11 @@ export default function AddUserModal({ onClose, onCreated }: Props) {
         {error && <ErrorAlert>{error}</ErrorAlert>}
 
         <ModalFooter>
-          <Button type="submit" loading={loading} disabled={!username.trim() || !password.trim()}>
-            {loading ? t("settings.creating_user", "Creating") : t("settings.create_user", "Create")}
-          </Button>
           <Button variant="secondary" onClick={onClose} disabled={loading}>
             {t("common.cancel", "Cancel")}
+          </Button>
+          <Button type="submit" loading={loading} disabled={!username.trim() || !password.trim()}>
+            {loading ? t("settings.creating_user", "Creating") : t("settings.create_user", "Create")}
           </Button>
         </ModalFooter>
       </form>
