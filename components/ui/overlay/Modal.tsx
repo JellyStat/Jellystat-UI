@@ -30,6 +30,8 @@ const sizeClass = {
   md: 'max-w-lg', // forms
   lg: 'max-w-2xl', // detail views
   xl: 'max-w-4xl', // data-heavy views
+  // Full-height workspace (search and pick); content should manage its own scrolling.
+  workspace: 'max-w-6xl h-[92dvh] sm:h-[85vh] flex flex-col gap-4',
 } as const;
 
 export type ModalPanelProps = ComponentProps<typeof DialogPanel> & {
@@ -45,6 +47,17 @@ export function ModalPanel({ size = 'md', className, ...rest }: ModalPanelProps)
         sizeClass[size],
         className
       )}
+      {...rest}
+    />
+  );
+}
+
+// The dialog's accessible title, for panels that build their own header instead of ModalHeader.
+export function ModalTitle({ className, ...rest }: ComponentProps<'h2'>) {
+  return (
+    <DialogTitle
+      as="h2"
+      className={cn('text-xl font-black text-white tracking-tight', className)}
       {...rest}
     />
   );

@@ -137,6 +137,7 @@ Plain `shadow`, `shadow-sm`, `shadow-md` and `shadow-xl` fold into the nearest o
 
 ### 2.8 Overlays
 - **Modal sizes:** `sm` = `max-w-md` (confirmations), `md` = `max-w-lg` (forms, the default), `lg` = `max-w-2xl` (detail views), `xl` = `max-w-4xl` (data-heavy views, e.g. the activity match dialog).
+- **Footer order:** Cancel first, primary action last. With `ModalFooter` that puts the primary action on the right on desktop and on top on mobile.
 - **Focus:** always `focus-visible:ring-1 focus-visible:ring-primary` (`ring-danger` when in an error state). No ring offsets. With purple primary, the 19 inputs that focus cyan today will focus purple, so focus matches the main action colour.
 
 ---

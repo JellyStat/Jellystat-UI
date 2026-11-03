@@ -1,11 +1,23 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { AlertCircle, ArrowLeftRight, ArrowRight, ChevronRight, Film, Loader2, Save, Search, Trash2, Tv } from "lucide-react";
+import { AlertCircle, ArrowLeftRight, ArrowRight, ChevronRight, Film, Save, Search, Trash2, Tv } from "lucide-react";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
 import { DefaultSelectedItem, SelectAsync } from "@/components/SelectAsync";
+import {
+  Button,
+  buttonClass,
+  Card,
+  cn,
+  EmptyState,
+  IconButton,
+  Page,
+  PageHeader,
+  Pagination,
+  Spinner,
+} from "@/components/ui";
 import client from "@/lib/api";
 import { ActivityMigrationModel } from "@/lib/models/ActivityMigrationModel";
 import Activity from "@/lib/models/activity";
@@ -30,12 +42,12 @@ function ItemLabel({ item }: { item: ItemsWithParentData }) {
   return (
     <>
       {code && (
-        <span className="shrink-0 font-mono text-[11px] font-bold text-gray-300 bg-surface-hover border border-border rounded-md px-1.5 py-0.5">
+        <span className="shrink-0 font-mono text-[11px] font-bold text-gray-200 bg-surface-raised border border-border rounded-lg px-1.5 py-0.5">
           {code}
         </span>
       )}
       <span className="truncate">{item.name}</span>
-      {item.library?.name && <span className="shrink-0 text-[11px] font-normal text-gray-400">· {item.library.name}</span>}
+      {item.library?.name && <span className="shrink-0 text-[11px] font-medium text-gray-400">· {item.library.name}</span>}
     </>
   );
 }
@@ -349,7 +361,7 @@ export default function ActivityMigrationPage() {
         close();
         setDialog({ activity, target, groupChildren });
       }}
-      className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold text-brand-cyan hover:bg-surface-hover transition-colors cursor-pointer"
+      className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold text-accent hover:bg-surface-hover transition-colors cursor-pointer"
     >
       <Search size={14} />
       {t("settings.migration_search_all", "Search all libraries…")}
@@ -357,18 +369,18 @@ export default function ActivityMigrationPage() {
   );
 
   const searchButton = (activity: Activity, target: MatchTarget, groupChildren?: Activity[]) => (
-    <button
+    <IconButton
+      variant="bordered"
       onClick={() => setDialog({ activity, target, groupChildren })}
-      aria-label={t("settings.migration_search_for", "Search for {{name}}", {
+      label={t("settings.migration_search_for", "Search for {{name}}", {
         name: target === "series" ? activity.seriesName : activity.name,
       })}
-      className="p-2 rounded-lg bg-background hover:bg-brand-cyan/20 text-gray-400 hover:text-brand-cyan border border-border hover:border-brand-cyan/50 transition-all flex cursor-pointer"
     >
       <Search size={16} />
-    </button>
+    </IconButton>
   );
 
-  const checkboxClass = "w-4 h-4 accent-brand-cyan cursor-pointer";
+  const checkboxClass = "size-4 accent-primary cursor-pointer";
 
   // --- SHARED CELLS (used by both the desktop table and the mobile cards) ---
   function rowCheckbox(activity: Activity) {
@@ -448,7 +460,7 @@ export default function ActivityMigrationPage() {
       <>
         <MigrationStatusBadge status={migration.status} error={migration.errorMessage} />
         {migration.errorMessage && (
-          <p className="mt-1 text-xs text-rose-400 max-w-40 whitespace-normal">{migration.errorMessage}</p>
+          <p className="mt-1 text-xs text-danger max-w-40 whitespace-normal">{migration.errorMessage}</p>
         )}
       </>
     );
@@ -459,17 +471,17 @@ export default function ActivityMigrationPage() {
     const candidates = seriesCandidates[group.seriesName] ?? 0;
     return (
       <div className="flex items-center gap-2 min-w-0">
-        <button
+        <IconButton
           onClick={() => setCollapsed((prev) => ({ ...prev, [group.key]: isOpen }))}
           aria-expanded={isOpen}
-          aria-label={t("settings.migration_toggle_series", "Show episodes of {{name}}", { name: group.seriesName })}
-          className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-surface-hover transition-colors cursor-pointer shrink-0"
+          label={t("settings.migration_toggle_series", "Show episodes of {{name}}", { name: group.seriesName })}
+          className="p-1 shrink-0"
         >
-          <ChevronRight size={16} className={`transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`} />
-        </button>
-        <Tv size={18} className="text-brand-purple shrink-0" />
+          <ChevronRight size={16} className={cn("transition-transform duration-200", isOpen && "rotate-90")} />
+        </IconButton>
+        <Tv size={18} className="text-primary shrink-0" />
         <div className="min-w-0">
-          <div className="text-[15px] font-black text-white tracking-tight truncate">{group.seriesName}</div>
+          <div className="text-sm font-bold text-white truncate">{group.seriesName}</div>
           <div className="text-xs font-medium text-gray-500">
             {t("settings.migration_unlinked_count", "{{count}} unlinked", { count: group.children.length })}
             {candidates > 1 &&
@@ -488,21 +500,21 @@ export default function ActivityMigrationPage() {
     return (
       <tr
         key={activity.id}
-        className={`border-b border-border transition-colors hover:bg-surface-hover ${isSelected(activity) ? "bg-brand-cyan/5" : ""}`}
+        className={cn("border-b border-border/50 transition-colors hover:bg-surface-hover", isSelected(activity) && "bg-primary/5")}
       >
-        <td className="p-3 text-center">{rowCheckbox(activity)}</td>
-        <td className={`p-3 ${indent ? "pl-16" : ""}`}>
+        <td className="px-4 py-3 text-center">{rowCheckbox(activity)}</td>
+        <td className={cn("px-4 py-3", indent && "pl-16")}>
           <div className="flex items-center gap-2 min-w-0">
-            {!indent && <Film size={18} className="text-brand-cyan shrink-0 ml-9" />}
+            {!indent && <Film size={18} className="text-accent shrink-0 ml-9" />}
             <span className="text-sm font-bold text-gray-200 truncate">{activity.name}</span>
           </div>
         </td>
-        <td className="text-gray-600" aria-hidden="true">
+        <td className="text-gray-500" aria-hidden="true">
           <ArrowRight size={16} className="mx-auto" />
         </td>
-        <td className="p-2 px-3">{itemSelect(activity)}</td>
-        <td className="p-3">{itemStatus(activity)}</td>
-        <td className="p-3">
+        <td className="px-4 py-2">{itemSelect(activity)}</td>
+        <td className="px-4 py-3">{itemStatus(activity)}</td>
+        <td className="px-4 py-3">
           <div className="flex justify-end">{searchButton(activity, "item")}</div>
         </td>
       </tr>
@@ -513,17 +525,17 @@ export default function ActivityMigrationPage() {
     const seriesItem = groupSeriesItem(group);
     return (
       <tbody key={group.key}>
-        <tr className="border-b border-border bg-surface-hover/35 hover:bg-surface-hover transition-colors">
-          <td className="p-3 text-center">{groupCheckbox(group)}</td>
-          <td className="p-3">{seriesInfo(group)}</td>
-          <td className="text-gray-600" aria-hidden="true">
+        <tr className="border-b border-border/50 bg-surface-raised hover:bg-surface-hover transition-colors">
+          <td className="px-4 py-3 text-center">{groupCheckbox(group)}</td>
+          <td className="px-4 py-3">{seriesInfo(group)}</td>
+          <td className="text-gray-500" aria-hidden="true">
             <ArrowRight size={16} className="mx-auto" />
           </td>
-          <td className="p-2 px-3">{seriesSelect(group, seriesItem)}</td>
-          <td className="p-3">
+          <td className="px-4 py-2">{seriesSelect(group, seriesItem)}</td>
+          <td className="px-4 py-3">
             <MigrationStatusBadge status={seriesItem ? "ready" : "notLinked"} />
           </td>
-          <td className="p-3">
+          <td className="px-4 py-3">
             <div className="flex justify-end">{searchButton(group.children[0], "series", group.children)}</div>
           </td>
         </tr>
@@ -537,11 +549,15 @@ export default function ActivityMigrationPage() {
     return (
       <div
         key={activity.id}
-        className={`flex flex-col gap-3 ${nested ? "py-3 pl-3 border-l-2 border-border" : "p-4"} ${isSelected(activity) ? "bg-brand-cyan/5" : ""}`}
+        className={cn(
+          "flex flex-col gap-3",
+          nested ? "py-3 pl-3 border-l-2 border-border" : "p-4",
+          isSelected(activity) && "bg-primary/5",
+        )}
       >
         <div className="flex items-start gap-3">
           <div className="pt-0.5">{rowCheckbox(activity)}</div>
-          {!nested && <Film size={18} className="text-brand-cyan shrink-0 mt-0.5" />}
+          {!nested && <Film size={18} className="text-accent shrink-0 mt-0.5" />}
           <span className="flex-1 min-w-0 text-sm font-bold text-gray-200 break-words">{activity.name}</span>
           <div className="shrink-0 text-right">{itemStatus(activity)}</div>
         </div>
@@ -556,7 +572,7 @@ export default function ActivityMigrationPage() {
   function renderSeriesCard(group: SeriesGroup) {
     const seriesItem = groupSeriesItem(group);
     return (
-      <div key={group.key} className="p-4 flex flex-col gap-3 bg-surface-hover/35">
+      <div key={group.key} className="p-4 flex flex-col gap-3 bg-surface-raised">
         <div className="flex items-start gap-3">
           <div className="pt-1.5">{groupCheckbox(group)}</div>
           <div className="flex-1 min-w-0">{seriesInfo(group)}</div>
@@ -578,44 +594,30 @@ export default function ActivityMigrationPage() {
   const hasFilters = !!search || typeFilter !== "all" || statusFilter !== "all";
 
   const emptyState = (
-    <div className="p-10 sm:p-16 text-center text-gray-500">
-      <ArrowLeftRight size={48} className="mx-auto mb-4 opacity-20" />
-      <span className="font-medium text-lg">
-        {hasFilters
+    <EmptyState
+      bordered={false}
+      Icon={ArrowLeftRight}
+      title={
+        hasFilters
           ? t("settings.migration_no_results", "Nothing matches these filters")
-          : t("settings.migration_empty_title", "No unlinked activity found")}
-      </span>
-      {!hasFilters && (
-        <p className="text-sm mt-1">{t("settings.migration_empty_desc", "All your watch history is successfully mapped.")}</p>
-      )}
-    </div>
+          : t("settings.migration_empty_title", "No unlinked activity found")
+      }
+      message={!hasFilters ? t("settings.migration_empty_desc", "All your watch history is successfully mapped.") : undefined}
+    />
   );
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 py-4 sm:p-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6">
-        <div className="flex items-center gap-4">
-          <div className="p-3.5 bg-brand-purple/10 rounded-2xl border border-brand-purple/20 shadow-inner shrink-0">
-            <ArrowLeftRight size={28} className="text-brand-purple" />
-          </div>
-          <div>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                {t("settings.migration_title", "Activity Migration")}
-              </h1>
-            </div>
-            <p className="text-sm text-gray-400 mt-1 font-medium">
-              {t("settings.migration_subtitle", "Map unlinked playback activity to valid library items.")}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 w-full md:w-auto">
+    <Page className="pt-4 sm:px-6 sm:pt-6">
+      <PageHeader
+        icon={<ArrowLeftRight size={28} />}
+        title={t("settings.migration_title", "Activity Migration")}
+        description={t("settings.migration_subtitle", "Map unlinked playback activity to valid library items.")}
+        actions={
+          <div className="flex items-center gap-3 w-full md:w-auto">
           <ConfirmationDialogButton
             buttonElement={
               <>
-                {deleteLoading ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                {deleteLoading ? <Spinner size={16} /> : <Trash2 size={16} />}
                 {t("common.delete", "Delete")} {selectedList.length > 0 && `(${selectedList.length})`}
               </>
             }
@@ -630,21 +632,23 @@ export default function ActivityMigrationPage() {
             tone="danger"
             disabled={selectedList.length === 0 || deleteLoading}
             onConfirm={deleteActivity}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-brand-rose/10 hover:bg-brand-rose text-brand-rose hover:text-white border border-brand-rose/20 hover:border-brand-rose py-2 px-4 rounded-xl font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-inner"
+            className={buttonClass({ variant: "dangerSoft" }, "flex-1 md:flex-none")}
           />
 
-          <button
+          <Button
             onClick={applyMigrations}
-            disabled={applicable.length === 0 || migrationLoading}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-brand-cyan text-black hover:bg-brand-cyan/90 py-2 px-6 rounded-xl font-black transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-lg shadow-brand-cyan/20 active:scale-95 cursor-pointer"
+            loading={migrationLoading}
+            disabled={applicable.length === 0}
+            className="flex-1 md:flex-none"
           >
-            {migrationLoading ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
+            {!migrationLoading && <Save size={16} />}
             {applicable.length > 0
               ? t("settings.migration_apply_count", "Apply {{count}} Migrations", { count: applicable.length })
               : t("settings.migration_apply", "Apply Migrations")}
-          </button>
-        </div>
-      </div>
+          </Button>
+          </div>
+        }
+      />
 
       <MigrationToolbar
         status={statusFilter}
@@ -656,18 +660,18 @@ export default function ActivityMigrationPage() {
       />
 
       {/* Table */}
-      <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col relative min-h-[400px]">
+      <Card padding="none" className="flex flex-col relative min-h-[400px]">
         {loading && (
-          <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
-            <Loader2 size={40} className="text-brand-purple animate-spin mb-3" />
-            <span className="text-sm font-bold text-gray-300">{t("settings.migration_scanning", "Scanning activity...")}</span>
+          <div className="absolute inset-0 z-20 bg-surface/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3 animate-in fade-in">
+            <Spinner size={40} tone="primary" />
+            <span className="text-sm font-bold text-gray-200">{t("settings.migration_scanning", "Scanning activity...")}</span>
           </div>
         )}
 
         {error && (
-          <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in p-6">
-            <AlertCircle size={40} className="text-brand-rose mb-3" />
-            <span className="text-lg font-bold text-brand-rose mb-1">{t("common.failed_to_load", "Failed to load data")}</span>
+          <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center gap-1 animate-in fade-in p-6">
+            <AlertCircle size={40} className="text-danger mb-2" />
+            <span className="text-lg font-bold text-danger">{t("common.failed_to_load", "Failed to load data")}</span>
             <span className="text-sm text-gray-400 text-center max-w-md">{error}</span>
           </div>
         )}
@@ -675,7 +679,7 @@ export default function ActivityMigrationPage() {
         {/* Mobile: cards */}
         <div className="md:hidden flex-1 flex flex-col">
           {groups.length > 0 && (
-            <label className="flex items-center gap-3 px-4 py-3 bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none cursor-pointer">
+            <label className="flex items-center gap-3 px-4 py-3 bg-background border-b border-border text-xs font-bold text-gray-400 uppercase tracking-wider select-none cursor-pointer">
               <input
                 type="checkbox"
                 className={checkboxClass}
@@ -688,7 +692,7 @@ export default function ActivityMigrationPage() {
           {!loading && groups.length === 0 ? (
             emptyState
           ) : (
-            <div className="divide-y divide-border">
+            <div className="divide-y divide-border/50">
               {groups.map((group) => (group.kind === "series" ? renderSeriesCard(group) : renderItemCard(group.activity, false)))}
             </div>
           )}
@@ -706,8 +710,8 @@ export default function ActivityMigrationPage() {
               <col className="w-16" />
             </colgroup>
             <thead>
-              <tr className="bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
-                <th className="p-3 text-center">
+              <tr className="bg-background border-b border-border text-xs font-bold text-gray-400 uppercase tracking-wider select-none">
+                <th className="px-4 py-3 text-center">
                   <input
                     type="checkbox"
                     className={checkboxClass}
@@ -716,11 +720,11 @@ export default function ActivityMigrationPage() {
                     aria-label={t("settings.migration_select_page", "Select all on this page")}
                   />
                 </th>
-                <th className="p-3">{t("settings.migration_col_unlinked", "Unlinked Activity")}</th>
+                <th className="px-4 py-3">{t("settings.migration_col_unlinked", "Unlinked Activity")}</th>
                 <th aria-hidden="true"></th>
-                <th className="p-3">{t("settings.migration_col_linked", "Linked Item")}</th>
-                <th className="p-3">{t("settings.migration_col_status", "Status")}</th>
-                <th className="p-3">
+                <th className="px-4 py-3">{t("settings.migration_col_linked", "Linked Item")}</th>
+                <th className="px-4 py-3">{t("settings.migration_col_status", "Status")}</th>
+                <th className="px-4 py-3">
                   <span className="sr-only">{t("common.actions", "Actions")}</span>
                 </th>
               </tr>
@@ -744,36 +748,25 @@ export default function ActivityMigrationPage() {
           </table>
         </div>
 
-        {/* Pagination */}
-        <div className="bg-background/80 border-t border-border p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+        <Pagination
+          className="shrink-0"
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          summary={
+            <>
               {t("settings.migration_total_unlinked", "Total Unlinked:")} <span className="text-white">{totalCount}</span>
-            </span>
-          </div>
-          <div className="flex items-center gap-4 ml-auto">
-            <span className="text-xs font-mono text-gray-400 whitespace-nowrap">
-              {t("common.page_info", "Page {{page}} of {{totalPages}}", { page, totalPages })}
-            </span>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
-              >
-                {t("common.prev", "Prev")}
-              </button>
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
-              >
-                {t("common.next", "Next")}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+            </>
+          }
+          labels={{
+            first: t("common.first", "First"),
+            prev: t("common.prev", "Prev"),
+            next: t("common.next", "Next"),
+            last: t("common.last", "Last"),
+            pageOf: t("common.page_info", "Page {{page}} of {{totalPages}}", { page, totalPages }),
+          }}
+        />
+      </Card>
 
       <ActivityMatchDialog
         open={dialog !== null}
@@ -783,6 +776,6 @@ export default function ActivityMigrationPage() {
         seriesItem={dialog ? migrationFor(dialog.activity).seriesItem : null}
         onLink={onDialogLink}
       />
-    </div>
+    </Page>
   );
 }

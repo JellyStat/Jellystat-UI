@@ -27,6 +27,11 @@ export {
 } from './primitives/StatusIndicator';
 
 export { default as DateRangePicker, type DateRangePickerProps } from './inputs/DateRangePicker';
+export {
+  default as SegmentedControl,
+  type SegmentedControlProps,
+  type SegmentedOption,
+} from './inputs/SegmentedControl';
 export { default as Select, type SelectOption, type SelectProps } from './inputs/Select';
 
 export { default as Card, type CardProps } from './layout/Card';
@@ -40,6 +45,7 @@ export {
   ModalFooter,
   ModalHeader,
   ModalPanel,
+  ModalTitle,
   type ModalHeaderProps,
   type ModalPanelProps,
   type ModalProps,
