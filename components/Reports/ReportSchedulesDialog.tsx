@@ -7,7 +7,7 @@ import { formatDateTime } from "@/lib/dateFormat";
 import type { ExportFormat, ReportParameter, ReportSchedule, WebhookType } from "@/lib/models/reports";
 import { Field, NumberInput, Select, TextInput, Toggle } from "./designer/controls";
 import ParameterInput from "./ParameterInput";
-import { Modal, ModalPanel, ModalTitle, Spinner } from "@/components/ui";
+import { Badge, Modal, ModalPanel, ModalTitle, Spinner } from "@/components/ui";
 
 interface Props {
   reportId: string;
@@ -161,14 +161,9 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                         <div className="flex items-center gap-2">
                           <Webhook size={14} className="text-accent shrink-0" />
                           <span className="font-bold text-sm text-white truncate">{s.name}</span>
-                          <span
-                            className={clsx(
-                              "text-[10px] uppercase tracking-wider px-1.5 rounded border",
-                              s.enabled ? "text-success border-success/30" : "text-gray-500 border-border",
-                            )}
-                          >
+                          <Badge tone={s.enabled ? "primary" : "neutral"} shape="square">
                             {s.enabled ? "on" : "off"}
-                          </span>
+                          </Badge>
                         </div>
                         <div className="text-xs text-gray-500 mt-1 flex flex-wrap gap-x-3">
                           <span>

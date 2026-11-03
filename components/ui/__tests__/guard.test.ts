@@ -64,6 +64,10 @@ const rules: Rule[] = [
       /\b(?:(?:group-|peer-)?focus(?:-visible|-within)?|data-open|data-focus):(?:border|ring|text|outline|bg)-(?:accent|brand-cyan)\b/,
   },
   {
+    name: 'use the kit Switch for on/off controls (one look: purple when on)',
+    pattern: /role=["']switch["']/,
+  },
+  {
     name: 'use <Link> or <button>, not router.push on a div/span/p/h* (keyboard users cannot reach it)',
     pattern: /<(?:div|span|p|h[1-6])\b[^>]*onClick=\{\(\) => router\.push/,
   },

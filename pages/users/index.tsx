@@ -12,7 +12,7 @@ import useFilters from "@/components/DataTableFilters/useFilters";
 import TextFilter from "@/components/DataTableFilters/TextFilter";
 import BooleanFilter from "@/components/DataTableFilters/BooleanFilter";
 import FilterItem from "@/components/DataTableFilters/FilterItem";
-import { PageHeader, SortableTh, Spinner } from "@/components/ui";
+import { PageHeader, SortableTh, Spinner, Switch } from "@/components/ui";
 
 interface SortStatus {
   columnAccessor: string;
@@ -161,21 +161,11 @@ export default function UsersPage() {
   );
 
   const renderTrackedToggle = (user: TrackedUsers) => (
-    <button
-      onClick={() => toggleUserTracking(user.id, !user.tracked)}
-      role="switch"
-      aria-checked={user.tracked}
-      aria-label={t("common.tracked", "Tracked")}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
-        user.tracked ? "bg-success" : "bg-surface border border-border"
-      }`}
-    >
-      <span
-        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-          user.tracked ? "translate-x-6 shadow-md" : "translate-x-1 opacity-70"
-        }`}
-      />
-    </button>
+    <Switch
+      checked={!!user.tracked}
+      onChange={(checked) => toggleUserTracking(user.id, checked)}
+      label={<span className="sr-only">{t("common.tracked", "Tracked")}</span>}
+    />
   );
 
   return (
