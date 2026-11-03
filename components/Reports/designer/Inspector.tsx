@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useContext, useRef } from "react";
 import { toast } from "sonner";
+import i18next from "i18next";
 import type { ReportChartOptions, ReportElement, ReportElementStyle, ReportTableColumn, ReportTableOptions } from "@/lib/models/reports";
 import { dataSourceColumns } from "@/lib/reports/columns";
 import { DEFAULT_PALETTE, defaultChartOptions, defaultTableOptions, PAGE_PRESETS } from "@/lib/reports/defaults";
@@ -874,7 +875,7 @@ function ImageContent({ e }: { e: ReportElement }) {
                 return;
               }
               if (file.size > MAX_IMAGE_BYTES) {
-                toast.error("Images must be 5 MB or smaller");
+                toast.error(i18next.t("reports.designer_image_too_big", "Images must be 5 MB or smaller"));
                 return;
               }
               const reader = new FileReader();

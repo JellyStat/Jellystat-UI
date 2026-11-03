@@ -34,6 +34,7 @@ import { useRouter } from "next/router";
 import { createPortal } from "react-dom";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import i18next from "i18next";
 import { ConfirmDialog, Spinner } from "@/components/ui";
 import client from "@/lib/api";
 import type { ReportDataResult, ReportDefinition, ReportImportResult, ReportRenderModel } from "@/lib/models/reports";
@@ -187,7 +188,7 @@ function DesignerShell() {
   const save = useCallback(async () => {
     const name = state.doc.name.trim();
     if (!name) {
-      toast.error("Give the report a name first (Report section, with nothing selected)");
+      toast.error(i18next.t("reports.designer_name_required", "Give the report a name first (Report section, with nothing selected)"));
       return;
     }
     setSaving(true);
@@ -199,14 +200,14 @@ function DesignerShell() {
         definition,
       });
       designer.markSaved(saved.id);
-      toast.success("Report saved");
+      toast.success(i18next.t("reports.designer_saved", "Report saved"));
       if (router.query.id !== saved.id) {
         void router.replace({ pathname: "/reports/designer", query: { id: saved.id } }, undefined, {
           shallow: true,
         });
       }
     } catch (err: any) {
-      toast.error(err?.message ?? "Failed to save the report");
+      toast.error(err?.message ?? i18next.t("reports.save_failed", "Failed to save the report"));
     } finally {
       setSaving(false);
     }
@@ -435,7 +436,7 @@ function DesignerShell() {
         downloadBlob(blob, exportFileName(name, format));
       }
     } catch (err: any) {
-      toast.error(err?.message ?? "Export failed");
+      toast.error(err?.message ?? i18next.t("reports.export_failed", "Export failed"));
     } finally {
       setExporting(null);
     }
@@ -456,7 +457,7 @@ function DesignerShell() {
       },
       { pageIndex: 0, selection: [] },
     );
-    toast.success("Report definition imported");
+    toast.success(i18next.t("reports.designer_imported", "Report definition imported"));
   };
 
   const importDefinition = async (file: File) => {
@@ -468,7 +469,7 @@ function DesignerShell() {
         setImportReview({ fileName: file.name, result });
       }
     } catch (err: any) {
-      toast.error(err?.message ?? "Failed to check the file");
+      toast.error(err?.message ?? i18next.t("reports.check_file_failed", "Failed to check the file"));
     }
   };
 
@@ -786,7 +787,7 @@ export default function ReportDesigner({ initial }: { initial: DesignerDoc }) {
   useEffect(() => {
     client.Reports.capabilities()
       .then(setCaps)
-      .catch((err) => toast.error(err?.message ?? "Failed to load report fields"));
+      .catch((err) => toast.error(err?.message ?? i18next.t("reports.fields_load_failed", "Failed to load report fields")));
   }, []);
 
   // Rendered on <body> so the full-screen designer sits above the app's side nav and page layout

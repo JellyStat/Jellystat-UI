@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { ChevronDown, Download, Monitor, RefreshCw, Server } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import i18next from "i18next";
 import client from "@/lib/api";
 import type { ReportRenderModel } from "@/lib/models/reports";
 import { downloadBlob, exportFileName, exportPdf, exportPng } from "@/lib/reports/clientExport";
@@ -103,7 +104,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
         downloadBlob(await client.Reports.render({ reportId, format, parameters: params }, true), exportFileName(model.name, format));
       }
     } catch (err: any) {
-      toast.error(err?.message ?? "Export failed");
+      toast.error(err?.message ?? i18next.t("reports.export_failed", "Export failed"));
     } finally {
       setExporting(false);
     }
