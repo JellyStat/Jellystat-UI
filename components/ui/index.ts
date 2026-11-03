@@ -14,7 +14,14 @@ export {
   type IconButtonProps,
   type IconButtonVariant,
 } from './primitives/IconButton';
-export { default as Input, InputAction, type InputProps } from './primitives/Input';
+export {
+  default as Input,
+  InputAction,
+  inputClass,
+  type InputActionProps,
+  type InputProps,
+  type InputSize,
+} from './primitives/Input';
 export { default as Label } from './primitives/Label';
 export { default as NumberField, type NumberFieldProps } from './primitives/NumberField';
 export { default as Skeleton } from './primitives/Skeleton';
@@ -27,6 +34,11 @@ export {
 } from './primitives/StatusIndicator';
 
 export { default as DateRangePicker, type DateRangePickerProps } from './inputs/DateRangePicker';
+export {
+  default as MultiSelect,
+  type MultiSelectOption,
+  type MultiSelectProps,
+} from './inputs/MultiSelect';
 export {
   default as SegmentedControl,
   type SegmentedControlProps,
@@ -56,6 +68,7 @@ export {
   type ConfirmDialogProps,
   type ConfirmTone,
 } from './overlay/ConfirmDialog';
+export { Popover, PopoverField, PopoverPanel, type PopoverFieldProps } from './overlay/Popover';
 
 export { default as Alert, type AlertProps, type AlertTone } from './data/Alert';
 export { default as EmptyState, type EmptyStateProps } from './data/EmptyState';

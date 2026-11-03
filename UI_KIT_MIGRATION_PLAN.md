@@ -142,7 +142,7 @@ For each file: swap the markup for the kit component, delete the class string, a
   - `ConfirmationDialogButton.tsx`: i18n wrapper over `ConfirmButton`, 9 callers
 - [x] Phase 4.1: setup + settings/Users. CreateUser, CreateServerInstance and SetupComplete share `components/Setup/SetupStep.tsx`; UpdateUser and UsersSettings are on the kit. The kit gained `Field` `hint`/`description`, the `Button` `dangerSoft` variant, and safer Modal centring. Still needs a visual check while signed in.
 - [x] Phase 4.2: remaining settings pages (Servers, API Keys, Webhooks, Library, Backups, Tasks, Activity Migration). Nothing under `components/Settings` or `components/Setup` imports headlessui directly any more. Kit additions: `Alert`, `Switch`, `Textarea`, `Checkbox`, `Pagination`, `SegmentedControl`, `ModalTitle`, IconButton variants, and Modal size `workspace`. Still needs a visual check while signed in.
-- [ ] Phase 4.3: ActivityTable + DataTableFilters
+- [x] Phase 4.3: ActivityTable + DataTableFilters, including IpLookUpModal, StreamInfoModal and LibraryFilter. Kit additions: `Input` `size="sm"` plus `inputClass()`, `Popover`/`PopoverField`/`PopoverPanel`, and `MultiSelect`. Nothing under these folders imports headlessui directly any more. Still needs a visual check while signed in.
 - [ ] Phase 4.4: stats and cards
 - [ ] Phase 4.5: page shells
 - [ ] Phase 4.6: SideNav

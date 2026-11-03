@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import FilterItem from "./FilterItem";
 import { Check, X, Minus } from "lucide-react";
 import { useDebounce } from "@/lib/hooks/useDebounce";
+import { cn, focusRing } from "@/components/ui";
 
 export default function BooleanFilter({
   keyName,
@@ -47,20 +48,28 @@ export default function BooleanFilter({
     });
   }
 
+  // Tri-state: any (null) -> yes (true) -> no (false)
   const stateStyles = {
-    null: "bg-surface border-border text-gray-500",
-    true: "bg-brand-emerald border-brand-emerald text-black",
-    false: "bg-brand-rose border-brand-rose text-white",
+    null: "bg-background border-border text-gray-500",
+    true: "bg-success border-success text-black",
+    false: "bg-danger border-danger text-white",
   };
 
   const currentState = query === null ? "null" : query ? "true" : "false";
 
   return (
     <div className="flex items-center gap-3">
-      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">{label}</span>
+      <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">{label}</span>
       <button
+        type="button"
         onClick={cycleValue}
-        className={`w-6 h-6 flex items-center justify-center rounded border transition-all duration-300 shadow-inner ${stateStyles[currentState as keyof typeof stateStyles]}`}
+        aria-label={label}
+        aria-pressed={query === null ? "mixed" : query}
+        className={cn(
+          "size-6 flex items-center justify-center rounded-lg border transition-all shadow-inner cursor-pointer",
+          stateStyles[currentState as keyof typeof stateStyles],
+          focusRing,
+        )}
       >
         {query === null && <Minus size={14} />}
         {query === true && <Check size={14} strokeWidth={3} />}

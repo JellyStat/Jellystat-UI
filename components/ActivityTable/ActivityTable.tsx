@@ -11,7 +11,6 @@ import {
   ArrowUp,
   ArrowDown,
   Search,
-  Loader2,
   Cpu,
   CheckCircle2,
   AlertCircle,
@@ -32,9 +31,19 @@ import { IpLookupModal } from "./IpLookUpModal";
 import { StreamInfoModal } from "./StreamInfoModal";
 import BooleanFilter from "../DataTableFilters/BooleanFilter";
 import NumberFilter from "../DataTableFilters/NumberFilter";
-import DropdownSelector from "../Core/DropdownSelector";
-import NumberField from "../Core/NumberField";
-import { IconButton } from "@/components/ui";
+import {
+  Badge,
+  Button,
+  buttonClass,
+  Card,
+  cn,
+  EmptyState,
+  IconButton,
+  NumberField,
+  Select,
+  SectionTitle,
+  Spinner,
+} from "@/components/ui";
 import ConfirmationDialogButton from "../Core/ConfirmationDialogButton";
 import LibraryFilter from "./LibraryFilter";
 import permissionsManager from "@/lib/permissionsManager";
@@ -273,7 +282,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
 
   // Hidden until the row is hovered or the box is ticked; always shown on touch screens (no hover)
   const checkboxClass =
-    "w-4 h-4 cursor-pointer accent-brand-rose transition-opacity opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100 checked:opacity-100 indeterminate:opacity-100 [@media(hover:none)]:opacity-100";
+    "size-4 cursor-pointer accent-primary transition-opacity opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100 checked:opacity-100 indeterminate:opacity-100 [@media(hover:none)]:opacity-100";
 
   const renderCheckbox = (entries: SelectionEntry[], label: string) => {
     const checked = entries.length > 0 && entries.every(([id]) => isSelected(id));
@@ -300,15 +309,15 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
     if (!transcodingInfo) {
       if (isTranscoding) {
         return (
-          <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-amber bg-brand-amber/10 border border-brand-amber/20 px-2 py-0.5 rounded shadow-inner">
-            <Cpu size={10} className="mr-1" /> {t("common.transcode", "Transcode")}
-          </span>
+          <Badge tone="warning" shape="square" className="gap-1 px-2 py-0.5">
+            <Cpu size={10} /> {t("common.transcode", "Transcode")}
+          </Badge>
         );
       }
       return (
-        <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-cyan bg-brand-cyan/10 border border-brand-cyan/20 px-2 py-0.5 rounded shadow-inner">
-          <CheckCircle2 size={10} className="mr-1" /> {t("common.direct", "Direct")}
-        </span>
+        <Badge tone="accent" shape="square" className="gap-1 px-2 py-0.5">
+          <CheckCircle2 size={10} /> {t("common.direct", "Direct")}
+        </Badge>
       );
     }
 
@@ -317,9 +326,9 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
     if (transcodingInfo.isAudioDirect === false) display += " (A)";
 
     return (
-      <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider text-brand-amber bg-brand-amber/10 border border-brand-amber/20 px-2 py-0.5 rounded shadow-inner">
-        <Cpu size={10} className="mr-1" /> {display}
-      </span>
+      <Badge tone="warning" shape="square" className="gap-1 px-2 py-0.5">
+        <Cpu size={10} /> {display}
+      </Badge>
     );
   };
 
@@ -330,7 +339,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
     return (
       <tr
         key={activity.id}
-        className={`group/row border-b border-border transition-colors hover:bg-surface-hover ${isSubRow ? "bg-background/40" : "bg-transparent"}`}
+        className={cn("group/row border-b border-border/50 transition-colors hover:bg-surface-hover", isSubRow && "bg-background")}
       >
         {isAdmin && (
           <td className="w-10 pl-4 pr-1 text-center">
@@ -339,29 +348,31 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
         )}
         <td className={`w-12 ${isSubRow ? "text-left" : "text-center"}`}>
           {!isSubRow && hasGroup ? (
-            <button
+            <IconButton
+              label={isExpanded ? t("common.collapse", "Collapse") : t("common.expand", "Expand")}
+              aria-expanded={isExpanded}
               onClick={() => toggleRow(activity.id ?? "")}
-              className="p-1 rounded hover:bg-surface border border-transparent hover:border-border text-gray-400 hover:text-white transition-all cursor-pointer"
+              className="p-1"
             >
               {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-            </button>
+            </IconButton>
           ) : isSubRow ? (
             <div className="flex items-center justify-start ml-4">
-              <span className="inline-block w-1 h-10  bg-brand-purple rounded" />
+              <span className="inline-block w-1 h-10 bg-primary rounded-full" />
             </div>
           ) : null}
         </td>
 
-        <td className="p-3 whitespace-normal min-w-[200px] max-w-[320px]">
+        <td className="px-4 py-3 whitespace-normal min-w-[200px] max-w-[320px]">
           <Link
             href={`/users/${activity.userId}`}
-            className="text-sm font-bold text-gray-200 hover:text-brand-cyan transition-colors line-clamp-2 leading-tight"
+            className="text-sm font-bold text-gray-200 hover:text-accent transition-colors line-clamp-2 leading-tight"
             title={activity.userName}
           >
             {activity.userName}
           </Link>
         </td>
-        <td className="p-3 text-xs font-mono text-gray-500">
+        <td className="px-4 py-3 text-xs font-mono text-gray-500">
           {activity.ipAddress && isRemoteSession(activity.ipAddress) ? (
             <IpLookupModal ip={activity.ipAddress} />
           ) : (
@@ -369,26 +380,26 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           )}
         </td>
 
-        <td className="p-3 whitespace-normal min-w-[200px] max-w-[320px]">
+        <td className="px-4 py-3 whitespace-normal min-w-[200px] max-w-[320px]">
           <Link
             href={`/libraries/items/${activity.itemId}`}
-            className="text-sm font-bold text-gray-200 hover:text-brand-cyan transition-colors line-clamp-2 leading-tight"
+            className="text-sm font-bold text-gray-200 hover:text-accent transition-colors line-clamp-2 leading-tight"
             title={activity.fullName || activity.name}
           >
             {activity.fullName || activity.name}
           </Link>
         </td>
 
-        <td className="p-3">
+        <td className="px-4 py-3">
           <button
             onClick={() => openStreamModal(activity)}
-            className="text-xs text-gray-400 hover:text-brand-cyan transition-colors cursor-pointer focus:outline-none"
+            className="text-xs text-gray-400 hover:text-accent transition-colors cursor-pointer focus:outline-none"
             title={t("activity.view_stream_info", "View stream details")}
           >
             {activity.client}
           </button>
         </td>
-        <td className="p-3">
+        <td className="px-4 py-3">
           <button
             onClick={() => openStreamModal(activity)}
             className="cursor-pointer focus:outline-none"
@@ -397,15 +408,15 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
             {formatTranscode(activity)}
           </button>
         </td>
-        <td className="p-3 text-xs text-gray-400">{activity.device}</td>
+        <td className="px-4 py-3 text-xs text-gray-400">{activity.device}</td>
 
-        <td className="p-3 text-xs text-gray-400 font-mono">
+        <td className="px-4 py-3 text-xs text-gray-400 font-mono">
           {formatDateTime(activity.dateCreated) || "-"}
         </td>
 
-        <td className="p-3 text-center text-sm font-bold text-gray-200">{activity.playCount || 0}</td>
+        <td className="px-4 py-3 text-center text-sm font-bold text-gray-200">{activity.playCount || 0}</td>
 
-        <td className="p-3 text-right text-xs font-mono text-gray-400">
+        <td className="px-4 py-3 text-right text-xs font-mono text-gray-400">
           {activity.playDuration?.secondsToDurationString?.() || "-"}
         </td>
       </tr>
@@ -420,7 +431,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
     return (
       <div
         key={activity.id}
-        className={`group/row p-4 flex flex-col gap-2.5 ${isSubRow ? "bg-background/40 border-l-2 border-brand-purple ml-4" : ""}`}
+        className={`group/row p-4 flex flex-col gap-2.5 ${isSubRow ? "bg-background border-l-2 border-primary ml-4" : ""}`}
       >
         <div className="flex items-start justify-between gap-3">
           {isAdmin && (
@@ -430,7 +441,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           )}
           <Link
             href={`/libraries/items/${activity.itemId}`}
-            className="flex-1 text-sm font-bold text-gray-200 hover:text-brand-cyan transition-colors line-clamp-2 leading-tight min-w-0"
+            className="flex-1 text-sm font-bold text-gray-200 hover:text-accent transition-colors line-clamp-2 leading-tight min-w-0"
             title={activity.fullName || activity.name}
           >
             {activity.fullName || activity.name}
@@ -443,12 +454,12 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
         <div className="flex items-center gap-2 text-xs min-w-0">
           <Link
             href={`/users/${activity.userId}`}
-            className="font-bold text-brand-purple hover:text-brand-cyan transition-colors truncate"
+            className="font-bold text-primary hover:text-accent transition-colors truncate"
             title={activity.userName}
           >
             {activity.userName}
           </Link>
-          <span className="text-gray-600 shrink-0">&middot;</span>
+          <span className="text-gray-500 shrink-0">&middot;</span>
           <span className="text-gray-500 font-mono truncate">
             {formatDateTime(activity.dateCreated) || "-"}
           </span>
@@ -466,7 +477,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           <button
             type="button"
             onClick={() => openStreamModal(activity)}
-            className="min-w-0 max-w-full truncate hover:text-brand-cyan transition-colors cursor-pointer focus:outline-none text-left"
+            className="min-w-0 max-w-full truncate hover:text-accent transition-colors cursor-pointer focus:outline-none text-left"
             title={t("activity.view_stream_info", "View stream details")}
           >
             {[activity.client, activity.device].filter(Boolean).join(" \u00b7 ")}
@@ -482,7 +493,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           <button
             type="button"
             onClick={() => toggleRow(activity.id ?? "")}
-            className="self-start flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-white bg-background/60 border border-border rounded-lg px-2.5 py-1.5 transition-colors cursor-pointer"
+            className="self-start flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-white bg-background border border-border rounded-lg px-2.5 py-1.5 transition-colors cursor-pointer"
           >
             {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
             {activity.playCount || activity.groupedResults?.length || 0} {t("common.unit.plays", "Plays")}
@@ -518,16 +529,16 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-xl sm:text-2xl font-black text-gray-200 flex items-center gap-3 shrink-0">
-          <ActivityIcon className="text-brand-purple" size={28} />
+        <SectionTitle className="flex items-center gap-3 shrink-0">
+          <ActivityIcon className="text-primary" size={24} />
           {t("activity.title", "Activity Log")}
-        </h2>
+        </SectionTitle>
         <div className="flex flex-wrap items-center gap-2 ml-auto">
           {isAdmin && selectedIds.length > 0 && (
             <ConfirmationDialogButton
               buttonElement={
                 <>
-                  {deleting ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                  {deleting ? <Spinner size={16} /> : <Trash2 size={16} />}
                   {t("activity.delete_selected", "Delete ({{count}})", { count: selectedIds.length })}
                 </>
               }
@@ -542,47 +553,42 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
               tone="danger"
               disabled={deleting}
               onConfirm={deleteSelected}
-              className="flex items-center gap-2 bg-brand-rose/10 hover:bg-brand-rose text-brand-rose hover:text-white border border-brand-rose/20 hover:border-brand-rose py-2 px-4 rounded-xl text-sm font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              className={buttonClass({ variant: "dangerSoft" })}
             />
           )}
           {isAdmin && selectedIds.length > 0 && (
-            <button
-              type="button"
-              onClick={clearSelection}
-              disabled={deleting}
-              className="py-2 px-3 rounded-xl text-sm font-bold text-gray-400 hover:text-white border border-border hover:border-gray-500 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-            >
+            <Button variant="secondary" onClick={clearSelection} disabled={deleting}>
               {t("activity.clear_selection", "Clear selection")}
-            </button>
+            </Button>
           )}
           {showLibraryFilter && (
             <LibraryFilter libraries={libraries} value={libraryIds} onChange={changeLibraryFilter} disabled={loading} />
           )}
-          <IconButton label={t("common.refresh", "Refresh")} onClick={() => fetchPage(page)}>
+          <IconButton variant="bordered" label={t("common.refresh", "Refresh")} onClick={() => fetchPage(page)} className="p-2.5">
             <RefreshCw size={18} />
           </IconButton>
         </div>
       </div>
 
       {/* Main Table Container */}
-      <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col relative min-h-[400px]">
+      <Card padding="none" className="flex flex-col relative min-h-[400px]">
         {loading && (
-          <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
-            <Loader2 size={40} className="text-brand-cyan animate-spin mb-3" />
-            <span className="text-sm font-bold text-gray-300">{t("common.loading", "Loading")}</span>
+          <div className="absolute inset-0 z-20 bg-surface/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3 animate-in fade-in">
+            <Spinner size={40} tone="primary" />
+            <span className="text-sm font-bold text-gray-200">{t("common.loading", "Loading")}</span>
           </div>
         )}
 
         {error && (
-          <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in p-6">
-            <AlertCircle size={40} className="text-brand-rose mb-3" />
-            <span className="text-lg font-bold text-brand-rose mb-1">{t("error_cards.failed_to_load", "Failed to load")}</span>
+          <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center gap-1 animate-in fade-in p-6">
+            <AlertCircle size={40} className="text-danger mb-2" />
+            <span className="text-lg font-bold text-danger">{t("error_cards.failed_to_load", "Failed to load")}</span>
             <span className="text-sm text-gray-400 text-center max-w-md">{error}</span>
           </div>
         )}
 
         {/* Mobile: search + sort toolbar */}
-        <div className="md:hidden flex flex-col gap-2 p-3 bg-background/60 border-b border-border">
+        <div className="md:hidden flex flex-col gap-2 p-3 bg-background border-b border-border">
           <TextFilter
             keyName="fullName"
             value={getFilterValueOrDefault("fullName", "") as string}
@@ -590,7 +596,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           />
           <div className="flex items-center gap-2">
             <div className="flex-1 min-w-0">
-              <DropdownSelector<string>
+              <Select<string>
                 data={sortOptions.map((o) => ({ value: o.value }))}
                 value={sortStatus.columnAccessor}
                 onChange={(value) => {
@@ -600,29 +606,27 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                 labelFn={(value) => sortOptions.find((o) => o.value === value)?.label ?? value}
                 leftIcon={ArrowUpDown}
                 widthPx={0}
+                className="w-full"
               />
             </div>
-            <button
-              type="button"
+            <IconButton
+              variant="bordered"
               onClick={() => {
                 setSortStatus((prev) => ({ ...prev, direction: prev.direction === "desc" ? "asc" : "desc" }));
                 setPage(1);
               }}
-              className="shrink-0 w-11 h-11 flex items-center justify-center rounded-xl bg-surface/80 border border-border text-brand-cyan hover:border-gray-500 transition-colors cursor-pointer"
-              aria-label={sortStatus.direction === "desc" ? "Descending" : "Ascending"}
+              className="size-11 text-accent"
+              label={sortStatus.direction === "desc" ? "Descending" : "Ascending"}
             >
               {sortStatus.direction === "desc" ? <ArrowDown size={16} /> : <ArrowUp size={16} />}
-            </button>
+            </IconButton>
           </div>
         </div>
 
         {/* Mobile: card list */}
-        <div className="md:hidden flex-1 divide-y divide-border">
+        <div className="md:hidden flex-1 divide-y divide-border/50">
           {!loading && activityData.length === 0 ? (
-            <div className="p-12 text-center text-gray-500">
-              <MonitorPlay size={40} className="mx-auto mb-3 opacity-20" />
-              <span className="font-medium">{t("activity.no_activity", "No activity found")}</span>
-            </div>
+            <EmptyState bordered={false} Icon={MonitorPlay} title={t("activity.no_activity", "No activity found")} />
           ) : (
             activityData.map((activity) => (
               <React.Fragment key={activity.id}>
@@ -638,7 +642,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
         <div className="hidden md:block overflow-x-auto custom-scrollbar flex-1">
           <table className="w-full text-left border-collapse whitespace-nowrap">
             <thead>
-              <tr className="group/row bg-background/80 border-b border-border text-[11px] font-bold text-gray-500 uppercase tracking-wider select-none">
+              <tr className="group/row bg-background border-b border-border text-xs font-bold text-gray-400 uppercase tracking-wider select-none">
                 {isAdmin && (
                   <th className="w-10 pl-4 pr-1 text-center">
                     <input
@@ -654,7 +658,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                     />
                   </th>
                 )}
-                <th className="p-3 w-12"></th>
+                <th className="px-4 py-3 w-12"></th>
                 <SortableHeader
                   label={t("common.user", "User")}
                   accessor="userName"
@@ -679,7 +683,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                   currentSort={sortStatus}
                   onSort={handleSort}
                 />
-                <th className="p-3 cursor-default">{t("common.transcode", "Transcode")}</th>
+                <th className="px-4 py-3 cursor-default">{t("common.transcode", "Transcode")}</th>
                 <SortableHeader
                   label={t("activity.device", "Device")}
                   accessor="device"
@@ -709,7 +713,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
               </tr>
 
               {/* Filter Row */}
-              <tr className="bg-background/40 border-b border-border shadow-inner">
+              <tr className="bg-surface-raised border-b border-border">
                 {isAdmin && <th className="p-2"></th>}
                 <th className="p-2 border-r border-border/50"></th>
 
@@ -791,9 +795,8 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
             <tbody>
               {!loading && activityData.length === 0 ? (
                 <tr>
-                  <td colSpan={isAdmin ? 11 : 10} className="p-16 text-center text-gray-500">
-                    <MonitorPlay size={48} className="mx-auto mb-4 opacity-20" />
-                    <span className="font-medium text-lg">{t("activity.no_activity", "No activity found")}</span>
+                  <td colSpan={isAdmin ? 11 : 10}>
+                    <EmptyState bordered={false} Icon={MonitorPlay} title={t("activity.no_activity", "No activity found")} />
                   </td>
                 </tr>
               ) : (
@@ -811,12 +814,13 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
         </div>
 
         {/* Pagination Footer */}
-        <div className="bg-background/80 border-t border-border p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
-          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+        {/* Footer: matches the kit Pagination, plus page size and page jump */}
+        <div className="bg-background border-t border-border p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
+          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
             {t("activity.total_records", "Total Records:")} <span className="text-white">{pageCount}</span>
           </span>
           <div className="flex flex-wrap items-center gap-2 sm:gap-4 ml-auto">
-            <DropdownSelector
+            <Select
               data={pageCountOptions.map((option) => ({ value: option }))}
               value={recordsPerPage}
               onChange={(value) => {
@@ -827,34 +831,32 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
               labelFn={(option) => option.toString()}
               widthPx={80}
             />
-            <NumberField
-              value={page}
-              onChange={(val) => (val ? setPage(val) : val)}
-              min={1}
-              max={totalPages}
-              className="py-3 px-1 focus:outline-none hover:bg-surface border border-transparent hover:border-border rounded-xl shadow-lg overflow-auto text-xs text-center font-mono text-gray-400"
-            />
-            <span className="text-xs font-mono text-gray-400">/</span>
-            <span className="text-xs font-mono text-gray-400">{totalPages}</span>
+            <div className="flex items-center gap-2">
+              <NumberField
+                value={page}
+                onChange={(val) => (val ? setPage(val) : val)}
+                min={1}
+                max={totalPages}
+                className="w-16 bg-background border border-border hover:border-border-strong focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none rounded-lg py-1.5 px-2 text-xs text-center font-mono text-gray-200 shadow-inner"
+              />
+              <span className="text-xs font-mono text-gray-400">/ {totalPages}</span>
+            </div>
             <div className="flex gap-2">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
-              >
+              <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
                 {t("common.prev", "Prev")}
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
               >
                 {t("common.next", "Next")}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Stream Info Modal */}
       <StreamInfoModal
@@ -868,22 +870,29 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
 
 // --- SUB-COMPONENTS ---
 
+const alignClass = {
+  left: { cell: "text-left", row: "" },
+  center: { cell: "text-center", row: "justify-center" },
+  right: { cell: "text-right", row: "justify-end" },
+} as const;
+
 function SortableHeader({ label, accessor, currentSort, onSort, align = "left" }: any) {
+  const active = currentSort.columnAccessor === accessor;
+  const a = alignClass[align as keyof typeof alignClass] ?? alignClass.left;
   return (
     <th
-      className={`p-3 group cursor-pointer hover:bg-surface-hover transition-colors text-${align}`}
+      aria-sort={active ? (currentSort.direction === "desc" ? "descending" : "ascending") : "none"}
+      className={cn("px-4 py-3 group cursor-pointer hover:bg-surface-hover transition-colors", a.cell)}
       onClick={() => onSort(accessor)}
     >
-      <div
-        className={`flex items-center gap-2 ${align === "right" ? "justify-end" : align === "center" ? "justify-center" : ""}`}
-      >
+      <div className={cn("flex items-center gap-2", a.row)}>
         {label}
-        {currentSort.columnAccessor !== accessor ? (
+        {!active ? (
           <ArrowUpDown size={14} className="opacity-30 group-hover:opacity-100 transition-opacity" />
         ) : currentSort.direction === "desc" ? (
-          <ArrowDown size={14} className="text-brand-cyan" />
+          <ArrowDown size={14} className="text-accent" />
         ) : (
-          <ArrowUp size={14} className="text-brand-cyan" />
+          <ArrowUp size={14} className="text-accent" />
         )}
       </div>
     </th>
