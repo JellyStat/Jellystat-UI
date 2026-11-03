@@ -143,7 +143,12 @@ For each file: swap the markup for the kit component, delete the class string, a
 - [x] Phase 4.1: setup + settings/Users. CreateUser, CreateServerInstance and SetupComplete share `components/Setup/SetupStep.tsx`; UpdateUser and UsersSettings are on the kit. The kit gained `Field` `hint`/`description`, the `Button` `dangerSoft` variant, and safer Modal centring. Still needs a visual check while signed in.
 - [x] Phase 4.2: remaining settings pages (Servers, API Keys, Webhooks, Library, Backups, Tasks, Activity Migration). Nothing under `components/Settings` or `components/Setup` imports headlessui directly any more. Kit additions: `Alert`, `Switch`, `Textarea`, `Checkbox`, `Pagination`, `SegmentedControl`, `ModalTitle`, IconButton variants, and Modal size `workspace`. Still needs a visual check while signed in.
 - [x] Phase 4.3: ActivityTable + DataTableFilters, including IpLookUpModal, StreamInfoModal and LibraryFilter. Kit additions: `Input` `size="sm"` plus `inputClass()`, `Popover`/`PopoverField`/`PopoverPanel`, and `MultiSelect`. Nothing under these folders imports headlessui directly any more. Still needs a visual check while signed in.
-- [ ] Phase 4.4: stats and cards
+- [x] Phase 4.4: stats and cards (StatsCard, WatchStatCard(s), GenreStatCards, LibraryCard, LibraryOverview, ItemsCards, ActivityItemsCards, RecentlyAdded, LastWatched, MediaGrid, Sessions, ErrorCards, ItemImage, DeviceIcon).
+  - Colours, greys, radius, weights and shadows were mapped to tokens by script; the mapping is in the commit message. Spinners are the kit `Spinner` and charts use `chartColors`.
+  - LibraryOverviewCard used runtime-built Tailwind classes (`` `bg-${color}/10` ``), which Tailwind can't detect, so its colours probably never rendered. They're now a static tone map on `IconChip`.
+  - NoData and ErrorCard are thin wrappers over `EmptyState` and `Alert`.
+  - Still needs a visual check while signed in.
+- [ ] Phase 4.4b: the page-level tab components upstream added (`components/UserPage`, `LibraryPage`, `ItemPage`), plus Reports designer chrome. Fold these into 4.5.
 - [ ] Phase 4.5: page shells
 - [ ] Phase 4.6: SideNav
 - [ ] Phase 5: delete Core, lint guard, grep audit, README

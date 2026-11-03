@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BarChart3, Loader2, AlertCircle, TrendingUp, Clock, Calendar, Calendar1 } from "lucide-react";
+import { BarChart3, AlertCircle, TrendingUp, Clock, Calendar, Calendar1 } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 import client from "@/lib/api";
 import { ChartStats } from "@/lib/models/chartStats";
 import { ChartStat } from "@/lib/models/chartStat";
 import NoData from "@/components/ErrorCards/NoData";
-import DropdownSelector from "@/components/Core/DropdownSelector";
 import ErrorCard from "../ErrorCards/ErrorCard";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import { DateRange } from "react-day-picker";
 import StatMetric from "@/lib/models/enums/statMetric";
 import { formatHourOfDay } from "@/lib/dateFormat";
+import { chartColors as themeChartColors, chartSeries as seriesColors, Select, Spinner } from "@/components/ui";
 
 // The API labels hourly buckets as "HH:00"; re-render them in the user's 12/24-hour style
 function formatHourKey(key: string): string {
@@ -20,14 +20,6 @@ function formatHourKey(key: string): string {
   return Number.isNaN(hour) ? key : formatHourOfDay(hour);
 }
 
-// --- THEME COLORS FOR CHART SERIES ---
-const chartColors = [
-  "#00a4dc", // brand-cyan
-  "#aa3bff", // brand-purple
-  "#34d399", // brand-emerald
-  "#fbbf24", // brand-amber
-  "#f43f5e", // brand-rose
-];
 
 export default function WatchTrendsCard() {
   const { t } = useTranslation("common");
@@ -102,7 +94,7 @@ export default function WatchTrendsCard() {
     const series = legends.map((l, i) => ({
       name: l,
       dataKey: l,
-      color: chartColors[i % chartColors.length],
+      color: seriesColors[i % seriesColors.length],
     }));
 
     return { data, series };
@@ -132,14 +124,14 @@ export default function WatchTrendsCard() {
         {/* Header & Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
           <div className="flex items-center gap-3">
-            <BarChart3 size={28} className="text-brand-purple shrink-0" />
-            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+            <BarChart3 size={28} className="text-primary shrink-0" />
+            <h2 className="text-xl sm:text-xl font-black text-white tracking-tight">
               {t("stats.watch_trends", "Watch Trends")}
             </h2>
           </div>
           <div className="grid grid-cols-1 min-[440px]:grid-cols-2 gap-2 sm:flex sm:items-end sm:gap-3">
             {/* <DateRangePickerButton value={dateRange} onChange={handleDateRange} /> */}
-            <DropdownSelector
+            <Select
               data={[
                 { value: StatMetric.Date, Icon: Calendar },
                 { value: StatMetric.Day, Icon: Calendar1 },
@@ -156,7 +148,7 @@ export default function WatchTrendsCard() {
               }
               disabled={loading}
             />
-            <DropdownSelector
+            <Select
               data={[
                 { value: "count", Icon: TrendingUp },
                 { value: "playDuration", Icon: Clock },
@@ -179,10 +171,10 @@ export default function WatchTrendsCard() {
             message={t("statistics.no_data_desc", "There is no playback history for the last 31 days.")}
           />
         ) : (
-          <div className="bg-surface/40  border border-border rounded-3xl shadow-xl shadow-black/20 overflow-hidden flex flex-col p-6 sm:p-8">
+          <div className="bg-surface border border-border rounded-2xl shadow-lg shadow-black/20 overflow-hidden flex flex-col p-6 sm:p-8">
             {loading ? (
               <div className="w-full h-[400px] flex flex-col items-center justify-center">
-                <Loader2 size={40} className="text-brand-purple animate-spin mb-4" />
+                <Spinner size={40} className="text-primary mb-4" />
                 <span className="text-gray-400 font-medium tracking-wide">{t("common.loading", "Loading")}</span>
               </div>
             ) : error ? (
@@ -208,11 +200,11 @@ export default function WatchTrendsCard() {
                       ))}
                     </defs>
 
-                    <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke={themeChartColors.grid} vertical={false} />
 
                     <XAxis
                       dataKey="key"
-                      stroke="#71717a"
+                      stroke={themeChartColors.axis}
                       fontSize={11}
                       tickLine={false}
                       axisLine={false}
@@ -235,7 +227,7 @@ export default function WatchTrendsCard() {
                     />
 
                     <YAxis
-                      stroke="#71717a"
+                      stroke={themeChartColors.axis}
                       fontSize={11}
                       tickLine={false}
                       axisLine={false}
@@ -249,7 +241,7 @@ export default function WatchTrendsCard() {
 
                     <Tooltip
                       content={<CustomTooltip formatValue={formatValue} metricType={metric} timeGranularity={timeGranularity} />}
-                      cursor={{ stroke: "#3f3f46", strokeWidth: 1, strokeDasharray: "4 4" }}
+                      cursor={{ stroke: themeChartColors.cursor, strokeWidth: 1, strokeDasharray: "4 4" }}
                     />
 
                     <Legend content={<CustomLegend />} verticalAlign="top" height={60} />
@@ -295,10 +287,10 @@ const CustomTooltip = ({ active, payload, label, formatValue, metricType, timeGr
     const total = payload.reduce((sum: number, entry: any) => sum + (entry.value || 0), 0);
 
     return (
-      <div className="bg-surface/95 backdrop-blur-xl border border-border p-4 rounded-2xl shadow-2xl shadow-black/60 min-w-[180px]">
+      <div className="bg-surface/60 backdrop-blur-xl border border-border p-4 rounded-2xl shadow-2xl shadow-black/40 min-w-[180px]">
         <p className="text-gray-200 font-black mb-3 pb-3 border-b border-border/50 text-sm tracking-tight flex justify-between">
           <span>{displayLabel}</span>
-          <span className="text-brand-cyan ml-4">{formatValue(total)}</span>
+          <span className="text-accent ml-4">{formatValue(total)}</span>
         </p>
         <div className="space-y-2.5">
           {payload.map((entry: any, index: number) => {
@@ -326,7 +318,7 @@ const CustomLegend = ({ payload }: any) => {
       {payload.map((entry: any, index: number) => (
         <div
           key={`item-${index}`}
-          className="flex items-center gap-2 text-xs font-bold text-gray-300 transition-colors hover:text-white cursor-default"
+          className="flex items-center gap-2 text-xs font-bold text-gray-200 transition-colors hover:text-white cursor-default"
         >
           <span className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: entry.color }}></span>
           {entry.value}

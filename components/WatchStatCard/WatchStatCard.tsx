@@ -77,7 +77,7 @@
 //             />
 //           ) : (
 //             <div className="w-full h-full flex items-center justify-center text-gray-500">
-//               <Icon size={48} className="drop-shadow-md opacity-50" />
+//               <Icon size={48} className="drop-shadow-lg opacity-50" />
 //             </div>
 //           )}
 //         </div>
@@ -90,7 +90,7 @@
 //             <h3 className="text-sm font-black text-white tracking-tight truncate pr-3">
 //               {resolvedTitle}
 //             </h3>
-//             <span className="text-xs font-bold text-brand-cyan tracking-wider uppercase shrink-0">
+//             <span className="text-xs font-bold text-accent tracking-wider uppercase shrink-0">
 //               {resolvedUnit}
 //             </span>
 //           </div>
@@ -109,7 +109,7 @@
 //                   {it.navLink ? (
 //                     <Link
 //                       href={it.navLink}
-//                       className="text-gray-200 hover:text-white font-medium truncate transition-colors focus:outline-none focus:text-brand-cyan"
+//                       className="text-gray-200 hover:text-white font-medium truncate transition-colors focus:outline-none focus:text-accent"
 //                       title={it.name}
 //                     >
 //                       {it.name}
@@ -125,7 +125,7 @@
 //                 </div>
 
 //                 {/* Right Side: Value */}
-//                 <span className="font-bold text-gray-300 shrink-0 tabular-nums">
+//                 <span className="font-bold text-gray-200 shrink-0 tabular-nums">
 //                   {it.value}
 //                 </span>
 

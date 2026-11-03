@@ -5,7 +5,6 @@ import {
   Search,
   ArrowDownWideNarrow,
   ArrowUpNarrowWide,
-  Loader2,
   AlertCircle,
   Film,
   ChevronDown,
@@ -17,7 +16,7 @@ import type { ItemsWithStats } from "@/lib/models/itemsWithStats";
 import ItemCard from "../ItemsCards/ItemCard";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
 import { useDebounce } from "@/lib/hooks/useDebounce";
-import DropdownSelector from "../Core/DropdownSelector";
+import { Select, Spinner } from "@/components/ui";
 
 type Props = {
   gridify?: GridifyQueryBuilder;
@@ -118,15 +117,15 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
     <div className="w-full animate-in fade-in duration-500">
       {/* Header & Controls */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
-        <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3 shrink-0">
-          <Film className="text-brand-cyan" size={28} />
+        <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-3 shrink-0">
+          <Film className="text-accent" size={28} />
           {t("common.media", "Media")}
         </h2>
 
         <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
           {/* Archived Filter */}
 
-          <DropdownSelector
+          <Select
             data={[{ value: "null" }, { value: "true" }, { value: "false" }]}
             value={archivedFilter === null ? "null" : archivedFilter ? "true" : "false"}
             onChange={(val) => setArchivedFilter(val === "true" ? true : val === "false" ? false : null)}
@@ -142,7 +141,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
           {/* Sort Controls */}
           {showSort && (
             <div className="flex items-center gap-2">
-              <DropdownSelector
+              <Select
                 data={[{ value: "name" }, { value: "dateCreated" }, { value: "playCount" }, { value: "size" }]}
                 value={sortField}
                 onChange={(val) => setSortField(val)}
@@ -158,7 +157,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
 
               <button
                 onClick={() => setSortDesc((s) => !s)}
-                className="flex items-center justify-center p-2 py-2.5 rounded-xl bg-surface/80 border border-border hover:border-gray-500 text-gray-400 transition-colors shadow-inner focus:outline-none cursor-pointer"
+                className="flex items-center justify-center p-2 py-2.5 rounded-xl bg-surface border border-border hover:border-border-strong text-gray-400 transition-colors shadow-inner focus:outline-none cursor-pointer"
                 aria-label="Toggle Sort Direction"
               >
                 {sortDesc ? <ArrowDownWideNarrow size={18} /> : <ArrowUpNarrowWide size={18} />}
@@ -176,19 +175,19 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
               placeholder={t("media_grid.search_placeholder", "Search media...")}
               value={input}
               onChange={(e) => setInput(e.currentTarget.value)}
-              className="w-full bg-background/50 border border-border hover:border-gray-500 rounded-xl py-2 pl-9 pr-4 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none transition-all shadow-inner"
+              className="w-full bg-background border border-border hover:border-border-strong rounded-xl py-2 pl-9 pr-4 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none transition-all shadow-inner"
             />
           </div>
         </div>
       </div>
 
       {/* Grid Container */}
-      <div className="bg-surface/30 border border-border rounded-2xl p-4 md:p-6 shadow-xl shadow-black/20 min-h-[400px] flex flex-col relative">
+      <div className="bg-surface border border-border rounded-2xl p-4 md:p-6 shadow-lg shadow-black/20 min-h-[400px] flex flex-col relative">
         {/* Error Overlay */}
         {error && (
-          <div className="p-4 mb-4 rounded-xl bg-brand-rose/10 border border-brand-rose/20 flex items-start gap-3">
-            <AlertCircle size={18} className="text-brand-rose shrink-0 mt-0.5" />
-            <p className="text-sm text-brand-rose/90 font-medium leading-relaxed">{error}</p>
+          <div className="p-4 mb-4 rounded-xl bg-danger/10 border border-danger/20 flex items-start gap-3">
+            <AlertCircle size={18} className="text-danger shrink-0 mt-0.5" />
+            <p className="text-sm text-danger/90 font-medium leading-relaxed">{error}</p>
           </div>
         )}
 
@@ -204,7 +203,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
 
         {/* Sentinel & Loading Status */}
         <div ref={sentinelRef} className="w-full h-20 flex items-center justify-center mt-4">
-          {loading && <Loader2 size={32} className="text-brand-cyan animate-spin" />}
+          {loading && <Spinner size={32} className="text-primary" />}
 
           {!loading && items.length === 0 && !error && (
             <div className="flex flex-col items-center justify-center text-gray-500 opacity-60 absolute inset-0">

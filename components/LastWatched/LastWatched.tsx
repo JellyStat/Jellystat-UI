@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
-import { History, Loader2, AlertCircle } from "lucide-react";
+import { History, AlertCircle } from "lucide-react";
 
 import client from "@/lib/api";
 import { ItemsWithStats } from "@/lib/models/itemsWithStats";
@@ -10,6 +10,7 @@ import NotFound from "../ErrorCards/NotFound";
 import { Items } from "@/lib/models/items";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
 import NoData from "../ErrorCards/NoData";
+import { Spinner } from "@/components/ui";
 
 type Props = {
   gridify?: GridifyQueryBuilder;
@@ -87,22 +88,22 @@ export default function LastWatched({ gridify }: Props) {
     <div className="flex flex-col items-start w-full animate-in fade-in duration-500">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <History className="text-brand-purple" size={28} />
-        <h2 className="text-2xl font-black text-white tracking-tight">{t("last_watched.title", "Last Watched")}</h2>
+        <History className="text-primary" size={28} />
+        <h2 className="text-xl font-black text-white tracking-tight">{t("last_watched.title", "Last Watched")}</h2>
       </div>
 
       {/* Loading State */}
       {loading && (
         <div className="w-full h-40 flex flex-col items-center justify-center">
-          <Loader2 size={32} className="text-brand-purple animate-spin" />
+          <Spinner size={32} className="text-primary" />
         </div>
       )}
 
       {/* Error State */}
       {error && !loading && (
-        <div className="w-full p-4 rounded-xl bg-brand-rose/10 border border-brand-rose/20 flex items-start gap-3">
-          <AlertCircle size={18} className="text-brand-rose shrink-0 mt-0.5" />
-          <p className="text-sm text-brand-rose/90 font-medium leading-relaxed">{error}</p>
+        <div className="w-full p-4 rounded-xl bg-danger/10 border border-danger/20 flex items-start gap-3">
+          <AlertCircle size={18} className="text-danger shrink-0 mt-0.5" />
+          <p className="text-sm text-danger/90 font-medium leading-relaxed">{error}</p>
         </div>
       )}
 

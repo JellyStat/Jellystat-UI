@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { IGridifyQuery } from "gridify-client";
-import { Sparkles, Loader2, AlertCircle } from "lucide-react";
+import { Sparkles, AlertCircle } from "lucide-react";
 
 import client from "@/lib/api";
 import type { RecentlyAdded } from "@/lib/models/RecentlyAdded";
 import ItemCards from "../ItemsCards/ItemCards";
 import NoData from "../ErrorCards/NoData";
+import { Spinner } from "@/components/ui";
 
 type Props = {
   gridify?: IGridifyQuery;
@@ -47,22 +48,22 @@ export default function RecentlyAdded({ gridify, grouped = true }: Props) {
     <div className="flex flex-col w-full animate-in fade-in duration-500">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <Sparkles size={28} className="text-brand-cyan" />
-        <h2 className="text-xl font-black text-gray-200 tracking-tight">{t("recently_added.title", "Recently Added")}</h2>
+        <Sparkles size={28} className="text-accent" />
+        <h2 className="text-xl font-black text-white tracking-tight">{t("recently_added.title", "Recently Added")}</h2>
       </div>
 
       <div className="relative w-full">
         {loading && (
-          <div className="w-full h-72 bg-surface/30 border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse shadow-inner">
-            <Loader2 size={32} className="text-brand-cyan animate-spin mb-3" />
+          <div className="w-full h-72 bg-surface border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse shadow-inner">
+            <Spinner size={32} className="text-primary mb-3" />
             <span className="text-gray-500 font-medium">{t("common.loading", "Loading")}</span>
           </div>
         )}
 
         {error && (
-          <div className="p-4 rounded-xl bg-brand-rose/10 border border-brand-rose/20 flex items-start gap-3">
-            <AlertCircle size={18} className="text-brand-rose shrink-0 mt-0.5" />
-            <p className="text-sm text-brand-rose/90 font-medium">{error}</p>
+          <div className="p-4 rounded-xl bg-danger/10 border border-danger/20 flex items-start gap-3">
+            <AlertCircle size={18} className="text-danger shrink-0 mt-0.5" />
+            <p className="text-sm text-danger/90 font-medium">{error}</p>
           </div>
         )}
 

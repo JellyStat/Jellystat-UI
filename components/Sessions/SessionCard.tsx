@@ -176,7 +176,7 @@ export default function SessionCard({ session }: SessionCardProps) {
   const indexString = item.parentIndexNumber && item.indexNumber ? `S${item.parentIndexNumber} - E${item.indexNumber}` : null;
 
   return (
-    <div className="relative flex flex-col bg-surface border border-border rounded-2xl overflow-hidden shadow-xl hover:border-brand-cyan/40 hover:shadow-brand-cyan/10 transition-all duration-300 group">
+    <div className="relative flex flex-col bg-surface border border-border rounded-2xl overflow-hidden shadow-lg hover:border-accent/40 hover:shadow-accent/10 transition-all duration-300 group">
       {/* Background Blur Image */}
       <div
         className="absolute inset-0 bg-cover bg-center z-0 opacity-30 mix-blend-screen"
@@ -208,7 +208,7 @@ export default function SessionCard({ session }: SessionCardProps) {
             </div>
 
             {/* Device Icon Mapper */}
-            <div className="shrink-0 flex items-center justify-center p-2 bg-background/50 border border-border rounded-xl shadow-inner">
+            <div className="shrink-0 flex items-center justify-center p-2 bg-background border border-border rounded-xl shadow-inner">
               <DeviceIcon
                 client={session.client ?? ""}
                 deviceName={session.deviceName ?? ""}
@@ -235,7 +235,7 @@ export default function SessionCard({ session }: SessionCardProps) {
             <LabeledText label={t("session.ip_address", "IP ADDRESS")} value={ip} />
             <LabeledText label={t("session.eta", "ETA")} value={eta} />
             <div className="text-right w-full mt-1">
-              <span className="text-[10px] font-mono text-gray-400 bg-background/50 px-2 py-1 rounded shadow-inner border border-border">
+              <span className="text-[10px] font-mono text-gray-400 bg-background px-2 py-1 rounded shadow-inner border border-border">
                 {session.playState?.positionTicks?.ticksToTimeString?.() || "0:00"} /{" "}
                 {item?.runtimeTicks?.ticksToTimeString?.() || "0:00"}
               </span>
@@ -247,23 +247,23 @@ export default function SessionCard({ session }: SessionCardProps) {
       {/* Progress Bar */}
       <div className="relative z-10 w-full h-1.5 bg-black/50 border-y border-white/5">
         <div
-          className="h-full bg-gradient-to-r from-brand-purple to-brand-cyan shadow-[0_0_10px_rgba(0,164,220,0.4)] transition-all duration-1000 ease-out"
+          className="h-full bg-gradient-to-r from-primary to-accent shadow-[0_0_10px_rgba(0,164,220,0.4)] transition-all duration-1000 ease-out"
           style={{ width: `${Math.min(100, Math.max(0, progressVal))}%` }}
         ></div>
       </div>
 
       {/* Bottom Section: Title & User */}
-      <div className="relative z-10 p-3 bg-surface/80 flex items-center justify-between gap-4">
+      <div className="relative z-10 p-3 bg-surface flex items-center justify-between gap-4">
         {/* Title & Status */}
         <div className="flex items-center gap-3 min-w-0">
           <div
-            className={`p-1.5 rounded-full ${session.isPaused ? "bg-brand-amber/20 text-brand-amber" : "bg-brand-emerald/20 text-brand-emerald"} shrink-0`}
+            className={`p-1.5 rounded-full ${session.isPaused ? "bg-warning/20 text-warning" : "bg-success/20 text-success"} shrink-0`}
           >
             {session.isPaused ? <Pause size={14} className="fill-current" /> : <Play size={14} className="fill-current" />}
           </div>
           <div className="flex flex-col min-w-0">
             <span
-              className="text-sm font-bold text-white truncate drop-shadow-sm hover:text-brand-purple transition-colors cursor-pointer"
+              className="text-sm font-bold text-white truncate drop-shadow-sm hover:text-primary transition-colors cursor-pointer"
               onClick={() => router.push(`/libraries/items/${encodeURIComponent(item?.id ?? "")}`)}
             >
               {item.seriesName ? `${item.seriesName} : ` : ""}
@@ -279,9 +279,9 @@ export default function SessionCard({ session }: SessionCardProps) {
         </div>
 
         {/* User Info */}
-        <div className="flex items-center gap-2 shrink-0 bg-background/50 pl-3 pr-1 py-1 rounded-full border border-border shadow-inner">
+        <div className="flex items-center gap-2 shrink-0 bg-background pl-3 pr-1 py-1 rounded-full border border-border shadow-inner">
           <span
-            className="text-xs font-bold text-gray-200 hover:text-brand-purple transition-colors cursor-pointer"
+            className="text-xs font-bold text-gray-200 hover:text-primary transition-colors cursor-pointer"
             onClick={() => router.push(`/users/${encodeURIComponent(session.userId ?? "")}`)}
           >
             {session.userName}

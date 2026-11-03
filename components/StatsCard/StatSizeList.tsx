@@ -1,20 +1,12 @@
 import { CountModelWithSize } from "@/lib/models/countModelWithSize";
+import { chartSeries } from "@/components/ui";
 
 type Props = {
   data: CountModelWithSize[];
-  colors?: string[];
+  colors?: readonly string[];
 };
 
-export default function StatSizeListCard({
-  data,
-  colors = [
-    "#00a4dc", // brand-cyan
-    "#aa3bff", // brand-purple
-    "#34d399", // brand-emerald
-    "#fbbf24", // brand-amber
-    "#f43f5e", // brand-rose
-  ],
-}: Props) {
+export default function StatSizeListCard({ data, colors = chartSeries }: Props) {
   const totalCount = data.reduce((sum, stat) => sum + (stat.count ?? 0), 0);
 
   const mappedData = data.map((item, index) => ({

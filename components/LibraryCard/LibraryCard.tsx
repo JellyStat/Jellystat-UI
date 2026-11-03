@@ -18,24 +18,24 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
 
   let FallbackIcon = Folders;
   let colorClasses = {
-    text: "text-brand-cyan",
-    bg: "bg-brand-cyan/20",
-    border: "border-brand-cyan/30",
+    text: "text-accent",
+    bg: "bg-accent/20",
+    border: "border-accent/30",
   };
 
   const typeStr: LibraryTypes = lib.type;
   if (typeStr === LibraryTypes.Movies) {
     FallbackIcon = Film;
-    colorClasses = { text: "text-brand-purple", bg: "bg-brand-purple/20", border: "border-brand-purple/30" };
+    colorClasses = { text: "text-primary", bg: "bg-primary/20", border: "border-primary/30" };
   } else if (typeStr === LibraryTypes.Series) {
     FallbackIcon = Tv;
-    colorClasses = { text: "text-brand-emerald", bg: "bg-brand-emerald/20", border: "border-brand-emerald/30" };
+    colorClasses = { text: "text-success", bg: "bg-success/20", border: "border-success/30" };
   } else if (typeStr === LibraryTypes.Music) {
     FallbackIcon = Music;
-    colorClasses = { text: "text-brand-amber", bg: "bg-brand-amber/20", border: "border-brand-amber/30" };
+    colorClasses = { text: "text-warning", bg: "bg-warning/20", border: "border-warning/30" };
   } else if (typeStr === LibraryTypes.HomeVideos) {
     FallbackIcon = ImageIcon;
-    colorClasses = { text: "text-brand-rose", bg: "bg-brand-rose/20", border: "border-brand-rose/30" };
+    colorClasses = { text: "text-danger", bg: "bg-danger/20", border: "border-danger/30" };
   }
 
   const lastPlayed = lib.latestActivity?.seriesName ?? lib.latestActivity?.name ?? t("library.never", "Never");
@@ -50,7 +50,7 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
   return (
     <div
       onClick={() => router.push(`/libraries/${encodeURIComponent(lib.id)}`)}
-      className="group flex flex-col bg-surface/50 backdrop-blur-md border border-border rounded-2xl overflow-hidden hover:border-gray-500 transition-all duration-300 shadow-xl shadow-black/20 hover:-translate-y-1 hover:shadow-2xl cursor-pointer min-h-95"
+      className="group flex flex-col bg-surface/60 backdrop-blur-md border border-border rounded-2xl overflow-hidden hover:border-border-strong transition-all duration-300 shadow-lg shadow-black/20 hover:-translate-y-1 hover:shadow-2xl cursor-pointer min-h-95"
     >
       {/* Header & Image Banner */}
       <div className="relative h-40 w-full overflow-hidden bg-background shrink-0">
@@ -74,7 +74,7 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
         <div className="absolute inset-0 bg-linear-to-t from-surface via-surface/80 to-transparent"></div>
 
         {lib.archived && (
-          <div className="absolute top-2 right-2 z-20 bg-black/80 backdrop-blur-md text-[10px] font-bold text-gray-300 px-2 py-1 rounded-md border border-white/10 uppercase tracking-widest shadow-lg">
+          <div className="absolute top-2 right-2 z-20 bg-black/80 backdrop-blur-md text-[10px] font-bold text-gray-200 px-2 py-1 rounded-md border border-white/10 uppercase tracking-widest shadow-lg">
             {t("common.archived", "Archived")}
           </div>
         )}
@@ -87,7 +87,7 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
       </div>
 
       {/* Stats Body */}
-      <div className="p-5 flex flex-col flex-1 gap-5 bg-surface/40">
+      <div className="p-5 flex flex-col flex-1 gap-5 bg-surface">
         {/* Metric Grid */}
         <div className="grid grid-cols-2 gap-4">
           <StatBlock
@@ -134,7 +134,7 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
               {lib.typeCounts.map((tItem) => (
                 <div
                   key={tItem.type}
-                  className="flex items-center bg-background border border-border px-2 py-1 rounded text-[11px] font-bold text-gray-300 shadow-inner"
+                  className="flex items-center bg-background border border-border px-2 py-1 rounded text-[11px] font-bold text-gray-200 shadow-inner"
                 >
                   <span className="text-gray-500 mr-1.5">{tItem.type}:</span>
                   {tItem.count ?? 0}

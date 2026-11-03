@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { GenreStats } from "@/lib/models/genreStats";
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart, Tooltip, TooltipContentProps } from "recharts";
+import { chartColors } from "@/components/ui";
 type Props = {
   data: GenreStats[];
   dataKey: string;
@@ -14,8 +15,8 @@ export default function GenreStatCard({ data, dataKey }: Props) {
   const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-surface/90 backdrop-blur-md border border-border rounded-lg p-3 text-sm">
-          <p className="text-sm font-bold text-brand-purple">{label}</p>
+        <div className="bg-surface border border-border rounded-xl p-3 text-sm shadow-2xl shadow-black/40">
+          <p className="text-sm font-bold text-primary">{label}</p>
           <p>
             {dataKey == "playDuration"
               ? (Number(payload[0].value ?? 0).secondsToDurationString?.() ?? "0")
@@ -44,7 +45,13 @@ export default function GenreStatCard({ data, dataKey }: Props) {
         {/* <PolarGrid /> */}
         <Tooltip content={CustomTooltip} cursor={false} />
         <PolarAngleAxis dataKey="name" />
-        <Radar name="Play Count" dataKey={dataKey} stroke="#8884d8" fill="#8884d8" fillOpacity={0.8} />
+        <Radar
+          name="Play Count"
+          dataKey={dataKey}
+          stroke={chartColors.primary}
+          fill={chartColors.primary}
+          fillOpacity={0.6}
+        />
         {/* <RechartsDevtools /> */}
       </RadarChart>
     </div>

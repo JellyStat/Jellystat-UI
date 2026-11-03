@@ -50,13 +50,13 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
 
   return (
     <div
-      className="bg-surface/60 backdrop-blur-md border border-border rounded-2xl overflow-hidden flex flex-col h-full group transition-all duration-300 hover:border-brand-purple/50 shadow-lg hover:shadow-brand-purple/10"
+      className="bg-surface/60 backdrop-blur-md border border-border rounded-2xl overflow-hidden flex flex-col h-full group transition-all duration-300 hover:border-primary/50 shadow-lg hover:shadow-primary/10"
       style={{ width }}
     >
       {/* Image Container */}
       {/* Fixed-width cards use the explicit height; fluid (grid) cards keep the 2:3 poster ratio (16:9 for episode stills). */}
       <div
-        className={`relative shrink-0 overflow-hidden bg-background/50 ${fluid ? `w-full ${isEpisodeStill ? "aspect-video" : "aspect-2/3"}` : ""}`}
+        className={`relative shrink-0 overflow-hidden bg-background ${fluid ? `w-full ${isEpisodeStill ? "aspect-video" : "aspect-2/3"}` : ""}`}
         style={fluid ? undefined : { height }}
       >
         <ItemImage
@@ -73,21 +73,21 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
         {/* Size Badge (ported from v1's .size-tag) */}
         {sizeLabel && (
           <div
-            className="pointer-events-none absolute bottom-2 right-2 z-30 flex items-center gap-1 rounded-md border border-brand-purple/40 bg-black/70 px-1.5 py-0.5 shadow-lg backdrop-blur-md"
+            className="pointer-events-none absolute bottom-2 right-2 z-30 flex items-center gap-1 rounded-md border border-primary/40 bg-black/70 px-1.5 py-0.5 shadow-lg backdrop-blur-md"
             title={t("media_grid.sort_size", "Size")}
           >
-            <HardDrive size={10} className="text-brand-purple" />
-            <span className="text-xs font-bold tabular-nums tracking-wide text-gray-100">{sizeLabel}</span>
+            <HardDrive size={10} className="text-primary" />
+            <span className="text-xs font-bold tabular-nums tracking-wide text-gray-200">{sizeLabel}</span>
           </div>
         )}
       </div>
 
       {/* Metadata Container */}
       <div className="p-3.5 flex flex-col flex-1 w-full gap-1.5 bg-linear-to-b from-transparent to-background/30">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-brand-cyan mb-1 truncate">{formattedDate}</span>
+        <span className="text-[10px] font-bold uppercase tracking-wider text-accent mb-1 truncate">{formattedDate}</span>
 
         <h4
-          className="text-sm font-black text-gray-200 leading-tight line-clamp-2 hover:text-brand-purple transition-colors cursor-pointer"
+          className="text-sm font-black text-gray-200 leading-tight line-clamp-2 hover:text-primary transition-colors cursor-pointer"
           onClick={() => router.push(`/libraries/items/${encodeURIComponent(item.parent?.id ?? item.id ?? "")}`)}
         >
           {title}
@@ -95,7 +95,7 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
 
         {isValidParent && (
           <p
-            className="text-xs text-gray-300 line-clamp-1 cursor-pointer hover:text-brand-purple transition-colors"
+            className="text-xs text-gray-200 line-clamp-1 cursor-pointer hover:text-primary transition-colors"
             onClick={() => router.push(`/libraries/items/${encodeURIComponent(item.id ?? "")}`)}
           >
             {item.name}

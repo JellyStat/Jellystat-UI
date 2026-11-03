@@ -36,7 +36,7 @@ export default function Sessions() {
       {/* Section Header */}
       <div className="flex items-center gap-3 mb-6">
         <StatusIndicator tone={sessions.length == 0 ? "danger" : "success"} />
-        <h2 className="text-xl font-black text-gray-200 tracking-tight flex items-center gap-2">
+        <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
           {t("sessions.active_streams", "Active Streams")}
         </h2>
       </div>
