@@ -100,11 +100,20 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
         if (kind === "client-png") {
           await exportPng(nodes, exportFileName(model.name, "png"));
         } else {
-          await exportPdf(nodes, model.definition.page.width, model.definition.page.height, exportFileName(model.name, "pdf"), model.name);
+          await exportPdf(
+            nodes,
+            model.definition.page.width,
+            model.definition.page.height,
+            exportFileName(model.name, "pdf"),
+            model.name,
+          );
         }
       } else {
         const format = kind as "pdf" | "png" | "svg" | "html" | "json";
-        downloadBlob(await client.Reports.render({ reportId, format, parameters: params }, true), exportFileName(model.name, format));
+        downloadBlob(
+          await client.Reports.render({ reportId, format, parameters: params }, true),
+          exportFileName(model.name, format),
+        );
       }
     } catch (err: any) {
       toast.error(err?.message ?? i18next.t("errors.export_failed", "Export failed"));
@@ -138,10 +147,11 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
             onClick={() => (JSON.stringify(values) === JSON.stringify(applied) ? load() : setApplied(values))}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 border border-primary/40 text-primary-soft hover:bg-primary hover:text-white text-sm font-bold cursor-pointer"
           >
-            <RefreshCw size={14} className={clsx(loading && "animate-spin")} /> {parameters.length ? dt("reports.designer.apply", "Apply") : dt("common.refresh", "Refresh")}
+            <RefreshCw size={14} className={clsx(loading && "animate-spin")} />{" "}
+            {parameters.length ? dt("reports.designer.apply", "Apply") : dt("common.refresh", "Refresh")}
           </button>
           <div className="flex-1" />
-          <div className="flex rounded-lg border border-border overflow-hidden text-xs font-bold">
+          {/* <div className="flex rounded-lg border border-border overflow-hidden text-xs font-bold">
             <button
               type="button"
               title={dt("reports.designer.draw_the_report_in_the_browser", "Draw the report in the browser")}
@@ -164,7 +174,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
             >
               <Server size={13} /> {dt("reports.designer.server_rendered", "Server rendered")}
             </button>
-          </div>
+          </div> */}
           <div className="relative">
             <button
               type="button"
@@ -172,7 +182,8 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
               disabled={!model}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-sm font-bold text-gray-300 hover:text-white hover:border-gray-500 cursor-pointer disabled:opacity-50"
             >
-              {exporting ? <Spinner size={14} className="" /> : <Download size={14} />} {dt("common.export", "Export")} <ChevronDown size={12} />
+              {exporting ? <Spinner size={14} className="" /> : <Download size={14} />} {dt("common.export", "Export")}{" "}
+              <ChevronDown size={12} />
             </button>
             {exportOpen && hostRef.current && (
               <ContextMenu
@@ -207,7 +218,10 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
           Object.values(model.data)
             .filter((d) => d.error)
             .map((d) => (
-              <div key={d.dataSourceId} className="mb-3 p-3 rounded-lg border border-warning/30 bg-warning/5 text-xs text-warning">
+              <div
+                key={d.dataSourceId}
+                className="mb-3 p-3 rounded-lg border border-warning/30 bg-warning/5 text-xs text-warning"
+              >
                 {model.definition.dataSources.find((s) => s.id === d.dataSourceId)?.name}: {d.error}
               </div>
             ))}
