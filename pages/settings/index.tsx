@@ -24,14 +24,14 @@ import UsersSettingsPage from "@/components/Settings/Users/UsersSettings";
 import BackupsPage from "@/components/Settings/Backups/BackupsPage";
 import ApiKeysPage from "@/components/Settings/ApiKeys/ApiKeysPage";
 import WebhooksPage from "@/components/Settings/Webhooks/WebhooksPage";
-import LanguageSwitcher from "@/components/Core/LanguageSwitcher";
-import DropdownSelector from "@/components/Core/DropdownSelector";
+import LanguageSwitcher from "@/components/Settings/LanguageSwitcher";
 import { getHourFormat, setHourFormat, type HourFormat } from "@/lib/dateFormat";
 import { VersionInfo } from "@/lib/models/VersionInfo";
 import versionManager from "@/lib/versionManager";
 import client from "@/lib/api";
 import permissionsManager from "@/lib/permissionsManager";
 import Permissions from "@/lib/models/enums/Permissions";
+import { Select } from "@/components/ui";
 
 const hourFormatOptions: HourFormat[] = ["auto", "12", "24"];
 
@@ -141,13 +141,13 @@ export default function SettingsPage() {
                       onClick={() => setAndStoreActiveTab(tab.id)}
                       className={`flex items-center gap-2 sm:gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap lg:whitespace-normal transition-all duration-300 group ${
                         isActive
-                          ? "bg-brand-cyan text-black shadow-md shadow-brand-cyan/20"
+                          ? "bg-accent text-black shadow-md shadow-accent/20"
                           : "text-gray-400 hover:text-white hover:bg-surface-hover"
                       }`}
                     >
                       <Icon
                         size={18}
-                        className={`transition-colors ${isActive ? "text-black" : "text-gray-500 group-hover:text-gray-300"}`}
+                        className={`transition-colors ${isActive ? "text-black" : "text-gray-500 group-hover:text-gray-200"}`}
                       />
                       {tab.label}
                     </button>
@@ -163,8 +163,8 @@ export default function SettingsPage() {
             <div className="max-w-[1600px] mx-auto py-4 sm:p-6 animate-in fade-in duration-500 flex flex-col gap-3">
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-6">
-                  <Settings size={24} className="text-brand-cyan" />
-                  <h3 className="text-xl font-black text-gray-200 tracking-tight">
+                  <Settings size={24} className="text-accent" />
+                  <h3 className="text-xl font-black text-white tracking-tight">
                     {t("settings.general_title", "General Settings")}
                   </h3>
                 </div>
@@ -186,7 +186,7 @@ export default function SettingsPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock size={16} className="text-gray-400" />
-                    <DropdownSelector<HourFormat>
+                    <Select<HourFormat>
                       data={hourFormatOptions.map((value) => ({ value }))}
                       value={hourFormat}
                       onChange={(value) => {
@@ -207,8 +207,8 @@ export default function SettingsPage() {
 
               <div>
                 <div className="flex items-center gap-3 mb-6">
-                  <Info size={24} className="text-brand-cyan" />
-                  <h3 className="text-xl font-black text-gray-200 tracking-tight">
+                  <Info size={24} className="text-accent" />
+                  <h3 className="text-xl font-black text-white tracking-tight">
                     {t("settings.version_title", "Version Info")}
                   </h3>
                 </div>
@@ -229,13 +229,13 @@ export default function SettingsPage() {
                           ) : versionInfo.apiHasUpdate ? (
                             <span
                               title={t("settings.api_update_available", "Update available: pull the latest Docker image to update")}
-                              className="inline-flex items-center gap-2 rounded-xl border border-brand-amber bg-brand-amber/10 px-4 py-2 text-sm font-bold text-brand-amber shadow-inner"
+                              className="inline-flex items-center gap-2 rounded-xl border border-warning bg-warning/10 px-4 py-2 text-sm font-bold text-warning shadow-inner"
                             >
                               <AlertCircle size={16} />
                               {versionInfo?.latestApiVersion}
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-2 text-sm font-bold text-green-400 shadow-inner">
+                            <span className="inline-flex items-center gap-2 rounded-xl border border-success/20 bg-success/10 px-4 py-2 text-sm font-bold text-success shadow-inner">
                               <Check size={16} />
                               {t("settings.latest", "Latest")}
                             </span>
@@ -253,16 +253,16 @@ export default function SettingsPage() {
                               onClick={updateUI}
                               disabled={isUpdatingUI || !isAdmin}
                               title={t("settings.update_available", "Update Available")}
-                              className="flex items-center gap-2 text-brand-amber bg-brand-amber/10 hover:bg-brand-amber/20 border border-brand-amber hover:border-brand-amber transition-colors px-4 py-2 rounded-xl text-sm font-bold shadow-inner disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                              className="flex items-center gap-2 text-warning bg-warning/10 hover:bg-warning/20 border border-warning hover:border-warning transition-colors px-4 py-2 rounded-xl text-sm font-bold shadow-inner disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                             >
                               <RefreshCw
                                 size={16}
-                                className={isUpdatingUI ? "animate-spin text-brand-amber" : "text-brand-amber"}
+                                className={isUpdatingUI ? "animate-spin text-warning" : "text-warning"}
                               />
                               {versionInfo?.latestUiTag}
                             </button>
                           ) : (
-                            <span className="inline-flex items-center gap-2 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-2 text-sm font-bold text-green-400 shadow-inner">
+                            <span className="inline-flex items-center gap-2 rounded-xl border border-success/20 bg-success/10 px-4 py-2 text-sm font-bold text-success shadow-inner">
                               <Check size={16} />
                               {t("settings.latest", "Latest")}
                             </span>

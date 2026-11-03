@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Blurhash } from "react-blurhash";
-import { Image as ImageIcon, Loader2 } from "lucide-react";
+import { Image as ImageIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Spinner } from "@/components/ui";
 
 type Props = {
   imageUrl: string;
@@ -59,9 +60,9 @@ export default function ItemImage({
           )}
 
           {/* Icons & Loading Spinners */}
-          <div className="absolute z-30 flex items-center justify-center text-gray-500 drop-shadow-md">
+          <div className="absolute z-30 flex items-center justify-center text-gray-500 drop-shadow-lg">
             {!imageLoaded && !imageError && (
-              <Loader2 size={32} className="animate-spin text-brand-cyan drop-shadow-[0_0_10px_rgba(0,164,220,0.5)]" />
+              <Spinner size={32} className="text-primary" />
             )}
             {!imageLoaded && imageError && !archived && PlaceHolderIcon && <PlaceHolderIcon size={48} className="opacity-30" />}
           </div>
@@ -70,7 +71,7 @@ export default function ItemImage({
 
       {/* Actual Image */}
 
-      <div className={`relative w-full ${aspectClassName} overflow-hidden transition-all duration-300 group-hover:shadow-brand-cyan/20  group-hover:shadow-xl shrink-0`}>
+      <div className={`relative w-full ${aspectClassName} overflow-hidden transition-all duration-300 group-hover:shadow-accent/20  group-hover:shadow-lg shrink-0`}>
         {/* Background Image */}
         <img
           className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out ${

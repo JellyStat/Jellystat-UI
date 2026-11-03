@@ -1,12 +1,23 @@
-import { DialogPanel, DialogTitle } from "@headlessui/react";
-import { Loader2, Plus, Trash2, Webhook, X } from "lucide-react";
+import { Plus, Trash2, Webhook } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { Field, Select, TextInput, Toggle } from "@/components/Reports/designer/controls";
 import client from "@/lib/api";
 import type { Server } from "@/lib/models/server";
 import type { EventWebhook, EventWebhookType, WebhookEventInfo, WebhookEventKey } from "@/lib/models/webhooks";
+import {
+  Button,
+  Checkbox,
+  Field,
+  IconButton,
+  Input,
+  ModalFooter,
+  ModalHeader,
+  ModalPanel,
+  Select,
+  Switch,
+  Textarea,
+} from "@/components/ui";
 
 type Props = {
   webhook: EventWebhook;
@@ -46,14 +57,14 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
   const toggleEvent = (key: WebhookEventKey, on: boolean) =>
     set({ events: on ? [...draft.events, key] : draft.events.filter((e) => e !== key) });
 
-  const typeOptions: { value: EventWebhookType; label: string }[] = [
-    { value: "discord", label: t("settings.webhook_type_discord", "Discord") },
-    { value: "generic", label: t("settings.webhook_type_generic", "Generic JSON") },
-  ];
-  const serverOptions = [
-    { value: ALL_SERVERS, label: t("settings.webhook_all_servers", "All servers") },
-    ...servers.map((s) => ({ value: s.id, label: s.name })),
-  ];
+  const typeLabels: Record<EventWebhookType, string> = {
+    discord: t("settings.webhook_type_discord", "Discord"),
+    generic: t("settings.webhook_type_generic", "Generic JSON"),
+  };
+  const serverLabel = (id: string) =>
+    id === ALL_SERVERS
+      ? t("settings.webhook_all_servers", "All servers")
+      : (servers.find((s) => s.id === id)?.name ?? id);
   const sample = events.find((e) => e.key === draft.events[0])?.sample ?? events[0]?.sample;
 
   async function save() {
@@ -76,62 +87,62 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
   }
 
   return (
-    <DialogPanel className="w-full max-w-3xl max-h-[92dvh] flex flex-col rounded-2xl border border-border bg-surface shadow-2xl shadow-black/40 overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-3 border-b border-border">
-        <DialogTitle className="flex items-center gap-2 text-lg font-black text-white">
-          <Webhook size={20} className="text-brand-cyan" />
-          {webhook.id ? t("settings.edit_webhook", "Edit webhook") : t("settings.add_webhook", "New webhook")}
-        </DialogTitle>
-        <button type="button" onClick={onClose} className="p-1 text-gray-400 hover:text-white cursor-pointer" aria-label="Close">
-          <X size={18} />
-        </button>
-      </div>
+    <ModalPanel size="xl">
+      <ModalHeader
+        icon={<Webhook size={22} />}
+        title={webhook.id ? t("settings.edit_webhook", "Edit webhook") : t("settings.add_webhook", "New webhook")}
+      />
 
-      <div className="flex-1 overflow-y-auto p-5 space-y-3">
-        <div className="grid sm:grid-cols-2 gap-3">
-          <Field label={t("settings.webhook_name", "Name")}>
-            <TextInput value={draft.name} onChange={(v) => set({ name: v })} />
+      <div className="space-y-5">
+        <div className="grid sm:grid-cols-2 gap-4">
+          <Field label={t("settings.webhook_name", "Name")} htmlFor="webhook-name">
+            <Input id="webhook-name" value={draft.name} onChange={(e) => set({ name: e.target.value })} />
           </Field>
           <Field label={t("settings.webhook_type", "Type")}>
-            <Select value={draft.type} options={typeOptions} onChange={(v) => set({ type: v })} />
+            <Select<EventWebhookType>
+              data={[{ value: "discord" }, { value: "generic" }]}
+              value={draft.type}
+              onChange={(v) => set({ type: v })}
+              labelFn={(v) => typeLabels[v]}
+              widthPx={0}
+              className="w-full"
+            />
           </Field>
         </div>
-        <Field label={t("settings.webhook_url", "URL")}>
-          <TextInput
+
+        <Field label={t("settings.webhook_url", "URL")} htmlFor="webhook-url">
+          <Input
+            id="webhook-url"
             value={draft.url}
             placeholder={draft.type === "discord" ? "https://discord.com/api/webhooks/..." : "https://example.com/hooks/jellystat"}
-            onChange={(v) => set({ url: v.trim() })}
+            onChange={(e) => set({ url: e.target.value.trim() })}
           />
         </Field>
 
         <Field label={t("settings.webhook_events", "Events")}>
           <div className="grid gap-2 sm:grid-cols-3">
             {events.map((e) => (
-              <label
+              <Checkbox
                 key={e.key}
-                className="flex items-start gap-2 rounded-lg border border-border bg-background p-2.5 cursor-pointer hover:border-brand-cyan/60"
-              >
-                <input
-                  type="checkbox"
-                  checked={draft.events.includes(e.key)}
-                  onChange={(ev) => toggleEvent(e.key, ev.target.checked)}
-                  className="accent-brand-purple mt-0.5 cursor-pointer"
-                />
-                <span className="min-w-0">
-                  <span className="block text-xs font-bold text-gray-200">{e.label}</span>
-                  <span className="block text-[11px] text-gray-500 normal-case tracking-normal font-normal">{e.description}</span>
-                </span>
-              </label>
+                variant="card"
+                checked={draft.events.includes(e.key)}
+                onChange={(ev) => toggleEvent(e.key, ev.target.checked)}
+                label={e.label}
+                description={e.description}
+              />
             ))}
           </div>
         </Field>
 
-        <div className="grid sm:grid-cols-2 gap-3">
+        <div className="grid sm:grid-cols-2 gap-4">
           <Field label={t("settings.webhook_server", "Server")}>
-            <Select
+            <Select<string>
+              data={[{ value: ALL_SERVERS }, ...servers.map((s) => ({ value: s.id }))]}
               value={draft.serverId ?? ALL_SERVERS}
-              options={serverOptions}
               onChange={(v) => set({ serverId: v === ALL_SERVERS ? null : v })}
+              labelFn={serverLabel}
+              widthPx={0}
+              className="w-full"
             />
           </Field>
           {draft.type === "generic" && (
@@ -141,11 +152,13 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
                   ? t("settings.webhook_secret_saved", "Signing secret (saved; type to replace, clear and save to remove)")
                   : t("settings.webhook_secret", "Signing secret (optional)")
               }
+              htmlFor="webhook-secret"
             >
-              <TextInput
+              <Input
+                id="webhook-secret"
                 value={draft.secret ?? ""}
                 placeholder={draft.hasSecret ? "••••••••" : "X-Jellystat-Signature: sha256=HMAC(body)"}
-                onChange={(v) => set({ secret: v })}
+                onChange={(e) => set({ secret: e.target.value })}
               />
             </Field>
           )}
@@ -153,41 +166,39 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
 
         {draft.type === "generic" && (
           <Field label={t("settings.webhook_headers", "Headers")}>
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               {headers.map(([key, value], i) => (
-                <div key={i} className="flex gap-2">
-                  <TextInput
+                <div key={i} className="flex items-center gap-2">
+                  <Input
                     value={key}
                     placeholder="Authorization"
-                    onChange={(v) => setHeaders(headers.map((h, j) => (j === i ? [v, h[1]] : h)))}
+                    onChange={(e) => setHeaders(headers.map((h, j) => (j === i ? [e.target.value, h[1]] : h)))}
+                    wrapperClassName="flex-1"
                   />
-                  <TextInput
+                  <Input
                     value={value}
                     placeholder="Bearer ..."
-                    onChange={(v) => setHeaders(headers.map((h, j) => (j === i ? [h[0], v] : h)))}
+                    onChange={(e) => setHeaders(headers.map((h, j) => (j === i ? [h[0], e.target.value] : h)))}
+                    wrapperClassName="flex-1"
                   />
-                  <button
-                    type="button"
+                  <IconButton
+                    label={t("common.delete", "Delete")}
                     onClick={() => setHeaders(headers.filter((_, j) => j !== i))}
-                    className="p-1.5 rounded-md border border-border text-gray-400 hover:text-brand-rose cursor-pointer"
-                    aria-label={t("common.delete", "Delete")}
+                    className="hover:text-danger"
                   >
-                    <Trash2 size={12} />
-                  </button>
+                    <Trash2 size={16} />
+                  </IconButton>
                 </div>
               ))}
-              <button
-                type="button"
-                onClick={() => setHeaders([...headers, ["", ""]])}
-                className="flex items-center gap-1 text-xs text-gray-400 hover:text-white cursor-pointer"
-              >
-                <Plus size={12} className="text-brand-cyan" /> {t("settings.webhook_add_header", "Add header")}
-              </button>
+              <Button variant="ghost" size="sm" onClick={() => setHeaders([...headers, ["", ""]])}>
+                <Plus size={14} className="text-primary" />
+                {t("settings.webhook_add_header", "Add header")}
+              </Button>
             </div>
           </Field>
         )}
 
-        <Toggle
+        <Switch
           label={t("settings.webhook_custom_payload", "Custom payload")}
           checked={useTemplate}
           onChange={(v) => {
@@ -201,7 +212,12 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
         />
         {useTemplate && (
           <div className="space-y-2">
-            <TextInput multiline rows={6} value={draft.payloadTemplate ?? ""} onChange={(v) => set({ payloadTemplate: v })} />
+            <Textarea
+              rows={6}
+              className="font-mono text-xs"
+              value={draft.payloadTemplate ?? ""}
+              onChange={(e) => set({ payloadTemplate: e.target.value })}
+            />
             <p className="text-[11px] text-gray-500">
               {t(
                 "settings.webhook_template_help",
@@ -211,33 +227,24 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
               )}
             </p>
             {sample !== undefined && (
-              <pre className="max-h-56 overflow-auto rounded-lg border border-border bg-background p-3 text-[11px] text-gray-400">
+              <pre className="max-h-56 overflow-auto rounded-xl border border-border bg-background p-4 text-[11px] text-gray-400 shadow-inner">
                 {JSON.stringify(sample, null, 2)}
               </pre>
             )}
           </div>
         )}
 
-        <Toggle label={t("settings.webhook_enabled", "Enabled")} checked={draft.enabled} onChange={(v) => set({ enabled: v })} />
+        <Switch label={t("settings.webhook_enabled", "Enabled")} checked={draft.enabled} onChange={(v) => set({ enabled: v })} />
       </div>
 
-      <div className="flex justify-end gap-3 px-5 py-3 border-t border-border">
-        <button
-          type="button"
-          onClick={onClose}
-          className="px-4 py-2 rounded-lg bg-background border border-border text-gray-200 hover:text-white text-sm cursor-pointer"
-        >
+      <ModalFooter className="pt-6">
+        <Button variant="secondary" onClick={onClose}>
           {t("common.cancel", "Cancel")}
-        </button>
-        <button
-          type="button"
-          onClick={save}
-          disabled={saving || !draft.name.trim() || !draft.url || draft.events.length === 0}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-cyan text-white text-sm font-bold cursor-pointer disabled:opacity-50"
-        >
-          {saving && <Loader2 size={14} className="animate-spin" />} {t("settings.save_webhook", "Save webhook")}
-        </button>
-      </div>
-    </DialogPanel>
+        </Button>
+        <Button onClick={save} loading={saving} disabled={!draft.name.trim() || !draft.url || draft.events.length === 0}>
+          {t("settings.save_webhook", "Save webhook")}
+        </Button>
+      </ModalFooter>
+    </ModalPanel>
   );
 }

@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { MoreVertical, Activity, Loader2, PlaySquare, Clock } from "lucide-react";
+import { MoreVertical, Activity, PlaySquare, Clock } from "lucide-react";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 
 import client from "@/lib/api";
 import StatType from "@/lib/models/enums/StatType";
+import { Spinner } from "@/components/ui";
 
 type Props = {
   type: StatType;
@@ -136,16 +137,16 @@ export default function StatsCard({ type, id }: Props) {
       {/* Header & Settings */}
       <div className="flex items-center justify-between mb-4 relative">
         <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
-          <Activity className="text-brand-purple" size={28} />
+          <Activity className="text-primary" size={28} />
           {title}
         </h2>
 
         <div ref={dropdownRef} className="relative">
           <button
             onClick={() => setOpen((o) => !o)}
-            className={`p-2 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-brand-purple ${
+            className={`p-2 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary ${
               open
-                ? "bg-surface border-brand-purple text-white shadow-inner"
+                ? "bg-surface border-primary text-white shadow-inner"
                 : "bg-transparent border-transparent text-gray-400 hover:text-white hover:bg-surface-hover"
             }`}
             aria-label="Toggle Stats Settings"
@@ -169,8 +170,8 @@ export default function StatsCard({ type, id }: Props) {
                       onClick={() => toggleDays(p.days)}
                       className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
                         isChecked
-                          ? "bg-brand-purple border-brand-purple"
-                          : "bg-background border-border group-hover:border-gray-500"
+                          ? "bg-primary border-primary"
+                          : "bg-background border-border group-hover:border-border-strong"
                       }`}
                     >
                       {isChecked && (
@@ -202,8 +203,8 @@ export default function StatsCard({ type, id }: Props) {
 
       {/* Error State */}
       {error && (
-        <div className="mb-4 p-4 rounded-xl bg-brand-rose/10 border border-brand-rose/20 flex items-start gap-3">
-          <p className="text-sm text-brand-rose/90 font-medium">{error}</p>
+        <div className="mb-4 p-4 rounded-xl bg-danger/10 border border-danger/20 flex items-start gap-3">
+          <p className="text-sm text-danger/90 font-medium">{error}</p>
         </div>
       )}
 
@@ -216,10 +217,10 @@ export default function StatsCard({ type, id }: Props) {
           return (
             <div
               key={p.key}
-              className="bg-surface/60 backdrop-blur-md border border-border rounded-2xl p-5 shadow-xl shadow-black/20 flex flex-col relative overflow-hidden group hover:border-brand-purple/40 transition-colors"
+              className="bg-surface/60 backdrop-blur-md border border-border rounded-2xl p-5 shadow-xl shadow-black/20 flex flex-col relative overflow-hidden group hover:border-primary/40 transition-colors"
             >
               {/* Subtle ambient background glow */}
-              <div className="absolute -bottom-12 -right-12 w-24 h-24 bg-brand-cyan/10 blur-[40px] rounded-full pointer-events-none group-hover:bg-brand-purple/10 transition-colors duration-500"></div>
+              <div className="absolute -bottom-12 -right-12 w-24 h-24 bg-accent/10 blur-[40px] rounded-full pointer-events-none group-hover:bg-primary/10 transition-colors duration-500"></div>
 
               <span className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 relative z-10">
                 {t(p.tKey, p.defaultLabel)}
@@ -227,12 +228,12 @@ export default function StatsCard({ type, id }: Props) {
 
               {isLoading ? (
                 <div className="flex-1 flex items-center justify-center py-4">
-                  <Loader2 size={24} className="text-brand-purple animate-spin" />
+                  <Spinner size={24} className="text-primary" />
                 </div>
               ) : (
                 <div className="flex flex-col gap-3 relative z-10">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-brand-cyan/10 rounded-lg text-brand-cyan border border-brand-cyan/20">
+                    <div className="p-2 bg-accent/10 rounded-lg text-accent border border-accent/20">
                       <PlaySquare size={18} />
                     </div>
                     <div className="flex flex-col">
@@ -244,7 +245,7 @@ export default function StatsCard({ type, id }: Props) {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-brand-purple/10 rounded-lg text-brand-purple border border-brand-purple/20">
+                    <div className="p-2 bg-primary/10 rounded-lg text-primary border border-primary/20">
                       <Clock size={18} />
                     </div>
                     <div className="flex flex-col">

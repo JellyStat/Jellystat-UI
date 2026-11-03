@@ -7,7 +7,7 @@ import WebSocketMessageTypes from "@/lib/models/enums/WebSocketMessageTypes";
 import SessionItem from "@/lib/models/sessionItem";
 import SessionCard from "./SessionCard";
 import NoData from "../ErrorCards/NoData";
-import StatusIndicator from "../Core/StatusIndicator";
+import { StatusIndicator } from "@/components/ui";
 
 export default function Sessions() {
   const { t } = useTranslation("common");
@@ -35,8 +35,8 @@ export default function Sessions() {
     <div className="flex flex-col w-full animate-in fade-in duration-500">
       {/* Section Header */}
       <div className="flex items-center gap-3 mb-6">
-        <StatusIndicator color={sessions.length == 0 ? "bg-brand-rose" : "bg-brand-emerald"} />
-        <h2 className="text-xl font-black text-gray-200 tracking-tight flex items-center gap-2">
+        <StatusIndicator tone={sessions.length == 0 ? "danger" : "success"} />
+        <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-2">
           {t("sessions.active_streams", "Active Streams")}
         </h2>
       </div>

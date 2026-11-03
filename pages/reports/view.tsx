@@ -46,8 +46,8 @@ export default function ReportViewPage() {
             >
               <ArrowLeft size={20} />
             </Link>
-            <div className="p-3 bg-brand-purple/10 rounded-2xl border border-brand-purple/20 shrink-0">
-              <FileBarChart size={24} className="text-brand-purple" />
+            <div className="p-3 bg-primary/10 rounded-2xl border border-primary/20 shrink-0">
+              <FileBarChart size={24} className="text-primary" />
             </div>
             <div className="min-w-0">
               <h1 className="text-2xl font-black text-white tracking-tight truncate">{report?.name ?? "…"}</h1>
@@ -61,11 +61,11 @@ export default function ReportViewPage() {
                 onClick={() => setShowSchedules(true)}
                 className="flex items-center gap-2 bg-surface hover:bg-surface-hover border border-border px-4 py-2 rounded-xl text-sm font-bold cursor-pointer"
               >
-                <CalendarClock size={16} className="text-brand-cyan" /> {t("reports.schedule", "Schedule")}
+                <CalendarClock size={16} className="text-accent" /> {t("reports.schedule", "Schedule")}
               </button>
               <Link
                 href={{ pathname: "/reports/designer", query: { id } }}
-                className="flex items-center gap-2 bg-brand-purple hover:bg-brand-purple/90 text-white px-4 py-2 rounded-xl text-sm font-bold"
+                className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-xl text-sm font-bold"
               >
                 <Pencil size={16} /> {t("reports.edit", "Edit")}
               </Link>

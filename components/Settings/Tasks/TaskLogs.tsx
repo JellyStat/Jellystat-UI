@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Play,
   ServerCog,
-  Loader2,
   Clock,
   CheckCircle2,
   CircleDashed,
@@ -22,6 +21,7 @@ import WebSocketMessageTypes from "@/lib/models/enums/WebSocketMessageTypes";
 import { WebsocketMessage } from "@/lib/models/WebsocketMessage";
 import { wsClient } from "@/lib/wsClient";
 import { formatDateTime } from "@/lib/dateFormat";
+import { Spinner } from "@/components/ui";
 
 const LOGS_PER_PAGE = 20;
 
@@ -153,17 +153,17 @@ export default function TasksLogsPage() {
         <td className="p-2 sm:p-4">
           <div className="flex items-center text-sm text-gray-300 font-medium">
             {log.success == null ? (
-              <span className="flex items-center gap-2 text-brand-cyan">
+              <span className="flex items-center gap-2 text-accent">
                 <CircleDashed size={14} className="shrink-0" />{" "}
                 <span className="sr-only sm:not-sr-only">{t("tasks.in_progress", "In Progress")}</span>
               </span>
             ) : log.success ? (
-              <span className="flex items-center gap-2 text-brand-emerald">
+              <span className="flex items-center gap-2 text-success">
                 <CheckCircle2 size={14} className="shrink-0" />{" "}
                 <span className="sr-only sm:not-sr-only">{t("tasks.success", "Success")}</span>
               </span>
             ) : (
-              <span className="flex items-center gap-2 text-brand-rose">
+              <span className="flex items-center gap-2 text-danger">
                 <XCircle size={14} className="shrink-0" />{" "}
                 <span className="sr-only sm:not-sr-only">{t("tasks.failed", "Failed")}</span>
               </span>
@@ -196,8 +196,8 @@ export default function TasksLogsPage() {
       {/* Header Container */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6">
         <div className="flex items-center gap-4">
-          <div className="p-3.5 bg-brand-purple/10 rounded-2xl border border-brand-purple/20 shadow-inner shrink-0">
-            <Logs className="text-brand-purple" size={28} />
+          <div className="p-3.5 bg-primary/10 rounded-2xl border border-primary/20 shadow-inner shrink-0">
+            <Logs className="text-primary" size={28} />
           </div>
           <div>
             <div className="flex items-center gap-3">
@@ -224,7 +224,7 @@ export default function TasksLogsPage() {
               {loading && logs.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="p-8 text-center">
-                    <Loader2 size={24} className="animate-spin text-brand-purple mx-auto mb-2" />
+                    <Spinner size={24} className="text-primary mx-auto mb-2" />
                     <span className="text-gray-500 text-sm font-medium">{t("common.loading", "Loading logs...")}</span>
                   </td>
                 </tr>
@@ -254,7 +254,7 @@ export default function TasksLogsPage() {
             {t("tasks.total_logs", "Total Logs:")} <span className="text-white">{totalCount}</span>
           </span>
           <div className="flex items-center gap-4 ml-auto">
-            {loading && logs.length > 0 && <Loader2 size={14} className="animate-spin text-brand-purple" />}
+            {loading && logs.length > 0 && <Spinner size={14} className="text-primary" />}
             <span className="text-xs font-mono text-gray-400 whitespace-nowrap">
               {t("common.page_of", "Page {{page}} of {{total}}", { page, total: totalPages })}
             </span>

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import { API_BASE } from "@/lib/api";
 import { Image as ImageIcon, Film, Tv, Music, Folders, HardDrive, PlaySquare, Clock, Timer, History } from "lucide-react";
-import Badge from "../Core/Badge";
+import { Badge } from "@/components/ui";
 import LibraryTypes from "@/lib/models/enums/LibraryTypes";
 
 export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
@@ -18,24 +18,24 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
 
   let FallbackIcon = Folders;
   let colorClasses = {
-    text: "text-brand-cyan",
-    bg: "bg-brand-cyan/20",
-    border: "border-brand-cyan/30",
+    text: "text-accent",
+    bg: "bg-accent/20",
+    border: "border-accent/30",
   };
 
   const typeStr: LibraryTypes = lib.type;
   if (typeStr === LibraryTypes.Movies) {
     FallbackIcon = Film;
-    colorClasses = { text: "text-brand-purple", bg: "bg-brand-purple/20", border: "border-brand-purple/30" };
+    colorClasses = { text: "text-primary", bg: "bg-primary/20", border: "border-primary/30" };
   } else if (typeStr === LibraryTypes.Series) {
     FallbackIcon = Tv;
-    colorClasses = { text: "text-brand-emerald", bg: "bg-brand-emerald/20", border: "border-brand-emerald/30" };
+    colorClasses = { text: "text-success", bg: "bg-success/20", border: "border-success/30" };
   } else if (typeStr === LibraryTypes.Music) {
     FallbackIcon = Music;
-    colorClasses = { text: "text-brand-amber", bg: "bg-brand-amber/20", border: "border-brand-amber/30" };
+    colorClasses = { text: "text-warning", bg: "bg-warning/20", border: "border-warning/30" };
   } else if (typeStr === LibraryTypes.HomeVideos) {
     FallbackIcon = ImageIcon;
-    colorClasses = { text: "text-brand-rose", bg: "bg-brand-rose/20", border: "border-brand-rose/30" };
+    colorClasses = { text: "text-danger", bg: "bg-danger/20", border: "border-danger/30" };
   }
 
   const lastPlayed = lib.latestActivity?.seriesName ?? lib.latestActivity?.name ?? t("library.never", "Never");
@@ -82,7 +82,7 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
         {/* Title Overlay */}
         <div className="absolute bottom-0 left-0 w-full p-5 flex justify-between items-end">
           <h2 className="text-2xl font-black text-gray-200 tracking-tight drop-shadow-lg truncate pr-4">{lib.name}</h2>
-          <Badge value={lib.type} shape="square" />
+          <Badge shape="square">{lib.type}</Badge>
         </div>
       </div>
 

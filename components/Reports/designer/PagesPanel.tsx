@@ -44,7 +44,7 @@ export default function PagesPanel() {
           onDoubleClick={() => setRenaming(i)}
           className={clsx(
             "group flex items-center gap-2 px-2 py-2 rounded-md text-xs cursor-pointer",
-            i === state.pageIndex ? "bg-brand-purple/15 text-white" : "text-gray-400 hover:bg-surface-hover hover:text-gray-200",
+            i === state.pageIndex ? "bg-primary/15 text-white" : "text-gray-400 hover:bg-surface-hover hover:text-gray-200",
           )}
         >
           <GripVertical size={12} className="text-gray-600 shrink-0 cursor-grab" />
@@ -53,7 +53,7 @@ export default function PagesPanel() {
             <input
               autoFocus
               defaultValue={p.name}
-              className="flex-1 min-w-0 bg-background border border-brand-purple rounded px-1 text-xs text-white outline-none"
+              className="flex-1 min-w-0 bg-background border border-primary rounded px-1 text-xs text-white outline-none"
               onClick={(ev) => ev.stopPropagation()}
               onKeyDown={(ev) => {
                 ev.stopPropagation();
@@ -90,7 +90,7 @@ export default function PagesPanel() {
             type="button"
             title="Delete page"
             disabled={definition.pages.length <= 1}
-            className="p-0.5 opacity-0 group-hover:opacity-100 hover:text-brand-rose cursor-pointer disabled:hidden"
+            className="p-0.5 opacity-0 group-hover:opacity-100 hover:text-danger cursor-pointer disabled:hidden"
             onClick={(ev) => {
               ev.stopPropagation();
               deletePage(i);
@@ -103,7 +103,7 @@ export default function PagesPanel() {
       <button
         type="button"
         onClick={addPage}
-        className="w-full flex items-center justify-center gap-2 mt-2 px-2 py-2 rounded-md border border-dashed border-border text-xs text-gray-400 hover:text-white hover:border-brand-purple cursor-pointer"
+        className="w-full flex items-center justify-center gap-2 mt-2 px-2 py-2 rounded-md border border-dashed border-border text-xs text-gray-400 hover:text-white hover:border-primary cursor-pointer"
       >
         <FilePlus2 size={14} /> Add page
       </button>

@@ -158,7 +158,7 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
     <div
       className={clsx(
         "rounded-lg border p-2 space-y-2",
-        depth % 2 === 0 ? "border-border bg-background/40" : "border-brand-purple/30 bg-brand-purple/5",
+        depth % 2 === 0 ? "border-border bg-background/40" : "border-primary/30 bg-primary/5",
       )}
     >
       <div className="flex flex-wrap items-center gap-2">
@@ -170,7 +170,7 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
               onClick={() => onChange({ ...node, combinator: c })}
               className={clsx(
                 "px-2 py-0.5 cursor-pointer uppercase",
-                (node.combinator ?? "and") === c ? "bg-brand-purple text-white" : "text-gray-400 hover:text-white",
+                (node.combinator ?? "and") === c ? "bg-primary text-white" : "text-gray-400 hover:text-white",
               )}
             >
               {c}
@@ -180,7 +180,7 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
         <label className="flex items-center gap-1 text-[11px] text-gray-400 cursor-pointer">
           <input
             type="checkbox"
-            className="accent-brand-purple"
+            className="accent-primary"
             checked={!!node.not}
             onChange={(ev) => onChange({ ...node, not: ev.target.checked })}
           />
@@ -207,7 +207,7 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
           <FolderPlus size={12} /> Group
         </button>
         {onRemove && (
-          <button type="button" title="Remove group" className="p-0.5 text-gray-500 hover:text-brand-rose cursor-pointer" onClick={onRemove}>
+          <button type="button" title="Remove group" className="p-0.5 text-gray-500 hover:text-danger cursor-pointer" onClick={onRemove}>
             <Trash2 size={12} />
           </button>
         )}
@@ -294,7 +294,7 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
             <button
               type="button"
               title="Remove rule"
-              className="p-1 text-gray-500 hover:text-brand-rose cursor-pointer"
+              className="p-1 text-gray-500 hover:text-danger cursor-pointer"
               onClick={() => removeRule(i)}
             >
               <Trash2 size={12} />

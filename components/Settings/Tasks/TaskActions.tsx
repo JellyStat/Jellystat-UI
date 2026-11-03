@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Play, ServerCog, Loader2, Clock, CheckCircle2, CircleDashed, Square } from "lucide-react";
+import { Play, ServerCog, Clock, CheckCircle2, CircleDashed, Square } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
@@ -13,7 +13,7 @@ import { TaskQueueUpdate } from "@/lib/models/taskQueueUpdate";
 import TasksLogsPage from "./TaskLogs";
 import { getTaskBadge } from "./Tasks";
 import Tasks from "@/lib/models/enums/Tasks";
-import DropdownSelector from "@/components/Core/DropdownSelector";
+import { Select, Spinner } from "@/components/ui";
 
 const taskOptionsBase = [{ value: 60 }, { value: 1440 }, { value: 720 }];
 
@@ -127,8 +127,8 @@ export default function TaskActionsPage() {
       {/* Header Container */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6">
         <div className="flex items-center gap-4">
-          <div className="p-3.5 bg-brand-purple/10 rounded-2xl border border-brand-purple/20 shadow-inner shrink-0">
-            <ServerCog className="text-brand-purple" size={28} />
+          <div className="p-3.5 bg-primary/10 rounded-2xl border border-primary/20 shadow-inner shrink-0">
+            <ServerCog className="text-primary" size={28} />
           </div>
           <div>
             <div className="flex items-center gap-3">
@@ -161,7 +161,7 @@ export default function TaskActionsPage() {
               {loading && tasks.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="p-8 text-center">
-                    <Loader2 size={24} className="animate-spin text-brand-purple mx-auto mb-2" />
+                    <Spinner size={24} className="text-primary mx-auto mb-2" />
                     <span className="text-gray-500 text-sm font-medium">{t("common.loading", "Loading tasks...")}</span>
                   </td>
                 </tr>
@@ -241,11 +241,11 @@ export default function TaskActionsPage() {
                   const badgeLabel = taskBadgeLabels[taskSetting.task] ?? taskSetting.task;
 
                   const statusBadge = isRunning ? (
-                    <span className="inline-flex items-center bg-brand-emerald/10 text-brand-emerald border border-brand-emerald/20 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider">
-                      <Loader2 size={12} className="mr-1.5 animate-spin" /> {t("tasks.running", "Running")}
+                    <span className="inline-flex items-center bg-success/10 text-success border border-success/20 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider">
+                      <Spinner size={12} className="mr-1.5" /> {t("tasks.running", "Running")}
                     </span>
                   ) : isQueued ? (
-                    <span className="inline-flex items-center bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/20 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider">
+                    <span className="inline-flex items-center bg-accent/10 text-accent border border-accent/20 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider">
                       {t("tasks.queued", "Queued")}
                     </span>
                   ) : (
@@ -266,7 +266,7 @@ export default function TaskActionsPage() {
                       {/* Interval */}
                       <td className="p-3 sm:p-4">
                         {interval > 0 ? (
-                          <DropdownSelector<number>
+                          <Select<number>
                             data={intervalOptionsFor(taskSetting)}
                             value={interval}
                             labelFn={formatInterval}
@@ -288,10 +288,10 @@ export default function TaskActionsPage() {
                             action: taskSetting.enabled ? t("common.disable", "Disable") : t("common.enable", "Enable"),
                             taskName: taskSetting.task,
                           })}
-                          className={`p-2 rounded-lg bg-background text-gray-400  border border-border ${taskSetting.enabled ? "hover:bg-brand-rose/20 hover:border-brand-rose/50 hover:text-brand-rose" : "hover:bg-brand-emerald/20 hover:border-brand-emerald/50 hover:text-brand-emerald"}  transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer`}
+                          className={`p-2 rounded-lg bg-background text-gray-400  border border-border ${taskSetting.enabled ? "hover:bg-danger/20 hover:border-danger/50 hover:text-danger" : "hover:bg-success/20 hover:border-success/50 hover:text-success"}  transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer`}
                         >
                           {taskSetting.enabled ? (
-                            <div className="flex items-center text-xs font-bold text-emerald-400">
+                            <div className="flex items-center text-xs font-bold text-success">
                               <CheckCircle2 size={14} className="mr-1.5" /> {t("common.yes", "Yes")}
                             </div>
                           ) : (
@@ -311,12 +311,12 @@ export default function TaskActionsPage() {
                           onClick={isRunning ? stopTask : executeTask}
                           disabled={isQueued || (!isManualOnly && taskSetting.intervalMinutes <= 0)}
                           title={t("tasks.run_now", "Run {{taskName}} now", { taskName: taskSetting.task })}
-                          className={`p-2 rounded-lg bg-background hover:bg-brand-emerald/20 text-gray-400 hover:${isRunning ? "text-brand-rose" : "text-brand-emerald"} border border-border hover:${isRunning ? "border-brand-rose/50" : "border-brand-emerald/50"} transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 ml-auto flex cursor-pointer`}
+                          className={`p-2 rounded-lg bg-background hover:bg-success/20 text-gray-400 ${isRunning ? "hover:text-danger hover:border-danger/50" : "hover:text-success hover:border-success/50"} border border-border transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 ml-auto flex cursor-pointer`}
                         >
                           {isRunning ? (
-                            <Square size={16} className="opacity-100 text-brand-rose" />
+                            <Square size={16} className="opacity-100 text-danger" />
                           ) : (
-                            <Play size={16} className={(isQueued ? "opacity-50" : "opacity-100") + " text-brand-emerald"} />
+                            <Play size={16} className={(isQueued ? "opacity-50" : "opacity-100") + " text-success"} />
                           )}
                         </button>
                       </td>

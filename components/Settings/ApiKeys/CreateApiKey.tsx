@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { AlertCircle, Check, Copy, Eye, KeyRound, Loader2, ShieldCheck, TriangleAlert } from "lucide-react";
-import { DialogPanel, DialogTitle } from "@headlessui/react";
+import { Check, Copy, Eye, KeyRound, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
@@ -8,6 +7,19 @@ import client from "@/lib/api";
 import Permissions from "@/lib/models/enums/Permissions";
 import type { CreatedApiKey } from "@/lib/models/apiKey";
 import type { Server } from "@/lib/models/server";
+import {
+  Alert,
+  Button,
+  cn,
+  ErrorAlert,
+  Field,
+  Input,
+  Label,
+  ModalFooter,
+  ModalHeader,
+  ModalPanel,
+  Select,
+} from "@/components/ui";
 
 type Props = {
   servers: Server[];
@@ -69,131 +81,80 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
     }
   }
 
-  const panelClass =
-    "w-full max-w-lg rounded-2xl border border-border bg-surface p-5 md:p-6 shadow-2xl shadow-black/40 duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0";
-  const inputClass = (invalid: boolean) =>
-    `w-full bg-background border rounded-xl py-3 px-4 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all shadow-inner ${
-      invalid
-        ? "border-brand-rose focus:border-brand-rose focus:ring-brand-rose/50"
-        : "border-border hover:border-gray-500 focus:border-brand-cyan focus:ring-brand-cyan"
-    }`;
-
   if (created) {
     return (
-      <DialogPanel transition className={panelClass}>
-        <DialogTitle className="text-lg font-black text-white">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2.5 rounded-xl bg-brand-emerald/10 border border-brand-emerald/20">
-              <KeyRound size={22} className="text-brand-emerald" />
-            </div>
-            <h2 className="text-2xl font-black text-white tracking-tight">
-              {t("settings.api_key_created", "API key created")}
-            </h2>
-          </div>
-        </DialogTitle>
+      <ModalPanel>
+        <ModalHeader icon={<KeyRound size={22} />} iconTone="success" title={t("settings.api_key_created", "API key created")} />
 
-        <div className="p-3.5 rounded-xl bg-brand-amber/10 border border-brand-amber/30 flex items-start gap-3 mb-4">
-          <TriangleAlert size={16} className="text-brand-amber shrink-0 mt-0.5" />
-          <p className="text-xs text-brand-amber font-medium leading-relaxed">
-            {t(
-              "settings.api_key_copy_warning",
-              "Copy this key now. It is only shown once and cannot be retrieved later. If you lose it, delete the key and create a new one.",
-            )}
-          </p>
-        </div>
+        <Alert tone="warning" className="mb-4">
+          {t(
+            "settings.api_key_copy_warning",
+            "Copy this key now. It is only shown once and cannot be retrieved later. If you lose it, delete the key and create a new one.",
+          )}
+        </Alert>
 
         <div className="flex items-stretch gap-2">
-          <code className="flex-1 min-w-0 break-all bg-background border border-border rounded-xl px-4 py-3 text-sm text-gray-200 select-all">
+          <code className="flex-1 min-w-0 break-all bg-background border border-border rounded-xl px-4 py-2.5 text-sm text-gray-200 select-all shadow-inner">
             {created.key}
           </code>
-          <button
-            type="button"
-            onClick={copyKey}
-            className="px-4 rounded-xl bg-background border border-border text-gray-200 hover:text-white hover:border-gray-500 transition-all flex items-center gap-2 text-sm font-bold"
-          >
-            {copied ? <Check size={16} className="text-brand-emerald" /> : <Copy size={16} />}
+          <Button variant="secondary" onClick={copyKey}>
+            {copied ? <Check size={16} className="text-success" /> : <Copy size={16} />}
             {copied ? t("common.copied", "Copied") : t("common.copy", "Copy")}
-          </button>
+          </Button>
         </div>
 
         <p className="mt-4 text-xs text-gray-500">
           {t("settings.api_key_usage", "Send it in the x-api-token header with each request.")}
         </p>
 
-        <div className="flex justify-end pt-5">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 rounded-xl bg-brand-cyan text-black font-black transition-all active:scale-[0.98]"
-          >
-            {t("common.done", "Done")}
-          </button>
-        </div>
-      </DialogPanel>
+        <ModalFooter className="pt-5">
+          <Button onClick={onClose}>{t("common.done", "Done")}</Button>
+        </ModalFooter>
+      </ModalPanel>
     );
   }
 
+  const accessOptions = [
+    {
+      value: Permissions.CanView,
+      icon: Eye,
+      title: t("settings.api_key_read_only", "Read only"),
+      desc: t("settings.api_key_read_only_desc", "View statistics for one server."),
+    },
+    {
+      value: Permissions.Administrator,
+      icon: ShieldCheck,
+      title: t("settings.api_key_admin", "Full admin"),
+      desc: t("settings.api_key_admin_desc", "Everything an administrator can do."),
+    },
+  ];
+
   return (
-    <DialogPanel transition className={panelClass}>
-      <DialogTitle className="text-lg font-black text-white">
-        <div className="flex items-start justify-between gap-4 mb-6">
-          <div>
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-brand-cyan/10 border border-brand-cyan/20">
-                <KeyRound size={22} className="text-brand-cyan" />
-              </div>
-              <h2 className="text-2xl font-black text-white tracking-tight">
-                {t("settings.add_api_key", "Create API Key")}
-              </h2>
-            </div>
-            <p className="mt-2 text-sm text-gray-400 font-medium">
-              {t("settings.add_api_key_desc", "Give another app access to Jellystat without a user login.")}
-            </p>
-          </div>
-        </div>
-      </DialogTitle>
+    <ModalPanel>
+      <ModalHeader
+        icon={<KeyRound size={22} />}
+        title={t("settings.add_api_key", "Create API Key")}
+        description={t("settings.add_api_key_desc", "Give another app access to Jellystat without a user login.")}
+      />
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="space-y-1.5">
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
-            {t("settings.api_key_name", "Name")}
-          </label>
-          <input
+        <Field label={t("settings.api_key_name", "Name")} htmlFor="api-key-name" error={fieldErrors.name}>
+          <Input
+            id="api-key-name"
             type="text"
             value={name}
             maxLength={100}
             onChange={(e) => setName(e.target.value)}
             disabled={loading}
             placeholder={t("settings.placeholder_api_key_name", "e.g. Homepage dashboard")}
-            className={inputClass(!!fieldErrors.name)}
+            error={!!fieldErrors.name}
           />
-          {fieldErrors.name && (
-            <p className="text-[11px] font-bold text-brand-rose ml-1 flex items-center mt-1">
-              <AlertCircle size={10} className="mr-1" />
-              {fieldErrors.name}
-            </p>
-          )}
-        </div>
+        </Field>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
-            {t("settings.api_key_access", "Access")}
-          </label>
+          <Label>{t("settings.api_key_access", "Access")}</Label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {[
-              {
-                value: Permissions.CanView,
-                icon: Eye,
-                title: t("settings.api_key_read_only", "Read only"),
-                desc: t("settings.api_key_read_only_desc", "View statistics for one server."),
-              },
-              {
-                value: Permissions.Administrator,
-                icon: ShieldCheck,
-                title: t("settings.api_key_admin", "Full admin"),
-                desc: t("settings.api_key_admin_desc", "Everything an administrator can do."),
-              },
-            ].map((opt) => {
+            {accessOptions.map((opt) => {
               const Icon = opt.icon;
               const active = permission === opt.value;
               return (
@@ -203,14 +164,13 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
                   aria-pressed={active}
                   disabled={loading}
                   onClick={() => setPermission(opt.value)}
-                  className={`text-left p-3.5 rounded-xl border transition-all ${
-                    active
-                      ? "border-brand-cyan bg-brand-cyan/10"
-                      : "border-border bg-background hover:border-gray-500"
-                  }`}
+                  className={cn(
+                    "text-left p-4 rounded-xl border transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary",
+                    active ? "border-primary bg-primary/10" : "border-border bg-background hover:border-gray-500",
+                  )}
                 >
-                  <div className="flex items-center gap-2 font-bold text-sm text-gray-100">
-                    <Icon size={16} className={active ? "text-brand-cyan" : "text-gray-500"} />
+                  <div className="flex items-center gap-2 font-bold text-sm text-white">
+                    <Icon size={16} className={active ? "text-primary" : "text-gray-500"} />
                     {opt.title}
                   </div>
                   <p className="text-xs text-gray-500 mt-1">{opt.desc}</p>
@@ -221,75 +181,39 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
         </div>
 
         {isReadOnly && (
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
-              {t("settings.api_key_server", "Server")}
-            </label>
-            <select
-              value={serverId}
-              onChange={(e) => setServerId(e.target.value)}
+          <Field label={t("settings.api_key_server", "Server")} error={fieldErrors.serverId}>
+            <Select<string>
+              data={servers.map((s) => ({ value: s.id }))}
+              value={serverId || undefined}
+              onChange={setServerId}
+              labelFn={(id) => servers.find((s) => s.id === id)?.name ?? id}
               disabled={loading}
-              className={inputClass(!!fieldErrors.serverId)}
-            >
-              {servers.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
-            {fieldErrors.serverId && (
-              <p className="text-[11px] font-bold text-brand-rose ml-1 flex items-center mt-1">
-                <AlertCircle size={10} className="mr-1" />
-                {fieldErrors.serverId}
-              </p>
-            )}
-          </div>
+              widthPx={0}
+              className="w-full"
+            />
+          </Field>
         )}
 
         {!isReadOnly && (
-          <div className="p-3.5 rounded-xl bg-brand-amber/10 border border-brand-amber/30 flex items-start gap-3">
-            <TriangleAlert size={16} className="text-brand-amber shrink-0 mt-0.5" />
-            <p className="text-xs text-brand-amber font-medium leading-relaxed">
-              {t(
-                "settings.api_key_admin_warning",
-                "A full admin key can change settings and delete data on every server. Only use it for apps you fully trust.",
-              )}
-            </p>
-          </div>
-        )}
-
-        {error && (
-          <div className="p-3.5 rounded-xl bg-brand-rose/10 border border-brand-rose/20 flex items-start gap-3">
-            <AlertCircle size={16} className="text-brand-rose shrink-0 mt-0.5" />
-            <p className="text-xs text-brand-rose/90 font-medium leading-relaxed">{error}</p>
-          </div>
-        )}
-
-        <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-2">
-          <button
-            type="submit"
-            disabled={loading || !name.trim()}
-            className="px-5 py-2.5 rounded-xl bg-brand-cyan text-black font-black transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg shadow-brand-cyan/20 active:scale-[0.98]"
-          >
-            {loading ? (
-              <>
-                <Loader2 size={18} className="animate-spin mr-2" />
-                {t("settings.creating_api_key", "Creating")}
-              </>
-            ) : (
-              t("settings.create_api_key", "Create")
+          <Alert tone="warning">
+            {t(
+              "settings.api_key_admin_warning",
+              "A full admin key can change settings and delete data on every server. Only use it for apps you fully trust.",
             )}
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={loading}
-            className="px-4 py-2.5 rounded-xl bg-background border border-border text-gray-200 hover:text-white hover:border-gray-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
+          </Alert>
+        )}
+
+        {error && <ErrorAlert>{error}</ErrorAlert>}
+
+        <ModalFooter>
+          <Button variant="secondary" onClick={onClose} disabled={loading}>
             {t("common.cancel", "Cancel")}
-          </button>
-        </div>
+          </Button>
+          <Button type="submit" loading={loading} disabled={!name.trim()}>
+            {loading ? t("settings.creating_api_key", "Creating") : t("settings.create_api_key", "Create")}
+          </Button>
+        </ModalFooter>
       </form>
-    </DialogPanel>
+    </ModalPanel>
   );
 }

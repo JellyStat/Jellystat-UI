@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Library, Loader2, AlertCircle } from "lucide-react";
+import { Library, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { GridifyQueryBuilder } from "gridify-client";
 import { useTranslation } from "react-i18next";
@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import client from "@/lib/api";
 import { TrackedLibraries } from "@/lib/models/trackedLibraries";
 import LibraryTrackingCard from "@/components/LibraryCard/LibraryTrackingCard";
+import { Button, Card, EmptyState, Page, PageHeader, Spinner } from "@/components/ui";
 
 export default function LibrarySettingsPage() {
   const { t } = useTranslation("common");
@@ -66,60 +67,43 @@ export default function LibrarySettingsPage() {
   }, [fetchPage]);
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 py-4 sm:p-6">
-      {/* Header Container */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6 mb-8">
-        <div className="flex items-center gap-4">
-          <div className="p-3.5 bg-brand-emerald/10 rounded-2xl border border-brand-emerald/20 shadow-inner shrink-0">
-            <Library size={28} className="text-brand-emerald" />
-          </div>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              {t("settings.library_title", "Library Settings")}
-            </h1>
-            <p className="text-sm text-gray-400 mt-1 font-medium">
-              {t("settings.library_subtitle", "Select which media libraries you want to track statistics for.")}
-            </p>
-          </div>
-        </div>
-      </div>
+    <Page className="pt-4 sm:px-6 sm:pt-6">
+      <PageHeader
+        iconTone="success"
+        icon={<Library size={28} />}
+        title={t("settings.library_title", "Library Settings")}
+        description={t("settings.library_subtitle", "Select which media libraries you want to track statistics for.")}
+      />
 
-      {/* Main Content Area */}
       <div className="relative min-h-[400px]">
-        {/* Loading State */}
         {loading && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center animate-in fade-in">
-            <Loader2 size={48} className="text-brand-emerald animate-spin mb-4" />
-            <span className="text-sm font-bold text-gray-300 tracking-wide">{t("common.loading", "Loading")}</span>
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 animate-in fade-in">
+            <Spinner size={48} tone="primary" />
+            <span className="text-sm font-bold text-gray-300">{t("common.loading", "Loading")}</span>
           </div>
         )}
 
-        {/* Error State */}
         {error && !loading && (
-          <div className="bg-surface/90 backdrop-blur-md border border-brand-rose/20 rounded-2xl p-8 flex flex-col items-center justify-center animate-in fade-in max-w-lg mx-auto mt-12 shadow-2xl">
-            <AlertCircle size={48} className="text-brand-rose mb-4" />
-            <span className="text-xl font-black text-white mb-2">{t("settings.sync_failed", "Sync Failed")}</span>
-            <span className="text-sm text-gray-400 text-center">{error}</span>
-            <button
-              onClick={fetchPage}
-              className="mt-6 px-6 py-2.5 bg-surface border border-border hover:border-brand-emerald hover:text-brand-emerald rounded-xl font-bold transition-all shadow-inner"
-            >
+          <Card className="max-w-lg mx-auto mt-12 flex flex-col items-center text-center animate-in fade-in">
+            <AlertCircle size={48} className="text-danger mb-4" />
+            <span className="text-lg font-bold text-white mb-2">{t("settings.sync_failed", "Sync Failed")}</span>
+            <span className="text-sm text-gray-400">{error}</span>
+            <Button variant="outline" onClick={fetchPage} className="mt-6">
               {t("common.retry_connection", "Retry Connection")}
-            </button>
-          </div>
+            </Button>
+          </Card>
         )}
 
-        {/* Library Grid */}
         {!loading && !error && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {libraryData.length === 0 ? (
-              <div className="col-span-full py-20 flex flex-col items-center justify-center text-gray-500">
-                <Library size={64} className="mb-4 opacity-20" />
-                <span className="text-xl font-bold text-gray-400">{t("common.no_libraries_found", "No libraries found")}</span>
-                <span className="text-sm mt-1">
-                  {t("settings.no_libraries_desc", "Make sure your media server is connected properly.")}
-                </span>
-              </div>
+              <EmptyState
+                className="col-span-full"
+                bordered={false}
+                Icon={Library}
+                title={t("common.no_libraries_found", "No libraries found")}
+                message={t("settings.no_libraries_desc", "Make sure your media server is connected properly.")}
+              />
             ) : (
               libraryData.map((lib) => (
                 <LibraryTrackingCard key={`${lib.serverId}-${lib.id}`} lib={lib} toggleLibraryTracking={toggleLibraryTracking} />
@@ -128,6 +112,6 @@ export default function LibrarySettingsPage() {
           </div>
         )}
       </div>
-    </div>
+    </Page>
   );
 }

@@ -91,6 +91,19 @@ export default {
     'jest/expect-expect': 'off',
     'jest/no-export': 'off',
     'jest/valid-title': 'off',
+
+    // UI kit boundary (see UI_AUDIT.md); components/ui/__tests__/guard.test.ts checks the same in Jest.
+    'no-restricted-imports': [
+      'error',
+      {
+        paths: [
+          {
+            name: '@headlessui/react',
+            message: 'Import from "@/components/ui" (styled) or "@/components/ui/headless" (unstyled).',
+          },
+        ],
+      },
+    ],
   },
 
   overrides: [
@@ -99,6 +112,12 @@ export default {
       rules: {
         'no-console': 'off',
         'react/button-has-type': 'off',
+      },
+    },
+    {
+      files: ['components/ui/**'],
+      rules: {
+        'no-restricted-imports': 'off',
       },
     },
   ],

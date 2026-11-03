@@ -2,10 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Calendar, X } from "lucide-react";
 import FilterItem, { DatesRangeValue } from "./FilterItem";
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
-import DateRangePicker from "../Core/DateRangePicker";
+import { HeadlessPopover as Popover, HeadlessPopoverPanel as PopoverPanel, PopoverButton } from "@/components/ui/headless";
 import { DateRange } from "react-day-picker";
 import { useDebounce } from "@/lib/hooks/useDebounce";
+import { DateRangePicker } from "@/components/ui";
 
 interface DateFilterProps {
   keyName: string;
@@ -87,7 +87,7 @@ export default function DateFilter({ keyName, value, onChange }: DateFilterProps
         {!isEmpty && (
           <button
             onClick={handleClear}
-            className="absolute right-2 text-gray-500 hover:text-brand-rose transition-colors focus:outline-none"
+            className="absolute right-2 text-gray-500 hover:text-danger transition-colors focus:outline-none"
             title="Clear filter"
           >
             <X size={14} />

@@ -22,8 +22,7 @@ import Permissions from "@/lib/models/enums/Permissions";
 import configManager from "@/lib/configManager";
 import { Server } from "@/lib/models/server";
 import { wsClient } from "@/lib/wsClient";
-import StatusIndicator from "../Core/StatusIndicator";
-import DropdownSelector from "../Core/DropdownSelector";
+import { Select, StatusIndicator } from "@/components/ui";
 
 export default function SideNav() {
   const router = useRouter();
@@ -160,7 +159,7 @@ export default function SideNav() {
 
   const brand = (
     <>
-      <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-linear-to-br from-brand-cyan to-brand-purple shadow-lg shadow-brand-purple/20 mr-3 shrink-0">
+      <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-linear-to-br from-accent to-primary shadow-lg shadow-primary/20 mr-3 shrink-0">
         <Activity className="text-white" size={24} />
       </div>
       <span className="text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-linear-to-r from-gray-100 to-gray-400">
@@ -181,7 +180,7 @@ export default function SideNav() {
             className="flex items-center"
             title={isConnected ? t("status.online", "System Online") : t("status.offline", "System Offline")}
           >
-            <StatusIndicator color={isConnected ? "bg-brand-emerald" : "bg-brand-rose"} />
+            <StatusIndicator tone={isConnected ? "success" : "danger"} />
           </span>
           <button
             type="button"
@@ -236,8 +235,8 @@ export default function SideNav() {
                 href={item.path}
                 className={`w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 font-medium group ${
                   isActive
-                    ? "bg-brand-purple/10 text-brand-purple shadow-inner border border-brand-purple/20"
-                    : "text-gray-400 hover:text-gray-100 hover:bg-surface-hover border border-transparent"
+                    ? "bg-primary/10 text-primary shadow-inner border border-primary/20"
+                    : "text-gray-400 hover:text-gray-200 hover:bg-surface-hover border border-transparent"
                 }`}
               >
                 <Icon
@@ -253,7 +252,7 @@ export default function SideNav() {
           <div className="pt-4 mt-4 border-t border-border/50">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 font-medium text-gray-400 hover:text-brand-rose hover:bg-brand-rose/10 group cursor-pointer"
+              className="w-full flex items-center px-4 py-3 rounded-xl transition-all duration-200 font-medium text-gray-400 hover:text-danger hover:bg-danger/10 group cursor-pointer"
             >
               <LogOut size={20} className="opacity-70 group-hover:opacity-100 transition-opacity" />
               <span className="ml-3 tracking-wide">{t("nav.logout", "Logout")}</span>
@@ -265,12 +264,12 @@ export default function SideNav() {
         <div className="p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] border-t border-border bg-background/30 flex-none flex flex-col gap-4">
           {/* Dynamic Status Indicator */}
           <div className="flex items-center gap-3">
-            <StatusIndicator color={isConnected ? "bg-brand-emerald" : "bg-brand-rose"} />
+            <StatusIndicator tone={isConnected ? "success" : "danger"} />
             <div className="flex flex-col text-left">
               <span className="text-sm font-bold text-gray-200">
                 {isConnected ? t("status.online", "System Online") : t("status.offline", "System Offline")}
               </span>
-              <span className={`text-[11px] font-mono tracking-wider ${isConnected ? "text-gray-500" : "text-brand-rose/80"}`}>
+              <span className={`text-[11px] font-mono tracking-wider ${isConnected ? "text-gray-500" : "text-danger/80"}`}>
                 {isConnected ? t("status.connected", "WS CONNECTED") : t("status.disconnected", "DISCONNECTED")}
               </span>
             </div>
@@ -278,7 +277,7 @@ export default function SideNav() {
 
           {/* Admin Server Switcher */}
           {isAdmin && serverOptions.length > 0 && (
-            <DropdownSelector<string | null>
+            <Select<string | null>
               data={serverOptions.map((opt) => ({ value: opt.value, Icon: ServerIcon }))}
               value={selectedServer}
               onChange={handleServerChange}

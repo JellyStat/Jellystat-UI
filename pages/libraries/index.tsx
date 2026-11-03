@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useTranslation } from "react-i18next";
-import { Database, Loader2, AlertCircle } from "lucide-react";
+import { Database, AlertCircle } from "lucide-react";
 
 import client from "@/lib/api";
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import LibraryCard from "@/components/LibraryCard/LibraryCard";
 import { GridifyQueryBuilder } from "gridify-client";
+import { PageHeader, Spinner } from "@/components/ui";
 
 export default function LibrariesPage() {
   const { t } = useTranslation("common");
@@ -46,33 +47,28 @@ export default function LibrariesPage() {
 
       <div className="space-y-8 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12">
         {/* Header */}
-        <div className="flex items-center gap-4 border-b border-border/50 pb-6">
-          <div className="p-3.5 bg-brand-cyan/10 rounded-2xl border border-brand-cyan/20 shadow-inner">
-            <Database size={28} className="text-brand-cyan" />
-          </div>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{t("nav.libraries", "Libraries")}</h1>
-            <p className="text-sm text-gray-400 mt-1 font-medium">
-              {t("libraries.libraries_desc", "Manage, track, and analyze your media collections")}
-            </p>
-          </div>
-        </div>
+        <PageHeader
+          iconTone="accent"
+          icon={<Database size={28} />}
+          title={t("nav.libraries", "Libraries")}
+          description={t("libraries.libraries_desc", "Manage, track, and analyze your media collections")}
+        />
 
         {/* Loading State */}
         {loading && (
           <div className="w-full py-32 flex flex-col items-center justify-center">
-            <Loader2 size={48} className="text-brand-cyan animate-spin mb-4" />
+            <Spinner size={48} className="text-primary mb-4" />
             <span className="text-gray-400 font-medium tracking-wide">{t("common.loading", "Loading")}</span>
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className="p-5 rounded-2xl bg-brand-rose/10 border border-brand-rose/20 flex items-start gap-4 shadow-xl shadow-brand-rose/5">
-            <AlertCircle size={24} className="text-brand-rose shrink-0 mt-0.5" />
+          <div className="p-5 rounded-2xl bg-danger/10 border border-danger/20 flex items-start gap-4 shadow-xl shadow-danger/5">
+            <AlertCircle size={24} className="text-danger shrink-0 mt-0.5" />
             <div className="flex flex-col">
-              <h3 className="text-lg font-bold text-brand-rose mb-1">{t("libraries.failed_load", "Failed to load libraries")}</h3>
-              <p className="text-sm text-brand-rose/80 font-medium">{error}</p>
+              <h3 className="text-lg font-bold text-danger mb-1">{t("libraries.failed_load", "Failed to load libraries")}</h3>
+              <p className="text-sm text-danger/80 font-medium">{error}</p>
             </div>
           </div>
         )}

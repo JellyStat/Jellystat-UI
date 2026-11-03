@@ -2,17 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { useTranslation } from "react-i18next";
-import { Activity, Lock, User, Server as ServerIcon, ChevronRight, Loader2, AlertCircle } from "lucide-react";
+import { Activity, Lock, User, Server as ServerIcon, ChevronRight, AlertCircle, Loader2 } from "lucide-react";
 
 import client from "@/lib/api";
 import { wsClient } from "@/lib/wsClient";
 import permissionsManager from "@/lib/permissionsManager";
 import { setToken } from "@/lib/helpers/tokenHelper";
 import { Server } from "@/lib/models/server";
-import DropdownSelector from "@/components/Core/DropdownSelector";
 import { config } from "node:process";
 import configManager from "@/lib/configManager";
 import Permissions from "@/lib/models/enums/Permissions";
+import { Select, Spinner } from "@/components/ui";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -140,26 +140,26 @@ export default function LoginPage() {
         <title>{t("login.page_title", "Login")} | Jellystat</title>
       </Head>
 
-      <div className="min-h-screen w-full bg-background flex items-center justify-center relative overflow-hidden font-sans selection:bg-brand-cyan/30">
+      <div className="min-h-screen w-full bg-background flex items-center justify-center relative overflow-hidden font-sans selection:bg-accent/30">
         {/* Ambient Background Glows */}
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-cyan/10 blur-[120px] rounded-full pointer-events-none"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-brand-purple/10 blur-[120px] rounded-full pointer-events-none"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent/10 blur-[120px] rounded-full pointer-events-none"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
 
         {/* Login Card */}
         <div className="w-full max-w-md p-8 sm:p-10 bg-surface/80 backdrop-blur-2xl border border-border rounded-3xl shadow-2xl shadow-black/60 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out m-4">
           {/* Logo & Header */}
           <div className="flex flex-col items-center text-center mb-10">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-cyan to-brand-purple p-[1px] shadow-lg shadow-brand-cyan/20 mb-6">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-primary p-[1px] shadow-lg shadow-accent/20 mb-6">
               <div className="w-full h-full bg-surface rounded-[15px] flex items-center justify-center">
                 <Activity
                   size={32}
-                  className="text-transparent bg-clip-text bg-gradient-to-br from-brand-cyan to-brand-purple"
+                  className="text-transparent bg-clip-text bg-gradient-to-br from-accent to-primary"
                   style={{ stroke: "url(#gradient)" }}
                 />
                 <svg width="0" height="0">
                   <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop stopColor="var(--color-brand-cyan)" offset="0%" />
-                    <stop stopColor="var(--color-brand-purple)" offset="100%" />
+                    <stop stopColor="var(--color-accent)" offset="0%" />
+                    <stop stopColor="var(--color-primary)" offset="100%" />
                   </linearGradient>
                 </svg>
               </div>
@@ -178,16 +178,16 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Global Error Banner */}
             {(error || serverError) && (
-              <div className="p-4 rounded-xl bg-brand-rose/10 border border-brand-rose/20 flex items-start gap-3 animate-in fade-in zoom-in-95">
-                <AlertCircle size={18} className="text-brand-rose shrink-0 mt-0.5" />
-                <p className="text-sm text-brand-rose/90 font-medium leading-relaxed">{error || serverError}</p>
+              <div className="p-4 rounded-xl bg-danger/10 border border-danger/20 flex items-start gap-3 animate-in fade-in zoom-in-95">
+                <AlertCircle size={18} className="text-danger shrink-0 mt-0.5" />
+                <p className="text-sm text-danger/90 font-medium leading-relaxed">{error || serverError}</p>
               </div>
             )}
 
             {/* Username Input */}
             <div className="space-y-1.5">
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-brand-cyan transition-colors">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-accent transition-colors">
                   <User size={18} />
                 </div>
                 <input
@@ -197,19 +197,19 @@ export default function LoginPage() {
                   placeholder={t("login.username_placeholder", "Username")}
                   className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-100 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all ${
                     usernameError
-                      ? "border-brand-rose/50 focus:border-brand-rose focus:ring-brand-rose"
-                      : "border-border focus:border-brand-cyan focus:ring-brand-cyan"
+                      ? "border-danger/50 focus:border-danger focus:ring-danger"
+                      : "border-border focus:border-accent focus:ring-accent"
                   }`}
                   disabled={loading}
                 />
               </div>
-              {usernameError && <p className="text-xs text-brand-rose font-medium pl-1">{usernameError}</p>}
+              {usernameError && <p className="text-xs text-danger font-medium pl-1">{usernameError}</p>}
             </div>
 
             {/* Password Input */}
             <div className="space-y-1.5">
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-brand-cyan transition-colors">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-accent transition-colors">
                   <Lock size={18} />
                 </div>
                 <input
@@ -219,20 +219,20 @@ export default function LoginPage() {
                   placeholder={t("login.password_placeholder", "Password")}
                   className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-100 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all ${
                     passwordError
-                      ? "border-brand-rose/50 focus:border-brand-rose focus:ring-brand-rose"
-                      : "border-border focus:border-brand-cyan focus:ring-brand-cyan"
+                      ? "border-danger/50 focus:border-danger focus:ring-danger"
+                      : "border-border focus:border-accent focus:ring-accent"
                   }`}
                   disabled={loading}
                 />
               </div>
-              {passwordError && <p className="text-xs text-brand-rose font-medium pl-1">{passwordError}</p>}
+              {passwordError && <p className="text-xs text-danger font-medium pl-1">{passwordError}</p>}
             </div>
 
             {/* Server Picker (Conditional) */}
 
             {showServerPicker && (
               <div className="space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-300">
-                <DropdownSelector<string | null>
+                <Select<string | null>
                   data={serverOptions.map((opt) => ({ value: opt.value, Icon: loadingServers ? Loader2 : ServerIcon }))}
                   value={selectedServer}
                   onChange={setSelectedServer}
@@ -243,7 +243,7 @@ export default function LoginPage() {
                   leftIcon={ServerIcon}
                   loading={loadingServers}
                 />
-                {serverValidationError && <p className="text-xs text-brand-rose font-medium pl-1">{serverValidationError}</p>}
+                {serverValidationError && <p className="text-xs text-danger font-medium pl-1">{serverValidationError}</p>}
               </div>
             )}
 
@@ -254,10 +254,10 @@ export default function LoginPage() {
                 disabled={loading || !username.trim() || !password.trim() || (showServerPicker && !selectedServer)}
                 className="w-full relative group overflow-hidden rounded-xl p-[1px] disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
               >
-                <span className="absolute inset-0 bg-gradient-to-r from-brand-cyan to-brand-purple rounded-xl opacity-80 group-hover:opacity-100 transition-opacity"></span>
+                <span className="absolute inset-0 bg-gradient-to-r from-accent to-primary rounded-xl opacity-80 group-hover:opacity-100 transition-opacity"></span>
                 <div className="relative flex items-center justify-center bg-surface hover:bg-transparent backdrop-blur-sm px-6 py-3.5 rounded-xl transition-colors">
                   {loading ? (
-                    <Loader2 size={20} className="animate-spin text-white" />
+                    <Spinner size={20} className="text-white" />
                   ) : (
                     <>
                       <span className="font-bold text-white tracking-wide">{t("login.submit_button", "Sign In")}</span>

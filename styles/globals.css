@@ -11,6 +11,21 @@
   --color-surface: #121214;
   --color-surface-hover: #1e1e24;
   --color-border: #27272a;
+
+  /* Semantic roles (see UI_AUDIT.md). Prefer these over brand-* in new code. */
+  --color-primary: var(--color-brand-purple);
+  --color-primary-hover: #9a2cee;
+  --color-on-primary: #ffffff;
+  --color-accent: var(--color-brand-cyan);
+  --color-accent-hover: #0090c2;
+  --color-on-accent: #000000;
+  --color-danger: var(--color-brand-rose);
+  --color-danger-hover: #e11d48;
+  --color-success: var(--color-brand-emerald);
+  --color-warning: var(--color-brand-amber);
+  --color-info: #38bdf8;
+  --color-surface-raised: #1a1c23;
+  --color-border-strong: #3f3f46;
 }
 
 @layer base {
@@ -56,7 +71,7 @@
   }
 }
 .rdp-root {
-  --rdp-accent-color: var(--color-brand-cyan) !important; /* Change the accent color to indigo. */
-  --rdp-accent-background-color: var(--color-border) !important; /* Change the accent background color. */
-  /* Add more CSS variables here. */
+  /* Calendar (react-day-picker) follows the primary colour. */
+  --rdp-accent-color: var(--color-primary) !important;
+  --rdp-accent-background-color: var(--color-border) !important;
 }

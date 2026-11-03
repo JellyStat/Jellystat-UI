@@ -1,20 +1,26 @@
-"use client";
+import { useEffect, useRef, useState, type Ref } from 'react';
+import { cn } from '../cn';
 
-import { forwardRef, useEffect, useRef, useState } from "react";
-
-interface Props {
+export type NumberFieldProps = {
   value: number | undefined;
   min?: number;
   max?: number;
+  // Called 400ms after the user stops typing, with the value clamped to min/max.
   onChange: (value: number | undefined) => void;
   className?: string;
   readonly?: boolean;
-}
+  ref?: Ref<HTMLInputElement>;
+};
 
-const NumberField = forwardRef<HTMLInputElement, Props>(function NumberField(
-  { value, onChange, min = undefined, max = undefined, className = "", readonly = false },
+export default function NumberField({
+  value,
+  onChange,
+  min,
+  max,
+  className,
+  readonly = false,
   ref,
-) {
+}: NumberFieldProps) {
   const [number, setNumber] = useState<number | undefined>(value);
   const onChangeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -28,7 +34,9 @@ const NumberField = forwardRef<HTMLInputElement, Props>(function NumberField(
 
   useEffect(() => {
     return () => {
-      if (onChangeTimeout.current) clearTimeout(onChangeTimeout.current);
+      if (onChangeTimeout.current) {
+        clearTimeout(onChangeTimeout.current);
+      }
     };
   }, []);
 
@@ -57,16 +65,20 @@ const NumberField = forwardRef<HTMLInputElement, Props>(function NumberField(
       ref={ref}
       min={min}
       max={max}
-      value={number}
+      value={number ?? ''}
       onChange={(e) => {
-        if (readonly) return;
+        if (readonly) {
+          return;
+        }
         const inputValue = e.target.value;
-        handleChange(inputValue === "" ? undefined : Number(inputValue));
+        handleChange(inputValue === '' ? undefined : Number(inputValue));
       }}
-      className={`no-spinner transition-all ${className} ${readonly ? "bg-surface/50 cursor-default" : ""}`}
+      className={cn(
+        'no-spinner transition-all',
+        className,
+        readonly && 'bg-surface cursor-default'
+      )}
       readOnly={readonly}
     />
   );
-});
-
-export default NumberField;
+}

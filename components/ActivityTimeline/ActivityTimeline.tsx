@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 import client from "@/lib/api";
 import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
@@ -9,6 +9,7 @@ import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import NoData from "../ErrorCards/NoData";
 import ActivityTimelineItem from "./ActivityTimelineItem";
 import { TIMELINE_PAGE_SIZE, parseStoredIds } from "./helpers";
+import { Spinner } from "@/components/ui";
 
 const LIBRARY_PREF_KEY = "PREF_ACTIVITY_TIMELINE_selectedLibraries";
 
@@ -116,7 +117,7 @@ export default function ActivityTimeline({ userId }: Props) {
                 aria-pressed={active}
                 className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg border shrink-0 cursor-pointer transition-all duration-300 text-xs font-bold ${
                   active
-                    ? "bg-brand-cyan/10 text-brand-cyan border-brand-cyan/20"
+                    ? "bg-accent/10 text-accent border-accent/20"
                     : "bg-surface text-gray-400 border-border hover:text-white hover:border-gray-500"
                 }`}
               >
@@ -133,13 +134,13 @@ export default function ActivityTimeline({ userId }: Props) {
 
       {loading && (
         <div className="flex items-center justify-center h-48">
-          <Loader2 size={40} className="text-brand-cyan animate-spin" />
+          <Spinner size={40} className="text-primary" />
         </div>
       )}
 
       {!loading && error && (
-        <div className="p-6 rounded-2xl bg-brand-rose/10 border border-brand-rose/20 flex flex-col items-center text-center max-w-lg mx-auto">
-          <AlertCircle size={40} className="text-brand-rose mb-3" />
+        <div className="p-6 rounded-2xl bg-danger/10 border border-danger/20 flex flex-col items-center text-center max-w-lg mx-auto">
+          <AlertCircle size={40} className="text-danger mb-3" />
           <span className="text-xl font-bold text-white mb-2">{t("timeline.error_loading", "Error loading timeline")}</span>
           <span className="text-sm text-gray-400">{error}</span>
         </div>

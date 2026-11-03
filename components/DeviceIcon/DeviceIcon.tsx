@@ -82,31 +82,31 @@ const SvgRoku = ({ className }: { className?: string }) => (
 // Evaluated top-to-bottom. Most specific targets MUST be at the top!
 const DEVICE_RULES = [
   // Browsers
-  { regex: /(chrome|chromium)/i, icon: SvgChrome, color: "text-yellow-400" },
-  { regex: /(firefox)/i, icon: SvgFirefox, color: "text-orange-500" },
-  { regex: /(edge|edg)/i, icon: SvgEdge, color: "text-sky-400" },
-  { regex: /(safari)/i, icon: SvgSafari, color: "text-blue-400" },
+  { regex: /(chrome|chromium)/i, icon: SvgChrome, color: "text-warning" },
+  { regex: /(firefox)/i, icon: SvgFirefox, color: "text-warning" },
+  { regex: /(edge|edg)/i, icon: SvgEdge, color: "text-info" },
+  { regex: /(safari)/i, icon: SvgSafari, color: "text-info" },
 
   // Consoles
-  { regex: /(playstation|ps[345]|psvita)/i, icon: SvgPlayStation, color: "text-blue-500" },
-  { regex: /(xbox)/i, icon: SvgXbox, color: "text-green-500" },
-  { regex: /(nintendo|switch)/i, icon: SvgSwitch, color: "text-red-500" },
-  { regex: /(gamepad|console)/i, icon: Gamepad2, color: "text-brand-purple" },
+  { regex: /(playstation|ps[345]|psvita)/i, icon: SvgPlayStation, color: "text-info" },
+  { regex: /(xbox)/i, icon: SvgXbox, color: "text-success" },
+  { regex: /(nintendo|switch)/i, icon: SvgSwitch, color: "text-danger" },
+  { regex: /(gamepad|console)/i, icon: Gamepad2, color: "text-primary" },
 
   // Streaming Sticks & Specific TVs
   { regex: /(roku)/i, icon: SvgRoku, color: "text-purple-500" },
-  { regex: /(chromecast|cast)/i, icon: Cast, color: "text-brand-cyan" },
-  { regex: /(fire(\s)?tv|amazon|kindle)/i, icon: SvgAndroid, color: "text-orange-500" },
+  { regex: /(chromecast|cast)/i, icon: Cast, color: "text-accent" },
+  { regex: /(fire(\s)?tv|amazon|kindle)/i, icon: SvgAndroid, color: "text-warning" },
 
   // Primary OS Ecosystems
   { regex: /(apple|mac(os)?|imac|macbook|ios|ipad|iphone|tvos|infuse|swiftfin)/i, icon: SvgApple, color: "text-gray-200" },
-  { regex: /(android|shield|findroid|symfonium)/i, icon: SvgAndroid, color: "text-emerald-500" },
-  { regex: /(windows|win10|win11)/i, icon: SvgWindows, color: "text-sky-500" },
-  { regex: /(linux|ubuntu|debian|arch|mint|fedora|centos|manjaro)/i, icon: SvgLinux, color: "text-yellow-200" },
+  { regex: /(android|shield|findroid|symfonium)/i, icon: SvgAndroid, color: "text-success" },
+  { regex: /(windows|win10|win11)/i, icon: SvgWindows, color: "text-info" },
+  { regex: /(linux|ubuntu|debian|arch|mint|fedora|centos|manjaro)/i, icon: SvgLinux, color: "text-warning" },
 
   // Generic Form Factors (Fallbacks)
-  { regex: /(web|browser)/i, icon: Globe, color: "text-brand-purple" },
-  { regex: /(tv|bravia|vizio|hisense|tcl|smarttv|lg|webos|samsung|tizen)/i, icon: Tv, color: "text-brand-cyan" },
+  { regex: /(web|browser)/i, icon: Globe, color: "text-primary" },
+  { regex: /(tv|bravia|vizio|hisense|tcl|smarttv|lg|webos|samsung|tizen)/i, icon: Tv, color: "text-accent" },
   { regex: /(tablet)/i, icon: Tablet, color: "text-gray-300" },
   { regex: /(mobile|phone)/i, icon: Smartphone, color: "text-gray-300" },
 ];

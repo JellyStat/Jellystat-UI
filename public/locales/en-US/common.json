@@ -20,6 +20,9 @@
     "api_key": "API Key",
     "archived": "Archived",
     "cancel": "Cancel",
+    "clear": "Clear",
+    "collapse": "Collapse",
+    "expand": "Expand",
     "client": "Client",
     "close": "Close",
     "date": "Date",
@@ -144,6 +147,8 @@
   "libraries": {
     "failed_load": "Failed to load libraries",
     "libraries_desc": "Manage, track, and analyze your media collections",
+    "total_media": "Total Media",
+    "total_storage": "Total Storage",
     "no_libraries_desc": "Make sure your server is connected and synced."
   },
   "library": {
@@ -480,6 +485,7 @@
     "playback_reporting_import": "Playback Reporting Import",
     "queued": "Queued",
     "run_now": "Run {{taskName}} Now",
+    "stop_task": "Stop {{taskName}}",
     "running": "Running",
     "start_failed": "Failed to start {{taskName}}",
     "starting_task": "Starting {{taskName}}",

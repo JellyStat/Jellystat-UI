@@ -1,14 +1,11 @@
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import {
   AlertCircle,
   CalendarClock,
-  ChevronDown,
   Copy,
   Download,
   FileBarChart,
   FilePlus2,
   LayoutTemplate,
-  Loader2,
   Pencil,
   Upload,
 } from "lucide-react";
@@ -18,7 +15,7 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
+import ConfirmationDialogButton from "@/components/ConfirmationDialogButton";
 import ReportImportDialog from "@/components/Reports/ReportImportDialog";
 import ReportSchedulesDialog from "@/components/Reports/ReportSchedulesDialog";
 import client from "@/lib/api";
@@ -27,6 +24,7 @@ import Permissions from "@/lib/models/enums/Permissions";
 import type { ReportImportResult, ReportParameter, ReportSummary } from "@/lib/models/reports";
 import permissionsManager from "@/lib/permissionsManager";
 import { checkReportFile, downloadReportFile, reportNameFromFile } from "@/lib/reports/transfer";
+import { Button, buttonClass, Card, DropdownMenu, EmptyState, PageHeader, Spinner } from "@/components/ui";
 
 export default function ReportsPage() {
   const { t } = useTranslation("common");
@@ -131,37 +129,23 @@ export default function ReportsPage() {
       </Head>
 
       <div className="space-y-8 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-border/50 pb-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3.5 bg-brand-purple/10 rounded-2xl border border-brand-purple/20 shadow-inner shrink-0">
-              <FileBarChart size={28} className="text-brand-purple" />
-            </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{t("nav.reports", "Reports")}</h1>
-              <p className="text-sm text-gray-400 mt-1 font-medium">
-                {t("reports.subtitle", "Design custom reports, export them, and deliver them on a schedule")}
-              </p>
-            </div>
-          </div>
-          {isAdmin && (
+        <PageHeader
+          icon={<FileBarChart size={28} />}
+          title={t("nav.reports", "Reports")}
+          description={t("reports.subtitle", "Design custom reports, export them, and deliver them on a schedule")}
+          actions={
+            isAdmin && (
             <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => importRef.current?.click()}
-                className="flex items-center gap-2 bg-surface hover:bg-surface-hover border border-border transition-colors px-4 py-2 rounded-xl text-sm font-bold cursor-pointer"
-              >
+              <Button variant="outline" onClick={() => importRef.current?.click()}>
                 <Upload size={16} className="text-gray-400" /> {t("reports.import", "Import")}
-              </button>
+              </Button>
               <Link
                 href={{ pathname: "/reports/designer", query: { template: "activity" } }}
-                className="flex items-center gap-2 bg-surface hover:bg-surface-hover border border-border transition-colors px-4 py-2 rounded-xl text-sm font-bold"
+                className={buttonClass({ variant: "outline" })}
               >
-                <LayoutTemplate size={16} className="text-brand-cyan" /> {t("reports.from_template", "From template")}
+                <LayoutTemplate size={16} className="text-accent" /> {t("reports.from_template", "From template")}
               </Link>
-              <Link
-                href="/reports/designer"
-                className="flex items-center gap-2 bg-brand-purple hover:bg-brand-purple/90 text-white transition-colors px-4 py-2 rounded-xl text-sm font-bold"
-              >
+              <Link href="/reports/designer" className={buttonClass({ variant: "primary" })}>
                 <FilePlus2 size={16} /> {t("reports.new", "New report")}
               </Link>
               <input
@@ -178,36 +162,38 @@ export default function ReportsPage() {
                 }}
               />
             </div>
-          )}
-        </div>
+            )
+          }
+        />
 
-        <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden relative min-h-[240px]">
+        <Card padding="none" className="relative min-h-[240px]">
           {loading && (
             <div className="absolute inset-0 z-20 bg-surface/80 backdrop-blur-sm flex items-center justify-center">
-              <Loader2 size={32} className="text-brand-purple animate-spin" />
+              <Spinner size={32} tone="primary" />
             </div>
           )}
           {error && !loading && (
             <div className="p-4 flex items-center gap-3 border-b border-border/50">
-              <AlertCircle size={18} className="text-brand-rose shrink-0" />
+              <AlertCircle size={18} className="text-danger shrink-0" />
               <span className="text-sm text-gray-400">{error}</span>
             </div>
           )}
           {!loading && !error && reports.length === 0 && (
-            <div className="p-12 text-center text-gray-500 flex flex-col items-center justify-center">
-              <FileBarChart size={48} className="mb-4 opacity-20" />
-              <span className="font-bold text-lg">{t("reports.empty", "No reports yet")}</span>
-              {isAdmin && <span className="text-sm mt-1">{t("reports.empty_hint", "Start from the template to see how it works.")}</span>}
-            </div>
+            <EmptyState
+              bordered={false}
+              Icon={FileBarChart}
+              title={t("reports.empty", "No reports yet")}
+              message={isAdmin ? t("reports.empty_hint", "Start from the template to see how it works.") : undefined}
+            />
           )}
           <div className="divide-y divide-border/50">
             {reports.map((r) => (
               <div
                 key={r.id}
-                className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-hover transition-colors"
+                className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-hover transition-colors"
               >
                 <Link href={{ pathname: "/reports/view", query: { id: r.id } }} className="min-w-0 space-y-1 flex-1">
-                  <h3 className="font-bold text-gray-100 truncate">{r.name}</h3>
+                  <h3 className="font-bold text-white truncate">{r.name}</h3>
                   {r.description && <p className="text-sm text-gray-400 line-clamp-2">{r.description}</p>}
                   <div className="text-xs text-gray-500 flex flex-wrap gap-x-4">
                     <span>
@@ -215,7 +201,7 @@ export default function ReportsPage() {
                       {r.updatedBy ? ` · ${r.updatedBy}` : ""}
                     </span>
                     {r.scheduleCount > 0 && (
-                      <span className="flex items-center gap-1 text-brand-cyan">
+                      <span className="flex items-center gap-1 text-accent">
                         <CalendarClock size={12} /> {r.scheduleCount} {t("reports.schedules", "schedule(s)")}
                       </span>
                     )}
@@ -225,55 +211,38 @@ export default function ReportsPage() {
                   <div className="flex flex-wrap gap-2 shrink-0">
                     <Link
                       href={{ pathname: "/reports/designer", query: { id: r.id } }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-gray-300 hover:text-white border border-border hover:border-brand-purple rounded-lg"
+                      className={buttonClass({ variant: "secondary", size: "sm" })}
                     >
-                      <Pencil size={13} /> {t("reports.edit", "Edit")}
+                      <Pencil size={14} /> {t("reports.edit", "Edit")}
                     </Link>
-                    <Menu>
-                      <MenuButton className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-gray-300 hover:text-white border border-border rounded-lg cursor-pointer">
-                        {t("reports.more", "More")} <ChevronDown size={13} />
-                      </MenuButton>
-                      <MenuItems
-                        anchor={{ to: "bottom end", gap: 4 }}
-                        className="z-30 min-w-40 rounded-xl border border-border bg-surface p-1 shadow-xl shadow-black/40 focus:outline-none"
-                      >
-                        {[
-                          {
-                            label: t("reports.schedule", "Schedule"),
-                            icon: <CalendarClock size={14} className="text-brand-cyan" />,
-                            onClick: () => openSchedules(r),
-                          },
-                          { label: t("reports.duplicate", "Duplicate"), icon: <Copy size={14} />, onClick: () => duplicate(r.id) },
-                          { label: t("reports.export", "Export"), icon: <Download size={14} />, onClick: () => exportReport(r) },
-                        ].map((item) => (
-                          <MenuItem key={item.label}>
-                            <button
-                              type="button"
-                              onClick={item.onClick}
-                              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold text-gray-300 data-[focus]:bg-surface-hover data-[focus]:text-white cursor-pointer"
-                            >
-                              {item.icon} {item.label}
-                            </button>
-                          </MenuItem>
-                        ))}
-                      </MenuItems>
-                    </Menu>
+                    <DropdownMenu
+                      label={t("reports.more", "More")}
+                      items={[
+                        {
+                          label: t("reports.schedule", "Schedule"),
+                          icon: <CalendarClock size={14} className="text-accent" />,
+                          onClick: () => openSchedules(r),
+                        },
+                        { label: t("reports.duplicate", "Duplicate"), icon: <Copy size={14} />, onClick: () => duplicate(r.id) },
+                        { label: t("reports.export", "Export"), icon: <Download size={14} />, onClick: () => exportReport(r) },
+                      ]}
+                    />
                     <ConfirmationDialogButton
-                      buttonElement={<div>{t("common.delete", "Delete")}</div>}
+                      buttonElement={t("common.delete", "Delete")}
                       dialogTitle={t("reports.delete_title", "Delete report {{name}}", {
                         name: r.name,
                       })}
                       description={t("reports.delete_confirm", "The report and its schedules will be deleted. This cannot be undone.")}
                       onConfirm={() => remove(r.id)}
-                      actionColor="bg-brand-rose"
-                      className="px-3 py-1.5 text-xs font-bold text-brand-rose hover:text-white border-brand-rose/60 bg-brand-rose/10 border hover:bg-rose-600 rounded-lg transition-all"
+                      tone="danger"
+                      className={buttonClass({ variant: "dangerSoft", size: "sm" })}
                     />
                   </div>
                 )}
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       </div>
 
       {importReview && (

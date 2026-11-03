@@ -234,7 +234,7 @@ function StepFields({
               />
               <button
                 type="button"
-                className="p-1 text-gray-500 hover:text-brand-rose cursor-pointer"
+                className="p-1 text-gray-500 hover:text-danger cursor-pointer"
                 onClick={() => set({ sort: (step.sort ?? []).filter((_, j) => j !== i) })}
               >
                 <Trash2 size={12} />
@@ -374,7 +374,7 @@ export default function TransformsEditor({
             <button
               type="button"
               title="Remove step"
-              className="p-0.5 text-gray-500 hover:text-brand-rose cursor-pointer"
+              className="p-0.5 text-gray-500 hover:text-danger cursor-pointer"
               onClick={() => onChange(transforms.filter((_, j) => j !== i))}
             >
               <Trash2 size={12} />

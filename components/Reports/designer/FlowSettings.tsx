@@ -104,7 +104,7 @@ export function ConditionsSection({ e, columns }: { e: ReportElement; columns: R
               <button
                 type="button"
                 title="Remove"
-                className="p-1 text-gray-500 hover:text-brand-rose cursor-pointer"
+                className="p-1 text-gray-500 hover:text-danger cursor-pointer"
                 onClick={() =>
                   setAll(
                     conditions.filter((_, j) => j !== i),
@@ -245,7 +245,7 @@ export function CardsSection({ e, columns, picker }: { e: ReportElement; columns
               max={95}
               value={Math.round(o.imageSize * 100)}
               onChange={(ev) => set({ imageSize: Number(ev.target.value) / 100 }, "imageSize")}
-              className="w-full accent-brand-purple"
+              className="w-full accent-primary"
             />
           </Field>
         </>

@@ -62,7 +62,7 @@ function ElementLink({ e }: { e: ReportElement }) {
 function TokenHelp() {
   return (
     <details className="text-[11px] text-gray-500">
-      <summary className="cursor-pointer hover:text-gray-300">Placeholders</summary>
+      <summary className="cursor-pointer hover:text-gray-200">Placeholders</summary>
       <ul className="mt-1 space-y-0.5">
         {TOKEN_HELP.map((t) => (
           <li key={t.token}>
@@ -275,7 +275,7 @@ function Arrange() {
           </>
         )}
         <div className="flex-1" />
-        <ToolButton title="Delete (Del)" onClick={deleteSelection} className="hover:text-brand-rose!">
+        <ToolButton title="Delete (Del)" onClick={deleteSelection} className="hover:text-danger!">
           <Trash2 size={15} />
         </ToolButton>
       </div>
@@ -456,7 +456,7 @@ function TableContent({ e }: { e: ReportElement }) {
                 />
                 <button
                   type="button"
-                  className="p-1 text-gray-500 hover:text-brand-rose cursor-pointer"
+                  className="p-1 text-gray-500 hover:text-danger cursor-pointer"
                   onClick={() =>
                     setCols(
                       cols.filter((_, j) => j !== i),
@@ -685,7 +685,7 @@ function ChartContent({ e }: { e: ReportElement }) {
               />
               <button
                 type="button"
-                className="p-1 text-gray-500 hover:text-brand-rose cursor-pointer"
+                className="p-1 text-gray-500 hover:text-danger cursor-pointer"
                 onClick={() => set({ series: c.series.filter((_, j) => j !== i) }, `s${i}del`)}
               >
                 <Trash2 size={12} />
@@ -885,7 +885,7 @@ function ImageContent({ e }: { e: ReportElement }) {
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="w-full flex items-center justify-center gap-2 px-2 py-2 rounded-md border border-dashed border-border text-xs text-gray-300 hover:text-white hover:border-brand-purple cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 px-2 py-2 rounded-md border border-dashed border-border text-xs text-gray-300 hover:text-white hover:border-primary cursor-pointer"
           >
             <Upload size={14} /> Upload image
           </button>
@@ -894,7 +894,7 @@ function ImageContent({ e }: { e: ReportElement }) {
           </Field>
           {e.src?.startsWith("data:") && <p className="text-[11px] text-gray-500">Embedded image ({Math.round((e.src.length * 0.75) / 1024)} KB)</p>}
           {e.src && !e.src.startsWith("data:") && (
-            <p className="text-[11px] text-brand-amber">
+            <p className="text-[11px] text-warning">
               Server exports only fetch URLs from your Jellyfin/Emby server or Jellystat. For other sites, upload the image instead.
             </p>
           )}

@@ -1,4 +1,4 @@
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@/components/ui/headless";
 import { Check, ChevronDown } from "lucide-react";
 import { FONT_FAMILIES } from "@/lib/reports/defaults";
 import { firstFamily, fontStack, useReportFonts } from "@/lib/reports/fonts";
@@ -23,7 +23,7 @@ export default function FontPicker({ value, onChange }: { value: string; onChang
   return (
     <Listbox value={value} onChange={onChange}>
       <ListboxButton
-        className="w-full min-w-0 flex items-center justify-between gap-1 bg-background border border-border rounded-md px-2 py-1 text-xs text-gray-200 outline-none focus:border-brand-purple cursor-pointer"
+        className="w-full min-w-0 flex items-center justify-between gap-1 bg-background border border-border rounded-lg px-2 py-1 text-xs text-gray-200 outline-none focus:border-primary cursor-pointer"
         onKeyDown={(ev) => ev.stopPropagation()}
       >
         <span className="truncate" style={{ fontFamily: value }}>
@@ -33,7 +33,7 @@ export default function FontPicker({ value, onChange }: { value: string; onChang
       </ListboxButton>
       <ListboxOptions
         anchor="bottom start"
-        className="z-[70] w-60 max-h-80 overflow-y-auto rounded-lg border border-border bg-surface py-1 shadow-2xl shadow-black/60 [--anchor-gap:4px] outline-none"
+        className="z-[70] w-60 max-h-80 overflow-y-auto rounded-xl border border-border bg-surface p-1 shadow-2xl shadow-black/60 [--anchor-gap:4px] outline-none"
       >
         {groups.map((g) => (
           <div key={g.category}>
@@ -44,9 +44,9 @@ export default function FontPicker({ value, onChange }: { value: string; onChang
                 <ListboxOption
                   key={f.family}
                   value={stack}
-                  className="group flex items-center gap-2 px-3 py-1.5 text-sm text-gray-300 cursor-pointer data-focus:bg-surface-hover data-focus:text-white"
+                  className="group flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-gray-300 cursor-pointer data-focus:bg-surface-hover data-focus:text-white"
                 >
-                  <Check size={13} className={f.family.toLowerCase() === current ? "text-brand-purple shrink-0" : "invisible shrink-0"} />
+                  <Check size={13} className={f.family.toLowerCase() === current ? "text-primary shrink-0" : "invisible shrink-0"} />
                   <span className="truncate" style={{ fontFamily: stack }}>
                     {f.family}
                   </span>
@@ -65,9 +65,9 @@ export default function FontPicker({ value, onChange }: { value: string; onChang
           <ListboxOption
             key={f.value}
             value={f.value}
-            className="group flex items-center gap-2 px-3 py-1.5 text-sm text-gray-300 cursor-pointer data-focus:bg-surface-hover data-focus:text-white"
+            className="group flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-gray-300 cursor-pointer data-focus:bg-surface-hover data-focus:text-white"
           >
-            <Check size={13} className="invisible text-brand-purple shrink-0 group-data-selected:visible" />
+            <Check size={13} className="invisible text-primary shrink-0 group-data-selected:visible" />
             <span className="truncate" style={{ fontFamily: f.value }}>
               {f.label}
             </span>

@@ -19,6 +19,9 @@
     "api_key": "API-Key",
     "archived": "Archiviert",
     "cancel": "Abbrechen",
+    "clear": "Leeren",
+    "collapse": "Einklappen",
+    "expand": "Ausklappen",
     "client": "Client",
     "close": "Schließen",
     "date": "Datum",
@@ -140,6 +143,8 @@
   "libraries": {
     "failed_load": "Bibliotheken konnten nicht geladen werden",
     "libraries_desc": "Verwalte, tracke und analysiere deine Mediensammlungen",
+    "total_media": "Medien gesamt",
+    "total_storage": "Speicher gesamt",
     "no_libraries_desc": "Stelle sicher, dass dein Server verbunden und synchronisiert ist."
   },
   "library": {
@@ -453,6 +458,7 @@
     "playback_reporting_import": "Playback-Reporting-Import",
     "queued": "Warteschlange",
     "run_now": "{{taskName}} jetzt ausführen",
+    "stop_task": "{{taskName}} stoppen",
     "running": "Läuft",
     "start_failed": "Fehler beim Starten von {{taskName}}",
     "starting_task": "{{taskName}} wird gestartet",

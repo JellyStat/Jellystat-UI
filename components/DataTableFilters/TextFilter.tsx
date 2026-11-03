@@ -60,7 +60,7 @@ export default function TextFilter({
       {query && (
         <button
           onClick={clearQuery}
-          className="absolute right-2 text-gray-500 hover:text-brand-rose transition-colors focus:outline-none"
+          className="absolute right-2 text-gray-500 hover:text-danger transition-colors focus:outline-none"
           title="Clear filter"
         >
           <X size={14} />

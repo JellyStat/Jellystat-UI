@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Loader2, AlertCircle, PieChartIcon } from "lucide-react";
+import { AlertCircle, PieChartIcon } from "lucide-react";
 
 import client from "@/lib/api";
 import NoData from "@/components/ErrorCards/NoData";
 import { CountModel } from "@/lib/models/countModel";
-import JPieChart from "../Core/PieChart";
+import { PieChart, Spinner } from "@/components/ui";
 import ErrorCard from "../ErrorCards/ErrorCard";
 import { IGridifyQuery } from "gridify-client";
 import { CountModelWithSize } from "@/lib/models/countModelWithSize";
@@ -60,17 +60,17 @@ export default function CodecStatsCard({ gridify }: Props) {
     }
 
     return (
-      <div className="bg-surface/40  border border-border rounded-3xl shadow-xl shadow-black/20 overflow-hidden flex flex-col h-full p-6 sm:p-8 ">
+      <div className="bg-surface/40 border border-border rounded-3xl shadow-xl shadow-black/20 overflow-hidden flex flex-col h-full p-6 sm:p-8 ">
         {loading ? (
           <div className="w-full h-[400px] flex flex-col items-center justify-center">
-            <Loader2 size={40} className="text-brand-purple animate-spin mb-4" />
+            <Spinner size={40} className="text-primary mb-4" />
             <span className="text-gray-400 font-medium tracking-wide">{t("common.loading", "Loading")}</span>
           </div>
         ) : error ? (
           <ErrorCard message={error} />
         ) : (
           <div>
-            <JPieChart data={stats} />
+            <PieChart data={stats} />
             <StatSizeListCard data={stats} />
           </div>
         )}
@@ -84,7 +84,7 @@ export default function CodecStatsCard({ gridify }: Props) {
         {/* Header & Controls */}
         <div className="flex justify-between gap-3 mb-6">
           <div className="flex items-center gap-3">
-            <PieChartIcon size={28} className="text-brand-purple" />
+            <PieChartIcon size={28} className="text-primary" />
             <h2 className="text-2xl font-black text-white tracking-tight">{t("stats.codec_stats", "Codec Statistics")}</h2>
           </div>
         </div>

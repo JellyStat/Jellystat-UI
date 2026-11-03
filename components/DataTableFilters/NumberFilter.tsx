@@ -2,10 +2,9 @@ import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Hash, X } from "lucide-react";
 import FilterItem, { NumberFilterType, NumberRangeValue } from "./FilterItem";
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
+import { HeadlessPopover as Popover, HeadlessPopoverPanel as PopoverPanel, PopoverButton } from "@/components/ui/headless";
 import { useDebounce } from "@/lib/hooks/useDebounce";
-import DropdownSelector from "../Core/DropdownSelector";
-import NumberField from "../Core/NumberField";
+import { NumberField, Select } from "@/components/ui";
 
 interface NumberFilterProps {
   keyName: string;
@@ -99,7 +98,7 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
         {!isEmpty && (
           <button
             onClick={handleClear}
-            className="absolute right-2 text-gray-500 hover:text-brand-rose transition-colors focus:outline-none"
+            className="absolute right-2 text-gray-500 hover:text-danger transition-colors focus:outline-none"
             title="Clear filter"
           >
             <X size={14} />
@@ -112,7 +111,7 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
               {!filterType && (
                 <div className="mb-4 flex flex-row items-center gap-2">
                   <div>{t("filter.number_type", "Type")}</div>
-                  <DropdownSelector
+                  <Select
                     data={[{ value: NumberFilterType.SINGLE }, { value: NumberFilterType.RANGE }]}
                     value={type}
                     onChange={(val) => setType(val as NumberFilterType)}
@@ -131,7 +130,7 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
                     <NumberField
                       value={query as number | undefined}
                       onChange={(val) => handleSingleChange(val)}
-                      className="bg-background border border-transparent hover:border-gray-500 focus:border-brand-cyan rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-brand-cyan"
+                      className="bg-background border border-transparent hover:border-gray-500 focus:border-accent rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-accent"
                     />
                   </div>
                 )}
@@ -142,7 +141,7 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
                       <NumberField
                         value={(query as NumberRangeValue)?.min ?? undefined}
                         onChange={(val) => handleRangeChange(val as number | null, true)}
-                        className="bg-background border border-transparent hover:border-gray-500 focus:border-brand-cyan rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-brand-cyan"
+                        className="bg-background border border-transparent hover:border-gray-500 focus:border-accent rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-accent"
                       />
                     </div>
                     <div className="flex flex-col gap-2">
@@ -150,7 +149,7 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
                       <NumberField
                         value={(query as NumberRangeValue)?.max ?? undefined}
                         onChange={(val) => handleRangeChange(val as number | null, false)}
-                        className="bg-background border border-transparent hover:border-gray-500 focus:border-brand-cyan rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-brand-cyan"
+                        className="bg-background border border-transparent hover:border-gray-500 focus:border-accent rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-accent"
                       />
                     </div>
                   </div>

@@ -5,15 +5,15 @@ import TaskActionsPage from "./TaskActions";
 export const getTaskBadge = (taskName: string, label: string) => {
   const colorClass =
     taskName === "Backup"
-      ? "bg-brand-cyan/10 text-brand-cyan border-brand-cyan/20"
+      ? "bg-accent/10 text-accent border-accent/20"
       : taskName === "FullSync"
-        ? "bg-brand-emerald/10 text-brand-emerald border-brand-emerald/20"
+        ? "bg-success/10 text-success border-success/20"
         : taskName === "PartialSync"
-          ? "bg-brand-amber/10 text-brand-amber border-brand-amber/20"
+          ? "bg-warning/10 text-warning border-warning/20"
           : taskName === "Restore"
-            ? "bg-brand-purple/10 text-brand-purple border-brand-purple/20"
+            ? "bg-primary/10 text-primary border-primary/20"
             : taskName === "PlaybackReportingPluginSync"
-              ? "bg-brand-rose/10 text-brand-rose border-brand-rose/20"
+              ? "bg-danger/10 text-danger border-danger/20"
               : "bg-surface text-gray-300 border-border";
 
   return (

@@ -5,7 +5,6 @@ import {
   Search,
   ArrowDownWideNarrow,
   ArrowUpNarrowWide,
-  Loader2,
   AlertCircle,
   Film,
   ChevronDown,
@@ -17,7 +16,7 @@ import type { ItemsWithStats } from "@/lib/models/itemsWithStats";
 import ItemCard from "../ItemsCards/ItemCard";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
 import { useDebounce } from "@/lib/hooks/useDebounce";
-import DropdownSelector from "../Core/DropdownSelector";
+import { Select, Spinner } from "@/components/ui";
 
 type Props = {
   gridify?: GridifyQueryBuilder;
@@ -119,14 +118,14 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
       {/* Header & Controls */}
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
         <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3 shrink-0">
-          <Film className="text-brand-cyan" size={28} />
+          <Film className="text-accent" size={28} />
           {t("common.media", "Media")}
         </h2>
 
         <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
           {/* Archived Filter */}
 
-          <DropdownSelector
+          <Select
             data={[{ value: "null" }, { value: "true" }, { value: "false" }]}
             value={archivedFilter === null ? "null" : archivedFilter ? "true" : "false"}
             onChange={(val) => setArchivedFilter(val === "true" ? true : val === "false" ? false : null)}
@@ -142,7 +141,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
           {/* Sort Controls */}
           {showSort && (
             <div className="flex items-center gap-2">
-              <DropdownSelector
+              <Select
                 data={[{ value: "name" }, { value: "dateCreated" }, { value: "playCount" }, { value: "size" }]}
                 value={sortField}
                 onChange={(val) => setSortField(val)}
@@ -186,9 +185,9 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
       <div className="bg-surface/30 border border-border rounded-2xl p-4 md:p-6 shadow-xl shadow-black/20 min-h-[400px] flex flex-col relative">
         {/* Error Overlay */}
         {error && (
-          <div className="p-4 mb-4 rounded-xl bg-brand-rose/10 border border-brand-rose/20 flex items-start gap-3">
-            <AlertCircle size={18} className="text-brand-rose shrink-0 mt-0.5" />
-            <p className="text-sm text-brand-rose/90 font-medium leading-relaxed">{error}</p>
+          <div className="p-4 mb-4 rounded-xl bg-danger/10 border border-danger/20 flex items-start gap-3">
+            <AlertCircle size={18} className="text-danger shrink-0 mt-0.5" />
+            <p className="text-sm text-danger/90 font-medium leading-relaxed">{error}</p>
           </div>
         )}
 
@@ -204,7 +203,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
 
         {/* Sentinel & Loading Status */}
         <div ref={sentinelRef} className="w-full h-20 flex items-center justify-center mt-4">
-          {loading && <Loader2 size={32} className="text-brand-cyan animate-spin" />}
+          {loading && <Spinner size={32} className="text-primary" />}
 
           {!loading && items.length === 0 && !error && (
             <div className="flex flex-col items-center justify-center text-gray-500 opacity-60 absolute inset-0">

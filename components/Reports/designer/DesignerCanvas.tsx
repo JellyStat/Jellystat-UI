@@ -478,7 +478,7 @@ export default function DesignerCanvas({ model, settings, onContextMenu }: Props
   return (
     <div
       ref={scrollRef}
-      className="flex-1 min-w-0 min-h-0 overflow-auto bg-[#16161a] relative select-none outline-none"
+      className="flex-1 min-w-0 min-h-0 overflow-auto bg-background relative select-none outline-none"
       tabIndex={-1}
       onPointerDown={onBackgroundPointerDown}
       onDragOver={(ev) => {
@@ -605,7 +605,7 @@ export default function DesignerCanvas({ model, settings, onContextMenu }: Props
               >
                 {e.locked && (
                   <div
-                    className="absolute flex items-center justify-center rounded bg-brand-purple text-white"
+                    className="absolute flex items-center justify-center rounded bg-primary text-white"
                     style={{ right: 0, top: -14 / zoom, width: 14 / zoom, height: 14 / zoom }}
                   >
                     <Lock size={10 / zoom} />
@@ -640,7 +640,7 @@ export default function DesignerCanvas({ model, settings, onContextMenu }: Props
           {/* Position / size readout while dragging */}
           {liveBox && (
             <div
-              className="absolute pointer-events-none rounded bg-brand-purple text-white font-mono whitespace-nowrap"
+              className="absolute pointer-events-none rounded bg-primary text-white font-mono whitespace-nowrap"
               style={{
                 left: liveBox.x,
                 top: liveBox.y + liveBox.height + 6 / zoom,

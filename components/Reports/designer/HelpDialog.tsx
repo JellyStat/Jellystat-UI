@@ -1,11 +1,11 @@
-import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import clsx from "clsx";
 import { CircleHelp, X } from "lucide-react";
 import { useState, type ReactNode } from "react";
+import { Modal, ModalPanel, ModalTitle } from "@/components/ui";
 
 /** Inline code. */
 const C = ({ children }: { children: ReactNode }) => (
-  <code className="px-1 py-0.5 rounded bg-background text-brand-purple text-[12px] whitespace-nowrap">{children}</code>
+  <code className="px-1 py-0.5 rounded bg-background text-primary text-[12px] whitespace-nowrap">{children}</code>
 );
 
 const Table = ({ head, rows }: { head: string[]; rows: ReactNode[][] }) => (
@@ -348,14 +348,12 @@ export default function HelpDialog({ onClose }: { onClose: () => void }) {
   const section = SECTIONS.find((s) => s.key === active) ?? SECTIONS[0];
 
   return (
-    <Dialog open onClose={onClose} className="relative z-50">
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
-      <div className="fixed inset-0 flex items-center justify-center p-2 sm:p-6">
-        <DialogPanel className="w-full max-w-4xl h-full max-h-[86dvh] flex flex-col rounded-2xl border border-border bg-surface shadow-2xl shadow-black/40 overflow-hidden">
+    <Modal open onClose={onClose}>
+        <ModalPanel className="p-0 md:p-0 max-w-4xl h-full max-h-[86dvh] flex flex-col overflow-hidden">
           <div className="flex items-center justify-between gap-4 px-5 py-3 border-b border-border">
-            <DialogTitle className="flex items-center gap-2 text-lg font-black text-white">
-              <CircleHelp size={20} className="text-brand-purple" /> Report designer help
-            </DialogTitle>
+            <ModalTitle className="flex items-center gap-2 text-lg font-black text-white">
+              <CircleHelp size={20} className="text-primary" /> Report designer help
+            </ModalTitle>
             <button type="button" onClick={onClose} className="p-1 text-gray-400 hover:text-white cursor-pointer" aria-label="Close">
               <X size={18} />
             </button>
@@ -369,7 +367,7 @@ export default function HelpDialog({ onClose }: { onClose: () => void }) {
                   onClick={() => setActive(s.key)}
                   className={clsx(
                     "text-left whitespace-nowrap px-3 py-1.5 rounded-lg text-[13px] cursor-pointer",
-                    s.key === active ? "bg-brand-purple/15 text-white font-bold" : "text-gray-400 hover:text-white hover:bg-surface-hover",
+                    s.key === active ? "bg-primary/15 text-white font-bold" : "text-gray-400 hover:text-white hover:bg-surface-hover",
                   )}
                 >
                   {s.title}
@@ -381,8 +379,7 @@ export default function HelpDialog({ onClose }: { onClose: () => void }) {
               {section.body}
             </div>
           </div>
-        </DialogPanel>
-      </div>
-    </Dialog>
+        </ModalPanel>
+    </Modal>
   );
 }

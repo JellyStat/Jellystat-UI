@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import { Users, ArrowUpDown, ArrowUp, ArrowDown, User as UserIcon, Loader2, AlertCircle } from "lucide-react";
+import { Users, User as UserIcon, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { GridifyQueryBuilder } from "gridify-client";
 
@@ -12,6 +12,7 @@ import useFilters from "@/components/DataTableFilters/useFilters";
 import TextFilter from "@/components/DataTableFilters/TextFilter";
 import BooleanFilter from "@/components/DataTableFilters/BooleanFilter";
 import FilterItem from "@/components/DataTableFilters/FilterItem";
+import { PageHeader, SortableTh, Spinner } from "@/components/ui";
 
 interface SortStatus {
   columnAccessor: string;
@@ -165,8 +166,8 @@ export default function UsersPage() {
       role="switch"
       aria-checked={user.tracked}
       aria-label={t("common.tracked", "Tracked")}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:ring-offset-2 focus:ring-offset-background ${
-        user.tracked ? "bg-brand-emerald" : "bg-surface border border-border"
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background ${
+        user.tracked ? "bg-success" : "bg-surface border border-border"
       }`}
     >
       <span
@@ -185,24 +186,19 @@ export default function UsersPage() {
 
       <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12">
         {/* Header */}
-        <div className="flex items-center gap-4 border-b border-border/50 pb-6">
-          <div className="p-3.5 bg-brand-cyan/10 rounded-2xl border border-brand-cyan/20 shadow-inner shrink-0">
-            <Users size={28} className="text-brand-cyan" />
-          </div>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{t("nav.users", "Users")}</h1>
-            <p className="text-sm text-gray-400 mt-1 font-medium">
-              {t("users.tracking_desc", "Manage tracked users and view individual playback statistics.")}
-            </p>
-          </div>
-        </div>
+        <PageHeader
+          iconTone="accent"
+          icon={<Users size={28} />}
+          title={t("nav.users", "Users")}
+          description={t("users.tracking_desc", "Manage tracked users and view individual playback statistics.")}
+        />
 
         {/* Main Table Container */}
         <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col relative min-h-[400px]">
           {/* Loading Overlay */}
           {loading && (
             <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
-              <Loader2 size={40} className="text-brand-cyan animate-spin mb-3" />
+              <Spinner size={40} className="text-primary mb-3" />
               <span className="text-sm font-bold text-gray-300">{t("common.loading", "Loading")}</span>
             </div>
           )}
@@ -210,8 +206,8 @@ export default function UsersPage() {
           {/* Error Overlay */}
           {error && (
             <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in p-6">
-              <AlertCircle size={40} className="text-brand-rose mb-3" />
-              <span className="text-lg font-bold text-brand-rose mb-1">{t("common.failed_to_load", "Failed to load")}</span>
+              <AlertCircle size={40} className="text-danger mb-3" />
+              <span className="text-lg font-bold text-danger mb-1">{t("common.failed_to_load", "Failed to load")}</span>
               <span className="text-sm text-gray-400 text-center max-w-md">{error}</span>
             </div>
           )}
@@ -237,7 +233,7 @@ export default function UsersPage() {
                   <div className="flex-1 min-w-0">
                     <Link
                       href={`/users/${user.id}`}
-                      className="block text-sm font-bold text-gray-100 hover:text-brand-cyan transition-colors truncate"
+                      className="block text-sm font-bold text-gray-100 hover:text-accent transition-colors truncate"
                     >
                       {user.username}
                     </Link>
@@ -339,7 +335,7 @@ export default function UsersPage() {
                       <td className="p-3 text-sm font-bold text-gray-200">
                         <Link
                           href={`/users/${user.id}`}
-                          className="text-sm font-bold text-gray-100 hover:text-brand-cyan transition-colors"
+                          className="text-sm font-bold text-gray-100 hover:text-accent transition-colors"
                         >
                           {user.username}
                         </Link>
@@ -352,7 +348,7 @@ export default function UsersPage() {
                         {user.latestActivity?.itemId ? (
                           <Link
                             href={`/libraries/items/${user.latestActivity.itemId}`}
-                            className="text-sm font-bold text-gray-100 hover:text-brand-cyan transition-colors"
+                            className="text-sm font-bold text-gray-100 hover:text-accent transition-colors"
                           >
                             {formatLastWatched(user)}
                           </Link>
@@ -413,22 +409,12 @@ export default function UsersPage() {
 // --- SUB-COMPONENTS ---
 function SortableHeader({ label, accessor, currentSort, onSort, align = "left" }: any) {
   return (
-    <th
-      className={`p-3 group cursor-pointer hover:bg-surface-hover transition-colors text-${align}`}
-      onClick={() => onSort(accessor)}
+    <SortableTh
+      sorted={currentSort.columnAccessor === accessor ? currentSort.direction : undefined}
+      onSort={() => onSort(accessor)}
+      align={align}
     >
-      <div
-        className={`flex items-center gap-2 ${align === "right" ? "justify-end" : align === "center" ? "justify-center" : ""}`}
-      >
-        {label}
-        {currentSort.columnAccessor !== accessor ? (
-          <ArrowUpDown size={14} className="opacity-30 group-hover:opacity-100 transition-opacity" />
-        ) : currentSort.direction === "desc" ? (
-          <ArrowDown size={14} className="text-brand-cyan" />
-        ) : (
-          <ArrowUp size={14} className="text-brand-cyan" />
-        )}
-      </div>
-    </th>
+      {label}
+    </SortableTh>
   );
 }

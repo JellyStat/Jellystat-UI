@@ -41,7 +41,7 @@ export default function CalculatedFieldsEditor({
             <button
               type="button"
               title="Remove"
-              className="p-1 text-gray-500 hover:text-brand-rose cursor-pointer"
+              className="p-1 text-gray-500 hover:text-danger cursor-pointer"
               onClick={() => onChange(calculated.filter((_, j) => j !== i))}
             >
               <Trash2 size={12} />
@@ -61,7 +61,7 @@ export default function CalculatedFieldsEditor({
       </div>
       {calculated.length > 0 && (
         <details className="text-[11px] text-gray-500">
-          <summary className="cursor-pointer hover:text-gray-300">Expression help</summary>
+          <summary className="cursor-pointer hover:text-gray-200">Expression help</summary>
           <p className="mt-1">{EXPRESSION_HELP}</p>
           <p className="mt-1">
             Fields: <span className="text-gray-400">{fields.map((f) => f.key).join(", ")}</span>

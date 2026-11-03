@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Film, Tv, Library, MonitorPlay, Users, Activity, Trophy, Loader2, AlertCircle, PieChart } from "lucide-react";
+import { Film, Tv, Library, MonitorPlay, Users, Activity, Trophy, AlertCircle, PieChart } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { GridifyQueryBuilder, IGridifyQuery, ConditionalOperator as op } from "gridify-client";
 
@@ -47,7 +47,7 @@ export default function GenreStatsCard({ gridify }: Props) {
     <div className="flex flex-col w-full animate-in fade-in duration-500">
       {/* Header & Controls */}
       <div className="flex items-center gap-3 mb-6">
-        <PieChart className="text-brand-emerald" size={28} />
+        <PieChart className="text-success" size={28} />
         <h2 className="text-2xl font-black text-white tracking-tight">{t("library.genres", "Genres")}</h2>
       </div>
 

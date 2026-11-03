@@ -2,6 +2,8 @@ import { useRouter } from "next/router";
 import { SearchX, ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/ui";
+
 export interface NotFoundProps {
   title?: string;
   message?: string;
@@ -21,10 +23,10 @@ export default function NotFound({ title, message, enableGoBack = true }: NotFou
         {/* Left Icon Section */}
         <div className="bg-background/50 p-8 sm:p-10 flex items-center justify-center border-b sm:border-b-0 sm:border-r border-border shrink-0 relative overflow-hidden">
           {/* Subtle glow behind the icon */}
-          <div className="absolute inset-0 bg-brand-cyan/5 group-hover:bg-brand-cyan/10 transition-colors duration-500"></div>
+          <div className="absolute inset-0 bg-accent/5 group-hover:bg-accent/10 transition-colors duration-500"></div>
 
-          <div className="relative w-20 h-20 bg-brand-cyan/10 rounded-full flex items-center justify-center border border-brand-cyan/20 shadow-inner">
-            <SearchX size={40} className="text-brand-cyan opacity-80" />
+          <div className="relative w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center border border-accent/20 shadow-inner">
+            <SearchX size={40} className="text-accent opacity-80" />
           </div>
         </div>
 
@@ -35,13 +37,10 @@ export default function NotFound({ title, message, enableGoBack = true }: NotFou
           <p className="text-gray-400 text-sm mb-8 leading-relaxed max-w-sm mx-auto sm:mx-0">{displayMessage}</p>
 
           {enableGoBack && (
-            <button
-              onClick={() => router.back()}
-              className="sm:self-start flex items-center justify-center gap-2 bg-surface hover:bg-surface-hover border border-border hover:border-gray-500 text-gray-200 hover:text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-inner active:scale-95 focus:outline-none focus:ring-1 focus:ring-brand-cyan"
-            >
-              <ArrowLeft size={18} className="opacity-70" />
+            <Button variant="outline" onClick={() => router.back()} className="sm:self-start">
+              <ArrowLeft size={16} />
               {t("error_cards.go_back", "Go Back")}
-            </button>
+            </Button>
           )}
         </div>
       </div>

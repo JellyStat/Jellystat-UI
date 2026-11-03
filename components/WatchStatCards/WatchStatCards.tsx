@@ -1,12 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
-import { Film, Tv, Library, MonitorPlay, Users, Activity, Trophy, Loader2, AlertCircle } from "lucide-react";
+import { Film, Tv, Library, MonitorPlay, Users, Activity, Trophy, AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 
 import client from "@/lib/api";
 import ItemTypes from "@/lib/models/enums/ItemTypes";
 import { LeaderboardCard } from "../WatchStatCard/LeaderboardCard";
-import NumberField from "../Core/NumberField";
+import { NumberField } from "@/components/ui";
 
 export type WatchStatItem = {
   id: string;
@@ -232,8 +232,8 @@ export default function WatchStatCards() {
       {/* Header & Controls */}
       <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
         <div>
-          <h2 className="text-xl font-black text-gray-200 tracking-tight flex items-center gap-3">
-            <Activity className="text-brand-purple" size={28} />
+          <h2 className="text-xl font-black text-white tracking-tight flex items-center gap-3">
+            <Activity className="text-primary" size={28} />
             {t("watch_stat_cards.watch_statistics", "Watch Statistics")}
           </h2>
           <p className="text-sm text-gray-400 font-medium mt-1">
@@ -250,7 +250,7 @@ export default function WatchStatCards() {
             min={1}
             max={999}
             onChange={(value) => setDays(value ?? 1)}
-            className="w-20 appearance-none bg-background border border-transparent hover:border-gray-500 focus:border-brand-purple rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-brand-purple "
+            className="w-20 appearance-none bg-background border border-transparent hover:border-gray-500 focus:border-primary rounded-lg px-2 py-1.5 text-sm font-bold text-gray-200 text-center focus:outline-none focus:ring-1 focus:ring-primary "
           />
         </div>
       </div>

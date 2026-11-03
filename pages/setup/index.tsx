@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { UserPlus, Database, CheckCircle2, Loader2, AlertTriangle } from "lucide-react";
+import { UserPlus, Database, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import SystemState from "@/lib/models/enums/systemState";
@@ -11,6 +11,7 @@ import { processServerId, setToken } from "@/lib/helpers/tokenHelper";
 import CreateUserPage from "@/components/Setup/CreateUser";
 import CreateServerPage from "@/components/Setup/CreateServerInstance";
 import SetupCompletePage from "@/components/Setup/SetupComplete";
+import { Spinner } from "@/components/ui";
 
 function hasStoredToken(): boolean {
   if (typeof window === "undefined") return false;
@@ -73,24 +74,21 @@ export default function SetupPage() {
       label: t("setup.step_admin", "Administrator"),
       description: t("setup.step_admin_desc", "Create local account"),
       icon: UserPlus,
-      activeColor: "brand-purple",
-      activeClasses: "ring-brand-purple bg-surface text-brand-purple shadow-[0_0_15px_#aa3bff]",
+      activeClasses: "ring-primary bg-surface text-primary shadow-[0_0_15px_var(--color-primary)]",
     },
     {
       id: 1,
       label: t("setup.step_connect", "Connect"),
       description: t("setup.step_connect_desc", "Link media server"),
       icon: Database,
-      activeColor: "brand-cyan",
-      activeClasses: "ring-brand-cyan bg-surface text-brand-cyan shadow-[0_0_15px_#00a4dc]",
+      activeClasses: "ring-accent bg-surface text-accent shadow-[0_0_15px_var(--color-accent)]",
     },
     {
       id: 2,
       label: t("setup.step_complete", "Complete"),
       description: t("setup.step_complete_desc", "Ready to launch"),
       icon: CheckCircle2,
-      activeColor: "brand-emerald",
-      activeClasses: "ring-brand-emerald bg-surface text-brand-emerald shadow-[0_0_15px_#34d399]",
+      activeClasses: "ring-success bg-surface text-success shadow-[0_0_15px_var(--color-success)]",
     },
   ];
 
@@ -100,28 +98,28 @@ export default function SetupPage() {
         <title>{t("setup.page_title", "Setup")} | Jellystat</title>
       </Head>
 
-      <div className="min-h-screen w-full bg-background flex flex-col items-center justify-center relative overflow-hidden font-sans selection:bg-brand-cyan/30 py-12 px-4">
+      <div className="min-h-screen w-full bg-background flex flex-col items-center justify-center relative overflow-hidden font-sans selection:bg-accent/30 py-12 px-4">
         {/* Ambient Background Glows */}
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-purple/10 blur-[120px] rounded-full pointer-events-none"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-brand-cyan/10 blur-[120px] rounded-full pointer-events-none"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent/10 blur-[120px] rounded-full pointer-events-none"></div>
 
         {loading ? (
           <div className="flex flex-col items-center justify-center animate-in fade-in z-10">
-            <Loader2 size={48} className="text-brand-purple animate-spin mb-4" />
+            <Spinner size={48} className="text-primary mb-4" />
             <p className="text-gray-400 font-medium tracking-wide">
               {t("setup.checking_system", "Checking system configuration...")}
             </p>
           </div>
         ) : error ? (
-          <div className="bg-surface/80 backdrop-blur-md border border-brand-rose/20 p-8 rounded-3xl shadow-2xl shadow-brand-rose/10 max-w-lg w-full text-center relative z-10 animate-in zoom-in-95">
-            <div className="mx-auto w-16 h-16 bg-brand-rose/10 text-brand-rose rounded-full flex items-center justify-center mb-6 border border-brand-rose/20 shadow-inner">
+          <div className="bg-surface/80 backdrop-blur-md border border-danger/20 p-8 rounded-3xl shadow-2xl shadow-danger/10 max-w-lg w-full text-center relative z-10 animate-in zoom-in-95">
+            <div className="mx-auto w-16 h-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mb-6 border border-danger/20 shadow-inner">
               <AlertTriangle size={32} />
             </div>
             <h2 className="text-2xl font-black text-white mb-2">{t("setup.config_error_title", "Configuration Error")}</h2>
             <p className="text-gray-400 text-sm mb-6">{error}</p>
             <button
               onClick={() => void fetchSystem()}
-              className="bg-brand-rose hover:bg-rose-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-brand-rose/20"
+              className="bg-danger hover:bg-danger-hover text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-danger/20"
             >
               {t("common.retry_connection", "Retry Connection")}
             </button>
@@ -134,7 +132,7 @@ export default function SetupPage() {
                 {/* Connecting Lines Behind Steps */}
                 <div className="absolute left-[15%] right-[15%] top-6 h-1 bg-surface-hover border-y border-border rounded-full -z-10 overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-brand-purple to-brand-cyan transition-all duration-700 ease-out"
+                    className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-700 ease-out"
                     style={{ width: `${(activeIndex / (steps.length - 1)) * 100}%` }}
                   ></div>
                 </div>
@@ -147,7 +145,7 @@ export default function SetupPage() {
 
                   let ringColor = "ring-border bg-surface text-gray-500";
                   if (isCompleted)
-                    ringColor = "ring-brand-emerald bg-brand-emerald text-black shadow-[0_0_15px_rgba(52,211,153,0.4)]";
+                    ringColor = "ring-success bg-success text-black shadow-[0_0_15px_rgba(52,211,153,0.4)]";
                   if (isActive) ringColor = step.activeClasses;
 
                   return (
@@ -178,7 +176,7 @@ export default function SetupPage() {
               {/* Global Transition Overlay */}
               {isTransitioning && (
                 <div className="absolute inset-0 z-50 bg-background/50 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center animate-in fade-in">
-                  <Loader2 size={40} className="text-brand-cyan animate-spin mb-3" />
+                  <Spinner size={40} className="text-primary mb-3" />
                   <span className="text-sm font-bold text-white tracking-wide">{t("common.loading", "Loading")}</span>
                 </div>
               )}

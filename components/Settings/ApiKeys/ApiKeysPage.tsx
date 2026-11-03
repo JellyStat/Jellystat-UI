@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Dialog } from "@headlessui/react";
-import { AlertCircle, Eye, KeyRound, Loader2, Plus, ShieldCheck } from "lucide-react";
+import { AlertCircle, Eye, KeyRound, Plus, ShieldCheck } from "lucide-react";
 
 import client from "@/lib/api";
 import { formatDateTime } from "@/lib/dateFormat";
@@ -9,7 +8,19 @@ import configManager from "@/lib/configManager";
 import Permissions from "@/lib/models/enums/Permissions";
 import type { ApiKeyInfo } from "@/lib/models/apiKey";
 import type { Server } from "@/lib/models/server";
-import ConfirmationDialogButton from "@/components/Core/ConfirmationDialogButton";
+import ConfirmationDialogButton from "@/components/ConfirmationDialogButton";
+import {
+  Badge,
+  Button,
+  buttonClass,
+  Card,
+  EmptyState,
+  Modal,
+  Page,
+  PageHeader,
+  SectionTitle,
+  Spinner,
+} from "@/components/ui";
 import CreateApiKeyModal from "./CreateApiKey";
 
 export default function ApiKeysPage() {
@@ -58,57 +69,42 @@ export default function ApiKeysPage() {
   const formatDate = (value?: string | null) => formatDateTime(value) || null;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12 py-4 sm:p-6">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6 mb-8">
-        <div className="flex items-center gap-4">
-          <div className="p-3.5 bg-brand-cyan/10 rounded-2xl border border-brand-cyan/20 shadow-inner shrink-0">
-            <KeyRound size={28} className="text-brand-cyan" />
-          </div>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              {t("settings.api_keys_title", "API Keys")}
-            </h1>
-            <p className="text-sm text-gray-400 mt-1 font-medium">
-              {t("settings.api_keys_subtitle", "Let other apps read from Jellystat using the x-api-token header.")}
-            </p>
-          </div>
-        </div>
-      </div>
+    <Page className="pt-4 sm:px-6 sm:pt-6">
+      <PageHeader
+        iconTone="accent"
+        icon={<KeyRound size={28} />}
+        title={t("settings.api_keys_title", "API Keys")}
+        description={t("settings.api_keys_subtitle", "Let other apps read from Jellystat using the x-api-token header.")}
+      />
 
-      <div className="relative min-h-[400px] space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <KeyRound size={20} className="text-brand-cyan" />
+      <div className="space-y-4">
+        <div className="flex items-center justify-between gap-4">
+          <SectionTitle className="flex items-center gap-2">
+            <KeyRound size={20} className="text-accent" />
             {t("settings.api_keys", "Keys")}
-          </h2>
-          <button
-            onClick={() => setIsCreateOpen(true)}
-            className="flex items-center gap-2 bg-surface hover:bg-surface-hover border border-border hover:border-brand-cyan transition-colors px-4 py-2 rounded-xl text-sm font-bold shadow-inner"
-          >
-            <Plus size={16} className="text-brand-cyan" />
+          </SectionTitle>
+          <Button variant="outline" onClick={() => setIsCreateOpen(true)}>
+            <Plus size={16} className="text-accent" />
             {t("settings.add_api_key", "Create API Key")}
-          </button>
+          </Button>
         </div>
 
-        <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden relative">
+        <Card padding="none" className="relative min-h-[200px]">
           {loading && (
-            <div className="absolute inset-0 z-20 bg-surface/80 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
-              <Loader2 size={32} className="text-brand-cyan animate-spin mb-3" />
+            <div className="absolute inset-0 z-20 bg-surface/80 backdrop-blur-sm flex items-center justify-center animate-in fade-in">
+              <Spinner size={32} tone="primary" />
             </div>
           )}
 
           {error && !loading && (
             <div className="p-4 flex items-center gap-3 border-b border-border/50">
-              <AlertCircle size={18} className="text-brand-rose shrink-0" />
+              <AlertCircle size={18} className="text-danger shrink-0" />
               <span className="text-sm text-gray-400">{error}</span>
             </div>
           )}
 
           {!loading && !error && keys.length === 0 ? (
-            <div className="p-12 text-center text-gray-500 flex flex-col items-center justify-center">
-              <KeyRound size={48} className="mb-4 opacity-20" />
-              <span className="font-bold text-lg">{t("settings.no_api_keys", "No API keys yet")}</span>
-            </div>
+            <EmptyState bordered={false} Icon={KeyRound} title={t("settings.no_api_keys", "No API keys yet")} />
           ) : (
             <div className="divide-y divide-border/50">
               {keys.map((key) => {
@@ -117,26 +113,16 @@ export default function ApiKeysPage() {
                 return (
                   <div
                     key={key.id}
-                    className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-hover transition-colors"
+                    className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-hover transition-colors"
                   >
                     <div className="min-w-0 space-y-1.5">
                       <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="font-bold text-gray-100 break-all">{key.name}</h3>
-                        <span
-                          className={`inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border ${
-                            isAdmin
-                              ? "bg-brand-rose/10 text-brand-rose border-brand-rose/20"
-                              : "bg-brand-cyan/10 text-brand-cyan border-brand-cyan/20"
-                          }`}
-                        >
+                        <h3 className="font-bold text-white break-all">{key.name}</h3>
+                        <Badge tone={isAdmin ? "danger" : "accent"} className="gap-1">
                           {isAdmin ? <ShieldCheck size={11} /> : <Eye size={11} />}
                           {isAdmin ? t("settings.api_key_admin", "Full admin") : t("settings.api_key_read_only", "Read only")}
-                        </span>
-                        {!isAdmin && server && (
-                          <span className="text-[10px] uppercase tracking-wider bg-brand-purple/10 text-brand-purple border border-brand-purple/20 px-2 py-0.5 rounded-full">
-                            {server}
-                          </span>
-                        )}
+                        </Badge>
+                        {!isAdmin && server && <Badge tone="primary">{server}</Badge>}
                       </div>
                       <div className="text-xs text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
                         <code className="text-gray-400">{key.keyPrefix}…</code>
@@ -152,30 +138,28 @@ export default function ApiKeysPage() {
 
                     <ConfirmationDialogButton
                       disabled={loading}
-                      buttonElement={<div>{t("common.delete", "Delete")}</div>}
+                      buttonElement={t("common.delete", "Delete")}
                       dialogTitle={t("settings.delete_api_key", "Delete API key {{name}}", { name: key.name })}
                       description={t(
                         "settings.confirm_delete_api_key",
                         "Apps using this key will immediately lose access. This cannot be undone.",
                       )}
                       onConfirm={() => handleDelete(key.id)}
-                      actionColor="bg-brand-rose"
-                      className="px-3 py-1.5 text-xs font-bold text-brand-rose hover:text-white border-brand-rose/60 bg-brand-rose/10 border hover:bg-rose-600 rounded-lg transition-all shadow-inner"
+                      tone="danger"
+                      className={buttonClass({ variant: "dangerSoft", size: "sm" })}
                     />
                   </div>
                 );
               })}
             </div>
           )}
-        </div>
+        </Card>
       </div>
 
-      <Dialog open={isCreateOpen} onClose={() => {}} className="relative z-50 focus:outline-none">
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
-        <div className="fixed inset-0 flex items-center-safe justify-center p-3 sm:p-4 overflow-y-auto">
-          <CreateApiKeyModal servers={servers} onClose={() => setIsCreateOpen(false)} onCreated={fetchKeys} />
-        </div>
-      </Dialog>
-    </div>
+      {/* Not dismissible by backdrop click: the new key is only shown once. */}
+      <Modal open={isCreateOpen} onClose={() => {}}>
+        <CreateApiKeyModal servers={servers} onClose={() => setIsCreateOpen(false)} onCreated={fetchKeys} />
+      </Modal>
+    </Page>
   );
 }
