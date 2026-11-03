@@ -726,16 +726,17 @@ function ChartContent({ e }: { e: ReportElement }) {
           <Toggle label={dt("reports.designer.stacked", "Stacked")} checked={c.stacked} onChange={(v) => set({ stacked: v }, "stacked")} />
         )}
       </div>
-      {!pie && (
-        <div className="grid grid-cols-2 gap-2">
-          <Field label={dt("reports.designer.axis_colour", "Axis colour")}>
-            <ColorInput value={c.axisColor} onChange={(v) => set({ axisColor: v ?? "#6b7280" }, "axisColor")} />
-          </Field>
+      <div className="grid grid-cols-2 gap-2">
+        {/* Axis colour also colours the legend and value labels, so pie/donut need it too (as the legend colour). */}
+        <Field label={pie ? dt("reports.designer.legend_colour", "Legend colour") : dt("reports.designer.axis_colour", "Axis colour")}>
+          <ColorInput value={c.axisColor} onChange={(v) => set({ axisColor: v ?? "#6b7280" }, "axisColor")} />
+        </Field>
+        {!pie && (
           <Field label={dt("reports.designer.grid_colour", "Grid colour")}>
             <ColorInput value={c.gridColor} onChange={(v) => set({ gridColor: v ?? "#e5e7eb" }, "gridColor")} />
           </Field>
-        </div>
-      )}
+        )}
+      </div>
     </Section>
   );
 }
