@@ -5,6 +5,7 @@ export { variants, type VariantSelection } from './variants';
 
 export { default as Badge, type BadgeProps } from './primitives/Badge';
 export { default as Button, buttonClass, type ButtonProps } from './primitives/Button';
+export { default as Checkbox, type CheckboxProps } from './primitives/Checkbox';
 export { default as Field, type FieldProps } from './primitives/Field';
 export { default as FieldError } from './primitives/FieldError';
 export { default as IconButton, type IconButtonProps } from './primitives/IconButton';
@@ -13,6 +14,8 @@ export { default as Label } from './primitives/Label';
 export { default as NumberField, type NumberFieldProps } from './primitives/NumberField';
 export { default as Skeleton } from './primitives/Skeleton';
 export { default as Spinner, type SpinnerProps } from './primitives/Spinner';
+export { default as Switch, type SwitchProps } from './primitives/Switch';
+export { default as Textarea, type TextareaProps } from './primitives/Textarea';
 export {
   default as StatusIndicator,
   type StatusIndicatorProps,

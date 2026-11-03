@@ -1,5 +1,12 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { ConfirmButton, NumberField, Select, StatusIndicator } from '@/components/ui';
+import {
+  Checkbox,
+  ConfirmButton,
+  NumberField,
+  Select,
+  StatusIndicator,
+  Switch,
+} from '@/components/ui';
 
 describe('ConfirmButton', () => {
   it('runs onConfirm only after the dialog is confirmed', async () => {
@@ -59,5 +66,22 @@ describe('StatusIndicator', () => {
   it('exposes a label when given', () => {
     render(<StatusIndicator tone="danger" label="Offline" />);
     expect(screen.getByRole('img', { name: 'Offline' })).toBeInTheDocument();
+  });
+});
+
+describe('Switch and Checkbox', () => {
+  it('report changes through onChange', () => {
+    const onSwitch = jest.fn();
+    const onCheck = jest.fn();
+    render(
+      <>
+        <Switch label="Enabled" checked={false} onChange={onSwitch} />
+        <Checkbox label="Playback started" checked={false} onChange={onCheck} />
+      </>
+    );
+    fireEvent.click(screen.getByRole('switch', { name: 'Enabled' }));
+    expect(onSwitch).toHaveBeenCalledWith(true);
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Playback started' }));
+    expect(onCheck).toHaveBeenCalled();
   });
 });
