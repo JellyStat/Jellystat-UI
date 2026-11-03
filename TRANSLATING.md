@@ -5,9 +5,31 @@ The English file, `public/locales/en-US/common.json`, is the template. Every oth
 the same keys, and only the values change.
 
 Untranslated strings are stored as `""`, and the app shows the English text for them. That means
-you can translate part of a file, open a pull request, and finish the rest later.
+you can translate part of a language and finish the rest later.
 
-## Improving an existing language
+## Translating on Weblate (recommended)
+
+[![Translation status](https://hosted.weblate.org/widget/jellystat/multi-auto.svg)](https://hosted.weblate.org/engage/jellystat/)
+
+The easiest way to help is on [Hosted Weblate](https://hosted.weblate.org/engage/jellystat/).
+You translate in your browser, with no Git or setup needed. Weblate also warns you about broken
+placeholders as you type. Your changes reach this repository as pull requests, which run the
+same checks as everyone else's.
+
+1. Sign in to Weblate (with your GitHub account or by email).
+2. Open the [Jellystat project](https://hosted.weblate.org/projects/jellystat/), choose a
+   language, and start translating. Please read the [Rules](#rules) first.
+3. **Your language isn't listed?** Use **Start new translation** on the project page to request
+   it. A maintainer adds the language to the repository, and it then appears in Weblate for you
+   to translate.
+
+## Translating in the repository
+
+If you prefer working with the files directly, you can edit the JSON and open a pull request.
+Translations are made in both places, so if your language is active on Weblate, check that
+nobody is working on the same strings there.
+
+### Improving an existing language
 
 1. Open `public/locales/<code>/common.json` (for example `de-DE`).
 2. Find the empty strings (`""`) or the ones you want to improve, and edit the values.
@@ -24,7 +46,9 @@ you can translate part of a file, open a pull request, and finish the rest later
 You don't need to run the app to translate. If you want to see your changes, run `npm install`
 and `npm run dev`, then choose the language under **Settings**.
 
-## Adding a new language
+### Adding a new language
+
+Maintainers also use this command when someone requests a language on Weblate.
 
 ```bash
 npm run i18n:new -- fr-FR
@@ -91,17 +115,26 @@ language as `""` and removes deleted keys from all languages. A pull request tha
 
 ## For maintainers: Weblate
 
-The files work with [Weblate](https://weblate.org) as they are, so translators can work in a
-browser without using Git. Create one component with these settings:
+Translations live in the [jellystat project on Hosted Weblate](https://hosted.weblate.org/projects/jellystat/),
+in the **Web UI** component. It's set up like this:
 
-| Setting | Value |
-|---|---|
-| File format | i18next JSON file v4 |
-| File mask | `public/locales/*/common.json` |
-| Monolingual base language file | `public/locales/en-US/common.json` |
-| Template for new translations | `public/locales/en-US/common.json` |
-| Source language | English |
-| Language code style | BCP style using hyphen as a separator (`fr-FR`) |
+| Setting | Value | Why |
+|---|---|---|
+| Version control system | GitHub pull request | Weblate pushes to its own fork and opens PRs, so it needs no write access and every change runs the **Check translations** workflow. |
+| Repository / branch | `https://github.com/JellyStat/Jellystat-UI.git`, `main` | |
+| File format | i18next JSON file v4 | |
+| File mask | `public/locales/*/common.json` | |
+| Monolingual base language file | `public/locales/en-US/common.json` | |
+| Edit base file | Off | English comes from the code through `npm run extract`, which would overwrite edits made in Weblate. |
+| Template for new translations | empty | Weblate falls back to the base file. |
+| Adding new translation | Contact maintainers | A new language also needs an entry in `languages.json`, which Weblate can't add. |
+| Language code style | BCP style using hyphen as a separator | Gives `fr-FR`, matching the folders. |
+| Translation license | GPL-3.0-only | Matches the code. |
+| Check flags | `i18next-interpolation, md-text` | Warns translators about broken placeholders and `**bold**` markup. |
 
-When Weblate adds a new language, it creates only the JSON file. Add the language to
-`public/locales/languages.json` as well, or `npm run i18n:check` reports it.
+A GitHub webhook (`https://hosted.weblate.org/hooks/github/`, push events) tells Weblate about new
+commits, so new English strings show up there soon after `npm run extract` lands on `main`.
+
+**When someone requests a new language**, run `npm run i18n:new -- <code>` and push. Weblate
+picks up the new file on the next pull. Don't let Weblate create language files itself: it
+can't add the `languages.json` entry, and `npm run i18n:check` would fail.

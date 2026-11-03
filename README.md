@@ -1,5 +1,7 @@
 # Jellystat Web UI
 
+[![Translation status](https://hosted.weblate.org/widget/jellystat/svg-badge.svg)](https://hosted.weblate.org/engage/jellystat/)
+
 > [!TIP]
 > **Looking to install Jellystat?** Head to [JellyStat/Jellystat](https://github.com/JellyStat/Jellystat) for install instructions, and to report bugs or request features. This repo is for developing the web interface.
 
@@ -14,7 +16,7 @@ This template comes with the following features:
 * **Real-Time WebSockets:** Live session monitoring and immediate UI updates without constant API polling.
 * **Modern Tooling:** Toast notifications powered by `sonner` and crisp, consistent iconography via `lucide-react`.
 * **Zero-Dependency Hooks:** Custom native React hooks (like `useDebounce`) to handle complex UI states while keeping JavaScript payloads small.
-* **Internationalization (i18n):** Localized with `i18next` and `react-i18next`. English (`public/locales/en-US`) is the template for every other language. See [TRANSLATING.md](TRANSLATING.md) to help translate.
+* **Internationalization (i18n):** Localized with `i18next` and `react-i18next`. English (`public/locales/en-US`) is the template for every other language. Translations are managed on [Weblate](https://hosted.weblate.org/engage/jellystat/), so you can help translate from your browser. See [TRANSLATING.md](TRANSLATING.md) for details.
 * **Gridify Integration:** Advanced, server-side data table sorting and filtering.
 
 ## UI kit
