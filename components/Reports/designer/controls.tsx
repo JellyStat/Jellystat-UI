@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { ReportCapabilities, ReportDataResult } from "@/lib/models/reports";
+import { dt } from "./i18n";
 
 export const CapabilitiesContext = createContext<ReportCapabilities | null>(null);
 export const useCapabilities = () => useContext(CapabilitiesContext);
@@ -182,7 +183,7 @@ export function ColorInput({
       />
       <TextInput value={value ?? ""} onChange={(v) => onChange(v.trim() === "" ? null : v.trim())} placeholder={allowNone ? "none" : "#000000"} />
       {allowNone && value && (
-        <button type="button" onClick={() => onChange(null)} className="p-1 text-gray-500 hover:text-white cursor-pointer" title="None">
+        <button type="button" onClick={() => onChange(null)} className="p-1 text-gray-500 hover:text-white cursor-pointer" title={dt("reports.designer.none", "None")}>
           <X size={12} />
         </button>
       )}

@@ -2,6 +2,7 @@ import { Plus, Trash2 } from "lucide-react";
 import clsx from "clsx";
 import type { ReportColumn, ReportDataSource, ReportDerive } from "@/lib/models/reports";
 import { Field, Select, TextInput } from "./controls";
+import { dt } from "./i18n";
 
 /** Settings for a data source built from other data sources: a join on matching columns, or a union of rows. */
 export default function CombineEditor({
@@ -24,15 +25,15 @@ export default function CombineEditor({
   const columnOptions = (cols: ReportColumn[]) => cols.map((c) => ({ value: c.name, label: c.label === c.name ? c.name : `${c.label} (${c.name})` }));
 
   if (others.length === 0) {
-    return <p className="text-xs text-gray-500">Add other data sources first; this one combines their results.</p>;
+    return <p className="text-xs text-gray-500">{dt("reports.designer.add_other_data_sources_first_this_one_combines_t", "Add other data sources first; this one combines their results.")}</p>;
   }
 
   return (
     <div className="space-y-4">
       <div className="flex rounded-lg border border-border overflow-hidden text-xs font-bold w-fit">
         {[
-          { value: "join", label: "Join (match rows)" },
-          { value: "union", label: "Union (stack rows)" },
+          { value: "join", label: dt("reports.designer.join_match_rows", "Join (match rows)") },
+          { value: "union", label: dt("reports.designer.union_stack_rows", "Union (stack rows)") },
         ].map((m) => (
           <button
             key={m.value}
@@ -52,38 +53,38 @@ export default function CombineEditor({
             user.
           </p>
           <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-end">
-            <Field label="Left">
-              <Select value={left} placeholder="Choose..." options={sourceOptions} onChange={(v) => set({ sources: [v, right], on: [] })} />
+            <Field label={dt("reports.designer.left", "Left")}>
+              <Select value={left} placeholder={dt("reports.designer.choose", "Choose...")} options={sourceOptions} onChange={(v) => set({ sources: [v, right], on: [] })} />
             </Field>
-            <Field label="Join">
+            <Field label={dt("reports.designer.join", "Join")}>
               <Select
                 value={derive.joinType ?? "left"}
                 options={[
-                  { value: "left", label: "Keep all left rows" },
-                  { value: "inner", label: "Only matches" },
-                  { value: "full", label: "Keep all rows" },
+                  { value: "left", label: dt("reports.designer.keep_all_left_rows", "Keep all left rows") },
+                  { value: "inner", label: dt("reports.designer.only_matches", "Only matches") },
+                  { value: "full", label: dt("reports.designer.keep_all_rows", "Keep all rows") },
                 ]}
                 onChange={(v) => set({ joinType: v as ReportDerive["joinType"] })}
               />
             </Field>
-            <Field label="Right">
-              <Select value={right} placeholder="Choose..." options={sourceOptions} onChange={(v) => set({ sources: [left, v], on: [] })} />
+            <Field label={dt("reports.designer.right", "Right")}>
+              <Select value={right} placeholder={dt("reports.designer.choose", "Choose...")} options={sourceOptions} onChange={(v) => set({ sources: [left, v], on: [] })} />
             </Field>
           </div>
-          <Field label="Match on">
+          <Field label={dt("reports.designer.match_on", "Match on")}>
             <div className="space-y-1.5">
               {derive.on.map((k, i) => (
                 <div key={i} className="grid grid-cols-[1fr_auto_1fr_auto] gap-1.5 items-center">
                   <Select
                     value={k.left}
-                    placeholder="Left column"
+                    placeholder={dt("reports.designer.left_column", "Left column")}
                     options={columnOptions(leftColumns)}
                     onChange={(v) => set({ on: derive.on.map((x, j) => (j === i ? { ...x, left: v } : x)) })}
                   />
                   <span className="text-xs text-gray-500">=</span>
                   <Select
                     value={k.right}
-                    placeholder="Right column"
+                    placeholder={dt("reports.designer.right_column", "Right column")}
                     options={columnOptions(rightColumns)}
                     onChange={(v) => set({ on: derive.on.map((x, j) => (j === i ? { ...x, right: v } : x)) })}
                   />
@@ -116,11 +117,11 @@ export default function CombineEditor({
                   });
                 }}
               >
-                <Plus size={12} /> Column pair
+                <Plus size={12} /> {dt("reports.designer.column_pair", "Column pair")}
               </button>
             </div>
           </Field>
-          <Field label="Prefix for clashing right-hand columns" hint="Default: the right source's name and _">
+          <Field label={dt("reports.designer.prefix_for_clashing_right_hand_columns", "Prefix for clashing right-hand columns")} hint={dt("reports.designer.default_the_right_source_s_name_and", "Default: the right source's name and _")}>
             <TextInput
               value={derive.rightPrefix ?? ""}
               placeholder={`${others.find((o) => o.id === right)?.name.replace(/[^A-Za-z0-9_]+/g, "_") ?? "right"}_`}
@@ -130,8 +131,8 @@ export default function CombineEditor({
         </>
       ) : (
         <>
-          <p className="text-xs text-gray-500">All rows of each chosen source, one after another; columns with the same name line up.</p>
-          <Field label="Sources">
+          <p className="text-xs text-gray-500">{dt("reports.designer.all_rows_of_each_chosen_source_one_after_another", "All rows of each chosen source, one after another; columns with the same name line up.")}</p>
+          <Field label={dt("reports.designer.sources", "Sources")}>
             <div className="grid grid-cols-2 gap-1">
               {others.map((o) => (
                 <label key={o.id} className="flex items-center gap-1.5 text-xs text-gray-300 cursor-pointer">
@@ -146,10 +147,10 @@ export default function CombineEditor({
               ))}
             </div>
           </Field>
-          <Field label="Column naming each row's source (optional)">
+          <Field label={dt("reports.designer.column_naming_each_row_s_source_optional", "Column naming each row's source (optional)")}>
             <TextInput
               value={derive.sourceColumn ?? ""}
-              placeholder="e.g. Source"
+              placeholder={dt("reports.designer.e_g_source", "e.g. Source")}
               onChange={(v) => set({ sourceColumn: v.replace(/[^A-Za-z0-9_]/g, "") || null })}
             />
           </Field>

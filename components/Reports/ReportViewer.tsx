@@ -11,6 +11,8 @@ import ContextMenu from "./designer/ContextMenu";
 import ParameterInput from "./ParameterInput";
 import ReportPageView, { layoutPages } from "./render/ReportPageView";
 import { Spinner } from "@/components/ui";
+import { useTranslation } from "react-i18next";
+import { dt } from "./designer/i18n";
 
 interface Props {
   reportId: string;
@@ -29,6 +31,7 @@ interface Props {
 export default function ReportViewer({ reportId, parameters: initialParameters, bare, mode: initialMode = "client" }: Props) {
   // Re-renders (re-measuring chart and table text) once the report fonts have loaded
   useReportFonts();
+  useTranslation(); // re-render when the language changes
   const [model, setModel] = useState<ReportRenderModel | null>(null);
   const [html, setHtml] = useState<string | null>(null);
   const [mode, setMode] = useState(initialMode);
@@ -57,7 +60,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
         setModel(await client.Reports.renderModel({ reportId, parameters: params }));
       }
     } catch (err: any) {
-      setError(err?.message ?? "Failed to render the report");
+      setError(err?.message ?? dt("reports.designer.failed_to_render_the_report", "Failed to render the report"));
     } finally {
       setLoading(false);
     }
@@ -124,7 +127,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
                 className="w-48"
                 source={{ reportId }}
                 values={values}
-                emptyLabel={p.type === "lookup" ? "All" : "Default"}
+                emptyLabel={p.type === "lookup" ? dt("reports.designer.all", "All") : dt("reports.designer.default", "Default")}
                 value={p.name in values ? values[p.name] : (p.defaultValue ?? null)}
                 onChange={(v) => setValues((s) => ({ ...s, [p.name]: v }))}
               />
@@ -135,31 +138,31 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
             onClick={() => (JSON.stringify(values) === JSON.stringify(applied) ? load() : setApplied(values))}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 border border-primary/40 text-primary-soft hover:bg-primary hover:text-white text-sm font-bold cursor-pointer"
           >
-            <RefreshCw size={14} className={clsx(loading && "animate-spin")} /> {parameters.length ? "Apply" : "Refresh"}
+            <RefreshCw size={14} className={clsx(loading && "animate-spin")} /> {parameters.length ? dt("reports.designer.apply", "Apply") : dt("reports.designer.refresh", "Refresh")}
           </button>
           <div className="flex-1" />
           <div className="flex rounded-lg border border-border overflow-hidden text-xs font-bold">
             <button
               type="button"
-              title="Draw the report in the browser"
+              title={dt("reports.designer.draw_the_report_in_the_browser", "Draw the report in the browser")}
               onClick={() => setMode("client")}
               className={clsx(
                 "flex items-center gap-1 px-2.5 py-1.5 cursor-pointer",
                 mode === "client" ? "bg-surface-hover text-white" : "text-gray-500 hover:text-white",
               )}
             >
-              <Monitor size={13} /> Interactive
+              <Monitor size={13} /> {dt("reports.designer.interactive", "Interactive")}
             </button>
             <button
               type="button"
-              title="Show the HTML rendered by the server"
+              title={dt("reports.designer.show_the_html_rendered_by_the_server", "Show the HTML rendered by the server")}
               onClick={() => setMode("server")}
               className={clsx(
                 "flex items-center gap-1 px-2.5 py-1.5 cursor-pointer",
                 mode === "server" ? "bg-surface-hover text-white" : "text-gray-500 hover:text-white",
               )}
             >
-              <Server size={13} /> Server rendered
+              <Server size={13} /> {dt("reports.designer.server_rendered", "Server rendered")}
             </button>
           </div>
           <div className="relative">
@@ -169,7 +172,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
               disabled={!model}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-sm font-bold text-gray-300 hover:text-white hover:border-gray-500 cursor-pointer disabled:opacity-50"
             >
-              {exporting ? <Spinner size={14} className="" /> : <Download size={14} />} Export <ChevronDown size={12} />
+              {exporting ? <Spinner size={14} className="" /> : <Download size={14} />} {dt("reports.designer.export", "Export")} <ChevronDown size={12} />
             </button>
             {exportOpen && hostRef.current && (
               <ContextMenu
@@ -177,14 +180,14 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
                 y={(hostRef.current.getBoundingClientRect().top ?? 100) - 4}
                 onClose={() => setExportOpen(false)}
                 items={[
-                  { label: "PNG (in browser)", onClick: () => runExport("client-png") },
-                  { label: "PDF (in browser)", onClick: () => runExport("client-pdf") },
+                  { label: dt("reports.designer.png_in_browser", "PNG (in browser)"), onClick: () => runExport("client-png") },
+                  { label: dt("reports.designer.pdf_in_browser", "PDF (in browser)"), onClick: () => runExport("client-pdf") },
                   "separator",
-                  { label: "PDF (server, vector)", onClick: () => runExport("pdf") },
-                  { label: "PNG (server)", onClick: () => runExport("png") },
-                  { label: "SVG (server)", onClick: () => runExport("svg") },
-                  { label: "HTML (server)", onClick: () => runExport("html") },
-                  { label: "Data as JSON", onClick: () => runExport("json") },
+                  { label: dt("reports.designer.pdf_server_vector", "PDF (server, vector)"), onClick: () => runExport("pdf") },
+                  { label: dt("reports.designer.png_server", "PNG (server)"), onClick: () => runExport("png") },
+                  { label: dt("reports.designer.svg_server", "SVG (server)"), onClick: () => runExport("svg") },
+                  { label: dt("reports.designer.html_server", "HTML (server)"), onClick: () => runExport("html") },
+                  { label: dt("reports.designer.data_as_json", "Data as JSON"), onClick: () => runExport("json") },
                 ]}
               />
             )}
@@ -237,7 +240,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
         {mode === "server" && html && (
           // sandbox without scripts: the server HTML is a static document
           <iframe
-            title="Server rendered report"
+            title={dt("reports.designer.server_rendered_report", "Server rendered report")}
             sandbox="allow-popups allow-popups-to-escape-sandbox"
             srcDoc={html}
             className={clsx("w-full rounded-xl border border-border bg-[#e5e7eb] transition-opacity", loading && "opacity-60")}

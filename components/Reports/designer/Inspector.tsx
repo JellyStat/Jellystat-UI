@@ -26,11 +26,12 @@ import { ColorInput, Field, NumberInput, PreviewDataContext, Section, Select, Te
 import { useDesigner } from "./designerStore";
 import { CardsSection, ConditionsSection, PagesSection } from "./FlowSettings";
 import FontPicker from "./FontPicker";
+import { dt } from "./i18n";
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const formatOptions = VALUE_FORMATS.map((f) => ({
   value: f,
-  label: f === "auto" ? "Automatic" : f === "link" ? "Hyperlink" : f.charAt(0).toUpperCase() + f.slice(1),
+  label: f === "auto" ? dt("reports.designer.automatic", "Automatic") : f === "link" ? dt("reports.designer.hyperlink", "Hyperlink") : f.charAt(0).toUpperCase() + f.slice(1),
 }));
 // Charts can't link their labels
 const chartFormatOptions = formatOptions.filter((f) => f.value !== "link");
@@ -42,7 +43,7 @@ const LINK_HELP =
 function ElementLink({ e }: { e: ReportElement }) {
   const { updateElements } = useDesigner();
   return (
-    <Field label="Link (optional)" hint="Opens when clicked in the viewer, HTML/SVG and PDF exports; {{tokens}} work here">
+    <Field label={dt("reports.designer.link_optional", "Link (optional)")} hint={dt("reports.designer.opens_when_clicked_in_the_viewer_html_svg_and_pd", "Opens when clicked in the viewer, HTML/SVG and PDF exports; {{tokens}} work here")}>
       <TextInput
         value={e.link ?? ""}
         placeholder="https://..."
@@ -63,7 +64,7 @@ function ElementLink({ e }: { e: ReportElement }) {
 function TokenHelp() {
   return (
     <details className="text-xs text-gray-500">
-      <summary className="cursor-pointer hover:text-gray-200">Placeholders</summary>
+      <summary className="cursor-pointer hover:text-gray-200">{dt("reports.designer.placeholders", "Placeholders")}</summary>
       <ul className="mt-1 space-y-0.5">
         {TOKEN_HELP.map((t) => (
           <li key={t.token}>
@@ -89,12 +90,12 @@ function PageSetup() {
   return (
     <>
       <ReportInfo />
-      <Section title="Page setup">
+      <Section title={dt("reports.designer.page_setup", "Page setup")}>
         <div className="grid grid-cols-2 gap-2">
-          <Field label="Size">
+          <Field label={dt("reports.designer.size", "Size")}>
             <Select
               value={PAGE_PRESETS[p.size] ? p.size : "Custom"}
-              options={[...Object.entries(PAGE_PRESETS).map(([k, v]) => ({ value: k, label: v.label })), { value: "Custom", label: "Custom" }]}
+              options={[...Object.entries(PAGE_PRESETS).map(([k, v]) => ({ value: k, label: v.label })), { value: dt("reports.designer.custom", "Custom"), label: "Custom" }]}
               onChange={(size) => {
                 const preset = PAGE_PRESETS[size];
                 if (!preset) {
@@ -113,12 +114,12 @@ function PageSetup() {
               }}
             />
           </Field>
-          <Field label="Orientation">
+          <Field label={dt("reports.designer.orientation", "Orientation")}>
             <Select
               value={p.orientation}
               options={[
-                { value: "portrait", label: "Portrait" },
-                { value: "landscape", label: "Landscape" },
+                { value: "portrait", label: dt("reports.designer.portrait", "Portrait") },
+                { value: "landscape", label: dt("reports.designer.landscape", "Landscape") },
               ]}
               onChange={(orientation) => {
                 if (orientation !== p.orientation) {
@@ -127,20 +128,20 @@ function PageSetup() {
               }}
             />
           </Field>
-          <Field label="Width (px)">
+          <Field label={dt("reports.designer.width_px", "Width (px)")}>
             <NumberInput value={p.width} min={50} max={5000} onChange={(v) => setPage({ width: v ?? p.width, size: "Custom" }, "width")} />
           </Field>
-          <Field label="Height (px)">
+          <Field label={dt("reports.designer.height_px", "Height (px)")}>
             <NumberInput value={p.height} min={50} max={5000} onChange={(v) => setPage({ height: v ?? p.height, size: "Custom" }, "height")} />
           </Field>
-          <Field label="Margin guide">
+          <Field label={dt("reports.designer.margin_guide", "Margin guide")}>
             <NumberInput value={p.margin} min={0} max={500} onChange={(v) => setPage({ margin: v ?? 0 }, "margin")} />
           </Field>
-          <Field label="Background">
+          <Field label={dt("reports.designer.background", "Background")}>
             <ColorInput value={p.background} onChange={(v) => setPage({ background: v ?? "#ffffff" }, "background")} />
           </Field>
         </div>
-        <Field label="This page's name">
+        <Field label={dt("reports.designer.this_page_s_name", "This page's name")}>
           <TextInput
             value={page.name}
             onChange={(v) =>
@@ -169,8 +170,8 @@ const TIME_ZONES: string[] = (() => {
 function ReportInfo() {
   const { state, change } = useDesigner();
   return (
-    <Section title="Report">
-      <Field label="Name">
+    <Section title={dt("reports.designer.report", "Report")}>
+      <Field label={dt("reports.designer.name", "Name")}>
         <TextInput
           value={state.doc.name}
           onChange={(v) =>
@@ -183,10 +184,10 @@ function ReportInfo() {
           }
         />
       </Field>
-      <Field label="Time zone" hint="Used for date groups, relative date filters (today, this month) and displayed dates">
+      <Field label={dt("reports.designer.time_zone", "Time zone")} hint={dt("reports.designer.used_for_date_groups_relative_date_filters_today", "Used for date groups, relative date filters (today, this month) and displayed dates")}>
         <Select
           value={state.doc.definition.timeZone ?? ""}
-          placeholder="UTC"
+          placeholder={dt("reports.designer.utc", "UTC")}
           options={TIME_ZONES.map((z) => ({ value: z, label: z.replace(/_/g, " ") }))}
           onChange={(v) =>
             change((doc) => {
@@ -195,7 +196,7 @@ function ReportInfo() {
           }
         />
       </Field>
-      <Field label="Description">
+      <Field label={dt("reports.designer.description", "Description")}>
         <TextInput
           multiline
           value={state.doc.description}
@@ -219,42 +220,42 @@ function Arrange() {
   return (
     <div className="px-3 py-2 border-b border-border/60 space-y-1">
       <div className="flex flex-wrap gap-0.5">
-        <ToolButton title={many ? "Align left edges" : "Align to page left"} onClick={() => align("left")}>
+        <ToolButton title={many ? dt("reports.designer.align_left_edges", "Align left edges") : dt("reports.designer.align_to_page_left", "Align to page left")} onClick={() => align("left")}>
           <AlignStartVertical size={15} />
         </ToolButton>
-        <ToolButton title="Align centres horizontally" onClick={() => align("center")}>
+        <ToolButton title={dt("reports.designer.align_centres_horizontally", "Align centres horizontally")} onClick={() => align("center")}>
           <AlignCenterVertical size={15} />
         </ToolButton>
-        <ToolButton title="Align right edges" onClick={() => align("right")}>
+        <ToolButton title={dt("reports.designer.align_right_edges", "Align right edges")} onClick={() => align("right")}>
           <AlignEndVertical size={15} />
         </ToolButton>
-        <ToolButton title="Align top edges" onClick={() => align("top")}>
+        <ToolButton title={dt("reports.designer.align_top_edges", "Align top edges")} onClick={() => align("top")}>
           <AlignStartHorizontal size={15} />
         </ToolButton>
-        <ToolButton title="Align centres vertically" onClick={() => align("middle")}>
+        <ToolButton title={dt("reports.designer.align_centres_vertically", "Align centres vertically")} onClick={() => align("middle")}>
           <AlignCenterHorizontal size={15} />
         </ToolButton>
-        <ToolButton title="Align bottom edges" onClick={() => align("bottom")}>
+        <ToolButton title={dt("reports.designer.align_bottom_edges", "Align bottom edges")} onClick={() => align("bottom")}>
           <AlignEndHorizontal size={15} />
         </ToolButton>
-        <ToolButton title="Distribute horizontally" onClick={() => distribute("horizontal")} disabled={selected.length < 3}>
+        <ToolButton title={dt("reports.designer.distribute_horizontally", "Distribute horizontally")} onClick={() => distribute("horizontal")} disabled={selected.length < 3}>
           <AlignHorizontalDistributeCenter size={15} />
         </ToolButton>
-        <ToolButton title="Distribute vertically" onClick={() => distribute("vertical")} disabled={selected.length < 3}>
+        <ToolButton title={dt("reports.designer.distribute_vertically", "Distribute vertically")} onClick={() => distribute("vertical")} disabled={selected.length < 3}>
           <AlignVerticalDistributeCenter size={15} />
         </ToolButton>
       </div>
       <div className="flex flex-wrap gap-0.5 items-center">
-        <ToolButton title="Bring to front (Ctrl+Shift+])" onClick={() => reorder("front")}>
+        <ToolButton title={dt("reports.designer.bring_to_front_ctrl_shift", "Bring to front (Ctrl+Shift+])")} onClick={() => reorder("front")}>
           <ArrowUpToLine size={15} />
         </ToolButton>
-        <ToolButton title="Bring forward (Ctrl+])" onClick={() => reorder("forward")}>
+        <ToolButton title={dt("reports.designer.bring_forward_ctrl", "Bring forward (Ctrl+])")} onClick={() => reorder("forward")}>
           <ArrowUp size={15} />
         </ToolButton>
-        <ToolButton title="Send backward (Ctrl+[)" onClick={() => reorder("backward")}>
+        <ToolButton title={dt("reports.designer.send_backward_ctrl", "Send backward (Ctrl+[)")} onClick={() => reorder("backward")}>
           <ArrowDown size={15} />
         </ToolButton>
-        <ToolButton title="Send to back (Ctrl+Shift+[)" onClick={() => reorder("back")}>
+        <ToolButton title={dt("reports.designer.send_to_back_ctrl_shift", "Send to back (Ctrl+Shift+[)")} onClick={() => reorder("back")}>
           <ArrowDownToLine size={15} />
         </ToolButton>
         {many && (
@@ -264,19 +265,19 @@ function Arrange() {
               className="text-xs px-1.5 py-1 rounded text-gray-400 hover:text-white hover:bg-surface-hover cursor-pointer"
               onClick={() => matchSize("width")}
             >
-              Same width
+              {dt("reports.designer.same_width", "Same width")}
             </button>
             <button
               type="button"
               className="text-xs px-1.5 py-1 rounded text-gray-400 hover:text-white hover:bg-surface-hover cursor-pointer"
               onClick={() => matchSize("height")}
             >
-              Same height
+              {dt("reports.designer.same_height", "Same height")}
             </button>
           </>
         )}
         <div className="flex-1" />
-        <ToolButton title="Delete (Del)" onClick={deleteSelection} className="hover:text-danger!">
+        <ToolButton title={dt("reports.designer.delete_del", "Delete (Del)")} onClick={deleteSelection} className="hover:text-danger!">
           <Trash2 size={15} />
         </ToolButton>
       </div>
@@ -295,8 +296,8 @@ function Layout({ e }: { e: ReportElement }) {
       `layout-${e.id}-${String(key)}`,
     );
   return (
-    <Section title="Layout">
-      <Field label="Name">
+    <Section title={dt("reports.designer.layout", "Layout")}>
+      <Field label={dt("reports.designer.name", "Name")}>
         <TextInput value={e.name ?? ""} onChange={(v) => set("name", v || null)} />
       </Field>
       <div className="grid grid-cols-4 gap-1.5">
@@ -314,12 +315,12 @@ function Layout({ e }: { e: ReportElement }) {
         </Field>
       </div>
       <div className="flex items-center gap-3">
-        <Field label="Opacity %" className="w-20">
+        <Field label={dt("reports.designer.opacity_percent", "Opacity %")} className="w-20">
           <NumberInput value={Math.round((e.opacity ?? 1) * 100)} min={0} max={100} onChange={(v) => set("opacity", (v ?? 100) / 100)} />
         </Field>
         <div className="flex flex-col gap-1 pt-3">
-          <Toggle label="Locked" checked={!!e.locked} onChange={(v) => set("locked", v)} />
-          <Toggle label="Hidden" checked={!!e.hidden} onChange={(v) => set("hidden", v)} />
+          <Toggle label={dt("reports.designer.locked", "Locked")} checked={!!e.locked} onChange={(v) => set("locked", v)} />
+          <Toggle label={dt("reports.designer.hidden", "Hidden")} checked={!!e.hidden} onChange={(v) => set("hidden", v)} />
         </div>
       </div>
     </Section>
@@ -329,10 +330,10 @@ function Layout({ e }: { e: ReportElement }) {
 function DataSourcePicker({ e }: { e: ReportElement }) {
   const { definition, updateElements } = useDesigner();
   return (
-    <Field label="Data source">
+    <Field label={dt("reports.designer.data_source", "Data source")}>
       <Select
         value={e.dataSourceId ?? ""}
-        placeholder={definition.dataSources.length ? "Choose..." : "Add one in the Data tab"}
+        placeholder={definition.dataSources.length ? dt("reports.designer.choose", "Choose...") : dt("reports.designer.add_one_in_the_data_tab", "Add one in the Data tab")}
         options={definition.dataSources.map((d) => ({ value: d.id, label: d.name }))}
         onChange={(v) =>
           updateElements([e.id], (x) => {
@@ -381,36 +382,36 @@ function MetricContent({ e }: { e: ReportElement }) {
       `metric-${e.id}-${key}`,
     );
   return (
-    <Section title="Metric">
+    <Section title={dt("reports.designer.metric", "Metric")}>
       <DataSourcePicker e={e} />
-      <Field label="Value">
+      <Field label={dt("reports.designer.value", "Value")}>
         <Select
           value={e.valueField ?? ""}
-          placeholder="Choose a column..."
+          placeholder={dt("reports.designer.choose_a_column", "Choose a column...")}
           options={columns.map((c) => ({ value: c.name, label: `${c.label} (${c.name})` }))}
           onChange={(v) => set("valueField", v || null)}
         />
       </Field>
-      <Field label="Label">
+      <Field label={dt("reports.designer.label", "Label")}>
         <TextInput value={e.label ?? ""} onChange={(v) => set("label", v || null)} />
       </Field>
       <div className="grid grid-cols-3 gap-1.5">
-        <Field label="Format">
+        <Field label={dt("reports.designer.format", "Format")}>
           <Select value={e.format ?? "auto"} options={formatOptions} onChange={(v) => set("format", v === "auto" ? null : v)} />
         </Field>
-        <Field label="Prefix">
+        <Field label={dt("reports.designer.prefix", "Prefix")}>
           <TextInput value={e.prefix ?? ""} onChange={(v) => set("prefix", v || null)} />
         </Field>
-        <Field label="Suffix">
+        <Field label={dt("reports.designer.suffix", "Suffix")}>
           <TextInput value={e.suffix ?? ""} onChange={(v) => set("suffix", v || null)} />
         </Field>
       </div>
       {e.format === "link" && (
-        <Field label="Link URL" hint={LINK_HELP}>
+        <Field label={dt("reports.designer.link_url", "Link URL")} hint={LINK_HELP}>
           <TextInput value={e.link ?? ""} placeholder="{{value}}" onChange={(v) => set("link", v || null)} />
         </Field>
       )}
-      <p className="text-xs text-gray-500">Shows the value from the first row. Use a Summary data source for totals.</p>
+      <p className="text-xs text-gray-500">{dt("reports.designer.shows_the_value_from_the_first_row_use_a_summary", "Shows the value from the first row. Use a Summary data source for totals.")}</p>
     </Section>
   );
 }
@@ -438,9 +439,9 @@ function TableContent({ e }: { e: ReportElement }) {
     );
 
   return (
-    <Section title="Table">
+    <Section title={dt("reports.designer.table", "Table")}>
       <DataSourcePicker e={e} />
-      <Field label={cols.length ? "Columns" : "Columns (showing all)"}>
+      <Field label={cols.length ? dt("reports.designer.columns_2", "Columns") : dt("reports.designer.columns_showing_all", "Columns (showing all)")}>
         <div className="space-y-2">
           {cols.map((c, i) => (
             <div key={i} className="rounded-md border border-border p-1.5 space-y-1.5">
@@ -471,7 +472,7 @@ function TableContent({ e }: { e: ReportElement }) {
               <div className="grid grid-cols-[1fr_52px_1fr_1fr] gap-1">
                 <TextInput
                   value={c.header ?? ""}
-                  placeholder="Header"
+                  placeholder={dt("reports.designer.header", "Header")}
                   onChange={(v) =>
                     setCols(
                       cols.map((x, j) => (j === i ? { ...x, header: v || null } : x)),
@@ -493,9 +494,9 @@ function TableContent({ e }: { e: ReportElement }) {
                 <Select
                   value={c.align}
                   options={[
-                    { value: "left", label: "Left" },
-                    { value: "center", label: "Center" },
-                    { value: "right", label: "Right" },
+                    { value: "left", label: dt("reports.designer.left", "Left") },
+                    { value: "center", label: dt("reports.designer.center", "Center") },
+                    { value: "right", label: dt("reports.designer.right", "Right") },
                   ]}
                   onChange={(v) =>
                     setCols(
@@ -519,7 +520,7 @@ function TableContent({ e }: { e: ReportElement }) {
                 <div title={LINK_HELP}>
                   <TextInput
                     value={c.link ?? ""}
-                    placeholder="Link URL, e.g. https://site/item/{{row.Id}} (empty: the value)"
+                    placeholder={dt("reports.designer.link_url_e_g_https_site_item_row_id_empty_the_va", "Link URL, e.g. https://site/item/{{row.Id}} (empty: the value)")}
                     onChange={(v) =>
                       setCols(
                         cols.map((x, j) => (j === i ? { ...x, link: v || null } : x)),
@@ -554,7 +555,7 @@ function TableContent({ e }: { e: ReportElement }) {
                 }
               }}
             >
-              <Plus size={12} /> Column
+              <Plus size={12} /> {dt("reports.designer.column", "Column")}
             </button>
             {cols.length === 0 && columns.length > 0 && (
               <button
@@ -573,33 +574,33 @@ function TableContent({ e }: { e: ReportElement }) {
                   )
                 }
               >
-                Add all
+                {dt("reports.designer.add_all", "Add all")}
               </button>
             )}
           </div>
         </div>
       </Field>
       <div className="grid grid-cols-2 gap-2">
-        <Field label="Row height">
+        <Field label={dt("reports.designer.row_height", "Row height")}>
           <NumberInput value={t.rowHeight} min={12} max={200} onChange={(v) => setOpt({ rowHeight: v ?? 26 }, "rowHeight")} />
         </Field>
-        <Field label="Max rows">
+        <Field label={dt("reports.designer.max_rows", "Max rows")}>
           <NumberInput value={t.maxRows ?? null} min={1} placeholder="fit" onChange={(v) => setOpt({ maxRows: v }, "maxRows")} />
         </Field>
-        <Field label="Header background">
+        <Field label={dt("reports.designer.header_background", "Header background")}>
           <ColorInput value={t.headerBackground} onChange={(v) => setOpt({ headerBackground: v ?? "#f3f4f6" }, "hb")} />
         </Field>
-        <Field label="Header text">
+        <Field label={dt("reports.designer.header_text", "Header text")}>
           <ColorInput value={t.headerColor} onChange={(v) => setOpt({ headerColor: v ?? "#111827" }, "hc")} />
         </Field>
-        <Field label="Stripes">
+        <Field label={dt("reports.designer.stripes", "Stripes")}>
           <ColorInput allowNone value={t.stripeBackground} onChange={(v) => setOpt({ stripeBackground: v }, "stripe")} />
         </Field>
-        <Field label="Grid lines">
+        <Field label={dt("reports.designer.grid_lines", "Grid lines")}>
           <ColorInput value={t.gridColor} onChange={(v) => setOpt({ gridColor: v ?? "#e5e7eb" }, "grid")} />
         </Field>
       </div>
-      <Toggle label="Show header" checked={t.showHeader} onChange={(v) => setOpt({ showHeader: v }, "showHeader")} />
+      <Toggle label={dt("reports.designer.show_header", "Show header")} checked={t.showHeader} onChange={(v) => setOpt({ showHeader: v }, "showHeader")} />
     </Section>
   );
 }
@@ -620,32 +621,32 @@ function ChartContent({ e }: { e: ReportElement }) {
   const pie = c.kind === "pie" || c.kind === "donut";
 
   return (
-    <Section title="Chart">
+    <Section title={dt("reports.designer.chart", "Chart")}>
       <DataSourcePicker e={e} />
-      <Field label="Type">
+      <Field label={dt("reports.designer.type", "Type")}>
         <Select
           value={c.kind}
           options={[
-            { value: "bar", label: "Bar" },
-            { value: "horizontalBar", label: "Horizontal bar" },
-            { value: "line", label: "Line" },
-            { value: "area", label: "Area" },
-            { value: "pie", label: "Pie" },
-            { value: "donut", label: "Donut" },
+            { value: "bar", label: dt("reports.designer.bar", "Bar") },
+            { value: "horizontalBar", label: dt("reports.designer.horizontal_bar", "Horizontal bar") },
+            { value: "line", label: dt("reports.designer.line", "Line") },
+            { value: "area", label: dt("reports.designer.area", "Area") },
+            { value: "pie", label: dt("reports.designer.pie", "Pie") },
+            { value: "donut", label: dt("reports.designer.donut", "Donut") },
           ]}
           onChange={(v) => set({ kind: v }, "kind")}
         />
       </Field>
       <div className="grid grid-cols-2 gap-2">
-        <Field label={pie ? "Slices" : "Categories (X)"}>
+        <Field label={pie ? dt("reports.designer.slices", "Slices") : dt("reports.designer.categories_x", "Categories (X)")}>
           <Select
             value={c.categoryField ?? ""}
-            placeholder="Choose..."
+            placeholder={dt("reports.designer.choose", "Choose...")}
             options={columns.map((x) => ({ value: x.name, label: x.label }))}
             onChange={(v) => set({ categoryField: v || null }, "category")}
           />
         </Field>
-        <Field label="Category format">
+        <Field label={dt("reports.designer.category_format", "Category format")}>
           <Select
             value={c.categoryFormat ?? "auto"}
             options={chartFormatOptions}
@@ -653,7 +654,7 @@ function ChartContent({ e }: { e: ReportElement }) {
           />
         </Field>
       </div>
-      <Field label={pie ? "Value" : "Series (Y)"}>
+      <Field label={pie ? dt("reports.designer.value", "Value") : dt("reports.designer.series_y", "Series (Y)")}>
         <div className="space-y-1.5">
           {c.series.map((s, i) => (
             <div key={i} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] gap-1 items-center">
@@ -667,7 +668,7 @@ function ChartContent({ e }: { e: ReportElement }) {
               />
               <TextInput
                 value={s.label ?? ""}
-                placeholder="Label"
+                placeholder={dt("reports.designer.label", "Label")}
                 onChange={(v) => set({ series: c.series.map((x, j) => (j === i ? { ...x, label: v || null } : x)) }, `s${i}l`)}
               />
               <input
@@ -704,12 +705,12 @@ function ChartContent({ e }: { e: ReportElement }) {
                 }
               }}
             >
-              <Plus size={12} /> Series
+              <Plus size={12} /> {dt("reports.designer.series", "Series")}
             </button>
           )}
         </div>
       </Field>
-      <Field label="Value format">
+      <Field label={dt("reports.designer.value_format", "Value format")}>
         <Select
           value={c.valueFormat ?? "auto"}
           options={chartFormatOptions}
@@ -717,20 +718,20 @@ function ChartContent({ e }: { e: ReportElement }) {
         />
       </Field>
       <div className="grid grid-cols-2 gap-1.5">
-        <Toggle label="Legend" checked={c.showLegend} onChange={(v) => set({ showLegend: v }, "legend")} />
-        <Toggle label="Values" checked={c.showValues} onChange={(v) => set({ showValues: v }, "values")} />
-        {!pie && <Toggle label="Grid" checked={c.showGrid} onChange={(v) => set({ showGrid: v }, "grid")} />}
-        {!pie && <Toggle label="Axes" checked={c.showAxes} onChange={(v) => set({ showAxes: v }, "axes")} />}
+        <Toggle label={dt("reports.designer.legend", "Legend")} checked={c.showLegend} onChange={(v) => set({ showLegend: v }, "legend")} />
+        <Toggle label={dt("reports.designer.values", "Values")} checked={c.showValues} onChange={(v) => set({ showValues: v }, "values")} />
+        {!pie && <Toggle label={dt("reports.designer.grid", "Grid")} checked={c.showGrid} onChange={(v) => set({ showGrid: v }, "grid")} />}
+        {!pie && <Toggle label={dt("reports.designer.axes", "Axes")} checked={c.showAxes} onChange={(v) => set({ showAxes: v }, "axes")} />}
         {(c.kind === "bar" || c.kind === "horizontalBar" || c.kind === "area") && (
-          <Toggle label="Stacked" checked={c.stacked} onChange={(v) => set({ stacked: v }, "stacked")} />
+          <Toggle label={dt("reports.designer.stacked", "Stacked")} checked={c.stacked} onChange={(v) => set({ stacked: v }, "stacked")} />
         )}
       </div>
       {!pie && (
         <div className="grid grid-cols-2 gap-2">
-          <Field label="Axis colour">
+          <Field label={dt("reports.designer.axis_colour", "Axis colour")}>
             <ColorInput value={c.axisColor} onChange={(v) => set({ axisColor: v ?? "#6b7280" }, "axisColor")} />
           </Field>
-          <Field label="Grid colour">
+          <Field label={dt("reports.designer.grid_colour", "Grid colour")}>
             <ColorInput value={c.gridColor} onChange={(v) => set({ gridColor: v ?? "#e5e7eb" }, "gridColor")} />
           </Field>
         </div>
@@ -760,24 +761,24 @@ function MediaSettings({ e }: { e: ReportElement }) {
 
   return (
     <>
-      <Field label="Picture">
+      <Field label={dt("reports.designer.picture", "Picture")}>
         <Select
           value={media.type === "user" ? "user" : media.imageType === "Backdrop" ? "backdrop" : "poster"}
           options={[
-            { value: "poster", label: "Item poster" },
-            { value: "backdrop", label: "Item backdrop" },
-            { value: "user", label: "User avatar" },
+            { value: "poster", label: dt("reports.designer.item_poster", "Item poster") },
+            { value: "backdrop", label: dt("reports.designer.item_backdrop", "Item backdrop") },
+            { value: "user", label: dt("reports.designer.user_avatar", "User avatar") },
           ]}
           onChange={(v) => set({ type: v === "user" ? "user" : "item", imageType: v === "backdrop" ? "Backdrop" : "Primary" }, "kind")}
         />
       </Field>
-      <Field label={media.type === "user" ? "User id from" : "Item id from"}>
+      <Field label={media.type === "user" ? dt("reports.designer.user_id_from", "User id from") : dt("reports.designer.item_id_from", "Item id from")}>
         <Select
           value={from}
           options={[
-            { value: "data", label: "Data source (first row)" },
-            { value: "parameter", label: "Parameter" },
-            { value: "fixed", label: "Fixed id" },
+            { value: "data", label: dt("reports.designer.data_source_first_row", "Data source (first row)") },
+            { value: "parameter", label: dt("reports.designer.parameter", "Parameter") },
+            { value: "fixed", label: dt("reports.designer.fixed_id", "Fixed id") },
           ]}
           onChange={(v) =>
             set(
@@ -794,18 +795,18 @@ function MediaSettings({ e }: { e: ReportElement }) {
       </Field>
       {from === "data" && (
         <div className="grid grid-cols-2 gap-2">
-          <Field label="Data source">
+          <Field label={dt("reports.designer.data_source", "Data source")}>
             <Select
               value={media.dataSourceId ?? ""}
-              placeholder="Choose..."
+              placeholder={dt("reports.designer.choose", "Choose...")}
               options={definition.dataSources.map((d) => ({ value: d.id, label: d.name }))}
               onChange={(v) => set({ dataSourceId: v || null, field: null }, "source")}
             />
           </Field>
-          <Field label="Id column">
+          <Field label={dt("reports.designer.id_column", "Id column")}>
             <Select
               value={media.field ?? ""}
-              placeholder="Choose..."
+              placeholder={dt("reports.designer.choose", "Choose...")}
               options={columns.map((c) => ({ value: c.name, label: c.label }))}
               onChange={(v) => set({ field: v || null }, "field")}
             />
@@ -813,17 +814,17 @@ function MediaSettings({ e }: { e: ReportElement }) {
         </div>
       )}
       {from === "parameter" && (
-        <Field label="Parameter">
+        <Field label={dt("reports.designer.parameter", "Parameter")}>
           <Select
             value={media.parameter ?? ""}
-            placeholder={definition.parameters.length ? "Choose..." : "Add one in the Data tab"}
+            placeholder={definition.parameters.length ? dt("reports.designer.choose", "Choose...") : dt("reports.designer.add_one_in_the_data_tab", "Add one in the Data tab")}
             options={definition.parameters.map((p) => ({ value: p.name, label: `@${p.name}` }))}
             onChange={(v) => set({ parameter: v || null }, "parameter")}
           />
         </Field>
       )}
       {from === "fixed" && (
-        <Field label={media.type === "user" ? "User id" : "Item id"}>
+        <Field label={media.type === "user" ? dt("reports.designer.user_id", "User id") : dt("reports.designer.item_id", "Item id")}>
           <TextInput value={media.id ?? ""} onChange={(v) => set({ id: v.trim() || null }, "id")} />
         </Field>
       )}
@@ -844,13 +845,13 @@ function ImageContent({ e }: { e: ReportElement }) {
     );
 
   return (
-    <Section title="Image">
-      <Field label="Source">
+    <Section title={dt("reports.designer.image", "Image")}>
+      <Field label={dt("reports.designer.source", "Source")}>
         <Select
           value={e.media ? "media" : "file"}
           options={[
-            { value: "file", label: "Upload or URL" },
-            { value: "media", label: "Media server image" },
+            { value: "file", label: dt("reports.designer.upload_or_url", "Upload or URL") },
+            { value: "media", label: dt("reports.designer.media_server_image", "Media server image") },
           ]}
           onChange={(v) =>
             updateElements([e.id], (x) => {
@@ -888,26 +889,26 @@ function ImageContent({ e }: { e: ReportElement }) {
             onClick={() => fileRef.current?.click()}
             className="w-full flex items-center justify-center gap-2 px-2 py-2 rounded-md border border-dashed border-border text-xs text-gray-300 hover:text-white hover:border-primary cursor-pointer"
           >
-            <Upload size={14} /> Upload image
+            <Upload size={14} /> {dt("reports.designer.upload_image", "Upload image")}
           </button>
-          <Field label="Or URL">
+          <Field label={dt("reports.designer.or_url", "Or URL")}>
             <TextInput value={e.src?.startsWith("data:") ? "" : (e.src ?? "")} placeholder="https://..." onChange={(v) => setSrc(v || null)} />
           </Field>
           {e.src?.startsWith("data:") && <p className="text-xs text-gray-500">Embedded image ({Math.round((e.src.length * 0.75) / 1024)} KB)</p>}
           {e.src && !e.src.startsWith("data:") && (
             <p className="text-xs text-warning">
-              Server exports only fetch URLs from your Jellyfin/Emby server or Jellystat. For other sites, upload the image instead.
+              {dt("reports.designer.server_exports_only_fetch_urls_from_your_jellyfi", "Server exports only fetch URLs from your Jellyfin/Emby server or Jellystat. For other sites, upload the image instead.")}
             </p>
           )}
         </>
       )}
-      <Field label="Fit">
+      <Field label={dt("reports.designer.fit", "Fit")}>
         <Select
           value={e.fit ?? "contain"}
           options={[
-            { value: "contain", label: "Contain" },
-            { value: "cover", label: "Cover" },
-            { value: "fill", label: "Stretch" },
+            { value: "contain", label: dt("reports.designer.contain", "Contain") },
+            { value: "cover", label: dt("reports.designer.cover", "Cover") },
+            { value: "fill", label: dt("reports.designer.stretch", "Stretch") },
           ]}
           onChange={(v) =>
             updateElements([e.id], (x) => {
@@ -938,61 +939,61 @@ function StyleSection({ elements }: { elements: ReportElement[] }) {
   const isLine = elements.every((e) => e.type === "line");
 
   return (
-    <Section title={elements.length > 1 ? `Style (${elements.length} elements)` : "Style"}>
+    <Section title={elements.length > 1 ? dt("reports.designer.style_n_elements", "Style ({{count}} elements)", { count: elements.length }) : dt("reports.designer.style", "Style")}>
       {hasText && (
         <>
           <div className="grid grid-cols-[1fr_64px] gap-2">
-            <Field label="Font">
+            <Field label={dt("reports.designer.font", "Font")}>
               <FontPicker value={s.fontFamily} onChange={(v) => set("fontFamily", v)} />
             </Field>
-            <Field label="Size">
+            <Field label={dt("reports.designer.size", "Size")}>
               <NumberInput value={s.fontSize} min={4} max={400} onChange={(v) => set("fontSize", v ?? 14)} />
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <Field label="Weight">
+            <Field label={dt("reports.designer.weight", "Weight")}>
               <Select
                 value={s.fontWeight}
                 options={[
-                  { value: "300", label: "Light" },
-                  { value: "normal", label: "Regular" },
-                  { value: "600", label: "Semibold" },
-                  { value: "bold", label: "Bold" },
-                  { value: "900", label: "Black" },
+                  { value: "300", label: dt("reports.designer.light", "Light") },
+                  { value: "normal", label: dt("reports.designer.regular", "Regular") },
+                  { value: "600", label: dt("reports.designer.semibold", "Semibold") },
+                  { value: "bold", label: dt("reports.designer.bold", "Bold") },
+                  { value: "900", label: dt("reports.designer.black", "Black") },
                 ]}
                 onChange={(v) => set("fontWeight", v)}
               />
             </Field>
-            <Field label="Text colour">
+            <Field label={dt("reports.designer.text_colour", "Text colour")}>
               <ColorInput value={s.color} onChange={(v) => set("color", v ?? "#111827")} />
             </Field>
-            <Field label="Align">
+            <Field label={dt("reports.designer.align", "Align")}>
               <Select
                 value={s.textAlign}
                 options={[
-                  { value: "left", label: "Left" },
-                  { value: "center", label: "Center" },
-                  { value: "right", label: "Right" },
+                  { value: "left", label: dt("reports.designer.left", "Left") },
+                  { value: "center", label: dt("reports.designer.center", "Center") },
+                  { value: "right", label: dt("reports.designer.right", "Right") },
                 ]}
                 onChange={(v) => set("textAlign", v)}
               />
             </Field>
-            <Field label="Vertical">
+            <Field label={dt("reports.designer.vertical", "Vertical")}>
               <Select
                 value={s.verticalAlign}
                 options={[
-                  { value: "top", label: "Top" },
-                  { value: "middle", label: "Middle" },
-                  { value: "bottom", label: "Bottom" },
+                  { value: "top", label: dt("reports.designer.top", "Top") },
+                  { value: "middle", label: dt("reports.designer.middle", "Middle") },
+                  { value: "bottom", label: dt("reports.designer.bottom", "Bottom") },
                 ]}
                 onChange={(v) => set("verticalAlign", v)}
               />
             </Field>
           </div>
           <div className="flex items-center gap-4">
-            <Toggle label="Italic" checked={s.italic} onChange={(v) => set("italic", v)} />
-            <Toggle label="Underline" checked={s.underline} onChange={(v) => set("underline", v)} />
-            <Field label="Line height" className="w-20">
+            <Toggle label={dt("reports.designer.italic", "Italic")} checked={s.italic} onChange={(v) => set("italic", v)} />
+            <Toggle label={dt("reports.designer.underline", "Underline")} checked={s.underline} onChange={(v) => set("underline", v)} />
+            <Field label={dt("reports.designer.line_height", "Line height")} className="w-20">
               <NumberInput value={s.lineHeight} min={0.5} max={4} step={0.1} onChange={(v) => set("lineHeight", v ?? 1.3)} />
             </Field>
           </div>
@@ -1000,33 +1001,33 @@ function StyleSection({ elements }: { elements: ReportElement[] }) {
       )}
       <div className="grid grid-cols-2 gap-2">
         {!isLine && (
-          <Field label="Fill">
+          <Field label={dt("reports.designer.fill", "Fill")}>
             <ColorInput allowNone value={s.background} onChange={(v) => set("background", v)} />
           </Field>
         )}
-        <Field label={isLine ? "Line colour" : "Border colour"}>
+        <Field label={isLine ? dt("reports.designer.line_colour", "Line colour") : dt("reports.designer.border_colour", "Border colour")}>
           <ColorInput allowNone value={s.borderColor} onChange={(v) => set("borderColor", v)} />
         </Field>
-        <Field label={isLine ? "Thickness" : "Border width"}>
+        <Field label={isLine ? dt("reports.designer.thickness", "Thickness") : dt("reports.designer.border_width", "Border width")}>
           <NumberInput value={s.borderWidth} min={0} max={100} onChange={(v) => set("borderWidth", v ?? 0)} />
         </Field>
-        <Field label={isLine ? "Line style" : "Border style"}>
+        <Field label={isLine ? dt("reports.designer.line_style", "Line style") : dt("reports.designer.border_style", "Border style")}>
           <Select
             value={s.borderStyle}
             options={[
-              { value: "solid", label: "Solid" },
-              { value: "dashed", label: "Dashed" },
-              { value: "dotted", label: "Dotted" },
+              { value: "solid", label: dt("reports.designer.solid", "Solid") },
+              { value: "dashed", label: dt("reports.designer.dashed", "Dashed") },
+              { value: "dotted", label: dt("reports.designer.dotted", "Dotted") },
             ]}
             onChange={(v) => set("borderStyle", v)}
           />
         </Field>
         {!isLine && (
           <>
-            <Field label="Corner radius">
+            <Field label={dt("reports.designer.corner_radius", "Corner radius")}>
               <NumberInput value={s.borderRadius} min={0} max={500} onChange={(v) => set("borderRadius", v ?? 0)} />
             </Field>
-            <Field label="Padding">
+            <Field label={dt("reports.designer.padding", "Padding")}>
               <NumberInput value={s.padding} min={0} max={500} onChange={(v) => set("padding", v ?? 0)} />
             </Field>
           </>
@@ -1050,7 +1051,7 @@ export default function Inspector() {
       <Arrange />
       {single && <Layout e={e} />}
       {single && e.type === "text" && (
-        <Section title="Text">
+        <Section title={dt("reports.designer.text", "Text")}>
           <TextInput
             multiline
             rows={4}
@@ -1077,12 +1078,12 @@ export default function Inspector() {
       {single && (e.type === "table" || e.type === "metric" || e.type === "cards") && <ConditionsContent e={e} />}
       {single && <PagesSection e={e} />}
       {single && e.type === "shape" && (
-        <Section title="Shape">
+        <Section title={dt("reports.designer.shape", "Shape")}>
           <Select
             value={e.shape ?? "rect"}
             options={[
-              { value: "rect", label: "Rectangle" },
-              { value: "ellipse", label: "Ellipse" },
+              { value: "rect", label: dt("reports.designer.rectangle", "Rectangle") },
+              { value: "ellipse", label: dt("reports.designer.ellipse", "Ellipse") },
             ]}
             onChange={(v) =>
               updateElements([e.id], (x) => {

@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { Copy, FilePlus2, GripVertical, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useDesigner } from "./designerStore";
+import { dt } from "./i18n";
 
 export default function PagesPanel() {
   const { definition, state, setPage, addPage, duplicatePage, deletePage, movePage, change } = useDesigner();
@@ -77,7 +78,7 @@ export default function PagesPanel() {
           <span className="text-xs text-gray-500">{p.elements.length}</span>
           <button
             type="button"
-            title="Duplicate page"
+            title={dt("reports.designer.duplicate_page", "Duplicate page")}
             className="p-0.5 opacity-0 group-hover:opacity-100 hover:text-white cursor-pointer"
             onClick={(ev) => {
               ev.stopPropagation();
@@ -88,7 +89,7 @@ export default function PagesPanel() {
           </button>
           <button
             type="button"
-            title="Delete page"
+            title={dt("reports.designer.delete_page", "Delete page")}
             disabled={definition.pages.length <= 1}
             className="p-0.5 opacity-0 group-hover:opacity-100 hover:text-danger cursor-pointer disabled:hidden"
             onClick={(ev) => {
@@ -105,7 +106,7 @@ export default function PagesPanel() {
         onClick={addPage}
         className="w-full flex items-center justify-center gap-2 mt-2 px-2 py-2 rounded-md border border-dashed border-border text-xs text-gray-400 hover:text-white hover:border-primary cursor-pointer"
       >
-        <FilePlus2 size={14} /> Add page
+        <FilePlus2 size={14} /> {dt("reports.designer.add_page", "Add page")}
       </button>
     </div>
   );

@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { FolderPlus, Plus, Trash2 } from "lucide-react";
 import type { ReportFieldInfo, ReportFilterNode, ReportParameter } from "@/lib/models/reports";
 import { inputClass, NumberInput, Select, TextInput } from "./controls";
+import { dt } from "./i18n";
 
 export const OPERATOR_LABELS: Record<string, string> = {
   eq: "equals",
@@ -105,10 +106,10 @@ function ValueInput({
       return (
         <Select
           value={value === true ? "true" : value === false ? "false" : ""}
-          placeholder="Choose..."
+          placeholder={dt("reports.designer.choose", "Choose...")}
           options={[
-            { value: "true", label: "Yes" },
-            { value: "false", label: "No" },
+            { value: "true", label: dt("reports.designer.yes", "Yes") },
+            { value: "false", label: dt("reports.designer.no", "No") },
           ]}
           onChange={(v) => onChange(v === "true")}
         />
@@ -117,7 +118,7 @@ function ValueInput({
       return (
         <Select
           value={String(value ?? "")}
-          placeholder="Choose..."
+          placeholder={dt("reports.designer.choose", "Choose...")}
           options={(field.options ?? []).map((o) => ({ value: o, label: o }))}
           onChange={onChange}
         />
@@ -197,23 +198,23 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
             })
           }
         >
-          <Plus size={12} /> Rule
+          <Plus size={12} /> {dt("reports.designer.rule", "Rule")}
         </button>
         <button
           type="button"
           className="flex items-center gap-1 text-xs text-gray-400 hover:text-white cursor-pointer"
           onClick={() => onChange({ ...node, rules: [...rules, { combinator: "and", rules: [] }] })}
         >
-          <FolderPlus size={12} /> Group
+          <FolderPlus size={12} /> {dt("reports.designer.group", "Group")}
         </button>
         {onRemove && (
-          <button type="button" title="Remove group" className="p-0.5 text-gray-500 hover:text-danger cursor-pointer" onClick={onRemove}>
+          <button type="button" title={dt("reports.designer.remove_group", "Remove group")} className="p-0.5 text-gray-500 hover:text-danger cursor-pointer" onClick={onRemove}>
             <Trash2 size={12} />
           </button>
         )}
       </div>
 
-      {rules.length === 0 && <p className="text-xs text-gray-500 px-1">No conditions: every row is included.</p>}
+      {rules.length === 0 && <p className="text-xs text-gray-500 px-1">{dt("reports.designer.no_conditions_every_row_is_included", "No conditions: every row is included.")}</p>}
 
       {rules.map((rule, i) =>
         rule.rules ? (
@@ -256,13 +257,13 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
                 <>
                   {parameters.length > 0 && (
                     <select
-                      title="Take the value from a report parameter"
+                      title={dt("reports.designer.take_the_value_from_a_report_parameter", "Take the value from a report parameter")}
                       className={clsx(inputClass, "w-auto! shrink-0 cursor-pointer")}
                       value={rule.parameter ?? ""}
                       onKeyDown={(ev) => ev.stopPropagation()}
                       onChange={(ev) => setRule(i, { ...rule, parameter: ev.target.value || null })}
                     >
-                      <option value="">Value</option>
+                      <option value="">{dt("reports.designer.value", "Value")}</option>
                       {parameters.map((p) => (
                         <option key={p.name} value={p.name}>
                           @{p.name}
@@ -293,7 +294,7 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
             </div>
             <button
               type="button"
-              title="Remove rule"
+              title={dt("reports.designer.remove_rule", "Remove rule")}
               className="p-1 text-gray-500 hover:text-danger cursor-pointer"
               onClick={() => removeRule(i)}
             >

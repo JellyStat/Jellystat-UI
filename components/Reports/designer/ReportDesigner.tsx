@@ -57,6 +57,8 @@ import Inspector from "./Inspector";
 import LayersPanel from "./LayersPanel";
 import PagesPanel from "./PagesPanel";
 import Toolbox from "./Toolbox";
+import { useTranslation } from "react-i18next";
+import { dt } from "./i18n";
 
 type LeftTab = "insert" | "layers" | "pages" | "data";
 const ZOOMS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
@@ -96,7 +98,7 @@ function usePreviewData(definition: ReportDefinition, name: string) {
         }
       } catch (err: any) {
         if (!cancelled) {
-          setError(err?.message ?? "Preview failed");
+          setError(err?.message ?? dt("reports.designer.preview_failed", "Preview failed"));
         }
       } finally {
         if (!cancelled) {
@@ -117,6 +119,7 @@ function usePreviewData(definition: ReportDefinition, name: string) {
 function DesignerShell() {
   // Re-renders (re-measuring chart and table text) once the report fonts have loaded
   useReportFonts();
+  useTranslation(); // re-render the designer when the language changes
   const router = useRouter();
   const designer = useDesigner();
   const { state, definition, page, selected, dirty, canUndo, canRedo } = designer;
@@ -308,44 +311,44 @@ function DesignerShell() {
     const locked = selected.length > 0 && selected.every((e) => e.locked);
     const items: MenuEntry[] = has
       ? [
-          { label: "Cut", shortcut: "Ctrl+X", icon: <Scissors size={13} />, onClick: designer.cut },
-          { label: "Copy", shortcut: "Ctrl+C", icon: <Copy size={13} />, onClick: designer.copy },
+          { label: dt("reports.designer.cut", "Cut"), shortcut: "Ctrl+X", icon: <Scissors size={13} />, onClick: designer.cut },
+          { label: dt("reports.designer.copy", "Copy"), shortcut: "Ctrl+C", icon: <Copy size={13} />, onClick: designer.copy },
           {
-            label: "Paste",
+            label: dt("reports.designer.paste", "Paste"),
             shortcut: "Ctrl+V",
             icon: <ClipboardPaste size={13} />,
             onClick: () => designer.paste({ x: req.pageX, y: req.pageY }),
           },
           {
-            label: "Duplicate",
+            label: dt("reports.designer.duplicate", "Duplicate"),
             shortcut: "Ctrl+D",
             icon: <Files size={13} />,
             onClick: designer.duplicate,
           },
           "separator",
           {
-            label: "Bring to front",
+            label: dt("reports.designer.bring_to_front", "Bring to front"),
             shortcut: "Ctrl+Shift+]",
             onClick: () => designer.reorder("front"),
           },
           {
-            label: "Bring forward",
+            label: dt("reports.designer.bring_forward", "Bring forward"),
             shortcut: "Ctrl+]",
             onClick: () => designer.reorder("forward"),
           },
           {
-            label: "Send backward",
+            label: dt("reports.designer.send_backward", "Send backward"),
             shortcut: "Ctrl+[",
             onClick: () => designer.reorder("backward"),
           },
           {
-            label: "Send to back",
+            label: dt("reports.designer.send_to_back", "Send to back"),
             shortcut: "Ctrl+Shift+[",
             onClick: () => designer.reorder("back"),
           },
           "separator",
           {
-            label: locked ? "Unlock" : "Lock",
+            label: locked ? dt("reports.designer.unlock", "Unlock") : dt("reports.designer.lock", "Lock"),
             icon: locked ? <Unlock size={13} /> : <Lock size={13} />,
             onClick: () =>
               designer.updateElements(state.selection, (e) => {
@@ -353,7 +356,7 @@ function DesignerShell() {
               }),
           },
           {
-            label: "Hide",
+            label: dt("reports.designer.hide", "Hide"),
             icon: <EyeOff size={13} />,
             onClick: () =>
               designer.updateElements(state.selection, (e) => {
@@ -361,7 +364,7 @@ function DesignerShell() {
               }),
           },
           {
-            label: "Delete",
+            label: dt("reports.designer.delete", "Delete"),
             shortcut: "Del",
             icon: <Trash2 size={13} />,
             danger: true,
@@ -370,19 +373,19 @@ function DesignerShell() {
         ]
       : [
           {
-            label: "Paste here",
+            label: dt("reports.designer.paste_here", "Paste here"),
             shortcut: "Ctrl+V",
             icon: <ClipboardPaste size={13} />,
             onClick: () => designer.paste({ x: req.pageX, y: req.pageY }),
           },
           {
-            label: "Select all",
+            label: dt("reports.designer.select_all", "Select all"),
             shortcut: "Ctrl+A",
             onClick: () => designer.select(page.elements.filter((e) => !e.hidden).map((e) => e.id)),
           },
           "separator",
           {
-            label: "Show hidden elements",
+            label: dt("reports.designer.show_hidden_elements", "Show hidden elements"),
             icon: <Eye size={13} />,
             disabled: !page.elements.some((e) => e.hidden),
             onClick: () =>
@@ -393,7 +396,7 @@ function DesignerShell() {
                 },
               ),
           },
-          { label: "Add page", icon: <Plus size={13} />, onClick: designer.addPage },
+          { label: dt("reports.designer.add_page", "Add page"), icon: <Plus size={13} />, onClick: designer.addPage },
         ];
     setMenu({ ...req, items });
   };
@@ -476,10 +479,10 @@ function DesignerShell() {
   // ---------------------------------------------------------------- render
 
   const tabs: { key: LeftTab; label: string; icon: typeof Plus }[] = [
-    { key: "insert", label: "Insert", icon: Plus },
-    { key: "layers", label: "Layers", icon: Layers },
-    { key: "pages", label: "Pages", icon: Files },
-    { key: "data", label: "Data", icon: Database },
+    { key: "insert", label: dt("reports.designer.insert", "Insert"), icon: Plus },
+    { key: "layers", label: dt("reports.designer.layers", "Layers"), icon: Layers },
+    { key: "pages", label: dt("reports.designer.pages", "Pages"), icon: Files },
+    { key: "data", label: dt("reports.designer.data", "Data"), icon: Database },
   ];
   const dataErrors = Object.values(preview.model?.data ?? {}).filter((d) => d.error).length;
 
@@ -487,12 +490,12 @@ function DesignerShell() {
     <div className="fixed inset-0 z-40 flex flex-col bg-background text-gray-200">
       {/* Toolbar */}
       <div className="h-12 shrink-0 flex items-center gap-1 px-2 border-b border-border bg-surface overflow-x-auto">
-        <ToolButton title="Back to reports" onClick={leave}>
+        <ToolButton title={dt("reports.designer.back_to_reports", "Back to reports")} onClick={leave}>
           <ArrowLeft size={17} />
         </ToolButton>
         <input
           value={state.doc.name}
-          placeholder="Untitled report"
+          placeholder={dt("reports.designer.untitled_report", "Untitled report")}
           onChange={(ev) =>
             designer.change(
               (doc) => {
@@ -505,17 +508,17 @@ function DesignerShell() {
         />
         {dirty && <span className="text-xs text-warning shrink-0">unsaved</span>}
         <div className="w-px h-6 bg-border mx-1 shrink-0" />
-        <ToolButton title="Toggle left panel" onClick={() => setShowLeft(!showLeft)} active={showLeft}>
+        <ToolButton title={dt("reports.designer.toggle_left_panel", "Toggle left panel")} onClick={() => setShowLeft(!showLeft)} active={showLeft}>
           <PanelLeft size={16} />
         </ToolButton>
-        <ToolButton title="Undo (Ctrl+Z)" onClick={designer.undo} disabled={!canUndo}>
+        <ToolButton title={dt("reports.designer.undo_ctrl_z", "Undo (Ctrl+Z)")} onClick={designer.undo} disabled={!canUndo}>
           <Undo2 size={16} />
         </ToolButton>
-        <ToolButton title="Redo (Ctrl+Y)" onClick={designer.redo} disabled={!canRedo}>
+        <ToolButton title={dt("reports.designer.redo_ctrl_y", "Redo (Ctrl+Y)")} onClick={designer.redo} disabled={!canRedo}>
           <Redo2 size={16} />
         </ToolButton>
         <div className="w-px h-6 bg-border mx-1 shrink-0" />
-        <ToolButton title="Zoom out (Ctrl+-)" onClick={() => zoomStep(-1)}>
+        <ToolButton title={dt("reports.designer.zoom_out_ctrl", "Zoom out (Ctrl+-)")} onClick={() => zoomStep(-1)}>
           <ZoomOut size={16} />
         </ToolButton>
         <select
@@ -537,30 +540,30 @@ function DesignerShell() {
               {Math.round(z * 100)}%
             </option>
           ))}
-          <option value="fit-width">Fit width</option>
-          <option value="fit-page">Fit page (Ctrl+0)</option>
+          <option value="fit-width">{dt("reports.designer.fit_width", "Fit width")}</option>
+          <option value="fit-page">{dt("reports.designer.fit_page_ctrl_0", "Fit page (Ctrl+0)")}</option>
         </select>
-        <ToolButton title="Zoom in (Ctrl+=)" onClick={() => zoomStep(1)}>
+        <ToolButton title={dt("reports.designer.zoom_in_ctrl", "Zoom in (Ctrl+=)")} onClick={() => zoomStep(1)}>
           <ZoomIn size={16} />
         </ToolButton>
-        <ToolButton title="Show grid (snap to grid)" onClick={() => setShowGrid(!showGrid)} active={showGrid}>
+        <ToolButton title={dt("reports.designer.show_grid_snap_to_grid", "Show grid (snap to grid)")} onClick={() => setShowGrid(!showGrid)} active={showGrid}>
           <Grid3x3 size={16} />
         </ToolButton>
-        <ToolButton title="Snap to guides and grid (hold Alt to move freely)" onClick={() => setSnap(!snap)} active={snap}>
+        <ToolButton title={dt("reports.designer.snap_to_guides_and_grid_hold_alt_to_move_freely", "Snap to guides and grid (hold Alt to move freely)")} onClick={() => setSnap(!snap)} active={snap}>
           <Magnet size={16} />
         </ToolButton>
-        <ToolButton title="Preview" onClick={() => setPreviewMode(!previewMode)} active={previewMode}>
+        <ToolButton title={dt("reports.designer.preview", "Preview")} onClick={() => setPreviewMode(!previewMode)} active={previewMode}>
           <Eye size={16} />
         </ToolButton>
-        <ToolButton title="Refresh data" onClick={preview.refresh}>
+        <ToolButton title={dt("reports.designer.refresh_data", "Refresh data")} onClick={preview.refresh}>
           <RefreshCw size={16} className={clsx(preview.loading && "animate-spin")} />
         </ToolButton>
-        <ToolButton title="Help: placeholders, formats, page flow and shortcuts (?)" onClick={() => setShowHelp(true)}>
+        <ToolButton title={dt("reports.designer.help_placeholders_formats_page_flow_and_shortcut", "Help: placeholders, formats, page flow and shortcuts (?)")} onClick={() => setShowHelp(true)}>
           <CircleHelp size={16} />
         </ToolButton>
         <div className="flex-1" />
         {state.doc.id && (
-          <ToolButton title="Schedules & webhooks" onClick={() => setShowSchedules(true)}>
+          <ToolButton title={dt("reports.designer.schedules_and_webhooks", "Schedules & webhooks")} onClick={() => setShowSchedules(true)}>
             <CalendarClock size={16} />
           </ToolButton>
         )}
@@ -570,7 +573,7 @@ function DesignerShell() {
             onClick={() => setExportOpen(!exportOpen)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-bold text-gray-300 hover:text-white hover:border-gray-500 cursor-pointer"
           >
-            {exporting ? <Spinner size={14} className="" /> : <Download size={14} />} Export <ChevronDown size={12} />
+            {exporting ? <Spinner size={14} className="" /> : <Download size={14} />} {dt("reports.designer.export", "Export")} <ChevronDown size={12} />
           </button>
           {exportOpen && (
             <ContextMenu
@@ -578,22 +581,22 @@ function DesignerShell() {
               y={48}
               onClose={() => setExportOpen(false)}
               items={[
-                { label: "PNG of this page (in browser)", onClick: () => runExport("client-png") },
-                { label: "PDF of all pages (in browser)", onClick: () => runExport("client-pdf") },
+                { label: dt("reports.designer.png_of_this_page_in_browser", "PNG of this page (in browser)"), onClick: () => runExport("client-png") },
+                { label: dt("reports.designer.pdf_of_all_pages_in_browser", "PDF of all pages (in browser)"), onClick: () => runExport("client-pdf") },
                 "separator",
-                { label: "PDF (server, vector)", onClick: () => runExport("server-pdf") },
-                { label: "PNG of this page (server)", onClick: () => runExport("server-png") },
-                { label: "SVG of this page (server)", onClick: () => runExport("server-svg") },
-                { label: "HTML (server)", onClick: () => runExport("server-html") },
-                { label: "Data as JSON (server)", onClick: () => runExport("server-json") },
+                { label: dt("reports.designer.pdf_server_vector", "PDF (server, vector)"), onClick: () => runExport("server-pdf") },
+                { label: dt("reports.designer.png_of_this_page_server", "PNG of this page (server)"), onClick: () => runExport("server-png") },
+                { label: dt("reports.designer.svg_of_this_page_server", "SVG of this page (server)"), onClick: () => runExport("server-svg") },
+                { label: dt("reports.designer.html_server", "HTML (server)"), onClick: () => runExport("server-html") },
+                { label: dt("reports.designer.data_as_json_server", "Data as JSON (server)"), onClick: () => runExport("server-json") },
                 "separator",
                 {
-                  label: "Report definition (.json)",
+                  label: dt("reports.designer.report_definition_json", "Report definition (.json)"),
                   icon: <FileJson size={13} />,
                   onClick: () => runExport("definition"),
                 },
                 {
-                  label: "Import definition...",
+                  label: dt("reports.designer.import_definition", "Import definition..."),
                   icon: <Upload size={13} />,
                   onClick: () => importRef.current?.click(),
                 },
@@ -607,9 +610,9 @@ function DesignerShell() {
           disabled={saving}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-solid text-white text-xs font-bold hover:bg-primary-solid-hover cursor-pointer disabled:opacity-50 shrink-0"
         >
-          {saving ? <Spinner size={14} className="" /> : <Save size={14} />} Save
+          {saving ? <Spinner size={14} className="" /> : <Save size={14} />} {dt("reports.designer.save", "Save")}
         </button>
-        <ToolButton title="Toggle right panel" onClick={() => setShowRight(!showRight)} active={showRight}>
+        <ToolButton title={dt("reports.designer.toggle_right_panel", "Toggle right panel")} onClick={() => setShowRight(!showRight)} active={showRight}>
           <PanelRight size={16} />
         </ToolButton>
         <input
@@ -681,16 +684,16 @@ function DesignerShell() {
           {/* Status bar */}
           <div className="h-7 shrink-0 flex items-center gap-4 px-3 border-t border-border bg-surface text-xs text-gray-500">
             <span>
-              Page {state.pageIndex + 1} of {definition.pages.length}
+              {dt("reports.designer.page_n_of_m", "Page {{n}} of {{m}}", { n: state.pageIndex + 1, m: definition.pages.length })}
             </span>
             <span>
               {definition.page.width} × {definition.page.height}
             </span>
-            {selected.length > 0 && <span>{selected.length} selected</span>}
+            {selected.length > 0 && <span>{dt("reports.designer.n_selected", "{{count}} selected", { count: selected.length })}</span>}
             <div className="flex-1" />
             {preview.loading && (
               <span className="flex items-center gap-1">
-                <Spinner size={11} className="" /> Loading data
+                <Spinner size={11} className="" /> {dt("reports.designer.loading_data", "Loading data")}
               </span>
             )}
             {preview.error && <span className="text-danger truncate">{preview.error}</span>}
@@ -746,10 +749,10 @@ function DesignerShell() {
 
       <ConfirmDialog
         open={confirmLeave}
-        title="Leave without saving?"
-        description="Your changes to this report haven't been saved."
-        confirmText="Leave"
-        cancelText="Stay"
+        title={dt("reports.designer.leave_without_saving", "Leave without saving?")}
+        description={dt("reports.designer.your_changes_to_this_report_haven_t_been_saved", "Your changes to this report haven't been saved.")}
+        confirmText={dt("reports.designer.leave", "Leave")}
+        cancelText={dt("reports.designer.stay", "Stay")}
         tone="danger"
         onResult={(yes) => {
           setConfirmLeave(false);

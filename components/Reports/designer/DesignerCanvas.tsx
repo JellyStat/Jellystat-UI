@@ -5,6 +5,7 @@ import { TOOLBOX } from "@/lib/reports/defaults";
 import { isGrowing, pageZones } from "@/lib/reports/layout";
 import ReportElementView, { type RenderContext } from "../render/ReportElementView";
 import { bounds, useDesigner, type Rect } from "./designerStore";
+import { dt } from "./i18n";
 
 export const TOOLBOX_MIME = "application/x-jellystat-report-tool";
 export const PAGE_GUTTER = 80;
@@ -667,7 +668,7 @@ export default function DesignerCanvas({ model, settings, onContextMenu }: Props
               <div
                 className="absolute left-0 right-0 flex items-center justify-end"
                 style={{ top: zones.header - 5 / zoom, height: 10 / zoom, cursor: "ns-resize", zIndex: 5 }}
-                title="Header line: everything above it repeats on the extra pages"
+                title={dt("reports.designer.header_line_everything_above_it_repeats_on_the_e", "Header line: everything above it repeats on the extra pages")}
                 onPointerDown={(ev) => {
                   ev.stopPropagation();
                   ev.preventDefault();
@@ -694,14 +695,14 @@ export default function DesignerCanvas({ model, settings, onContextMenu }: Props
               >
                 <div className="absolute left-0 right-0" style={{ top: 5 / zoom, borderTop: `${stroke * 1.5}px dashed #16a34a` }} />
                 <span className="relative pointer-events-none" style={{ ...zoneLabel, marginRight: 4 / zoom }}>
-                  Header · repeats on extra pages
+                  {dt("reports.designer.header_repeats_on_extra_pages", "Header · repeats on extra pages")}
                 </span>
               </div>
               <div
                 className="absolute left-0 right-0 pointer-events-none flex justify-end"
                 style={{ top: zones.footer, borderTop: `${stroke * 1.5}px dashed #16a34a`, zIndex: 5 }}
               >
-                <span style={{ ...zoneLabel, marginRight: 4 / zoom, marginTop: 2 / zoom }}>Footer · repeats on extra pages</span>
+                <span style={{ ...zoneLabel, marginRight: 4 / zoom, marginTop: 2 / zoom }}>{dt("reports.designer.footer_repeats_on_extra_pages", "Footer · repeats on extra pages")}</span>
               </div>
             </>
           )}

@@ -16,6 +16,7 @@ import {
 import { TOOLBOX } from "@/lib/reports/defaults";
 import { TOOLBOX_MIME } from "./DesignerCanvas";
 import { useDesigner } from "./designerStore";
+import { dt } from "./i18n";
 
 const ICONS: Record<string, LucideIcon> = {
   heading: Heading,
@@ -38,7 +39,7 @@ export default function Toolbox() {
 
   return (
     <div className="p-3">
-      <p className="text-xs text-gray-500 mb-3">Drag onto the page, or click to add.</p>
+      <p className="text-xs text-gray-500 mb-3">{dt("reports.designer.drag_onto_the_page_or_click_to_add", "Drag onto the page, or click to add.")}</p>
       <div className="grid grid-cols-2 gap-2">
         {TOOLBOX.map((tool) => {
           const Icon = ICONS[tool.key] ?? Square;
