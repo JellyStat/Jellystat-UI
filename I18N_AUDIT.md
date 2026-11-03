@@ -155,7 +155,7 @@ Code changes that make keys visible to the parser:
 - `StatsCard`'s periods use literal `t()` calls.
 - `TaskActions` no longer nests `t()` inside another call's options. The parser skips nested calls.
 
-Known leftover: the commented-out `t("stat_card.most_viewed", …)` in `WatchStatCard.tsx:39` is still picked up as a key.
+The fully commented-out `components/WatchStatCard/WatchStatCard.tsx` was deleted; it fed an unused `stat_card.most_viewed` key to the extractor. Every key in en-US is now referenced in code, and every key the code uses exists in en-US.
 
 **Before regenerating de-DE:** the merged and renamed keys below have no German text yet, so they fall back to English. Running `npm run extract` as-is also rewrites `de-DE`. It keeps translations for keys that still exist, fills new keys with English and drops the rest.
 

@@ -1150,9 +1150,6 @@
     "toast_admin_created": "Local administrator account created",
     "toast_server_connected": "Server connected successfully!"
   },
-  "stat_card": {
-    "most_viewed": "Most Viewed"
-  },
   "statistics": {
     "by_date": "By Date",
     "by_day": "By Day",
