@@ -38,7 +38,7 @@ export default function CombineEditor({
             key={m.value}
             type="button"
             onClick={() => set({ mode: m.value as ReportDerive["mode"], sources: m.value === "join" ? derive.sources.slice(0, 2) : derive.sources })}
-            className={clsx("px-3 py-1.5 cursor-pointer", derive.mode === m.value ? "bg-primary text-white" : "text-gray-400 hover:text-white")}
+            className={clsx("px-3 py-1.5 cursor-pointer", derive.mode === m.value ? "bg-primary-solid text-white" : "text-gray-400 hover:text-white")}
           >
             {m.label}
           </button>

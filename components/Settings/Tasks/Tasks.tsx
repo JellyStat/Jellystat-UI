@@ -13,7 +13,7 @@ export const getTaskBadge = (taskName: string, label: string) => {
           : taskName === "Restore"
             ? "bg-primary/10 text-primary border-primary/20"
             : taskName === "PlaybackReportingPluginSync"
-              ? "bg-danger/10 text-danger border-danger/20"
+              ? "bg-info/10 text-info border-info/20"
               : "bg-surface text-gray-300 border-border";
 
   return (

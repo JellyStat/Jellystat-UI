@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   AlertCircle,
   MonitorPlay,
+  Info,
   RefreshCcw,
   RefreshCw,
   Trash2,
@@ -270,7 +271,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
 
   // Hidden until the row is hovered or the box is ticked; always shown on touch screens (no hover)
   const checkboxClass =
-    "w-4 h-4 cursor-pointer accent-danger transition-opacity opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100 checked:opacity-100 indeterminate:opacity-100 [@media(hover:none)]:opacity-100";
+    "w-4 h-4 cursor-pointer accent-primary";
 
   const renderCheckbox = (entries: SelectionEntry[], label: string) => {
     const checked = entries.length > 0 && entries.every(([id]) => isSelected(id));
@@ -379,16 +380,17 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
         <td className="p-3">
           <button
             onClick={() => openStreamModal(activity)}
-            className="text-xs text-gray-400 hover:text-accent transition-colors cursor-pointer focus:outline-none"
+            className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-accent transition-colors cursor-pointer underline decoration-dotted decoration-gray-500 underline-offset-4 focus:outline-none focus-visible:ring-1 focus-visible:ring-primary"
             title={t("activity.view_stream_info", "View stream details")}
           >
+            <Info size={12} aria-hidden="true" className="shrink-0" />
             {activity.client}
           </button>
         </td>
         <td className="p-3">
           <button
             onClick={() => openStreamModal(activity)}
-            className="cursor-pointer focus:outline-none"
+            className="cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-primary"
             title={t("activity.view_stream_info", "View stream details")}
           >
             {formatTranscode(activity)}
@@ -445,7 +447,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           >
             {activity.userName}
           </Link>
-          <span className="text-gray-600 shrink-0">&middot;</span>
+          <span className="text-gray-500 shrink-0">&middot;</span>
           <span className="text-gray-500 font-mono truncate">
             {formatDateTime(activity.dateCreated) || "-"}
           </span>
@@ -455,7 +457,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           <button
             type="button"
             onClick={() => openStreamModal(activity)}
-            className="cursor-pointer focus:outline-none"
+            className="cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-primary"
             title={t("activity.view_stream_info", "View stream details")}
           >
             {formatTranscode(activity)}
@@ -463,7 +465,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           <button
             type="button"
             onClick={() => openStreamModal(activity)}
-            className="min-w-0 max-w-full truncate hover:text-accent transition-colors cursor-pointer focus:outline-none text-left"
+            className="min-w-0 max-w-full truncate hover:text-accent transition-colors cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-primary text-left"
             title={t("activity.view_stream_info", "View stream details")}
           >
             {[activity.client, activity.device].filter(Boolean).join(" \u00b7 ")}
@@ -569,10 +571,18 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
 
       {/* Main Table Container */}
       <div className="bg-surface border border-border rounded-2xl shadow-xl shadow-black/20 overflow-hidden flex flex-col relative min-h-[400px]">
-        {loading && (
+        {/* First load: nothing to show yet, so cover the table. */}
+        {loading && activityData.length === 0 && (
           <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center animate-in fade-in">
             <Spinner size={40} className="text-primary mb-3" />
             <span className="text-sm font-bold text-gray-300">{t("common.loading", "Loading")}</span>
+          </div>
+        )}
+        {/* Later loads keep the current rows visible. */}
+        {loading && activityData.length > 0 && (
+          <div role="status" className="absolute top-3 right-3 z-20 flex items-center gap-2 bg-surface border border-border rounded-full px-3 py-1.5 shadow-lg shadow-black/40">
+            <Spinner size={14} className="text-primary" />
+            <span className="text-xs font-bold text-gray-300">{t("common.loading", "Loading")}</span>
           </div>
         )}
 
@@ -612,7 +622,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                 setPage(1);
               }}
               className="shrink-0 w-11 h-11 flex items-center justify-center rounded-xl bg-surface/80 border border-border text-accent hover:border-gray-500 transition-colors cursor-pointer"
-              aria-label={sortStatus.direction === "desc" ? "Descending" : "Ascending"}
+              aria-label={sortStatus.direction === "desc" ? t("common.sort_descending", "Descending") : t("common.sort_ascending", "Ascending")}
             >
               {sortStatus.direction === "desc" ? <ArrowDown size={16} /> : <ArrowUp size={16} />}
             </button>
@@ -835,7 +845,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
               onChange={(val) => (val ? setPage(val) : val)}
               min={1}
               max={totalPages}
-              className="py-3 px-1 focus:outline-none hover:bg-surface border border-transparent hover:border-border rounded-xl shadow-lg overflow-auto text-xs text-center font-mono text-gray-400"
+              className="py-3 px-1 focus:outline-none focus-visible:ring-1 focus-visible:ring-primary hover:bg-surface border border-transparent hover:border-border rounded-xl shadow-lg overflow-auto text-xs text-center font-mono text-gray-400"
             />
             <span className="text-xs font-mono text-gray-400">/</span>
             <span className="text-xs font-mono text-gray-400">{totalPages}</span>

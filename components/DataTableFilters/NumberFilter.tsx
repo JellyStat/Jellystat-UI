@@ -84,12 +84,12 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
   return (
     <div className="relative">
       <Popover className="relative w-full flex items-center min-w-50">
-        <PopoverButton className="w-full flex items-center gap-2 bg-surface/50 border border-transparent hover:border-border rounded py-1.5 px-3 text-xs text-gray-200 placeholder:text-gray-600  transition-all shadow-inner">
+        <PopoverButton className="w-full flex items-center gap-2 bg-surface/50 border border-transparent hover:border-border rounded py-1.5 px-3 text-xs text-gray-200 placeholder:text-gray-500  transition-all shadow-inner">
           <div className="text-gray-500">
             <Hash size={14} />
           </div>
           <div
-            className={`flex-1 text-left text-xs tracking-tight font-normal ${isEmpty ? "text-gray-600" : "text-gray-200"}`}
+            className={`flex-1 text-left text-xs tracking-tight font-normal ${isEmpty ? "text-gray-500" : "text-gray-200"}`}
             role="input"
           >
             {displayText()}
@@ -98,8 +98,9 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
         {!isEmpty && (
           <button
             onClick={handleClear}
-            className="absolute right-2 text-gray-500 hover:text-danger transition-colors focus:outline-none"
-            title="Clear filter"
+            className="absolute right-2 text-gray-500 hover:text-danger transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+            title={t("common.clear", "Clear")}
+            aria-label={t("common.clear", "Clear")}
           >
             <X size={14} />
           </button>

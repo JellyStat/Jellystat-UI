@@ -13,7 +13,9 @@
     "connecting": "Connecting to Jellystat",
     "connection_failed": "Connection Failed",
     "connection_failed_desc": "The application was unable to start due to an error contacting the API. Please ensure your backend is running.",
-    "retrying": "Retrying"
+    "retrying": "Retrying",
+    "timeout": "No response from {{url}} after 20 seconds.",
+    "connecting_slow": "Still waiting for {{url}}. Check that the Jellystat API is running."
   },
   "common": {
     "actions": "Actions",
@@ -105,7 +107,10 @@
     "transcode": "Transcode",
     "video": "VIDEO",
     "playback_stream": "Playback Stream",
-    "source": "Source"
+    "source": "Source",
+    "confirm": "Confirm",
+    "sort_descending": "Descending",
+    "sort_ascending": "Ascending"
   },
   "error_cards": {
     "failed_to_load": "Failed to load",
@@ -149,7 +154,8 @@
     "libraries_desc": "Manage, track, and analyze your media collections",
     "total_media": "Total Media",
     "total_storage": "Total Storage",
-    "no_libraries_desc": "Make sure your server is connected and synced."
+    "no_libraries_desc": "Make sure your server is connected and synced.",
+    "mixed_content": "Mixed Content"
   },
   "library": {
     "confirmDeleteArchivedItems": "Delete all archived items in this library. This action cannot be rolled back.",
@@ -189,7 +195,8 @@
     "switch_local": "Switch to Local Account Login",
     "switch_server": "Login via Jellyfin/Emby",
     "username_placeholder": "Username",
-    "welcome_back": "Welcome Back"
+    "welcome_back": "Welcome Back",
+    "server": "Server"
   },
   "media_grid": {
     "filter_all": "All Media",
@@ -232,7 +239,9 @@
   "sessions": {
     "active_streams": "Active Streams",
     "no_active": "No active sessions",
-    "waiting": "Waiting for users to start playing media"
+    "waiting": "Waiting for users to start playing media",
+    "none_active": "No active streams",
+    "live": "Live"
   },
   "stream": {
     "aspect_ratio": "ASPECT RATIO",
@@ -384,7 +393,15 @@
     "users_title": "User Settings",
     "language_desc": "Select your preferred language",
     "language": "Language",
-    "toast_user_updated": "User updated successfully"
+    "toast_user_updated": "User updated successfully",
+    "backups_delete_title": "Delete this backup?",
+    "backups_delete_named_desc": "{{fileName}} will be permanently deleted. This can't be undone.",
+    "backup_restore_queued": "Restore queued",
+    "backup_restore_failed": "Couldn't start the restore: {{error}}",
+    "backup_uploaded": "Backup uploaded",
+    "backup_upload_failed": "Upload failed: {{error}}",
+    "remote_auth_on_short": "Remote auth on",
+    "remote_auth_off_short": "Remote auth off"
   },
   "setup": {
     "btn_add_server": "Add Server",
@@ -541,5 +558,11 @@
     "viewed_shows": "Most Viewed Shows",
     "watch_statistics": "Watch Statistics",
     "watch_stats_desc": "Leaderboards for your most heavily utilized media and users."
+  },
+  "reports": {
+    "imported": "Imported {{name}}",
+    "designer_needs_width": "The report designer needs a wider screen",
+    "designer_needs_width_desc": "Open it on a tablet or computer. You can still view and export reports here.",
+    "back_to_reports": "Back to reports"
   }
 }

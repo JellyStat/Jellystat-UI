@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import { Play, Pause, Tv } from "lucide-react";
@@ -262,13 +263,13 @@ export default function SessionCard({ session }: SessionCardProps) {
             {session.isPaused ? <Pause size={14} className="fill-current" /> : <Play size={14} className="fill-current" />}
           </div>
           <div className="flex flex-col min-w-0">
-            <span
-              className="text-sm font-bold text-white truncate drop-shadow-sm hover:text-primary transition-colors cursor-pointer"
-              onClick={() => router.push(`/libraries/items/${encodeURIComponent(item?.id ?? "")}`)}
+            <Link
+              href={`/libraries/items/${encodeURIComponent(item?.id ?? "")}`}
+              className="text-sm font-bold text-white truncate drop-shadow-sm hover:text-primary transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
             >
               {item.seriesName ? `${item.seriesName} : ` : ""}
               {item?.name}
-            </span>
+            </Link>
             {item?.type === ItemTypes.Episode && (
               <div className="flex items-center gap-1.5 text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">
                 <TypeIcon size={10} />
@@ -280,12 +281,12 @@ export default function SessionCard({ session }: SessionCardProps) {
 
         {/* User Info */}
         <div className="flex items-center gap-2 shrink-0 bg-background/50 pl-3 pr-1 py-1 rounded-full border border-border shadow-inner">
-          <span
-            className="text-xs font-bold text-gray-200 hover:text-primary transition-colors cursor-pointer"
-            onClick={() => router.push(`/users/${encodeURIComponent(session.userId ?? "")}`)}
+          <Link
+            href={`/users/${encodeURIComponent(session.userId ?? "")}`}
+            className="text-xs font-bold text-gray-200 hover:text-primary transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
           >
             {session.userName}
-          </span>
+          </Link>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={userImage}

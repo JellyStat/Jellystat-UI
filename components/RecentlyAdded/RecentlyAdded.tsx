@@ -54,7 +54,7 @@ export default function RecentlyAdded({ gridify, grouped = true }: Props) {
 
       <div className="relative w-full">
         {loading && (
-          <div className="w-full h-72 bg-surface/30 border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse shadow-inner">
+          <div className="w-full h-72 bg-surface/30 border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse motion-reduce:animate-none shadow-inner">
             <Spinner size={32} className="text-primary mb-3" />
             <span className="text-gray-500 font-medium">{t("common.loading", "Loading")}</span>
           </div>

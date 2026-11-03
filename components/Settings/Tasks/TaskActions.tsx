@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Play, ServerCog, Clock, CheckCircle2, CircleDashed, Square } from "lucide-react";
+import { Play, ServerCog, Clock, Square } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
@@ -13,7 +13,7 @@ import { TaskQueueUpdate } from "@/lib/models/taskQueueUpdate";
 import TasksLogsPage from "./TaskLogs";
 import { getTaskBadge } from "./Tasks";
 import Tasks from "@/lib/models/enums/Tasks";
-import { Select, Spinner } from "@/components/ui";
+import { Select, Spinner, Switch } from "@/components/ui";
 
 const taskOptionsBase = [{ value: 60 }, { value: 1440 }, { value: 720 }];
 
@@ -281,25 +281,19 @@ export default function TaskActionsPage() {
 
                       {/* Enabled Status */}
                       <td className="p-3 sm:p-4">
-                        <button
-                          onClick={() => void toggleTaskEnabled(taskSetting)}
+                        <Switch
+                          checked={taskSetting.enabled}
+                          onChange={() => void toggleTaskEnabled(taskSetting)}
                           disabled={isSaving || isRunning || isQueued || taskSetting.intervalMinutes <= 0}
-                          title={t("tasks.toggle_task", '{{action}} task "{{taskName}}"', {
-                            action: taskSetting.enabled ? t("common.disable", "Disable") : t("common.enable", "Enable"),
-                            taskName: taskSetting.task,
-                          })}
-                          className={`p-2 rounded-lg bg-background text-gray-400  border border-border ${taskSetting.enabled ? "hover:bg-danger/20 hover:border-danger/50 hover:text-danger" : "hover:bg-success/20 hover:border-success/50 hover:text-success"}  transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 flex cursor-pointer`}
-                        >
-                          {taskSetting.enabled ? (
-                            <div className="flex items-center text-xs font-bold text-success">
-                              <CheckCircle2 size={14} className="mr-1.5" /> {t("common.yes", "Yes")}
-                            </div>
-                          ) : (
-                            <div className="flex items-center text-xs font-bold text-gray-500">
-                              <CircleDashed size={14} className="mr-1.5" /> {t("common.no", "No")}
-                            </div>
-                          )}
-                        </button>
+                          label={
+                            <span className="sr-only">
+                              {t("tasks.toggle_task", '{{action}} task "{{taskName}}"', {
+                                action: taskSetting.enabled ? t("common.disable", "Disable") : t("common.enable", "Enable"),
+                                taskName: taskSetting.task,
+                              })}
+                            </span>
+                          }
+                        />
                       </td>
 
                       {/* Live WebSocket Status */}

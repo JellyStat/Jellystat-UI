@@ -166,9 +166,16 @@ export default function StatsCard({ type, id }: Props) {
                     key={p.key}
                     className="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-hover cursor-pointer transition-colors group"
                   >
+                    {/* Real checkbox for keyboard and screen readers; the box below is its visual. */}
+                    <input
+                      type="checkbox"
+                      className="peer sr-only"
+                      checked={isChecked}
+                      onChange={() => toggleDays(p.days)}
+                    />
                     <div
-                      onClick={() => toggleDays(p.days)}
-                      className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                      aria-hidden="true"
+                      className={`w-4 h-4 rounded border flex items-center justify-center transition-colors peer-focus-visible:ring-1 peer-focus-visible:ring-primary ${
                         isChecked
                           ? "bg-primary border-primary"
                           : "bg-background border-border group-hover:border-border-strong"

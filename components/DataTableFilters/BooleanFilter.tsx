@@ -50,7 +50,7 @@ export default function BooleanFilter({
   const stateStyles = {
     null: "bg-surface border-border text-gray-500",
     true: "bg-success border-success text-black",
-    false: "bg-danger border-danger text-white",
+    false: "bg-danger-solid border-danger-solid text-white",
   };
 
   const currentState = query === null ? "null" : query ? "true" : "false";

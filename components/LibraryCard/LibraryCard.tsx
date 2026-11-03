@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import { API_BASE } from "@/lib/api";
@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui";
 import LibraryTypes from "@/lib/models/enums/LibraryTypes";
 
 export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
-  const router = useRouter();
   const { t, i18n } = useTranslation("common");
   const [imageError, setImageError] = useState(false);
 
@@ -48,9 +47,9 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
     : t("common.na", "N/A");
 
   return (
-    <div
-      onClick={() => router.push(`/libraries/${encodeURIComponent(lib.id)}`)}
-      className="group flex flex-col bg-surface/50 backdrop-blur-md border border-border rounded-2xl overflow-hidden hover:border-gray-500 transition-all duration-300 shadow-xl shadow-black/20 hover:-translate-y-1 hover:shadow-2xl cursor-pointer min-h-95"
+    <Link
+      href={`/libraries/${encodeURIComponent(lib.id)}`}
+      className="group flex flex-col bg-surface/50 backdrop-blur-md border border-border rounded-2xl overflow-hidden hover:border-gray-500 transition-all duration-300 shadow-xl shadow-black/20 hover:-translate-y-1 hover:shadow-2xl min-h-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
     >
       {/* Header & Image Banner */}
       <div className="relative h-40 w-full overflow-hidden bg-background shrink-0">
@@ -144,7 +143,7 @@ export default function LibraryCard({ lib }: { lib: LibrariesWithStats }) {
           )}
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 

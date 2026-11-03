@@ -119,7 +119,7 @@ export default function SetupPage() {
             <p className="text-gray-400 text-sm mb-6">{error}</p>
             <button
               onClick={() => void fetchSystem()}
-              className="bg-danger hover:bg-danger-hover text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-danger/20"
+              className="bg-danger-solid hover:bg-danger-solid-hover text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-danger/20"
             >
               {t("common.retry_connection", "Retry Connection")}
             </button>

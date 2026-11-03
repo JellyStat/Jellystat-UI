@@ -12,7 +12,7 @@ import { Server } from "@/lib/models/server";
 import { config } from "node:process";
 import configManager from "@/lib/configManager";
 import Permissions from "@/lib/models/enums/Permissions";
-import { Select, Spinner } from "@/components/ui";
+import { Label, Select, Spinner } from "@/components/ui";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -186,16 +186,21 @@ export default function LoginPage() {
 
             {/* Username Input */}
             <div className="space-y-1.5">
+              <Label htmlFor="login-username">{t("common.username", "Username")}</Label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-accent transition-colors">
                   <User size={18} />
                 </div>
                 <input
+                  id="login-username"
                   type="text"
+                  autoComplete="username"
+                  aria-invalid={usernameError ? true : undefined}
+                  aria-describedby={usernameError ? "login-username-error" : undefined}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder={t("login.username_placeholder", "Username")}
-                  className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-100 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all ${
+                  className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-1 transition-all ${
                     usernameError
                       ? "border-danger/50 focus:border-danger focus:ring-danger"
                       : "border-border focus:border-accent focus:ring-accent"
@@ -203,21 +208,30 @@ export default function LoginPage() {
                   disabled={loading}
                 />
               </div>
-              {usernameError && <p className="text-xs text-danger font-medium pl-1">{usernameError}</p>}
+              {usernameError && (
+                <p id="login-username-error" className="text-xs text-danger font-medium pl-1">
+                  {usernameError}
+                </p>
+              )}
             </div>
 
             {/* Password Input */}
             <div className="space-y-1.5">
+              <Label htmlFor="login-password">{t("common.password", "Password")}</Label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-accent transition-colors">
                   <Lock size={18} />
                 </div>
                 <input
+                  id="login-password"
                   type="password"
+                  autoComplete="current-password"
+                  aria-invalid={passwordError ? true : undefined}
+                  aria-describedby={passwordError ? "login-password-error" : undefined}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t("login.password_placeholder", "Password")}
-                  className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-100 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all ${
+                  className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-1 transition-all ${
                     passwordError
                       ? "border-danger/50 focus:border-danger focus:ring-danger"
                       : "border-border focus:border-accent focus:ring-accent"
@@ -225,13 +239,18 @@ export default function LoginPage() {
                   disabled={loading}
                 />
               </div>
-              {passwordError && <p className="text-xs text-danger font-medium pl-1">{passwordError}</p>}
+              {passwordError && (
+                <p id="login-password-error" className="text-xs text-danger font-medium pl-1">
+                  {passwordError}
+                </p>
+              )}
             </div>
 
             {/* Server Picker (Conditional) */}
 
             {showServerPicker && (
               <div className="space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-300">
+                <Label>{t("login.server", "Server")}</Label>
                 <Select<string | null>
                   data={serverOptions.map((opt) => ({ value: opt.value, Icon: loadingServers ? Loader2 : ServerIcon }))}
                   value={selectedServer}

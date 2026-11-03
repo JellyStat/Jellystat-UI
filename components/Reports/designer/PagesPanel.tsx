@@ -47,7 +47,7 @@ export default function PagesPanel() {
             i === state.pageIndex ? "bg-primary/15 text-white" : "text-gray-400 hover:bg-surface-hover hover:text-gray-200",
           )}
         >
-          <GripVertical size={12} className="text-gray-600 shrink-0 cursor-grab" />
+          <GripVertical size={12} className="text-gray-500 shrink-0 cursor-grab" />
           <span className="w-5 text-gray-500 font-mono">{i + 1}</span>
           {renaming === i ? (
             <input
@@ -74,7 +74,7 @@ export default function PagesPanel() {
           ) : (
             <span className="flex-1 truncate">{p.name}</span>
           )}
-          <span className="text-[10px] text-gray-600">{p.elements.length}</span>
+          <span className="text-[10px] text-gray-500">{p.elements.length}</span>
           <button
             type="button"
             title="Duplicate page"

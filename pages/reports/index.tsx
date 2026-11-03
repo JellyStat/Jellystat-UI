@@ -93,7 +93,7 @@ export default function ReportsPage() {
         description: result.description ?? null,
         definition: result.definition!,
       });
-      toast.success(`Imported ${saved.name}`);
+      toast.success(t("reports.imported", "Imported {{name}}", { name: saved.name }));
       await router.push({ pathname: "/reports/designer", query: { id: saved.id } });
     } catch (err: any) {
       toast.error(err?.message ?? "Failed to import the report");

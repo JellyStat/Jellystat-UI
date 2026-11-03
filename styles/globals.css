@@ -26,6 +26,16 @@
   --color-info: #38bdf8;
   --color-surface-raised: #1a1c23;
   --color-border-strong: #3f3f46;
+
+  /* Filled buttons: darker than the text/icon tones so white labels pass WCAG AA (4.5:1). */
+  --color-primary-solid: #9333ea; /* 5.4:1 with white */
+  --color-primary-solid-hover: #7e22ce;
+  --color-danger-solid: #e11d48; /* 4.7:1 with white */
+  --color-danger-solid-hover: #be123c;
+
+  /* Secondary text: Tailwind's gray-500 is 3.9:1 on cards; this is 6.0:1 (5.4:1 on hover rows).
+     gray-600 stays for borders and decoration only (the guard test blocks it on text). */
+  --color-gray-500: #8b93a1;
 }
 
 @layer base {

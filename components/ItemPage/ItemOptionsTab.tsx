@@ -75,11 +75,11 @@ export default function ItemOptions({ item }: Props) {
               }
               dialogTitle={t("item.deleteArchivedItem", "Delete Archived Item")}
               description={t("item.confirmDeleteArchivedItemDescription", "Are you sure you want to delete this archived item?")}
-              confirmText={t("common.yes", "Yes")}
-              cancelText={t("common.no", "No")}
+              confirmText={t("common.delete", "Delete")}
+              cancelText={t("common.cancel", "Cancel")}
               onConfirm={deleteArchivedItem}
               tone="danger"
-              className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger px-4 py-3 text-base font-semibold text-white transition hover:bg-danger-hover"
+              className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger-solid px-4 py-3 text-base font-semibold text-white transition hover:bg-danger-solid-hover"
             />
           </div>
         </div>

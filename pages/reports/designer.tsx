@@ -1,4 +1,5 @@
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, MonitorSmartphone } from "lucide-react";
+import Link from "next/link";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -9,7 +10,7 @@ import client from "@/lib/api";
 import Permissions from "@/lib/models/enums/Permissions";
 import permissionsManager from "@/lib/permissionsManager";
 import { activitySummaryTemplate, emptyDefinition } from "@/lib/reports/defaults";
-import { Spinner } from "@/components/ui";
+import { buttonClass, EmptyState, Spinner } from "@/components/ui";
 
 /** /reports/designer?id=... edits a saved report; no id starts a new one (?template=activity for the sample). */
 export default function ReportDesignerPage() {
@@ -71,7 +72,27 @@ export default function ReportDesignerPage() {
           <Spinner size={32} className="text-primary" />
         </div>
       )}
-      {doc && <ReportDesigner key={doc.id ?? "new"} initial={doc} />}
+      {/* The multi-panel designer doesn't fit a phone; say so instead of rendering it broken. */}
+      <div className="md:hidden m-4">
+        <EmptyState
+          Icon={MonitorSmartphone}
+          title={t("reports.designer_needs_width", "The report designer needs a wider screen")}
+          message={t(
+            "reports.designer_needs_width_desc",
+            "Open it on a tablet or computer. You can still view and export reports here.",
+          )}
+        />
+        <div className="mt-4 flex justify-center">
+          <Link href="/reports" className={buttonClass({ variant: "outline" })}>
+            {t("reports.back_to_reports", "Back to reports")}
+          </Link>
+        </div>
+      </div>
+      {doc && (
+        <div className="hidden md:contents">
+          <ReportDesigner key={doc.id ?? "new"} initial={doc} />
+        </div>
+      )}
     </>
   );
 }

@@ -68,7 +68,7 @@ describe('Button standards', () => {
   it('defaults to the primary colour at md size', () => {
     render(<Button>Create</Button>);
     expect(screen.getByRole('button', { name: 'Create' })).toHaveClass(
-      'bg-primary',
+      'bg-primary-solid',
       'text-on-primary',
       'font-black',
       'px-5',

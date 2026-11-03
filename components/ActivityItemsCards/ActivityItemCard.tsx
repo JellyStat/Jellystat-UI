@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import { Clock, User } from "lucide-react";
@@ -62,31 +63,33 @@ export const ActivityItemCard: React.FC<Props> = ({ item, width = 160, height = 
 
           <span className="flex items-center gap-1 text-[12px] font-bold text-gray-400 bg-background/80 rounded border border-border/50 truncate max-w-[80px] shadow-inner">
             <User size={12} className="shrink-0" />
-            <span
-              className="truncate hover:text-primary transition-colors cursor-pointer"
-              onClick={() => router.push(`/users/${encodeURIComponent(item.latestActivity?.userId ?? "")}`)}
+            <Link
+              href={`/users/${encodeURIComponent(item.latestActivity?.userId ?? "")}`}
+              className="truncate hover:text-primary transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
             >
               {item.latestActivity?.userName ?? t("common.na", "N/A")}
-            </span>
+            </Link>
           </span>
         </div>
 
         {/* Title */}
-        <h4
-          className="text-sm font-black text-gray-200 leading-tight line-clamp-2 hover:text-primary transition-colors cursor-pointer"
-          onClick={() => router.push(`/libraries/items/${encodeURIComponent(item.parent?.id ?? "")}`)}
-        >
-          {title}
+        <h4 className="text-sm font-black text-gray-200 leading-tight line-clamp-2">
+          <Link
+            href={`/libraries/items/${encodeURIComponent(item.parent?.id ?? "")}`}
+            className="hover:text-primary transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
+          >
+            {title}
+          </Link>
         </h4>
 
         {/* Subtitle (Episode Name) */}
         {isValidParent && (
-          <p
-            className="text-xs text-gray-300 line-clamp-1 cursor-pointer hover:text-primary transition-colors"
-            onClick={() => router.push(`/libraries/items/${encodeURIComponent(item.id ?? "")}`)}
+          <Link
+            href={`/libraries/items/${encodeURIComponent(item.id ?? "")}`}
+            className="block text-xs text-gray-300 line-clamp-1 hover:text-primary transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded"
           >
             {item.name}
-          </p>
+          </Link>
         )}
 
         {/* Season / Episode Index */}

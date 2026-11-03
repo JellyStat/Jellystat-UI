@@ -49,7 +49,7 @@ export default function LibraryOverview() {
       {/* Content Area */}
       <div className="flex flex-col gap-3">
         {loading && (
-          <div className="w-full h-48 bg-surface/30 border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse shadow-inner">
+          <div className="w-full h-48 bg-surface/30 border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse motion-reduce:animate-none shadow-inner">
             <Spinner size={24} className="text-primary mb-3" />
             <span className="text-xs text-gray-500 font-medium">{t("library.scanning", "Scanning libraries...")}</span>
           </div>

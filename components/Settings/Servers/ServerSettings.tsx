@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import client from "@/lib/api";
 import configManager from "@/lib/configManager";
 import { Server as ServerModel } from "@/lib/models/server";
-import { Badge, Button, Card, cn, EmptyState, Modal, Page, PageHeader, SectionTitle, Spinner } from "@/components/ui";
+import { Badge, Button, Card, cn, EmptyState, Modal, Page, PageHeader, SectionTitle, Spinner, Switch } from "@/components/ui";
 import AddServerModal from "./AddServer";
 import EditServerModal from "./EditServer";
 
@@ -112,9 +112,9 @@ export default function ServerSettingsPage() {
                       {server.name}
                       <Badge tone="accent">{server.type || "Jellyfin"}</Badge>
                       {server.allowRemoteAuth ? (
-                        <ShieldCheck size={18} className="text-success" />
+                        <ShieldCheck size={18} className="text-success" aria-label={t("settings.remote_auth_on_short", "Remote auth on")} />
                       ) : (
-                        <ShieldClose size={18} className="text-danger" />
+                        <ShieldClose size={18} className="text-gray-500" aria-label={t("settings.remote_auth_off_short", "Remote auth off")} />
                       )}
                     </h3>
                     <div className="flex items-center flex-wrap gap-4 mt-2 text-xs text-gray-400 font-mono">
@@ -139,12 +139,8 @@ export default function ServerSettingsPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => toggleRemoteAuth(server)}
-                      loading={togglingId === server.id}
-                      aria-pressed={!!server.allowRemoteAuth}
+                    <div
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background border border-border"
                       title={
                         server.allowRemoteAuth
                           ? t(
@@ -156,16 +152,15 @@ export default function ServerSettingsPage() {
                               "Only local Jellystat users can sign in for this server. Click to allow Jellyfin or Emby sign-in.",
                             )
                       }
-                      className={cn(
-                        server.allowRemoteAuth &&
-                          "text-success bg-success/10 border-success/40 hover:text-success hover:border-success",
-                      )}
                     >
-                      {togglingId !== server.id &&
-                        (server.allowRemoteAuth ? <ShieldCheck size={14} /> : <ShieldClose size={14} />)}
-                      {t("settings.remote_auth_short", "Remote auth")}:{" "}
-                      {server.allowRemoteAuth ? t("common.on", "On") : t("common.off", "Off")}
-                    </Button>
+                      {togglingId === server.id && <Spinner size={14} className="text-primary" />}
+                      <Switch
+                        checked={!!server.allowRemoteAuth}
+                        onChange={() => toggleRemoteAuth(server)}
+                        disabled={togglingId === server.id}
+                        label={<span className="text-xs font-bold">{t("settings.remote_auth_short", "Remote auth")}</span>}
+                      />
+                    </div>
                     <Button variant="secondary" size="sm" onClick={() => setEditingServer(server)}>
                       {t("common.edit", "Edit")}
                     </Button>

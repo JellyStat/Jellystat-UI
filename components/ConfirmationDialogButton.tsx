@@ -29,11 +29,14 @@ export default function ConfirmationDialogButton({
 }: ConfirmationDialogButtonProps) {
   const { t } = useTranslation("common");
 
+  // Default to the action's verb, never "Yes": a named button is harder to click by mistake.
+  const defaultConfirm = rest.tone === "danger" ? t("common.delete", "Delete") : t("common.confirm", "Confirm");
+
   return (
     <ConfirmButton
       title={dialogTitle}
-      confirmText={confirmText ?? t("common.yes", "Yes")}
-      cancelText={cancelText ?? t("common.no", "No")}
+      confirmText={confirmText ?? defaultConfirm}
+      cancelText={cancelText ?? t("common.cancel", "Cancel")}
       {...rest}
     >
       {buttonElement}

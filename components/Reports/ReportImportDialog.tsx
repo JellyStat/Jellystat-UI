@@ -48,7 +48,7 @@ export default function ReportImportDialog({
               <button
                 type="button"
                 onClick={onImport}
-                className="px-4 py-2 rounded-xl text-sm font-bold bg-primary hover:bg-primary/90 text-white cursor-pointer"
+                className="px-4 py-2 rounded-xl text-sm font-bold bg-primary-solid hover:bg-primary-solid-hover text-white cursor-pointer"
               >
                 Import anyway
               </button>

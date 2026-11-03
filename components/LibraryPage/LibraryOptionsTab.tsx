@@ -75,11 +75,11 @@ export default function LibraryOptions({ library }: Props) {
                 }
                 dialogTitle={t("library.deleteArchivedLibrary", "Delete Archived Library")}
                 description={t("library.confirmDeleteArchivedLibrary", "Are you sure you want to delete this archived library?")}
-                confirmText={t("common.yes", "Yes")}
-                cancelText={t("common.no", "No")}
+                confirmText={t("common.delete", "Delete")}
+                cancelText={t("common.cancel", "Cancel")}
                 onConfirm={deleteArchivedLibrary}
                 tone="danger"
-                className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger px-4 py-3 text-base font-semibold text-white transition hover:bg-danger-hover"
+                className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger-solid px-4 py-3 text-base font-semibold text-white transition hover:bg-danger-solid-hover"
               />
             </div>
           </div>
@@ -116,11 +116,11 @@ export default function LibraryOptions({ library }: Props) {
                   "library.confirmDeleteArchivedItems",
                   "Are you sure you want to delete all archived items in this library?",
                 )}
-                confirmText={t("common.yes", "Yes")}
-                cancelText={t("common.no", "No")}
+                confirmText={t("common.delete", "Delete")}
+                cancelText={t("common.cancel", "Cancel")}
                 onConfirm={deleteArchivedLibrary}
                 tone="danger"
-                className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger px-4 py-3 text-base font-semibold text-white transition hover:bg-danger-hover"
+                className="inline-flex items-center justify-center rounded-xl border border-danger/60 bg-danger-solid px-4 py-3 text-base font-semibold text-white transition hover:bg-danger-solid-hover"
               />
             </div>
           </div>

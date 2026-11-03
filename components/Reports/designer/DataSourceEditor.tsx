@@ -124,7 +124,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                     onClick={() => set({ derive: m.value ? (draft.derive ?? { mode: "join", sources: [], on: [], joinType: "left" }) : null })}
                     className={clsx(
                       "px-3 py-1.5 cursor-pointer",
-                      derived === m.value ? "bg-primary text-white" : "text-gray-400 hover:text-white",
+                      derived === m.value ? "bg-primary-solid text-white" : "text-gray-400 hover:text-white",
                     )}
                   >
                     {m.label}
@@ -222,7 +222,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                         }}
                         className={clsx(
                           "px-3 py-1.5 cursor-pointer",
-                          grouped === m.value ? "bg-primary text-white" : "text-gray-400 hover:text-white",
+                          grouped === m.value ? "bg-primary-solid text-white" : "text-gray-400 hover:text-white",
                         )}
                       >
                         {m.label}
@@ -571,7 +571,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
               type="button"
               onClick={() => onApply(final())}
               disabled={!draft.name.trim()}
-              className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-bold hover:bg-primary/90 cursor-pointer disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-primary-solid text-white text-sm font-bold hover:bg-primary-solid-hover cursor-pointer disabled:opacity-50"
             >
               Apply
             </button>

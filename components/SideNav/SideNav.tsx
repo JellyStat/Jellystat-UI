@@ -180,7 +180,10 @@ export default function SideNav() {
             className="flex items-center"
             title={isConnected ? t("status.online", "System Online") : t("status.offline", "System Offline")}
           >
-            <StatusIndicator tone={isConnected ? "success" : "danger"} />
+            <StatusIndicator
+              tone={isConnected ? "success" : "danger"}
+              label={isConnected ? t("status.online", "System Online") : t("status.offline", "System Offline")}
+            />
           </span>
           <button
             type="button"

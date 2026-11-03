@@ -5,7 +5,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { wsClient } from "@/lib/wsClient";
-import client from "@/lib/api";
+import client, { API_BASE } from "@/lib/api";
 import SystemState from "@/lib/models/enums/systemState";
 import SideNav from "@/components/SideNav/SideNav";
 import { AlertTriangle } from "lucide-react";
@@ -16,14 +16,21 @@ import { applyDetectedLanguage } from "@/lib/i18n";
 import { useTranslation } from "react-i18next";
 import { Spinner } from "@/components/ui";
 
+const STARTUP_TIMEOUT_MS = 20_000;
+const SLOW_HINT_MS = 5_000;
+
 function App({ Component, pageProps }: AppProps) {
   const { t } = useTranslation("common");
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retrying, setRetrying] = useState(false);
+  const [slow, setSlow] = useState(false);
   const router = useRouter();
   const currentPath = router.asPath;
+
+  // Where the app is trying to reach, shown while waiting and on failure.
+  const apiUrl = API_BASE || (typeof window !== "undefined" ? window.location.origin : "");
 
   useEffect(() => {
     applyDetectedLanguage();
@@ -35,7 +42,16 @@ function App({ Component, pageProps }: AppProps) {
 
     setError(null);
     try {
-      const info = await client.System.getSystemInfo();
+      // An unreachable API can leave the request pending forever; give up so the error screen can offer Retry.
+      const info = await Promise.race([
+        client.System.getSystemInfo(),
+        new Promise<never>((_, reject) =>
+          setTimeout(
+            () => reject(new Error(t("app.timeout", "No response from {{url}} after 20 seconds.", { url: apiUrl }))),
+            STARTUP_TIMEOUT_MS,
+          ),
+        ),
+      ]);
       // Once the first admin exists, adding a server needs their login. Let /login through so they can
       // sign in; after login they land on "/" and get sent back to setup from there.
       if (info && info.state === SystemState.FirstUserCreated && router.pathname === "/login") {
@@ -80,6 +96,16 @@ function App({ Component, pageProps }: AppProps) {
 
   const hideNav = currentPath.includes("/login") || currentPath.includes("/setup");
   const showLoading = loading || retrying;
+
+  // After a few seconds of waiting, say what the app is waiting for.
+  useEffect(() => {
+    if (!showLoading) {
+      setSlow(false);
+      return;
+    }
+    const timer = setTimeout(() => setSlow(true), SLOW_HINT_MS);
+    return () => clearTimeout(timer);
+  }, [showLoading]);
   const showError = error;
 
   return (
@@ -110,6 +136,13 @@ function App({ Component, pageProps }: AppProps) {
               <div className="h-full w-full flex flex-col items-center justify-center animate-in fade-in duration-500">
                 <Spinner size={48} className="text-primary mb-4" />
                 <p className="text-gray-400 font-medium tracking-wide">{t("app.connecting", "Connecting to Jellystat...")}</p>
+                {slow && (
+                  <p className="mt-2 text-sm text-gray-500 text-center px-4" role="status">
+                    {t("app.connecting_slow", "Still waiting for {{url}}. Check that the Jellystat API is running.", {
+                      url: apiUrl,
+                    })}
+                  </p>
+                )}
               </div>
             )}
 
@@ -140,7 +173,7 @@ function App({ Component, pageProps }: AppProps) {
                     <button
                       onClick={() => void fetchSystem(true)}
                       disabled={retrying}
-                      className="bg-danger hover:bg-danger-hover text-white font-bold py-3 px-8 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center mx-auto shadow-lg shadow-danger/20 cursor-pointer active:scale-95"
+                      className="bg-danger-solid hover:bg-danger-solid-hover text-white font-bold py-3 px-8 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center mx-auto shadow-lg shadow-danger/20 cursor-pointer active:scale-95"
                     >
                       {retrying ? <Spinner size={18} className="mr-2" /> : null}
                       {retrying ? t("app.retrying", "Retrying...") : t("common.retry_connection", "Retry Connection")}

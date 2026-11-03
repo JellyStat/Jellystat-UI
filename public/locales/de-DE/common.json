@@ -12,7 +12,9 @@
     "connecting": "Verbindung zu Jellystat wird hergestellt",
     "connection_failed": "Verbindung fehlgeschlagen",
     "connection_failed_desc": "Die Anwendung konnte aufgrund eines Fehlers bei der API-Verbindung nicht gestartet werden. Bitte stelle sicher, dass dein Backend läuft.",
-    "retrying": "Wird erneut versucht"
+    "retrying": "Wird erneut versucht",
+    "timeout": "Keine Antwort von {{url}} nach 20 Sekunden.",
+    "connecting_slow": "Warte weiterhin auf {{url}}. Prüfe, ob die Jellystat-API läuft."
   },
   "common": {
     "actions": "Aktionen",
@@ -101,7 +103,10 @@
     "transcode": "Transkodieren",
     "video": "VIDEO",
     "playback_stream": "Wiedergabestrom",
-    "source": "Quelle"
+    "source": "Quelle",
+    "confirm": "Bestätigen",
+    "sort_descending": "Absteigend",
+    "sort_ascending": "Aufsteigend"
   },
   "error_cards": {
     "failed_to_load": "Fehler beim Laden",
@@ -145,7 +150,8 @@
     "libraries_desc": "Verwalte, tracke und analysiere deine Mediensammlungen",
     "total_media": "Medien gesamt",
     "total_storage": "Speicher gesamt",
-    "no_libraries_desc": "Stelle sicher, dass dein Server verbunden und synchronisiert ist."
+    "no_libraries_desc": "Stelle sicher, dass dein Server verbunden und synchronisiert ist.",
+    "mixed_content": "Gemischte Inhalte"
   },
   "library": {
     "confirmDeleteArchivedItems": "Lösche alle archivierten Elemente in dieser Bibliothek. Diese Aktion kann nicht rückgängig gemacht werden.",
@@ -185,7 +191,8 @@
     "switch_local": "Zum lokalen Login wechseln",
     "switch_server": "Login über Jellyfin/Emby",
     "username_placeholder": "Benutzername",
-    "welcome_back": "Willkommen zurück"
+    "welcome_back": "Willkommen zurück",
+    "server": "Server"
   },
   "media_grid": {
     "filter_all": "Alle Medien",
@@ -228,7 +235,9 @@
   "sessions": {
     "active_streams": "Aktive Streams",
     "no_active": "Keine aktiven Sitzungen",
-    "waiting": "Warten darauf, dass Benutzer Medien abspielen"
+    "waiting": "Warten darauf, dass Benutzer Medien abspielen",
+    "none_active": "Keine aktiven Streams",
+    "live": "Live"
   },
   "settings": {
     "api": "API",
@@ -357,7 +366,15 @@
     "users_subtitle": "Verwalte Benutzerkonten und Berechtigungen.",
     "users_title": "Benutzereinstellungen",
     "language_desc": "Wähle deine bevorzugte Sprache",
-    "language": "Sprache"
+    "language": "Sprache",
+    "backups_delete_title": "Dieses Backup löschen?",
+    "backups_delete_named_desc": "{{fileName}} wird dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden.",
+    "backup_restore_queued": "Wiederherstellung eingeplant",
+    "backup_restore_failed": "Wiederherstellung konnte nicht gestartet werden: {{error}}",
+    "backup_uploaded": "Backup hochgeladen",
+    "backup_upload_failed": "Hochladen fehlgeschlagen: {{error}}",
+    "remote_auth_on_short": "Remote-Anmeldung an",
+    "remote_auth_off_short": "Remote-Anmeldung aus"
   },
   "setup": {
     "btn_add_server": "Server hinzufügen",
@@ -531,5 +548,11 @@
     "resolution": "Auflösung",
     "hdr": "HDR",
     "dynamic_range": "Dynamischer Bereich"
+  },
+  "reports": {
+    "imported": "{{name}} importiert",
+    "designer_needs_width": "Der Berichtsdesigner braucht einen breiteren Bildschirm",
+    "designer_needs_width_desc": "Öffne ihn auf einem Tablet oder Computer. Berichte ansehen und exportieren kannst du hier trotzdem.",
+    "back_to_reports": "Zurück zu den Berichten"
   }
 }

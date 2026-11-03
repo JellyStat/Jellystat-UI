@@ -24,7 +24,7 @@ export function inputClass(
 ) {
   const s = sizeClass[size];
   return cn(
-    'w-full bg-background border text-gray-200 placeholder:text-gray-600 shadow-inner transition-all focus:outline-none focus:ring-1 disabled:opacity-50 disabled:cursor-not-allowed',
+    'w-full bg-background border text-gray-200 placeholder:text-gray-500 shadow-inner transition-all focus:outline-none focus:ring-1 disabled:opacity-50 disabled:cursor-not-allowed',
     s.field,
     hasLeftIcon && s.left,
     hasRightSlot && s.right,

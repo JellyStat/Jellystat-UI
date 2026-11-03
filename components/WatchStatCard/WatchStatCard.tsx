@@ -109,7 +109,7 @@
 //                   {it.navLink ? (
 //                     <Link
 //                       href={it.navLink}
-//                       className="text-gray-200 hover:text-white font-medium truncate transition-colors focus:outline-none focus:text-accent"
+//                       className="text-gray-200 hover:text-white font-medium truncate transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-primary focus:text-accent"
 //                       title={it.name}
 //                     >
 //                       {it.name}

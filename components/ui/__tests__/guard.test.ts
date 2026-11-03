@@ -45,6 +45,23 @@ const rules: Rule[] = [
     // `text-${e.id}` there is an undo-history key, not a class name.
     allow: ['components/Reports/designer/Inspector.tsx'],
   },
+  // UX review (Jellystat UI: UX and Visual Design Review) fixes, kept from regressing:
+  {
+    name: 'text-gray-600 fails contrast (2.5:1); use text-gray-500 or lighter for text',
+    pattern: /(?:^|[\s"'`])(?:placeholder:)?text-gray-600\b/,
+  },
+  {
+    name: 'filled purple/red buttons with white text need the *-solid fills for AA contrast',
+    pattern: /(?:^|[\s"'`])bg-(?:primary|danger)(?:\s+[\w:\/\[\]-]+)*?\s+text-white\b/,
+  },
+  {
+    name: 'name the action on confirm buttons instead of Yes/No',
+    pattern: /confirmText=\{t\("common\.yes"/,
+  },
+  {
+    name: 'use <Link> or <button>, not router.push on a div/span/p/h* (keyboard users cannot reach it)',
+    pattern: /<(?:div|span|p|h[1-6])\b[^>]*onClick=\{\(\) => router\.push/,
+  },
 ];
 
 function walk(dir: string, out: string[] = []): string[] {

@@ -604,7 +604,7 @@ function DesignerShell() {
           type="button"
           onClick={save}
           disabled={saving}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-bold hover:bg-primary/90 cursor-pointer disabled:opacity-50 shrink-0"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-solid text-white text-xs font-bold hover:bg-primary-solid-hover cursor-pointer disabled:opacity-50 shrink-0"
         >
           {saving ? <Spinner size={14} className="" /> : <Save size={14} />} Save
         </button>
@@ -704,7 +704,7 @@ function DesignerShell() {
                     onClick={() => designer.setPage(i)}
                     className={clsx(
                       "w-5 h-5 rounded text-[10px] cursor-pointer",
-                      i === state.pageIndex ? "bg-primary text-white" : "hover:bg-surface-hover",
+                      i === state.pageIndex ? "bg-primary-solid text-white" : "hover:bg-surface-hover",
                     )}
                   >
                     {i + 1}

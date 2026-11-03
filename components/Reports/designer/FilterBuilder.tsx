@@ -170,7 +170,7 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
               onClick={() => onChange({ ...node, combinator: c })}
               className={clsx(
                 "px-2 py-0.5 cursor-pointer uppercase",
-                (node.combinator ?? "and") === c ? "bg-primary text-white" : "text-gray-400 hover:text-white",
+                (node.combinator ?? "and") === c ? "bg-primary-solid text-white" : "text-gray-400 hover:text-white",
               )}
             >
               {c}
