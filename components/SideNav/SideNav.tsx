@@ -135,7 +135,8 @@ export default function SideNav() {
       localStorage.removeItem("jellystat_token");
       localStorage.removeItem("jellystat_refreshToken");
       localStorage.removeItem("jellystat_serverId");
-      localStorage.removeItem("jellystat_config");
+      // Also drops the in-memory copy, which survives this client-side navigation.
+      configManager.clearConfig();
       router.push("/login");
     } catch {
       console.warn("Failed to clear localStorage during logout, proceeding to login.");

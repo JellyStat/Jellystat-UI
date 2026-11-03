@@ -29,6 +29,8 @@ export async function processServerId(serverId?: string) {
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("jellystat_token");
     if (!token) return;
+    // The cached server list may predate this token (anonymous or another user's), so refetch on next use.
+    configManager.clearConfig();
     try {
       const payloadBase64 = token.split(".")[1];
       const decoded = JSON.parse(atob(payloadBase64));

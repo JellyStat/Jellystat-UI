@@ -82,6 +82,7 @@ function logoutAndRedirect(): void {
   try {
     localStorage.removeItem("jellystat_token");
     localStorage.removeItem("jellystat_refreshToken");
+    localStorage.removeItem("jellystat_config");
   } catch {
     /* ignore localStorage errors */
   }
@@ -212,7 +213,26 @@ async function apiFetchRaw(path: string, options?: RequestInit): Promise<Respons
 // Model interfaces moved to individual files under ./models/
 
 // Updated per OpenAPI: server list is returned from Auth/Config
-const getConfig = async (): Promise<Server[]> => apiFetch<Server[]>("/Auth/Config");
+// /Auth/Config allows anonymous access and then strips fields like url/externalURL.
+export const isAnonymousConfig = (servers: Server[] | null | undefined): boolean =>
+  Array.isArray(servers) && servers.length > 0 && servers.every((s) => !s.url);
+
+const getConfig = async (): Promise<Server[]> => {
+  const sentAuth = getAuthHeader();
+  const servers = await apiFetch<Server[]>("/Auth/Config");
+  if (!sentAuth || !isAnonymousConfig(servers)) return servers;
+
+  // We sent a token but got the anonymous list, so the server didn't accept it: refresh and ask again.
+  // Another request may already have refreshed while this one was in flight.
+  try {
+    if (getAuthHeader() === sentAuth) await refreshToken();
+  } catch (err) {
+    console.warn("Token refresh after anonymous config response failed:", err);
+    return servers;
+  }
+  if (!getAuthHeader()) return servers;
+  return apiFetch<Server[]>("/Auth/Config");
+};
 
 // Updated per OpenAPI: use /Api/UpdateConfig to add/update a server
 const addServer = async (payload: AddServer): Promise<Server> =>
