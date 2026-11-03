@@ -3,8 +3,9 @@ import { cn } from '../cn';
 
 const toneClass = {
   current: '',
-  cyan: 'text-brand-cyan',
-  purple: 'text-brand-purple',
+  primary: 'text-primary',
+  accent: 'text-accent',
+  muted: 'text-gray-500',
 } as const;
 
 export type SpinnerProps = LucideProps & {
@@ -13,6 +14,11 @@ export type SpinnerProps = LucideProps & {
 
 export default function Spinner({ tone = 'current', size = 16, className, ...rest }: SpinnerProps) {
   return (
-    <Loader2 size={size} className={cn('animate-spin', toneClass[tone], className)} {...rest} />
+    <Loader2
+      size={size}
+      aria-hidden="true"
+      className={cn('animate-spin shrink-0', toneClass[tone], className)}
+      {...rest}
+    />
   );
 }

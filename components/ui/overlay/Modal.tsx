@@ -1,7 +1,8 @@
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '../cn';
-import IconChip, { type IconChipTone } from '../layout/IconChip';
+import IconChip from '../layout/IconChip';
+import type { Tone } from '../tones';
 
 export type ModalProps = {
   open: boolean;
@@ -21,12 +22,24 @@ export default function Modal({ open, onClose, children }: ModalProps) {
   );
 }
 
-export function ModalPanel({ className, ...rest }: ComponentProps<typeof DialogPanel>) {
+const sizeClass = {
+  sm: 'max-w-md', // confirmations
+  md: 'max-w-lg', // forms
+  lg: 'max-w-2xl', // detail views
+  xl: 'max-w-4xl', // data-heavy views
+} as const;
+
+export type ModalPanelProps = ComponentProps<typeof DialogPanel> & {
+  size?: keyof typeof sizeClass;
+};
+
+export function ModalPanel({ size = 'md', className, ...rest }: ModalPanelProps) {
   return (
     <DialogPanel
       transition
       className={cn(
-        'w-full max-w-lg rounded-2xl border border-border bg-surface p-5 md:p-6 shadow-2xl shadow-black/40 duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0',
+        'w-full max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-surface p-5 md:p-6 shadow-2xl shadow-black/40 duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0',
+        sizeClass[size],
         className
       )}
       {...rest}
@@ -38,7 +51,7 @@ export type ModalHeaderProps = {
   title: ReactNode;
   description?: ReactNode;
   icon?: ReactNode;
-  iconTone?: IconChipTone;
+  iconTone?: Tone;
   className?: string;
 };
 
@@ -46,14 +59,14 @@ export function ModalHeader({
   title,
   description,
   icon,
-  iconTone = 'cyan',
+  iconTone = 'primary',
   className,
 }: ModalHeaderProps) {
   return (
     <div className={cn('mb-6', className)}>
       <div className="flex items-center gap-3">
         {icon && <IconChip tone={iconTone}>{icon}</IconChip>}
-        <DialogTitle as="h2" className="text-2xl font-black text-white tracking-tight">
+        <DialogTitle as="h2" className="text-xl font-black text-white tracking-tight">
           {title}
         </DialogTitle>
       </div>

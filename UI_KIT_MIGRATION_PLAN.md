@@ -2,11 +2,11 @@
 
 Status: **planned, not started**. Written 2026-11-02.
 
-**Goal:** move the UI that already exists into a reusable kit in `components/ui/`, so the look is defined in one place instead of copied as Tailwind strings across pages. The rendered output should not change.
+**Goal:** move the UI that already exists into a reusable kit in `components/ui/`, so the look is defined in one place instead of copied as Tailwind strings across pages, and bring the UI in line with one consistent scale for colour, spacing, radius, type and elevation along the way. The standards are in [UI_AUDIT.md](UI_AUDIT.md).
 
 **Constraints:**
 - **No new dependencies.** The kit is built only from what's already installed: Tailwind v4, `clsx`, `tailwind-merge`, `@headlessui/react`, `@daypicker/react`, `recharts`, `lucide-react` and `sonner`.
-- The UI is finished, so this is a refactor. Each extracted component must reproduce the markup and classes it replaces exactly.
+- Kit components follow the standards in `UI_AUDIT.md`, not every variant that exists today. Migrating a screen can change how it looks in the ways the audit lists; check each screen in its PR.
 
 ---
 
@@ -108,9 +108,12 @@ Build Page, PageHeader, SectionTitle, Card, IconChip, Modal, Table, ErrorAlert a
 ### Phase 3: Fold `components/Core` into the kit
 Move each Core file into `components/ui/` and rebuild its internals on the new primitives, keeping the props the same. Leave a re-export at the old path, e.g. `export * from "@/components/ui/overlay/ConfirmDialog"`, so nothing breaks. Delete `components/Core` once the call sites are updated in Phase 4.
 
+`Core/IconButton.tsx` arrived with the 2026-11-03 main update. It's an icon-only pill (props `icon`, `shape`, `tooltip`) and differs from the kit's `IconButton`. Merge the two by adding `icon`/`shape` support to the kit version; it has only one caller. The newer code also uses headlessui `Popover`, `Menu` and `Combobox`, which are candidates for kit wrappers once each has a second caller.
+
 ### Phase 4: Migrate call sites (one area per PR, smallest first)
-1. `pages/setup/**` and `pages/settings/Users/**`: inputs, fields, modals, buttons.
-2. `pages/settings/Servers/**`, `Library`, `Backups`, `Tasks`, `ActivityMigration`: tables, modals, error alerts.
+Since the 2026-11-03 main update, settings and setup screens live in `components/Settings/**` and `components/Setup/**`; the files under `pages/` are thin routes.
+1. `components/Setup/**` and `components/Settings/Users/**`: inputs, fields, modals, buttons.
+2. `components/Settings/{Servers,Library,Backups,Tasks,ActivityMigration,ApiKeys,Webhooks}`: tables, modals, error alerts.
 3. `components/ActivityTable/**` and `components/DataTableFilters/**`: Table, filters, IpLookUpModal.
 4. Stats and cards: StatsCard, WatchStatCard(s), GenreStatCards, LibraryCard, LibraryOverview, ItemsCards, ActivityItemsCards, RecentlyAdded, LastWatched, MediaGrid, Sessions.
 5. Page shells: swap every `<h1 className="text-3xl font-black …">` and container div for `Page` + `PageHeader`.
@@ -131,6 +134,8 @@ For each file: swap the markup for the kit component, delete the class string, a
 - [ ] Phase 0b: Storybook. Skipped for now: the package is installed but there is no `.storybook/` config yet
 - [x] Phase 1: Spinner, Label, FieldError, Input (+ InputAction), Field, Button, IconButton, Badge, Skeleton, with tests in `components/ui/__tests__/kit.test.tsx`
 - [x] Phase 2: Page, PageHeader, SectionTitle, Card, IconChip, Modal (+ ModalPanel/ModalHeader/ModalFooter), Table (+ TableHead/Th/TableBody/Td/TableMessageRow), ErrorAlert, EmptyState, with tests in `components/ui/__tests__/layout.test.tsx`
+- [x] Phase 2.5: semantic colour tokens in `globals.css`, kit components updated to the audit standards (shared `tones.ts`, focus ring, Card `padding`, Modal `size`, `Tr`), `lib/helpers/chartColors.ts`
+- [x] Pilot: `components/Settings/Users/AddUser.tsx` migrated to the kit (still needs a visual check while signed in)
 - [ ] Phase 3: Core moved into the kit, with re-exports at the old paths
 - [ ] Phase 4.1: setup + settings/Users
 - [ ] Phase 4.2: remaining settings pages
@@ -141,7 +146,7 @@ For each file: swap the markup for the kit component, delete the class string, a
 - [ ] Phase 5: delete Core, lint guard, grep audit, README
 
 ## 5. Risks / notes
-- **Visual drift:** near-identical strings sometimes differ by one class (`pr-4` vs `pr-12`, `rounded-2xl` vs `rounded-3xl`). Make the difference a prop or variant instead of normalising it silently.
+- **Visual drift:** near-identical strings often differ by one class (`rounded-2xl` vs `rounded-3xl`, `px-4` vs `px-5`). Settle each one against `UI_AUDIT.md` rather than adding a variant to keep it. Make it a prop only when the difference has a real purpose, e.g. `pr-12` when an input has a trailing button.
 - **Permission-gated UI** (latest commit): conditional rendering stays at the call site, never inside the kit.
 - **`tailwind-merge`:** custom tokens (`bg-surface`, `text-brand-*`) merge correctly because they follow the standard color-utility naming. Check this once with a quick test in `cn.ts`.
 - **Jest:** add a small render test per kit component under `components/ui/__tests__` with the existing Testing Library setup.

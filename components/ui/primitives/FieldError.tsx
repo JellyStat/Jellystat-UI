@@ -9,10 +9,10 @@ export default function FieldError({ className, children, ...rest }: ComponentPr
 
   return (
     <p
-      className={cn('text-[11px] font-bold text-brand-rose ml-1 flex items-center mt-1', className)}
+      className={cn('text-[11px] font-bold text-danger ml-1 flex items-center gap-1', className)}
       {...rest}
     >
-      <AlertCircle size={10} className="mr-1" />
+      <AlertCircle size={10} />
       {children}
     </p>
   );

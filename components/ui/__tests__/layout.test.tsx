@@ -72,6 +72,6 @@ describe('ErrorAlert', () => {
 describe('EmptyState', () => {
   it('omits the border when bordered is false', () => {
     const { container } = render(<EmptyState title="No Data" bordered={false} />);
-    expect(container.firstChild).not.toHaveClass('border-2');
+    expect(container.firstChild).not.toHaveClass('border');
   });
 });

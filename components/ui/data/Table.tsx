@@ -6,7 +6,7 @@ export type TableProps = ComponentProps<'table'> & {
   wrapperClassName?: string;
 };
 
-// Horizontally scrollable table; place inside a <Card> for the bordered panel look.
+// Horizontally scrollable table; place inside <Card padding="none"> for the bordered panel look.
 export default function Table({ wrapperClassName, className, ...rest }: TableProps) {
   return (
     <div className={cn('overflow-x-auto custom-scrollbar', wrapperClassName)}>
@@ -21,7 +21,7 @@ export function TableHead({ className, ...rest }: ComponentProps<'tr'>) {
     <thead>
       <tr
         className={cn(
-          'bg-background/80 border-b border-border text-xs font-bold text-gray-500 uppercase tracking-wider',
+          'bg-background border-b border-border text-xs font-bold text-gray-400 uppercase tracking-wider',
           className
         )}
         {...rest}
@@ -31,15 +31,19 @@ export function TableHead({ className, ...rest }: ComponentProps<'tr'>) {
 }
 
 export function Th({ className, ...rest }: ComponentProps<'th'>) {
-  return <th className={cn('p-4', className)} {...rest} />;
+  return <th className={cn('px-4 py-3', className)} {...rest} />;
 }
 
 export function TableBody({ className, ...rest }: ComponentProps<'tbody'>) {
-  return <tbody className={cn('divide-y divide-border', className)} {...rest} />;
+  return <tbody className={cn('divide-y divide-border/50', className)} {...rest} />;
+}
+
+export function Tr({ className, ...rest }: ComponentProps<'tr'>) {
+  return <tr className={cn('hover:bg-surface-hover transition-colors', className)} {...rest} />;
 }
 
 export function Td({ className, ...rest }: ComponentProps<'td'>) {
-  return <td className={cn('p-4', className)} {...rest} />;
+  return <td className={cn('px-4 py-3 text-sm text-gray-200', className)} {...rest} />;
 }
 
 export type TableMessageRowProps = {
@@ -53,7 +57,7 @@ export function TableMessageRow({ colSpan, loading = false, children }: TableMes
   return (
     <tr>
       <td colSpan={colSpan} className="p-8 text-center text-gray-500 text-sm font-medium">
-        {loading && <Spinner size={24} tone="purple" className="mx-auto mb-2" />}
+        {loading && <Spinner size={24} tone="primary" className="mx-auto mb-2" />}
         {children}
       </td>
     </tr>

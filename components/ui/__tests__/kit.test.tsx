@@ -32,7 +32,8 @@ describe('Input', () => {
   it('pads for icons and shows the error state', () => {
     render(<Input leftIcon={<span />} rightSlot={<span />} error placeholder="name" />);
     const input = screen.getByPlaceholderText('name');
-    expect(input).toHaveClass('pl-11', 'pr-12', 'border-brand-rose');
+    expect(input).toHaveClass('pl-11', 'pr-12', 'border-danger');
+    expect(input).not.toHaveClass('focus:ring-primary');
     expect(input).toHaveAttribute('aria-invalid', 'true');
   });
 });
@@ -57,8 +58,26 @@ describe('Field', () => {
 });
 
 describe('Badge', () => {
-  it('uses tone classes', () => {
-    render(<Badge tone="rose">Admin</Badge>);
-    expect(screen.getByText('Admin')).toHaveClass('text-brand-rose');
+  it('uses semantic tone classes', () => {
+    render(<Badge tone="danger">Admin</Badge>);
+    expect(screen.getByText('Admin')).toHaveClass('bg-danger/10', 'text-danger', 'rounded-full');
+  });
+});
+
+describe('Button standards', () => {
+  it('defaults to the primary colour at md size', () => {
+    render(<Button>Create</Button>);
+    expect(screen.getByRole('button', { name: 'Create' })).toHaveClass(
+      'bg-primary',
+      'text-on-primary',
+      'px-4',
+      'py-2.5'
+    );
+  });
+
+  it('merges semantic colour overrides', () => {
+    expect(cn('bg-primary shadow-lg shadow-primary/20', 'bg-danger shadow-danger/20')).toBe(
+      'shadow-lg bg-danger shadow-danger/20'
+    );
   });
 });

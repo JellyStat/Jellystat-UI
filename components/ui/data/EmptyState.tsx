@@ -20,14 +20,14 @@ export default function EmptyState({
   return (
     <div
       className={cn(
-        'bg-surface/50 rounded-3xl p-16 flex flex-col items-center justify-center text-center',
-        bordered && 'border-2 border-border',
+        'bg-surface rounded-2xl p-12 flex flex-col items-center justify-center text-center gap-1',
+        bordered && 'border border-border',
         className
       )}
     >
-      <Icon size={48} className="text-gray-500 opacity-30 mb-4" />
-      <h3 className="text-xl font-bold text-gray-300">{title}</h3>
-      {message && <p className="text-sm text-gray-500">{message}</p>}
+      <Icon size={48} className="text-gray-500 opacity-30 mb-3" />
+      <h3 className="text-lg font-bold text-white">{title}</h3>
+      {message && <p className="text-sm text-gray-400">{message}</p>}
     </div>
   );
 }

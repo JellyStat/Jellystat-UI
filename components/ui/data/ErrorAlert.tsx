@@ -13,14 +13,14 @@ export default function ErrorAlert({ title, children, className }: ErrorAlertPro
     <div
       role="alert"
       className={cn(
-        'p-3.5 rounded-xl bg-brand-rose/10 border border-brand-rose/20 flex items-start gap-3',
+        'p-4 rounded-xl bg-danger/10 border border-danger/20 flex items-start gap-3',
         className
       )}
     >
-      <AlertCircle size={16} className="text-brand-rose shrink-0 mt-0.5" />
-      <div>
-        {title && <p className="text-lg font-bold text-brand-rose mb-1">{title}</p>}
-        <p className="text-xs text-brand-rose/90 font-medium leading-relaxed">{children}</p>
+      <AlertCircle size={16} className="text-danger shrink-0 mt-0.5" />
+      <div className="min-w-0">
+        {title && <p className="text-sm font-bold text-danger mb-1">{title}</p>}
+        <p className="text-xs text-danger/90 font-medium leading-relaxed">{children}</p>
       </div>
     </div>
   );

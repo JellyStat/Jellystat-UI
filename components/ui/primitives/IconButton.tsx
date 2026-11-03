@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'react';
 import { cn } from '../cn';
+import { focusRing } from '../tones';
 
 export type IconButtonProps = ComponentProps<'button'> & {
   // Accessible name; icon-only buttons have no visible text.
@@ -18,7 +19,8 @@ export default function IconButton({
       aria-label={label}
       title={label}
       className={cn(
-        'p-1 rounded hover:bg-surface border border-transparent hover:border-border text-gray-400 hover:text-white transition-all cursor-pointer',
+        'inline-flex items-center justify-center p-1.5 rounded-lg border border-transparent text-gray-400 hover:text-white hover:bg-surface-hover hover:border-border transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed',
+        focusRing,
         className
       )}
       {...rest}
