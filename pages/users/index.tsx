@@ -349,7 +349,7 @@ export default function UsersPage() {
 
                       <td className="p-3 text-xs text-gray-400">{user.latestActivity?.client ?? "-"}</td>
 
-                      <td className="p-3 text-center text-sm font-bold text-gray-200">{user.playCount || 0}</td>
+                      <td className="p-3 text-center text-sm font-bold text-gray-200 tabular-nums">{user.playCount || 0}</td>
 
                       <td className="p-3 text-right text-xs font-mono text-gray-400">
                         {user.playDuration?.secondsToDurationString?.() || "-"}

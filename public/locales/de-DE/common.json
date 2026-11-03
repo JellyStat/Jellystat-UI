@@ -115,7 +115,8 @@
     "discard_changes_title": "Änderungen verwerfen?",
     "discard_changes_desc": "Deine Änderungen wurden nicht gespeichert.",
     "discard": "Verwerfen",
-    "keep_editing": "Weiter bearbeiten"
+    "keep_editing": "Weiter bearbeiten",
+    "try_again": "Erneut versuchen"
   },
   "error_cards": {
     "failed_to_load": "Fehler beim Laden",

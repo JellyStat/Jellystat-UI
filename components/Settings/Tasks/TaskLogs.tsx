@@ -143,7 +143,7 @@ export default function TasksLogsPage() {
 
         {/* Duration */}
         <td className="hidden sm:table-cell p-4">
-          <div className="flex items-center text-sm text-gray-300 font-medium">
+          <div className="flex items-center text-sm text-gray-300 font-medium tabular-nums">
             <Clock size={14} className="mr-2 text-gray-500" />
             {log.duration.secondsToDurationString()}
           </div>

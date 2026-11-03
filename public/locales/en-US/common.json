@@ -119,7 +119,8 @@
     "discard_changes_title": "Discard changes?",
     "discard_changes_desc": "Your edits have not been saved.",
     "discard": "Discard",
-    "keep_editing": "Keep editing"
+    "keep_editing": "Keep editing",
+    "try_again": "Try again"
   },
   "error_cards": {
     "failed_to_load": "Failed to load",
