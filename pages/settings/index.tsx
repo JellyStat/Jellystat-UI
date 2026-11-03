@@ -127,7 +127,9 @@ export default function SettingsPage() {
         <div className="max-w-[1600px] mx-auto sm:px-6 sm:pt-6 animate-in slide-in-from-top-4 duration-500">
           <div className="flex overflow-x-auto custom-scrollbar pb-2 sm:pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
             {/* Glassmorphic Tab Container */}
-            <div className="flex items-center p-1.5 bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-inner w-full justify-between">
+            {/* When the tabs don't fit they scroll: shrink-0 + w-max let the background grow with them
+                (a flex child shrinks to its container otherwise); min-w-full fills the row when they fit. */}
+            <div className="flex items-center p-1.5 bg-surface/60 backdrop-blur-xl border border-border rounded-2xl shadow-inner shrink-0 w-max min-w-full justify-between">
               {tabs
                 .filter((tab) => !tab.IsAdmin || isAdmin)
                 .map((tab) => {
@@ -139,7 +141,7 @@ export default function SettingsPage() {
                       key={tab.id}
                       id={`settings-tab-${tab.id}`}
                       onClick={() => setAndStoreActiveTab(tab.id)}
-                      className={`flex items-center gap-2 sm:gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap lg:whitespace-normal transition-all duration-300 group ${
+                      className={`flex items-center gap-2 sm:gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 group ${
                         isActive
                           ? "bg-accent text-black shadow-md shadow-accent/20"
                           : "text-gray-400 hover:text-white hover:bg-surface-hover"
