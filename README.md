@@ -81,3 +81,9 @@ import { Button, Card, Field, Input, Modal, ModalPanel, PageHeader } from "@/com
 - `storybook` – starts storybook dev server
 - `storybook:build` – build production storybook bundle to `storybook-static`
 - `format:write` – formats all files with oxfmt
+
+## License
+
+Jellystat UI is licensed under the [GNU General Public License v3.0](LICENSE). Contributions, including translations, are accepted under the same license.
+
+The project started from the [Mantine Next.js template](https://github.com/mantinedev/next-app-template) by Vitaly Rtischev, which is MIT licensed. Its notice is kept in [LICENSES/mantine-next-template-MIT.txt](LICENSES/mantine-next-template-MIT.txt).
