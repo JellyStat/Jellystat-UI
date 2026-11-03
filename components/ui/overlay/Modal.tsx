@@ -17,7 +17,10 @@ export default function Modal({ open, onClose, children }: ModalProps) {
     <Dialog open={open} onClose={onClose} className="relative z-50 focus:outline-none">
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
 
-      <div className="fixed inset-0 flex items-center justify-center p-4">{children}</div>
+      {/* items-center-safe keeps tall panels scrollable from the top on short screens */}
+      <div className="fixed inset-0 flex items-center-safe justify-center p-3 sm:p-4 overflow-y-auto">
+        {children}
+      </div>
     </Dialog>
   );
 }
@@ -38,7 +41,7 @@ export function ModalPanel({ size = 'md', className, ...rest }: ModalPanelProps)
     <DialogPanel
       transition
       className={cn(
-        'w-full max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-surface p-5 md:p-6 shadow-2xl shadow-black/40 duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0',
+        'w-full rounded-2xl border border-border bg-surface p-5 md:p-6 shadow-2xl shadow-black/40 duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0',
         sizeClass[size],
         className
       )}

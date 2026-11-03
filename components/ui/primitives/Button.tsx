@@ -8,6 +8,8 @@ const variantGroups = {
     primary: 'bg-primary hover:bg-primary-hover text-on-primary shadow-lg shadow-primary/20',
     accent: 'bg-accent hover:bg-accent-hover text-on-accent shadow-lg shadow-accent/20',
     danger: 'bg-danger hover:bg-danger-hover text-white shadow-lg shadow-danger/20',
+    // Low-emphasis destructive action, e.g. a Delete button in a list row.
+    dangerSoft: 'bg-danger/10 border border-danger/40 text-danger hover:bg-danger hover:text-white',
     secondary:
       'bg-background border border-border text-gray-200 hover:text-white hover:border-border-strong',
     outline:

@@ -140,7 +140,7 @@ For each file: swap the markup for the kit component, delete the class string, a
   - `DropdownSelector.tsx`: re-export of `Select`, 13 callers
   - `NumberField.tsx`: re-export, 3 callers
   - `ConfirmationDialogButton.tsx`: i18n wrapper over `ConfirmButton`, 9 callers
-- [ ] Phase 4.1: setup + settings/Users
+- [x] Phase 4.1: setup + settings/Users. CreateUser, CreateServerInstance and SetupComplete share `components/Setup/SetupStep.tsx`; UpdateUser and UsersSettings are on the kit. The kit gained `Field` `hint`/`description`, the `Button` `dangerSoft` variant, and safer Modal centring. Still needs a visual check while signed in.
 - [ ] Phase 4.2: remaining settings pages
 - [ ] Phase 4.3: ActivityTable + DataTableFilters
 - [ ] Phase 4.4: stats and cards

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AlertCircle, Eye, EyeOff, Loader2, Lock, Server as ServerIcon, User, UserPlus } from "lucide-react";
-import { DialogPanel, DialogTitle } from "@headlessui/react";
+import { Eye, EyeOff, Lock, Server as ServerIcon, User, UserPen } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
@@ -9,7 +8,18 @@ import client from "@/lib/api";
 import { LocalUser } from "@/lib/models/localUser";
 import type { Server } from "@/lib/models/server";
 import configManager from "@/lib/configManager";
-import DropdownSelector from "@/components/Core/DropdownSelector";
+import {
+  Button,
+  ErrorAlert,
+  Field,
+  Input,
+  InputAction,
+  ModalFooter,
+  ModalHeader,
+  ModalPanel,
+  Select,
+  Spinner,
+} from "@/components/ui";
 
 type Props = {
   userId: string;
@@ -109,63 +119,44 @@ export default function UpdateUserModal({ userId, onClose, onCreated }: Props) {
     }
   }
 
-  return (
-    <DialogPanel
-      transition
-      className="w-full max-w-lg rounded-2xl border border-border bg-surface p-5 md:p-6 shadow-2xl shadow-black/40 duration-100 ease-out data-closed:transform-[scale(95%)] data-closed:opacity-0"
-    >
-      <DialogTitle className="text-lg font-black text-white">
-        <div className="flex items-start justify-between gap-4 mb-6">
-          <div>
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-brand-purple/10 border border-brand-purple/20">
-                <UserPlus size={22} className="text-brand-purple" />
-              </div>
-              <h2 className="text-2xl font-black text-white tracking-tight">{t("settings.update_user", "Update User")}</h2>
-            </div>
-            <p className="mt-2 text-sm text-gray-400 font-medium">
-              {t("settings.update_user_desc", "Update the local Jellystat user account.")}
-            </p>
-          </div>
-        </div>
-      </DialogTitle>
+  const togglePassword = (
+    <InputAction onClick={() => setShowPassword((current) => !current)}>
+      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+    </InputAction>
+  );
 
-      {loading && (
-        <div className="w-full h-[450px] flex flex-col items-center justify-center">
-          <Loader2 size={40} className="text-brand-purple animate-spin mb-4" />
-          <span className="text-gray-400 font-medium tracking-wide">{t("common.loading", "Loading")}</span>
+  return (
+    <ModalPanel>
+      <ModalHeader
+        icon={<UserPen size={22} />}
+        title={t("settings.update_user", "Update User")}
+        description={t("settings.update_user_desc", "Update the local Jellystat user account.")}
+      />
+
+      {loading && !user && (
+        <div className="w-full h-[450px] flex flex-col items-center justify-center gap-3">
+          <Spinner size={40} tone="primary" />
+          <span className="text-sm text-gray-400 font-medium">{t("common.loading", "Loading")}</span>
         </div>
       )}
 
-      {!loading && user && (
+      {user && (
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
-              {t("common.username", "Username")}
-            </label>
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-500 group-focus-within:text-brand-cyan transition-colors">
-                <User size={18} />
-              </div>
-              <input
-                type="text"
-                value={user?.username ?? ""}
-                disabled={true}
-                placeholder={t("settings.placeholder_username", "Choose a username")}
-                className={`w-full bg-background border rounded-xl py-3 pl-11 pr-4 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all shadow-inner ${
-                  fieldErrors.username
-                    ? "border-brand-rose focus:border-brand-rose focus:ring-brand-rose/50"
-                    : "border-border hover:border-gray-500 focus:border-brand-cyan focus:ring-brand-cyan"
-                }`}
-              />
-            </div>
-          </div>
+          <Field label={t("common.username", "Username")} htmlFor="update-user-username">
+            <Input
+              id="update-user-username"
+              type="text"
+              value={user.username ?? ""}
+              disabled
+              leftIcon={<User size={18} />}
+            />
+          </Field>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
-              {t("settings.default_server", "Default Server")}
-            </label>
-            <DropdownSelector<string>
+          <Field
+            label={t("settings.default_server", "Default Server")}
+            description={t("settings.default_server_desc", "The server this user sees when they sign in.")}
+          >
+            <Select<string>
               data={servers.map((s) => ({ value: s.id, Icon: ServerIcon }))}
               value={serverId ?? undefined}
               onChange={(value) => setServerId(value)}
@@ -178,119 +169,53 @@ export default function UpdateUserModal({ userId, onClose, onCreated }: Props) {
               leftIcon={ServerIcon}
               disabled={loading || servers.length === 0}
               widthPx={0}
+              className="w-full"
             />
-            <p className="text-[11px] text-gray-500 ml-1">
-              {t("settings.default_server_desc", "The server this user sees when they sign in.")}
-            </p>
-          </div>
+          </Field>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
-              {t("common.password", "Password")}
-            </label>
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-500 group-focus-within:text-brand-purple transition-colors">
-                <Lock size={18} />
-              </div>
-              <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={loading}
-                placeholder={t("settings.placeholder_new_password", "Leave blank to keep the current password")}
-                className={`w-full bg-background border rounded-xl py-3 pl-11 pr-12 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all shadow-inner ${
-                  fieldErrors.password
-                    ? "border-brand-rose focus:border-brand-rose focus:ring-brand-rose/50"
-                    : "border-border hover:border-gray-500 focus:border-brand-purple focus:ring-brand-purple"
-                }`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((current) => !current)}
-                tabIndex={-1}
-                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-500 hover:text-gray-300 transition-colors focus:outline-none"
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-            {fieldErrors.password && (
-              <p className="text-[11px] font-bold text-brand-rose ml-1 flex items-center mt-1">
-                <AlertCircle size={10} className="mr-1" />
-                {fieldErrors.password}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">
-              {t("common.confirm_password", "Confirm Password")}
-            </label>
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-500 group-focus-within:text-brand-purple transition-colors">
-                <Lock size={18} />
-              </div>
-              <input
-                type={showPassword ? "text" : "password"}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={loading}
-                placeholder={t("settings.placeholder_password", "Enter your password")}
-                className={`w-full bg-background border rounded-xl py-3 pl-11 pr-12 text-sm text-gray-200 placeholder:text-gray-600 focus:outline-none focus:ring-1 transition-all shadow-inner ${
-                  fieldErrors.confirmPassword
-                    ? "border-brand-rose focus:border-brand-rose focus:ring-brand-rose/50"
-                    : "border-border hover:border-gray-500 focus:border-brand-purple focus:ring-brand-purple"
-                }`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((current) => !current)}
-                tabIndex={-1}
-                className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-500 hover:text-gray-300 transition-colors focus:outline-none"
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-            {fieldErrors.confirmPassword && (
-              <p className="text-[11px] font-bold text-brand-rose ml-1 flex items-center mt-1">
-                <AlertCircle size={10} className="mr-1" />
-                {fieldErrors.confirmPassword}
-              </p>
-            )}
-          </div>
-
-          {error && (
-            <div className="p-3.5 rounded-xl bg-brand-rose/10 border border-brand-rose/20 flex items-start gap-3">
-              <AlertCircle size={16} className="text-brand-rose shrink-0 mt-0.5" />
-              <p className="text-xs text-brand-rose/90 font-medium leading-relaxed">{error}</p>
-            </div>
-          )}
-
-          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-2">
-            <button
-              type="submit"
-              disabled={loading || (!passwordEntered && !serverChanged)}
-              className="px-5 py-2.5 rounded-xl bg-brand-purple hover:bg-[#9a2cee] text-white font-black transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg shadow-brand-purple/20 active:scale-[0.98]"
-            >
-              {loading ? (
-                <>
-                  <Loader2 size={18} className="animate-spin mr-2" />
-                  {t("settings.updating_user", "Updating")}
-                </>
-              ) : (
-                t("settings.update_user", "Update")
-              )}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
+          <Field label={t("common.password", "Password")} htmlFor="update-user-password" error={fieldErrors.password}>
+            <Input
+              id="update-user-password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
-              className="px-4 py-2.5 rounded-xl bg-background border border-border text-gray-200 hover:text-white hover:border-gray-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+              placeholder={t("settings.placeholder_new_password", "Leave blank to keep the current password")}
+              leftIcon={<Lock size={18} />}
+              error={!!fieldErrors.password}
+              rightSlot={togglePassword}
+            />
+          </Field>
+
+          <Field
+            label={t("common.confirm_password", "Confirm Password")}
+            htmlFor="update-user-password-confirm"
+            error={fieldErrors.confirmPassword}
+          >
+            <Input
+              id="update-user-password-confirm"
+              type={showPassword ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              disabled={loading}
+              placeholder={t("settings.placeholder_password", "Enter your password")}
+              leftIcon={<Lock size={18} />}
+              error={!!fieldErrors.confirmPassword}
+            />
+          </Field>
+
+          {error && <ErrorAlert>{error}</ErrorAlert>}
+
+          <ModalFooter>
+            <Button type="submit" loading={loading} disabled={!passwordEntered && !serverChanged}>
+              {loading ? t("settings.updating_user", "Updating") : t("settings.update_user", "Update")}
+            </Button>
+            <Button variant="secondary" onClick={onClose} disabled={loading}>
               {t("common.cancel", "Cancel")}
-            </button>
-          </div>
+            </Button>
+          </ModalFooter>
         </form>
       )}
-    </DialogPanel>
+    </ModalPanel>
   );
 }
