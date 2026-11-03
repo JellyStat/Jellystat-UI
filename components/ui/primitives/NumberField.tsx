@@ -9,6 +9,7 @@ export type NumberFieldProps = {
   onChange: (value: number | undefined) => void;
   className?: string;
   readonly?: boolean;
+  ariaLabel?: string;
   ref?: Ref<HTMLInputElement>;
 };
 
@@ -19,6 +20,7 @@ export default function NumberField({
   max,
   className,
   readonly = false,
+  ariaLabel,
   ref,
 }: NumberFieldProps) {
   const [number, setNumber] = useState<number | undefined>(value);
@@ -79,6 +81,7 @@ export default function NumberField({
         readonly && 'bg-surface cursor-default'
       )}
       readOnly={readonly}
+      aria-label={ariaLabel}
     />
   );
 }

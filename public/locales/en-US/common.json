@@ -110,7 +110,16 @@
     "source": "Source",
     "confirm": "Confirm",
     "sort_descending": "Descending",
-    "sort_ascending": "Ascending"
+    "sort_ascending": "Ascending",
+    "first": "First",
+    "last": "Last",
+    "page_size": "Rows per page",
+    "jump_to_page": "Go to page",
+    "all": "All",
+    "discard_changes_title": "Discard changes?",
+    "discard_changes_desc": "Your edits have not been saved.",
+    "discard": "Discard",
+    "keep_editing": "Keep editing"
   },
   "error_cards": {
     "failed_to_load": "Failed to load",

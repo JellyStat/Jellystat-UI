@@ -64,7 +64,7 @@ export default function AddUserModal({ onClose, onCreated }: Props) {
       />
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <Field label={t("common.username", "Username")} htmlFor="add-user-username" error={fieldErrors.username}>
+        <Field label={t("common.username", "Username")} htmlFor="add-user-username" required error={fieldErrors.username}>
           <Input
             id="add-user-username"
             type="text"
@@ -77,7 +77,7 @@ export default function AddUserModal({ onClose, onCreated }: Props) {
           />
         </Field>
 
-        <Field label={t("common.password", "Password")} htmlFor="add-user-password" error={fieldErrors.password}>
+        <Field label={t("common.password", "Password")} htmlFor="add-user-password" required error={fieldErrors.password}>
           <Input
             id="add-user-password"
             type={showPassword ? "text" : "password"}

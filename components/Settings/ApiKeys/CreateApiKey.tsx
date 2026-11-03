@@ -19,6 +19,7 @@ import {
   ModalHeader,
   ModalPanel,
   Select,
+  useDiscardGuard,
 } from "@/components/ui";
 
 type Props = {
@@ -40,6 +41,17 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
   const [copied, setCopied] = useState(false);
 
   const isReadOnly = permission === Permissions.CanView;
+  const guard = useDiscardGuard({
+    // Once the key is shown there is nothing left to lose; Done closes it.
+    dirty: !created && name.trim() !== "",
+    onClose,
+    labels: {
+      title: t("common.discard_changes_title", "Discard changes?"),
+      description: t("common.discard_changes_desc", "Your edits have not been saved."),
+      discard: t("common.discard", "Discard"),
+      keepEditing: t("common.keep_editing", "Keep editing"),
+    },
+  });
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -83,7 +95,7 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
 
   if (created) {
     return (
-      <ModalPanel>
+      <ModalPanel onKeyDown={guard.onKeyDown}>
         <ModalHeader icon={<KeyRound size={22} />} iconTone="success" title={t("settings.api_key_created", "API key created")} />
 
         <Alert tone="warning" className="mb-4">
@@ -130,7 +142,8 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
   ];
 
   return (
-    <ModalPanel>
+    <ModalPanel onKeyDown={guard.onKeyDown}>
+      {guard.dialog}
       <ModalHeader
         icon={<KeyRound size={22} />}
         title={t("settings.add_api_key", "Create API Key")}
@@ -138,7 +151,7 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
       />
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <Field label={t("settings.api_key_name", "Name")} htmlFor="api-key-name" error={fieldErrors.name}>
+        <Field label={t("settings.api_key_name", "Name")} required htmlFor="api-key-name" error={fieldErrors.name}>
           <Input
             id="api-key-name"
             type="text"
@@ -181,7 +194,7 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
         </div>
 
         {isReadOnly && (
-          <Field label={t("settings.api_key_server", "Server")} error={fieldErrors.serverId}>
+          <Field label={t("settings.api_key_server", "Server")} required error={fieldErrors.serverId}>
             <Select<string>
               data={servers.map((s) => ({ value: s.id }))}
               value={serverId || undefined}

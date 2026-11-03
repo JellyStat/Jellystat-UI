@@ -69,6 +69,10 @@ export {
   type ConfirmTone,
 } from './overlay/ConfirmDialog';
 export {
+  default as useDiscardGuard,
+  type DiscardGuardLabels,
+} from './overlay/useDiscardGuard';
+export {
   default as DropdownMenu,
   type DropdownMenuItem,
   type DropdownMenuProps,

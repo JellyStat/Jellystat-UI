@@ -82,7 +82,7 @@ export default function AddServerModal({ onClose, onCreated }: Props) {
       />
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <Field label={t("common.url", "URL")} htmlFor="add-server-url" error={fieldErrors.Url}>
+        <Field label={t("common.url", "URL")} htmlFor="add-server-url" required error={fieldErrors.Url}>
           <Input
             id="add-server-url"
             type="text"
@@ -107,7 +107,7 @@ export default function AddServerModal({ onClose, onCreated }: Props) {
           />
         </Field>
 
-        <Field label={t("common.api_key", "API Key")} htmlFor="add-server-api-key" error={fieldErrors.ApiKey}>
+        <Field label={t("common.api_key", "API Key")} htmlFor="add-server-api-key" required error={fieldErrors.ApiKey}>
           <Input
             id="add-server-api-key"
             type={showApiKey ? "text" : "password"}

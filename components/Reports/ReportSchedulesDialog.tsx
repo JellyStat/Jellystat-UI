@@ -161,7 +161,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                         <div className="flex items-center gap-2">
                           <Webhook size={14} className="text-accent shrink-0" />
                           <span className="font-bold text-sm text-white truncate">{s.name}</span>
-                          <Badge tone={s.enabled ? "primary" : "neutral"} shape="square">
+                          <Badge tone={s.enabled ? "success" : "neutral"} shape="square">
                             {s.enabled ? "on" : "off"}
                           </Badge>
                         </div>

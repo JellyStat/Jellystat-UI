@@ -38,7 +38,7 @@ import permissionsManager from "@/lib/permissionsManager";
 import Permissions from "@/lib/models/enums/Permissions";
 import type { LibrariesWithStats } from "@/lib/models/librariesWithStats";
 import { formatDateTime } from "@/lib/dateFormat";
-import { NumberField, Select, SortableTh, Spinner } from "@/components/ui";
+import { Pagination, Select, SortableTh, Spinner } from "@/components/ui";
 
 const LIBRARY_FILTER_STORAGE_KEY = "PREF_ACTIVITY_LIBRARY_FILTER";
 
@@ -761,7 +761,9 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                 <th className="p-2 border-r border-border/50">
                   <BooleanFilter
                     keyName="directPlay"
-                    label=""
+                    label={t("common.transcode", "Transcode")}
+                    trueLabel={t("common.transcode", "Transcode")}
+                    falseLabel={t("common.direct", "Direct")}
                     isInverted={true}
                     value={getFilterValueOrDefault("directPlay", null) as boolean | null}
                     onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("directPlay"))}
@@ -823,50 +825,36 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           </table>
         </div>
 
-        {/* Pagination Footer */}
-        <div className="bg-background/80 border-t border-border p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
-          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-            {t("activity.total_records", "Total Records:")} <span className="text-white">{pageCount}</span>
-          </span>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4 ml-auto">
-            <Select
-              data={pageCountOptions.map((option) => ({ value: option }))}
-              value={recordsPerPage}
-              onChange={(value) => {
-                setRecordsPerPage(value);
-                localStorage.setItem("jellystat_recordsPerPage", value.toString());
-                setPage(1);
-              }}
-              labelFn={(option) => option.toString()}
-              widthPx={80}
-            />
-            <NumberField
-              value={page}
-              onChange={(val) => (val ? setPage(val) : val)}
-              min={1}
-              max={totalPages}
-              className="py-3 px-1 focus:outline-none focus-visible:ring-1 focus-visible:ring-primary hover:bg-surface border border-transparent hover:border-border rounded-xl shadow-lg overflow-auto text-xs text-center font-mono text-gray-400"
-            />
-            <span className="text-xs font-mono text-gray-400">/</span>
-            <span className="text-xs font-mono text-gray-400">{totalPages}</span>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
-              >
-                {t("common.prev", "Prev")}
-              </button>
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
-              >
-                {t("common.next", "Next")}
-              </button>
-            </div>
-          </div>
-        </div>
+        <Pagination
+          className="shrink-0"
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          jumpToPage
+          pageSize={{
+            value: recordsPerPage,
+            options: pageCountOptions,
+            onChange: (value) => {
+              setRecordsPerPage(value);
+              localStorage.setItem("jellystat_recordsPerPage", value.toString());
+              setPage(1);
+            },
+          }}
+          summary={
+            <>
+              {t("activity.total_records", "Total Records:")} <span className="text-white">{pageCount}</span>
+            </>
+          }
+          labels={{
+            first: t("common.first", "First"),
+            prev: t("common.prev", "Prev"),
+            next: t("common.next", "Next"),
+            last: t("common.last", "Last"),
+            pageOf: t("common.page_info", "Page {{page}} of {{totalPages}}", { page, totalPages }),
+            pageSize: t("common.page_size", "Rows per page"),
+            jumpToPage: t("common.jump_to_page", "Go to page"),
+          }}
+        />
       </div>
 
       {/* Stream Info Modal */}

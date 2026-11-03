@@ -64,7 +64,7 @@ const rules: Rule[] = [
       /\b(?:(?:group-|peer-)?focus(?:-visible|-within)?|data-open|data-focus):(?:border|ring|text|outline|bg)-(?:accent|brand-cyan)\b/,
   },
   {
-    name: 'use the kit Switch for on/off controls (one look: purple when on)',
+    name: 'use the kit Switch for on/off controls so every toggle looks the same',
     pattern: /role=["']switch["']/,
   },
   {

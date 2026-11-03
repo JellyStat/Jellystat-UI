@@ -106,7 +106,16 @@
     "source": "Quelle",
     "confirm": "Bestätigen",
     "sort_descending": "Absteigend",
-    "sort_ascending": "Aufsteigend"
+    "sort_ascending": "Aufsteigend",
+    "first": "Erste",
+    "last": "Letzte",
+    "page_size": "Zeilen pro Seite",
+    "jump_to_page": "Gehe zu Seite",
+    "all": "Alle",
+    "discard_changes_title": "Änderungen verwerfen?",
+    "discard_changes_desc": "Deine Änderungen wurden nicht gespeichert.",
+    "discard": "Verwerfen",
+    "keep_editing": "Weiter bearbeiten"
   },
   "error_cards": {
     "failed_to_load": "Fehler beim Laden",

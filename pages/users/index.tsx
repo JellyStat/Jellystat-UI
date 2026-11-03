@@ -12,7 +12,7 @@ import useFilters from "@/components/DataTableFilters/useFilters";
 import TextFilter from "@/components/DataTableFilters/TextFilter";
 import BooleanFilter from "@/components/DataTableFilters/BooleanFilter";
 import FilterItem from "@/components/DataTableFilters/FilterItem";
-import { PageHeader, SortableTh, Spinner, Switch } from "@/components/ui";
+import { PageHeader, Pagination, SortableTh, Spinner, Switch } from "@/components/ui";
 
 interface SortStatus {
   columnAccessor: string;
@@ -299,7 +299,7 @@ export default function UsersPage() {
                   <th className="p-2 border-r border-border/50 font-normal">
                     <BooleanFilter
                       keyName="tracked"
-                      label=""
+                      label={t("common.tracked", "Tracked")}
                       value={getFilterValueOrDefault("tracked", null) as boolean | null}
                       onChange={(val) => applyFilter("tracked", val)}
                     />
@@ -363,33 +363,24 @@ export default function UsersPage() {
             </table>
           </div>
 
-          {/* Pagination Footer */}
-          <div className="bg-background/80 border-t border-border p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3 shrink-0">
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
-              {t("users.total_users", "Total Users:")} <span className="text-white">{pageCount}</span>
-            </span>
-            <div className="flex items-center gap-4 ml-auto">
-              <span className="text-xs font-mono text-gray-400 whitespace-nowrap">
-                {t("common.page_of", "Page {{page}} of {{total}}", { page, total: totalPages })}
-              </span>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
-                >
-                  {t("common.prev", "Prev")}
-                </button>
-                <button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-gray-500 hover:text-white disabled:opacity-30 transition-all text-xs font-bold cursor-pointer"
-                >
-                  {t("common.next", "Next")}
-                </button>
-              </div>
-            </div>
-          </div>
+          <Pagination
+            className="shrink-0"
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            summary={
+              <>
+                {t("users.total_users", "Total Users:")} <span className="text-white">{pageCount}</span>
+              </>
+            }
+            labels={{
+              first: t("common.first", "First"),
+              prev: t("common.prev", "Prev"),
+              next: t("common.next", "Next"),
+              last: t("common.last", "Last"),
+              pageOf: t("common.page_info", "Page {{page}} of {{totalPages}}", { page, totalPages }),
+            }}
+          />
         </div>
       </div>
     </>
