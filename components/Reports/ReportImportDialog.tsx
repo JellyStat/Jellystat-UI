@@ -29,7 +29,7 @@ export default function ReportImportDialog({
         <ModalPanel className="p-0 md:p-0 max-w-lg max-h-[80dvh] flex flex-col">
           <div className="px-5 py-4 border-b border-border">
             <ModalTitle className="text-lg font-bold text-white">
-              {blocked ? dt("reports.designer.this_report_can_t_be_imported", "This report can't be imported") : dt("reports.designer.check_before_importing", "Check before importing")}
+              {blocked ? dt("reports.designer.errors.this_report_can_t_be_imported", "This report can't be imported") : dt("reports.designer.check_before_importing", "Check before importing")}
             </ModalTitle>
             <p className="text-xs text-gray-500 mt-1 break-all">{fileName}</p>
           </div>
@@ -43,7 +43,7 @@ export default function ReportImportDialog({
               onClick={onClose}
               className="px-4 py-2 rounded-xl text-sm font-bold border border-border text-gray-300 hover:text-white cursor-pointer"
             >
-              {blocked ? dt("reports.designer.close", "Close") : dt("reports.designer.cancel", "Cancel")}
+              {blocked ? dt("common.close", "Close") : dt("common.cancel", "Cancel")}
             </button>
             {!blocked && (
               <button

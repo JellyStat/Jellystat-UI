@@ -28,13 +28,13 @@ export const TRANSFORM_LABELS: Record<ReportTransformType, { label: string; help
 };
 
 const FILTER_OPERATORS = [
-  { value: "eq", label: "equals" },
+  { value: "eq", get label() { return dt("reports.designer.equals", "equals"); } },
   { value: "neq", get label() { return dt("reports.designer.does_not_equal", "does not equal"); } },
   { value: "gt", get label() { return dt("reports.designer.greater_than", "greater than"); } },
   { value: "gte", get label() { return dt("reports.designer.at_least", "at least"); } },
   { value: "lt", get label() { return dt("reports.designer.less_than", "less than"); } },
   { value: "lte", get label() { return dt("reports.designer.at_most", "at most"); } },
-  { value: "contains", label: "contains" },
+  { value: "contains", get label() { return dt("reports.designer.contains", "contains"); } },
   { value: "notContains", get label() { return dt("reports.designer.does_not_contain", "does not contain"); } },
   { value: "isNull", get label() { return dt("reports.designer.is_empty", "is empty"); } },
   { value: "isNotNull", get label() { return dt("reports.designer.is_not_empty", "is not empty"); } },
@@ -47,7 +47,7 @@ const newStep = (type: ReportTransformType, columns: ReportColumn[]): ReportTran
     case "filter":
       return { type, field: numeric, operator: "gte", value: 0 };
     case "topN":
-      return { type, field: numeric, count: 5, desc: true, otherLabel: "Other" };
+      return { type, field: numeric, count: 5, desc: true, otherLabel: dt("reports.designer.other", "Other") };
     case "pivot":
       return {
         type,
@@ -122,7 +122,7 @@ function StepFields({
                   onKeyDown={(ev) => ev.stopPropagation()}
                   onChange={(ev) => set({ parameter: ev.target.value || null })}
                 >
-                  <option value="">{dt("reports.designer.value", "Value")}</option>
+                  <option value="">{dt("common.value", "Value")}</option>
                   {parameters.map((p) => (
                     <option key={p.name} value={p.name}>
                       @{p.name}
@@ -162,7 +162,7 @@ function StepFields({
             </Field>
           </div>
           <Field label={dt("reports.designer.per_group_optional", "Per group (optional)")}>
-            <ColumnSelect value={step.partitionBy} columns={columns} optional="Whole result" onChange={(v) => set({ partitionBy: v })} />
+            <ColumnSelect value={step.partitionBy} columns={columns} optional={dt("reports.designer.whole_result", "Whole result")} onChange={(v) => set({ partitionBy: v })} />
           </Field>
           <Field label={dt("reports.designer.rest_as_blank_drop", "Rest as (blank = drop)")}>
             <TextInput value={step.otherLabel ?? ""} placeholder={dt("reports.designer.other", "Other")} onChange={(v) => set({ otherLabel: v || null })} />
@@ -198,7 +198,7 @@ function StepFields({
           <Field label={dt("reports.designer.date_bucket_column", "Date bucket column")}>
             <ColumnSelect value={step.field} columns={columns} onChange={(v) => set({ field: v })} />
           </Field>
-          <Field label={dt("reports.designer.range", "Range")} hint={dt("reports.designer.blank_from_the_first_to_the_last_date_in_the_dat", "Blank: from the first to the last date in the data")}>
+          <Field label={dt("common.range", "Range")} hint={dt("reports.designer.blank_from_the_first_to_the_last_date_in_the_dat", "Blank: from the first to the last date in the data")}>
             <div className="flex gap-1">
               {parameters.length > 0 && (
                 <select
@@ -207,7 +207,7 @@ function StepFields({
                   onKeyDown={(ev) => ev.stopPropagation()}
                   onChange={(ev) => set({ parameter: ev.target.value || null })}
                 >
-                  <option value="">{dt("reports.designer.days", "Days")}</option>
+                  <option value="">{dt("common.days", "Days")}</option>
                   {parameters.map((p) => (
                     <option key={p.name} value={p.name}>
                       @{p.name}
@@ -233,8 +233,8 @@ function StepFields({
               <Select
                 value={s.desc ? "desc" : "asc"}
                 options={[
-                  { value: "asc", label: dt("reports.designer.ascending", "Ascending") },
-                  { value: "desc", label: dt("reports.designer.descending", "Descending") },
+                  { value: "asc", label: dt("common.sort_ascending", "Ascending") },
+                  { value: "desc", label: dt("common.sort_descending", "Descending") },
                 ]}
                 onChange={(v) => set({ sort: (step.sort ?? []).map((x, j) => (j === i ? { ...x, desc: v === "desc" } : x)) })}
               />
@@ -263,7 +263,7 @@ function StepFields({
             <Field label={dt("reports.designer.new_column_name", "New column name")}>
               <TextInput value={step.alias ?? ""} onChange={(v) => set({ alias: v.replace(/[^A-Za-z0-9_]/g, "") || null })} />
             </Field>
-            <Field label={dt("reports.designer.type", "Type")}>
+            <Field label={dt("common.type", "Type")}>
               <Select value={step.mode ?? "auto"} options={CALCULATED_TYPES} onChange={(v) => set({ mode: v === "auto" ? null : v })} />
             </Field>
           </div>
@@ -300,7 +300,7 @@ function StepFields({
             />
           </Field>
           <Field label={dt("reports.designer.restart_for_each_optional", "Restart for each (optional)")}>
-            <ColumnSelect value={step.partitionBy} columns={columns} optional="Whole result" onChange={(v) => set({ partitionBy: v })} />
+            <ColumnSelect value={step.partitionBy} columns={columns} optional={dt("reports.designer.whole_result", "Whole result")} onChange={(v) => set({ partitionBy: v })} />
           </Field>
           {step.type === "rank" && (
             <Field label={dt("reports.designer.rank_1_is", "Rank 1 is")}>

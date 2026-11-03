@@ -47,7 +47,7 @@ export default function WebhooksPage() {
       setWebhooks(list ?? []);
       setEvents(eventList ?? []);
     } catch (err: any) {
-      setError(err?.message ?? t("settings.error_load_webhooks", "Failed to load webhooks"));
+      setError(err?.message ?? t("errors.failed_to_load_webhooks", "Failed to load webhooks"));
     } finally {
       setLoading(false);
     }
@@ -64,11 +64,11 @@ export default function WebhooksPage() {
       if (result.success) {
         toast.success(t("settings.webhook_test_sent", "Test delivered in {{ms}} ms", { ms: result.elapsedMs }));
       } else {
-        toast.error(result.error ?? t("settings.webhook_test_failed", "Test delivery failed"));
+        toast.error(result.error ?? t("errors.test_delivery_failed", "Test delivery failed"));
       }
       await fetchWebhooks();
     } catch (err: any) {
-      toast.error(err?.message ?? t("settings.webhook_test_failed", "Test delivery failed"));
+      toast.error(err?.message ?? t("errors.test_delivery_failed", "Test delivery failed"));
     } finally {
       setBusy(null);
     }
@@ -81,7 +81,7 @@ export default function WebhooksPage() {
       await client.Webhooks.save({ ...webhook, enabled: !webhook.enabled, secret: null });
       await fetchWebhooks();
     } catch (err: any) {
-      toast.error(err?.message ?? t("settings.error_save_webhook", "Failed to save the webhook"));
+      toast.error(err?.message ?? t("errors.failed_to_save_the_webhook", "Failed to save the webhook"));
     } finally {
       setBusy(null);
     }
@@ -93,7 +93,7 @@ export default function WebhooksPage() {
       await client.Webhooks.delete({ Id: id });
       await fetchWebhooks();
     } catch (err: any) {
-      setError(err?.message ?? t("settings.error_delete_webhook", "Failed to delete the webhook"));
+      setError(err?.message ?? t("errors.failed_to_delete_the_webhook", "Failed to delete the webhook"));
       setLoading(false);
     }
   }
@@ -107,7 +107,7 @@ export default function WebhooksPage() {
       <PageHeader
         iconTone="accent"
         icon={<Webhook size={28} />}
-        title={t("settings.webhooks_title", "Webhooks")}
+        title={t("common.webhooks", "Webhooks")}
         description={t(
           "settings.webhooks_subtitle",
           "Post playback and new media events to Discord or any URL as they happen. Scheduled reports are set up from each report.",
@@ -118,7 +118,7 @@ export default function WebhooksPage() {
         <div className="flex items-center justify-between gap-4">
           <SectionTitle className="flex items-center gap-2">
             <Webhook size={20} className="text-accent" />
-            {t("settings.webhooks", "Webhooks")}
+            {t("common.webhooks", "Webhooks")}
           </SectionTitle>
           <Button variant="outline" onClick={() => setEditing(emptyWebhook())} disabled={events.length === 0}>
             <Plus size={16} className="text-accent" />
@@ -141,7 +141,7 @@ export default function WebhooksPage() {
           )}
 
           {!loading && !error && webhooks.length === 0 ? (
-            <EmptyState bordered={false} Icon={Webhook} title={t("settings.no_webhooks", "No webhooks yet")} />
+            <EmptyState bordered={false} Icon={Webhook} title={t("empty.no_webhooks_yet", "No webhooks yet")} />
           ) : (
             <div className="divide-y divide-border/50">
               {webhooks.map((w) => (
@@ -158,7 +158,7 @@ export default function WebhooksPage() {
                         disabled={busy !== null}
                         label={
                           <span className="text-xs font-bold text-gray-400">
-                            {w.enabled ? t("settings.webhook_on", "On") : t("settings.webhook_off", "Off")}
+                            {w.enabled ? t("common.on", "On") : t("common.off", "Off")}
                           </span>
                         }
                       />

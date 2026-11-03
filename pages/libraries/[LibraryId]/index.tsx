@@ -71,8 +71,8 @@ export default function LibraryPage() {
   if (!lib && !loading && !error) {
     return (
       <NotFound
-        title={t("library.not_found_title", "Library not found")}
-        message={t("library.not_found_message", "Library with id {{id}} could not be found", { id: LibraryId as string })}
+        title={t("errors.library_not_found", "Library not found")}
+        message={t("errors.library_with_id_id_could_not_be_found", "Library with id {{id}} could not be found", { id: LibraryId as string })}
       />
     );
   }
@@ -107,7 +107,7 @@ export default function LibraryPage() {
         {error && (
           <div className="p-6 rounded-2xl bg-danger/10 border border-danger/20 flex flex-col items-center justify-center text-center max-w-lg mx-auto mt-12">
             <AlertCircle size={40} className="text-danger mb-3" />
-            <span className="text-xl font-bold text-white mb-2">{t("library.error_loading", "Error loading library")}</span>
+            <span className="text-xl font-bold text-white mb-2">{t("errors.error_loading_library", "Error loading library")}</span>
             <span className="text-sm text-gray-400">{error}</span>
           </div>
         )}

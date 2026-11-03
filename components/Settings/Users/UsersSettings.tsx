@@ -54,7 +54,7 @@ export default function UsersSettingsPage() {
     } catch (err: any) {
       if (err?.name === "AbortError") return;
       console.error(err);
-      setError(err?.message ?? t("settings.error_load_users", "Failed to load users"));
+      setError(err?.message ?? t("errors.failed_to_load_users", "Failed to load users"));
     } finally {
       setLoading(false);
     }
@@ -82,7 +82,7 @@ export default function UsersSettingsPage() {
       fetchPage();
     } catch (err: any) {
       console.error(err);
-      setError(err?.message ?? t("settings.error_delete_user", "Failed to delete user"));
+      setError(err?.message ?? t("errors.failed_to_delete_user", "Failed to delete user"));
     } finally {
       setLoading(false);
     }
@@ -93,7 +93,7 @@ export default function UsersSettingsPage() {
       <PageHeader
         icon={<UsersIcon size={28} />}
         title={t("settings.users_title", "User Settings")}
-        description={t("settings.users_subtitle", "Manage local Jellystat users.")}
+        description={t("settings.users_subtitle", "Manage user accounts and permissions.")}
       />
 
       <div className="space-y-4">
@@ -123,7 +123,7 @@ export default function UsersSettingsPage() {
           )}
 
           {!loading && !error && usersData.length === 0 ? (
-            <EmptyState bordered={false} Icon={UsersIcon} title={t("settings.no_users", "No users found")} />
+            <EmptyState bordered={false} Icon={UsersIcon} title={t("empty.no_users_found", "No users found")} />
           ) : (
             <div className="divide-y divide-border/50">
               {usersData.map((user) => {

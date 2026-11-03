@@ -98,7 +98,7 @@ function usePreviewData(definition: ReportDefinition, name: string) {
         }
       } catch (err: any) {
         if (!cancelled) {
-          setError(err?.message ?? dt("reports.designer.preview_failed", "Preview failed"));
+          setError(err?.message ?? dt("reports.designer.errors.preview_failed", "Preview failed"));
         }
       } finally {
         if (!cancelled) {
@@ -191,7 +191,7 @@ function DesignerShell() {
   const save = useCallback(async () => {
     const name = state.doc.name.trim();
     if (!name) {
-      toast.error(i18next.t("reports.designer_name_required", "Give the report a name first (Report section, with nothing selected)"));
+      toast.error(i18next.t("errors.give_the_report_a_name_first_report", "Give the report a name first (Report section, with nothing selected)"));
       return;
     }
     setSaving(true);
@@ -210,7 +210,7 @@ function DesignerShell() {
         });
       }
     } catch (err: any) {
-      toast.error(err?.message ?? i18next.t("reports.save_failed", "Failed to save the report"));
+      toast.error(err?.message ?? i18next.t("errors.failed_to_save_the_report", "Failed to save the report"));
     } finally {
       setSaving(false);
     }
@@ -312,7 +312,7 @@ function DesignerShell() {
     const items: MenuEntry[] = has
       ? [
           { label: dt("reports.designer.cut", "Cut"), shortcut: "Ctrl+X", icon: <Scissors size={13} />, onClick: designer.cut },
-          { label: dt("reports.designer.copy", "Copy"), shortcut: "Ctrl+C", icon: <Copy size={13} />, onClick: designer.copy },
+          { label: dt("common.copy", "Copy"), shortcut: "Ctrl+C", icon: <Copy size={13} />, onClick: designer.copy },
           {
             label: dt("reports.designer.paste", "Paste"),
             shortcut: "Ctrl+V",
@@ -320,7 +320,7 @@ function DesignerShell() {
             onClick: () => designer.paste({ x: req.pageX, y: req.pageY }),
           },
           {
-            label: dt("reports.designer.duplicate", "Duplicate"),
+            label: dt("common.duplicate", "Duplicate"),
             shortcut: "Ctrl+D",
             icon: <Files size={13} />,
             onClick: designer.duplicate,
@@ -364,7 +364,7 @@ function DesignerShell() {
               }),
           },
           {
-            label: dt("reports.designer.delete", "Delete"),
+            label: dt("common.delete", "Delete"),
             shortcut: "Del",
             icon: <Trash2 size={13} />,
             danger: true,
@@ -439,7 +439,7 @@ function DesignerShell() {
         downloadBlob(blob, exportFileName(name, format));
       }
     } catch (err: any) {
-      toast.error(err?.message ?? i18next.t("reports.export_failed", "Export failed"));
+      toast.error(err?.message ?? i18next.t("errors.export_failed", "Export failed"));
     } finally {
       setExporting(null);
     }
@@ -472,7 +472,7 @@ function DesignerShell() {
         setImportReview({ fileName: file.name, result });
       }
     } catch (err: any) {
-      toast.error(err?.message ?? i18next.t("reports.check_file_failed", "Failed to check the file"));
+      toast.error(err?.message ?? i18next.t("errors.failed_to_check_the_file", "Failed to check the file"));
     }
   };
 
@@ -490,7 +490,7 @@ function DesignerShell() {
     <div className="fixed inset-0 z-40 flex flex-col bg-background text-gray-200">
       {/* Toolbar */}
       <div className="h-12 shrink-0 flex items-center gap-1 px-2 border-b border-border bg-surface overflow-x-auto">
-        <ToolButton title={dt("reports.designer.back_to_reports", "Back to reports")} onClick={leave}>
+        <ToolButton title={dt("common.back_to_reports", "Back to reports")} onClick={leave}>
           <ArrowLeft size={17} />
         </ToolButton>
         <input
@@ -506,7 +506,7 @@ function DesignerShell() {
           }
           className="w-40 sm:w-56 bg-transparent border border-transparent hover:border-border focus:border-primary rounded-md px-2 py-1 text-sm font-bold text-white outline-none"
         />
-        {dirty && <span className="text-xs text-warning shrink-0">unsaved</span>}
+        {dirty && <span className="text-xs text-warning shrink-0">{dt("reports.designer.unsaved", "unsaved")}</span>}
         <div className="w-px h-6 bg-border mx-1 shrink-0" />
         <ToolButton title={dt("reports.designer.toggle_left_panel", "Toggle left panel")} onClick={() => setShowLeft(!showLeft)} active={showLeft}>
           <PanelLeft size={16} />
@@ -563,7 +563,7 @@ function DesignerShell() {
         </ToolButton>
         <div className="flex-1" />
         {state.doc.id && (
-          <ToolButton title={dt("reports.designer.schedules_and_webhooks", "Schedules & webhooks")} onClick={() => setShowSchedules(true)}>
+          <ToolButton title={dt("common.schedules_and_webhooks", "Schedules & webhooks")} onClick={() => setShowSchedules(true)}>
             <CalendarClock size={16} />
           </ToolButton>
         )}
@@ -573,7 +573,7 @@ function DesignerShell() {
             onClick={() => setExportOpen(!exportOpen)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-bold text-gray-300 hover:text-white hover:border-gray-500 cursor-pointer"
           >
-            {exporting ? <Spinner size={14} className="" /> : <Download size={14} />} {dt("reports.designer.export", "Export")} <ChevronDown size={12} />
+            {exporting ? <Spinner size={14} className="" /> : <Download size={14} />} {dt("common.export", "Export")} <ChevronDown size={12} />
           </button>
           {exportOpen && (
             <ContextMenu
@@ -610,7 +610,7 @@ function DesignerShell() {
           disabled={saving}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-solid text-white text-xs font-bold hover:bg-primary-solid-hover cursor-pointer disabled:opacity-50 shrink-0"
         >
-          {saving ? <Spinner size={14} className="" /> : <Save size={14} />} {dt("reports.designer.save", "Save")}
+          {saving ? <Spinner size={14} className="" /> : <Save size={14} />} {dt("common.save", "Save")}
         </button>
         <ToolButton title={dt("reports.designer.toggle_right_panel", "Toggle right panel")} onClick={() => setShowRight(!showRight)} active={showRight}>
           <PanelRight size={16} />
@@ -689,7 +689,7 @@ function DesignerShell() {
             <span>
               {definition.page.width} × {definition.page.height}
             </span>
-            {selected.length > 0 && <span>{dt("reports.designer.n_selected", "{{count}} selected", { count: selected.length })}</span>}
+            {selected.length > 0 && <span>{dt("reports.designer.n_selected", "{{n}} selected", { n: selected.length })}</span>}
             <div className="flex-1" />
             {preview.loading && (
               <span className="flex items-center gap-1">
@@ -790,7 +790,7 @@ export default function ReportDesigner({ initial }: { initial: DesignerDoc }) {
   useEffect(() => {
     client.Reports.capabilities()
       .then(setCaps)
-      .catch((err) => toast.error(err?.message ?? i18next.t("reports.fields_load_failed", "Failed to load report fields")));
+      .catch((err) => toast.error(err?.message ?? i18next.t("errors.failed_to_load_report_fields", "Failed to load report fields")));
   }, []);
 
   // Rendered on <body> so the full-screen designer sits above the app's side nav and page layout

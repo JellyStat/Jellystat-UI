@@ -46,7 +46,7 @@ export default function GenreStatCard({ data, dataKey }: Props) {
         <Tooltip content={CustomTooltip} cursor={false} />
         <PolarAngleAxis dataKey="name" />
         <Radar
-          name="Play Count"
+          name={t("statistics.play_count", "Play Count")}
           dataKey={dataKey}
           stroke={chartColors.primary}
           fill={chartColors.primary}

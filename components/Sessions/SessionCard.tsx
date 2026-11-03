@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import { Play, Pause, Tv } from "lucide-react";
 
 import { API_BASE } from "@/lib/api";
@@ -36,12 +37,12 @@ function getContainer(item: SessionItem) {
   return `${nowPlayingContainer.toUpperCase()}${transcodeContainer}`;
 }
 
-function getAudio(session: SessionItem) {
+function getAudio(session: SessionItem, t: TFunction) {
   const item = session.nowPlayingItem;
   const streamIndex = session.playState?.audioStreamIndex ?? -1;
   const validStreamIndex = streamIndex >= 0 && streamIndex < (item?.mediaStreams?.length ?? 0);
 
-  const transcodeType = session.transcodingInfo && !session.transcodingInfo.isAudioDirect ? "Transcode" : "Direct Play";
+  const transcodeType = session.transcodingInfo && !session.transcodingInfo.isAudioDirect ? t("common.transcode", "Transcode") : t("common.direct_play", "Direct Play");
   const transcodeCodec =
     session.transcodingInfo && !session.transcodingInfo.isAudioDirect && session.transcodingInfo.audioCodec
       ? ` -> ${session.transcodingInfo.audioCodec.toUpperCase()}-${session.transcodingInfo.audioChannels ?? ""}Ch`
@@ -90,16 +91,16 @@ function getVideoResolution(videoHeight: number | null | undefined) {
   return "240p";
 }
 
-function getVideo(session: SessionItem) {
+function getVideo(session: SessionItem, t: TFunction) {
   const videoStream = session.nowPlayingItem?.mediaStreams?.find((stream) => stream.type === "Video");
   if (!videoStream) return "";
 
-  let transcodeType = "Direct Play";
+  let transcodeType = t("common.direct_play", "Direct Play");
   let transcodeVideoCodec = "";
   let transcodeVideoResolution = "";
 
   if (session.transcodingInfo && !session.transcodingInfo.isVideoDirect) {
-    transcodeType = "Transcode";
+    transcodeType = t("common.transcode", "Transcode");
     transcodeVideoResolution = getVideoResolution(session.transcodingInfo.height);
     transcodeVideoCodec = ` -> ${session.transcodingInfo.videoCodec?.toUpperCase()}-${transcodeVideoResolution}`;
   }
@@ -159,9 +160,9 @@ export default function SessionCard({ session }: SessionCardProps) {
 
   // Telemetry strings
   const container = getContainer(session);
-  const video = getVideo(session);
+  const video = getVideo(session, t);
   const videoBitrate = getVideoBitrate(session);
-  const audio = getAudio(session);
+  const audio = getAudio(session, t);
   const audioBitrate = getAudioBitrate(session);
   const ip = session.ipAddress ?? "";
 
@@ -204,8 +205,8 @@ export default function SessionCard({ session }: SessionCardProps) {
           {/* Header Row (Device Name & Icon) */}
           <div className="flex justify-between items-start gap-2 mb-2 w-full">
             <div className="flex flex-col gap-1 w-full min-w-0 mt-1">
-              <LabeledText label={t("session.device", "DEVICE")} value={session.deviceName} />
-              <LabeledText label={t("session.client", "CLIENT")} value={session.client} />
+              <LabeledText label={t("common.device", "Device")} value={session.deviceName} />
+              <LabeledText label={t("common.client", "Client")} value={session.client} />
             </div>
 
             {/* Device Icon Mapper */}
@@ -225,15 +226,15 @@ export default function SessionCard({ session }: SessionCardProps) {
 
           {/* Details Row */}
           <div className="flex flex-col gap-1.5 w-full">
-            <LabeledText label={t("common.container", "CONTAINER")} value={container} />
-            <LabeledText label={t("common.video", "VIDEO")} value={`${video} ${videoBitrate}`} />
-            <LabeledText label={t("common.audio", "AUDIO")} value={`${audio} ${audioBitrate}`} />
-            <LabeledText label={t("session.subtitles", "SUBTITLES")} value={subtitles} />
+            <LabeledText label={t("common.container", "Container")} value={container} />
+            <LabeledText label={t("common.video", "Video")} value={`${video} ${videoBitrate}`} />
+            <LabeledText label={t("common.audio", "Audio")} value={`${audio} ${audioBitrate}`} />
+            <LabeledText label={t("session.subtitles", "Subtitles")} value={subtitles} />
           </div>
 
           {/* Footer Row (IP, ETA, Time) */}
           <div className="flex flex-col gap-1 w-full mt-auto pt-2 border-t border-white/5">
-            <LabeledText label={t("session.ip_address", "IP ADDRESS")} value={ip} />
+            <LabeledText label={t("common.ip_address", "IP Address")} value={ip} />
             <LabeledText label={t("session.eta", "ETA")} value={eta} />
             <div className="text-right w-full mt-1">
               <span className="text-xs font-mono text-gray-400 bg-background/50 px-2 py-1 rounded shadow-inner border border-border">

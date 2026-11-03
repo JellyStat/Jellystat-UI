@@ -25,7 +25,7 @@ export default function LibraryOverview() {
         console.log("Fetched libraries:", res?.data ?? []);
       }
     } catch (err: any) {
-      if (!isCancelledRef.current) setError(err?.message ?? t("error_cards.failed_to_load_desc", "Failed to load data"));
+      if (!isCancelledRef.current) setError(err?.message ?? t("errors.failed_to_load_data", "Failed to load data"));
     } finally {
       if (!isCancelledRef.current) setLoading(false);
     }
@@ -43,7 +43,7 @@ export default function LibraryOverview() {
       {/* Section Header */}
       <div className="flex items-center mb-4">
         <Database size={20} className="text-primary mr-2" />
-        <h2 className="text-xl font-bold text-white tracking-tight">{t("library.overview_title", "Libraries")}</h2>
+        <h2 className="text-xl font-bold text-white tracking-tight">{t("common.libraries", "Libraries")}</h2>
       </div>
 
       {/* Content Area */}
@@ -51,7 +51,7 @@ export default function LibraryOverview() {
         {loading && (
           <div className="w-full h-48 bg-surface/30 border border-border rounded-2xl flex flex-col items-center justify-center animate-pulse motion-reduce:animate-none shadow-inner">
             <Spinner size={24} className="text-primary mb-3" />
-            <span className="text-xs text-gray-500 font-medium">{t("library.scanning", "Scanning libraries...")}</span>
+            <span className="text-xs text-gray-500 font-medium">{t("library.scanning", "Scanning libraries")}</span>
           </div>
         )}
 
@@ -66,7 +66,7 @@ export default function LibraryOverview() {
 
         {!loading && !error && libraries.length === 0 && (
           <div className="w-full h-32 bg-surface/30 border border-border border-dashed rounded-2xl flex flex-col items-center justify-center text-gray-500 shadow-inner">
-            <span className="font-medium text-sm">{t("common.no_libraries_found", "No libraries found")}</span>
+            <span className="font-medium text-sm">{t("empty.no_libraries_found", "No libraries found")}</span>
           </div>
         )}
       </div>

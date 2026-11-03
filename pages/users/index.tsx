@@ -61,7 +61,7 @@ export default function UsersPage() {
         setPageCount(res?.count ?? 0);
       } catch (err: any) {
         if (err?.name === "AbortError") return;
-        setError(err?.message ?? t("settings.error_load_users", "Failed to load users"));
+        setError(err?.message ?? t("errors.failed_to_load_users", "Failed to load users"));
       } finally {
         setLoading(false);
       }
@@ -112,7 +112,7 @@ export default function UsersPage() {
           return u;
         }),
       );
-      toast.error(t("users.tracking_failed", "Failed to update tracking: {{error}}", { error: err?.message ?? String(err) }));
+      toast.error(t("errors.failed_to_update_tracking_error", "Failed to update tracking: {{error}}", { error: err?.message ?? String(err) }));
     }
   };
 
@@ -122,7 +122,7 @@ export default function UsersPage() {
     const item = user.item;
     if (!activity || !activity.dateCreated) return "-";
 
-    const name = activity.name ?? "Unknown";
+    const name = activity.name ?? t("common.unknown", "Unknown");
     const seriesName = activity.seriesName;
     const episodeIndex = `S${item?.parentIndex?.toString().padStart(2, "0") ?? "??"}E${item?.index?.toString().padStart(2, "0") ?? "??"}`;
     const hasEpisodeIndex = item?.parentIndex != null && item?.index != null;
@@ -171,7 +171,7 @@ export default function UsersPage() {
   return (
     <>
       <Head>
-        <title>{t("nav.users", "Users")} | Jellystat</title>
+        <title>{t("common.unit.users", "Users")} | Jellystat</title>
       </Head>
 
       <div className="space-y-6 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12">
@@ -179,7 +179,7 @@ export default function UsersPage() {
         <PageHeader
           iconTone="accent"
           icon={<Users size={28} />}
-          title={t("nav.users", "Users")}
+          title={t("common.unit.users", "Users")}
           description={t("users.tracking_desc", "Manage tracked users and view individual playback statistics.")}
         />
 
@@ -197,7 +197,7 @@ export default function UsersPage() {
           {error && (
             <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in p-6">
               <AlertCircle size={40} className="text-danger mb-3" />
-              <span className="text-lg font-bold text-danger mb-1">{t("common.failed_to_load", "Failed to load")}</span>
+              <span className="text-lg font-bold text-danger mb-1">{t("errors.failed_to_load", "Failed to load")}</span>
               <span className="text-sm text-gray-400 text-center max-w-md">{error}</span>
             </div>
           )}
@@ -214,7 +214,7 @@ export default function UsersPage() {
             {!loading && userData.length === 0 ? (
               <div className="p-12 text-center text-gray-500">
                 <Users size={40} className="mx-auto mb-3 opacity-20" />
-                <span className="font-medium">{t("users.no_users", "No Users found")}</span>
+                <span className="font-medium">{t("empty.no_users_found", "No users found")}</span>
               </div>
             ) : (
               userData.map((user) => (
@@ -261,7 +261,7 @@ export default function UsersPage() {
                     currentSort={sortStatus}
                     onSort={handleSort}
                   />
-                  <th className="p-3 cursor-default">{t("users.last_watched", "Last Watched")}</th>
+                  <th className="p-3 cursor-default">{t("common.last_watched", "Last Watched")}</th>
                   <th className="p-3 cursor-default">{t("common.client", "Client")}</th>
                   <SortableHeader
                     label={t("common.unit.plays", "Plays")}
@@ -313,7 +313,7 @@ export default function UsersPage() {
                   <tr>
                     <td colSpan={8} className="p-16 text-center text-gray-500">
                       <Users size={48} className="mx-auto mb-4 opacity-20" />
-                      <span className="font-medium text-lg">{t("users.no_users", "No Users found")}</span>
+                      <span className="font-medium text-lg">{t("empty.no_users_found", "No users found")}</span>
                     </td>
                   </tr>
                 ) : (

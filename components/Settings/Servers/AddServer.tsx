@@ -43,10 +43,10 @@ export default function AddServerModal({ onClose, onCreated }: Props) {
 
     const nextFieldErrors: typeof fieldErrors = {};
     if (!Url.trim()) {
-      nextFieldErrors.Url = t("common.error_url_required", "URL is required");
+      nextFieldErrors.Url = t("errors.url_is_required", "URL is required");
     }
     if (!ApiKey.trim()) {
-      nextFieldErrors.ApiKey = t("common.error_api_key_required", "API Key is required");
+      nextFieldErrors.ApiKey = t("errors.api_key_is_required", "API key is required");
     }
 
     if (Object.keys(nextFieldErrors).length > 0) {
@@ -65,7 +65,7 @@ export default function AddServerModal({ onClose, onCreated }: Props) {
       onCreated?.();
       onClose();
     } catch (err: any) {
-      const message = err?.message ?? t("settings.error_create_server", "Failed to create server");
+      const message = err?.message ?? t("errors.failed_to_create_server", "Failed to create server");
       setError(message);
       toast.error(message);
     } finally {
@@ -77,7 +77,7 @@ export default function AddServerModal({ onClose, onCreated }: Props) {
     <ModalPanel>
       <ModalHeader
         icon={<ServerCog size={22} />}
-        title={t("settings.add_server", "Add Server")}
+        title={t("common.add_server", "Add Server")}
         description={t("settings.add_server_desc", "Add a new Jellyfin or Emby server to monitor.")}
       />
 
@@ -89,7 +89,7 @@ export default function AddServerModal({ onClose, onCreated }: Props) {
             value={Url}
             onChange={(e) => setUrl(e.target.value)}
             disabled={loading}
-            placeholder={t("settings.placeholder_url", "Enter the server URL")}
+            placeholder={t("settings.placeholder_url", "Enter the URL")}
             leftIcon={<LinkIcon size={18} />}
             error={!!fieldErrors.Url}
           />
@@ -102,7 +102,7 @@ export default function AddServerModal({ onClose, onCreated }: Props) {
             value={externalUrl}
             onChange={(e) => setExternalUrl(e.target.value)}
             disabled={loading}
-            placeholder={t("settings.placeholder_url", "Enter the server URL")}
+            placeholder={t("settings.placeholder_url", "Enter the URL")}
             leftIcon={<Globe size={18} />}
           />
         </Field>
@@ -114,7 +114,7 @@ export default function AddServerModal({ onClose, onCreated }: Props) {
             value={ApiKey}
             onChange={(e) => setApiKey(e.target.value)}
             disabled={loading}
-            placeholder={t("settings.placeholder_api_key", "Enter your API key")}
+            placeholder={t("common.placeholder_api_key", "Enter server API key")}
             leftIcon={<Lock size={18} />}
             error={!!fieldErrors.ApiKey}
             rightSlot={
@@ -148,7 +148,7 @@ export default function AddServerModal({ onClose, onCreated }: Props) {
             {t("common.cancel", "Cancel")}
           </Button>
           <Button type="submit" loading={loading} disabled={!Url.trim() || !ApiKey.trim()}>
-            {loading ? t("settings.adding_server", "Adding Server") : t("settings.add_server", "Add Server")}
+            {loading ? t("settings.adding_server", "Adding Server") : t("common.add_server", "Add Server")}
           </Button>
         </ModalFooter>
       </form>

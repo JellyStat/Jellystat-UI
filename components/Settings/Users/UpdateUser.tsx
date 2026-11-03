@@ -81,16 +81,16 @@ export default function UpdateUserModal({ userId, onClose, onCreated }: Props) {
     const nextFieldErrors: typeof fieldErrors = {};
     if (passwordEntered) {
       if (!password.trim()) {
-        nextFieldErrors.password = t("common.error_password_required", "Password is required");
+        nextFieldErrors.password = t("errors.password_is_required", "Password is required");
       }
 
       if (!confirmPassword.trim()) {
-        nextFieldErrors.confirmPassword = t("common.error_confirm_password_required", "Confirm Password is required");
+        nextFieldErrors.confirmPassword = t("errors.confirm_password_is_required", "Confirm password is required");
       }
 
       if (password !== confirmPassword) {
-        nextFieldErrors.confirmPassword = t("common.error_password_mismatch", "Passwords do not match");
-        nextFieldErrors.password = t("common.error_password_mismatch", "Passwords do not match");
+        nextFieldErrors.confirmPassword = t("errors.passwords_do_not_match", "Passwords do not match");
+        nextFieldErrors.password = t("errors.passwords_do_not_match", "Passwords do not match");
       }
     }
 
@@ -111,7 +111,7 @@ export default function UpdateUserModal({ userId, onClose, onCreated }: Props) {
       onCreated?.();
       onClose();
     } catch (err: any) {
-      const message = err?.message ?? t("settings.error_update_user", "Failed to update user");
+      const message = err?.message ?? t("errors.failed_to_update_user", "Failed to update user");
       setError(message);
       toast.error(message);
     } finally {
@@ -165,7 +165,7 @@ export default function UpdateUserModal({ userId, onClose, onCreated }: Props) {
                 return server ? `${server.type ? `${server.type} - ` : ""}${server.name}` : value;
               }}
               placeholder={t("settings.no_default_server", "No default server")}
-              emptyDataMessage={t("settings.no_servers", "No servers connected")}
+              emptyDataMessage={t("empty.no_servers_connected", "No servers connected")}
               leftIcon={ServerIcon}
               disabled={loading || servers.length === 0}
               widthPx={0}
@@ -211,7 +211,7 @@ export default function UpdateUserModal({ userId, onClose, onCreated }: Props) {
               {t("common.cancel", "Cancel")}
             </Button>
             <Button type="submit" loading={loading} disabled={!passwordEntered && !serverChanged}>
-              {loading ? t("settings.updating_user", "Updating") : t("settings.update_user", "Update")}
+              {loading ? t("settings.updating_user", "Updating") : t("common.update", "Update")}
             </Button>
           </ModalFooter>
         </form>

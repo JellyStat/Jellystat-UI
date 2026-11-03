@@ -147,11 +147,11 @@ export default function SideNav() {
   const navItems = [
     { name: t("nav.overview", "Overview"), path: "/", icon: Activity, isAdmin: false },
     { name: t("nav.live_sessions", "Live Sessions"), path: "/sessions", icon: PlaySquare, isAdmin: false },
-    { name: t("nav.libraries", "Libraries"), path: "/libraries", icon: Film, isAdmin: false },
+    { name: t("common.libraries", "Libraries"), path: "/libraries", icon: Film, isAdmin: false },
     { name: t("nav.activity", "Activity"), path: "/activity", icon: History, isAdmin: false },
     { name: t("nav.statistics", "Statistics"), path: "/statistics", icon: BarChart3, isAdmin: false },
     { name: t("nav.reports", "Reports"), path: "/reports", icon: FileBarChart, isAdmin: false },
-    { name: t("nav.users", "Users"), path: "/users", icon: Users, isAdmin: true },
+    { name: t("common.unit.users", "Users"), path: "/users", icon: Users, isAdmin: true },
     { name: t("nav.settings", "Settings"), path: "/settings", icon: Settings, isAdmin: false },
   ];
 
@@ -285,7 +285,7 @@ export default function SideNav() {
               value={selectedServer}
               onChange={handleServerChange}
               labelFn={(val) =>
-                serverOptions.find((opt) => opt.value === val)?.label ?? t("common.select_server", "Select a server...")
+                serverOptions.find((opt) => opt.value === val)?.label ?? t("common.select_server", "Select a server")
               }
             />
           )}

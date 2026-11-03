@@ -47,7 +47,7 @@ function App({ Component, pageProps }: AppProps) {
         client.System.getSystemInfo(),
         new Promise<never>((_, reject) =>
           setTimeout(
-            () => reject(new Error(t("app.timeout", "No response from {{url}} after 20 seconds.", { url: apiUrl }))),
+            () => reject(new Error(t("errors.no_response_from_url_after_20_seconds", "No response from {{url}} after 20 seconds.", { url: apiUrl }))),
             STARTUP_TIMEOUT_MS,
           ),
         ),
@@ -82,7 +82,7 @@ function App({ Component, pageProps }: AppProps) {
       if (isRetry) setRetrying(false);
       else setLoading(false);
     } catch (err: any) {
-      let msg = err?.message ?? String(err ?? "Unknown error");
+      let msg = err?.message ?? String(err ?? t("errors.unknown_error", "Unknown error"));
       setError(msg);
       if (isRetry) setRetrying(false);
       else setLoading(false);
@@ -135,7 +135,7 @@ function App({ Component, pageProps }: AppProps) {
             {showLoading && (
               <div className="h-full w-full flex flex-col items-center justify-center animate-in fade-in duration-500">
                 <Spinner size={48} className="text-primary mb-4" />
-                <p className="text-gray-400 font-medium tracking-wide">{t("app.connecting", "Connecting to Jellystat...")}</p>
+                <p className="text-gray-400 font-medium tracking-wide">{t("app.connecting", "Connecting to Jellystat")}</p>
                 {slow && (
                   <p className="mt-2 text-sm text-gray-500 text-center px-4" role="status">
                     {t("app.connecting_slow", "Still waiting for {{url}}. Check that the Jellystat API is running.", {
@@ -157,11 +157,11 @@ function App({ Component, pageProps }: AppProps) {
                       <AlertTriangle size={32} />
                     </div>
                     <h2 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">
-                      {t("app.connection_failed", "Connection Failed")}
+                      {t("errors.connection_failed", "Connection Failed")}
                     </h2>
                     <p className="text-gray-400 text-sm mb-8">
                       {t(
-                        "app.connection_failed_desc",
+                        "errors.the_application_was_unable_to_start_due",
                         "The application was unable to start due to an error contacting the API. Please ensure your backend is running.",
                       )}
                     </p>
@@ -176,7 +176,7 @@ function App({ Component, pageProps }: AppProps) {
                       className="bg-danger-solid hover:bg-danger-solid-hover text-white font-bold py-3 px-8 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center mx-auto shadow-lg shadow-danger/20 cursor-pointer active:scale-95"
                     >
                       {retrying ? <Spinner size={18} className="mr-2" /> : null}
-                      {retrying ? t("app.retrying", "Retrying...") : t("common.retry_connection", "Retry Connection")}
+                      {retrying ? t("app.retrying", "Retrying") : t("common.retry_connection", "Retry Connection")}
                     </button>
                   </div>
                 </div>

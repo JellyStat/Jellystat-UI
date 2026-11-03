@@ -54,7 +54,7 @@ export default function CombineEditor({
           </p>
           <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-end">
             <Field label={dt("reports.designer.left", "Left")}>
-              <Select value={left} placeholder={dt("reports.designer.choose", "Choose...")} options={sourceOptions} onChange={(v) => set({ sources: [v, right], on: [] })} />
+              <Select value={left} placeholder={dt("common.choose", "Choose")} options={sourceOptions} onChange={(v) => set({ sources: [v, right], on: [] })} />
             </Field>
             <Field label={dt("reports.designer.join", "Join")}>
               <Select
@@ -68,7 +68,7 @@ export default function CombineEditor({
               />
             </Field>
             <Field label={dt("reports.designer.right", "Right")}>
-              <Select value={right} placeholder={dt("reports.designer.choose", "Choose...")} options={sourceOptions} onChange={(v) => set({ sources: [left, v], on: [] })} />
+              <Select value={right} placeholder={dt("common.choose", "Choose")} options={sourceOptions} onChange={(v) => set({ sources: [left, v], on: [] })} />
             </Field>
           </div>
           <Field label={dt("reports.designer.match_on", "Match on")}>

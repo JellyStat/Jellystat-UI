@@ -96,7 +96,7 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
       onSaved();
       onClose();
     } catch (err: any) {
-      toast.error(err?.message ?? t("settings.error_save_webhook", "Failed to save the webhook"));
+      toast.error(err?.message ?? t("errors.failed_to_save_the_webhook", "Failed to save the webhook"));
     } finally {
       setSaving(false);
     }
@@ -112,10 +112,10 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
 
       <div className="space-y-5">
         <div className="grid sm:grid-cols-2 gap-4">
-          <Field label={t("settings.webhook_name", "Name")} required htmlFor="webhook-name">
+          <Field label={t("common.name", "Name")} required htmlFor="webhook-name">
             <Input id="webhook-name" value={draft.name} onChange={(e) => set({ name: e.target.value })} />
           </Field>
-          <Field label={t("settings.webhook_type", "Type")}>
+          <Field label={t("common.type", "Type")}>
             <Select<EventWebhookType>
               data={[{ value: "discord" }, { value: "generic" }]}
               value={draft.type}
@@ -127,7 +127,7 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
           </Field>
         </div>
 
-        <Field label={t("settings.webhook_url", "URL")} required htmlFor="webhook-url">
+        <Field label={t("common.url", "URL")} required htmlFor="webhook-url">
           <Input
             id="webhook-url"
             value={draft.url}
@@ -152,7 +152,7 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
         </Field>
 
         <div className="grid sm:grid-cols-2 gap-4">
-          <Field label={t("settings.webhook_server", "Server")}>
+          <Field label={t("common.server", "Server")}>
             <Select<string>
               data={[{ value: ALL_SERVERS }, ...servers.map((s) => ({ value: s.id }))]}
               value={draft.serverId ?? ALL_SERVERS}
@@ -166,8 +166,8 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
             <Field
               label={
                 draft.hasSecret
-                  ? t("settings.webhook_secret_saved", "Signing secret (saved; type to replace, clear and save to remove)")
-                  : t("settings.webhook_secret", "Signing secret (optional)")
+                  ? t("common.signing_secret_saved", "Signing secret (saved; type to replace, clear the box and save to remove)")
+                  : t("common.signing_secret", "Signing secret (optional)")
               }
               htmlFor="webhook-secret"
             >
@@ -251,7 +251,7 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
           </div>
         )}
 
-        <Switch label={t("settings.webhook_enabled", "Enabled")} checked={draft.enabled} onChange={(v) => set({ enabled: v })} />
+        <Switch label={t("common.enabled", "Enabled")} checked={draft.enabled} onChange={(v) => set({ enabled: v })} />
       </div>
 
       <ModalFooter className="pt-6">

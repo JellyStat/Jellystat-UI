@@ -72,8 +72,8 @@ export default function RecentlyAdded({ gridify, grouped = true }: Props) {
         {!loading && !error && items.length === 0 && (
           <div className="w-full">
             <NoData
-              title={t("common.no_items_title", "No Items Found")}
-              message={t("common.no_items_message", "No items in your library")}
+              title={t("empty.no_items_found", "No Items Found")}
+              message={t("empty.no_items_in_your_library", "No items in your library")}
               Icon={Sparkles}
             />
           </div>

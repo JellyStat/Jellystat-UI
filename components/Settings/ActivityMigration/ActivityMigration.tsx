@@ -246,7 +246,7 @@ export default function ActivityMigrationPage() {
       const failures = new Map(
         results
           .filter((r) => !r.success)
-          .map((r) => [r.id, r.errorMessage || t("settings.migration_unknown_error", "Unknown error")]),
+          .map((r) => [r.id, r.errorMessage || t("errors.unknown_error", "Unknown error")]),
       );
       const linked = applicable.length - failures.size;
 
@@ -260,7 +260,7 @@ export default function ActivityMigrationPage() {
       });
 
       if (failures.size === 0) {
-        toast.success(t("settings.migration_applied", "Linked {{count}} items", { count: linked }));
+        toast.success(t("settings.migration_applied", "Linked {{count}} items", { defaultValue_one: "Linked {{count}} item", count: linked }));
       } else {
         toast.warning(
           t("settings.migration_applied_partial", "Linked {{linked}} of {{total}}. {{failed}} failed.", {
@@ -275,7 +275,7 @@ export default function ActivityMigrationPage() {
     } catch (err: any) {
       console.error(err);
       toast.error(
-        t("settings.migration_apply_failed", "Failed to apply migrations: {{error}}", { error: err?.message ?? String(err) }),
+        t("errors.failed_to_apply_migrations_error", "Failed to apply migrations: {{error}}", { error: err?.message ?? String(err) }),
       );
     } finally {
       setMigrationLoading(false);
@@ -288,7 +288,7 @@ export default function ActivityMigrationPage() {
     const activityIds = selectedList.map((a) => a.id!).filter(Boolean);
     try {
       await client.History.activity.delete(selectedList[0]?.serverId, activityIds);
-      toast.success(t("settings.migration_deleted", "Deleted {{count}} activity records", { count: activityIds.length }));
+      toast.success(t("common.activity_deleted", "Deleted {{count}} activity records", { defaultValue_one: "Deleted {{count}} activity record", count: activityIds.length }));
       setMigrations((prev) => {
         const next = { ...prev };
         activityIds.forEach((id) => delete next[id]);
@@ -300,7 +300,7 @@ export default function ActivityMigrationPage() {
     } catch (err: any) {
       console.error(err);
       toast.error(
-        t("settings.migration_delete_failed", "Failed to delete activity: {{error}}", { error: err?.message ?? String(err) }),
+        t("errors.failed_to_delete_activity_error", "Failed to delete activity: {{error}}", { error: err?.message ?? String(err) }),
       );
     } finally {
       setDeleteLoading(false);
@@ -483,9 +483,9 @@ export default function ActivityMigrationPage() {
         <div className="min-w-0">
           <div className="text-sm font-bold text-white truncate">{group.seriesName}</div>
           <div className="text-xs font-medium text-gray-500">
-            {t("settings.migration_unlinked_count", "{{count}} unlinked", { count: group.children.length })}
+            {t("settings.migration_unlinked_count", "{{n}} unlinked", { n: group.children.length })}
             {candidates > 1 &&
-              ` · ${t("settings.migration_series_candidates", "{{count}} series match this name", { count: candidates })}`}
+              ` · ${t("settings.migration_series_candidates", "{{count}} series match this name", { defaultValue_one: "{{count}} series matches this name", count: candidates })}`}
           </div>
         </div>
       </div>
@@ -599,10 +599,10 @@ export default function ActivityMigrationPage() {
       Icon={ArrowLeftRight}
       title={
         hasFilters
-          ? t("settings.migration_no_results", "Nothing matches these filters")
-          : t("settings.migration_empty_title", "No unlinked activity found")
+          ? t("empty.nothing_matches_these_filters", "Nothing matches these filters")
+          : t("empty.no_unlinked_activity_found", "No unlinked activity found")
       }
-      message={!hasFilters ? t("settings.migration_empty_desc", "All your watch history is successfully mapped.") : undefined}
+      message={!hasFilters ? t("empty.all_your_watch_history_is_successfully", "All your watch history is successfully mapped.") : undefined}
     />
   );
 
@@ -610,7 +610,7 @@ export default function ActivityMigrationPage() {
     <Page className="pt-4 sm:px-6 sm:pt-6">
       <PageHeader
         icon={<ArrowLeftRight size={28} />}
-        title={t("settings.migration_title", "Activity Migration")}
+        title={t("common.activity_migration", "Activity Migration")}
         description={t("settings.migration_subtitle", "Map unlinked playback activity to valid library items.")}
         actions={
           <div className="flex items-center gap-3 w-full md:w-auto">
@@ -621,11 +621,11 @@ export default function ActivityMigrationPage() {
                 {t("common.delete", "Delete")} {selectedList.length > 0 && `(${selectedList.length})`}
               </>
             }
-            dialogTitle={t("settings.migration_confirm_delete_title", "Delete selected activity?")}
+            dialogTitle={t("common.activity_delete_title", "Delete selected activity?")}
             description={t(
               "settings.migration_confirm_delete_desc",
               "This permanently deletes {{count}} unlinked activity records. They can't be migrated afterwards.",
-              { count: selectedList.length },
+              { defaultValue_one: "This permanently deletes {{count}} unlinked activity record. It can't be migrated afterwards.", count: selectedList.length },
             )}
             confirmText={t("common.delete", "Delete")}
             cancelText={t("common.cancel", "Cancel")}
@@ -643,7 +643,7 @@ export default function ActivityMigrationPage() {
           >
             {!migrationLoading && <Save size={16} />}
             {applicable.length > 0
-              ? t("settings.migration_apply_count", "Apply {{count}} Migrations", { count: applicable.length })
+              ? t("settings.migration_apply_count", "Apply {{count}} Migrations", { defaultValue_one: "Apply {{count}} Migration", count: applicable.length })
               : t("settings.migration_apply", "Apply Migrations")}
           </Button>
           </div>
@@ -665,7 +665,7 @@ export default function ActivityMigrationPage() {
         {loading && activityData.length === 0 && (
           <div className="absolute inset-0 z-20 bg-surface/50 backdrop-blur-sm flex flex-col items-center justify-center gap-3 animate-in fade-in">
             <Spinner size={40} tone="primary" />
-            <span className="text-sm font-bold text-gray-300">{t("settings.migration_scanning", "Scanning activity...")}</span>
+            <span className="text-sm font-bold text-gray-300">{t("settings.migration_scanning", "Scanning activity")}</span>
           </div>
         )}
         {/* Later loads keep the current rows visible. */}
@@ -679,7 +679,7 @@ export default function ActivityMigrationPage() {
         {error && (
           <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center gap-1 animate-in fade-in p-6">
             <AlertCircle size={40} className="text-danger mb-2" />
-            <span className="text-lg font-bold text-danger">{t("common.failed_to_load", "Failed to load data")}</span>
+            <span className="text-lg font-bold text-danger">{t("errors.failed_to_load", "Failed to load")}</span>
             <span className="text-sm text-gray-400 text-center max-w-md">{error}</span>
           </div>
         )}
@@ -694,7 +694,7 @@ export default function ActivityMigrationPage() {
                 checked={pageAllSelected}
                 onChange={() => toggle(activityData, !pageAllSelected)}
               />
-              {t("settings.migration_select_page", "Select all on this page")}
+              {t("common.select_page", "Select all on this page")}
             </label>
           )}
           {!loading && groups.length === 0 ? (
@@ -725,13 +725,13 @@ export default function ActivityMigrationPage() {
                     className={checkboxClass}
                     checked={pageAllSelected}
                     onChange={() => toggle(activityData, !pageAllSelected)}
-                    aria-label={t("settings.migration_select_page", "Select all on this page")}
+                    aria-label={t("common.select_page", "Select all on this page")}
                   />
                 </th>
                 <th className="px-4 py-3">{t("settings.migration_col_unlinked", "Unlinked Activity")}</th>
                 <th aria-hidden="true"></th>
                 <th className="px-4 py-3">{t("settings.migration_col_linked", "Linked Item")}</th>
-                <th className="px-4 py-3">{t("settings.migration_col_status", "Status")}</th>
+                <th className="px-4 py-3">{t("common.status", "Status")}</th>
                 <th className="px-4 py-3">
                   <span className="sr-only">{t("common.actions", "Actions")}</span>
                 </th>

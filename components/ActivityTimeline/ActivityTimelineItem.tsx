@@ -88,7 +88,7 @@ export default function ActivityTimelineItem({ entry, side }: Props) {
           </h3>
           {seasons && <p className="text-sm text-gray-300">{seasons}</p>}
           {entry.isSeries && entry.episodeCount > 0 && (
-            <p className="text-xs text-gray-400">{t("timeline.episodes", "{{episodeCount}} Episodes", { episodeCount: entry.episodeCount })}</p>
+            <p className="text-xs text-gray-400">{t("common.episode_count", "{{episodeCount}} Episodes", { episodeCount: entry.episodeCount })}</p>
           )}
           <p className="flex items-center gap-1.5 text-xs text-gray-500 uppercase tracking-wider">
             <Clock size={12} />

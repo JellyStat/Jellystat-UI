@@ -53,7 +53,7 @@ export default function ReportDesignerPage() {
           definition: r.definition,
         }),
       )
-      .catch((err) => setError(err?.message ?? "Failed to load the report"));
+      .catch((err) => setError(err?.message ?? t("errors.failed_to_load_the_report", "Failed to load the report")));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady, router.query.id, router.query.template]);
 
@@ -84,7 +84,7 @@ export default function ReportDesignerPage() {
         />
         <div className="mt-4 flex justify-center">
           <Link href="/reports" className={buttonClass({ variant: "outline" })}>
-            {t("reports.back_to_reports", "Back to reports")}
+            {t("common.back_to_reports", "Back to reports")}
           </Link>
         </div>
       </div>

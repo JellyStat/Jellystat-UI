@@ -4,29 +4,30 @@ import type { ReportFieldInfo, ReportFilterNode, ReportParameter } from "@/lib/m
 import { inputClass, NumberInput, Select, TextInput } from "./controls";
 import { dt } from "./i18n";
 
+// Getters so the labels follow the current language.
 export const OPERATOR_LABELS: Record<string, string> = {
-  eq: "equals",
-  neq: "does not equal",
-  gt: "greater than",
-  gte: "greater than or equal to",
-  lt: "less than",
-  lte: "less than or equal to",
-  contains: "contains",
-  notContains: "not contains",
-  startsWith: "starts with",
-  endsWith: "ends with",
-  isNull: "is empty",
-  isNotNull: "is not empty",
-  in: "in",
-  notIn: "not in",
-  between: "between",
-  lastNDays: "in the last N days",
-  lastNHours: "in the last N hours",
-  notLastNDays: "not in the last N days",
-  notLastNHours: "not in the last N hours",
-  today: "is today",
-  thisMonth: "is this month",
-  thisYear: "is this year",
+  get eq() { return dt("reports.designer.equals", "equals"); },
+  get neq() { return dt("reports.designer.does_not_equal", "does not equal"); },
+  get gt() { return dt("reports.designer.greater_than", "greater than"); },
+  get gte() { return dt("reports.designer.greater_than_or_equal_to", "greater than or equal to"); },
+  get lt() { return dt("reports.designer.less_than", "less than"); },
+  get lte() { return dt("reports.designer.less_than_or_equal_to", "less than or equal to"); },
+  get contains() { return dt("reports.designer.contains", "contains"); },
+  get notContains() { return dt("reports.designer.does_not_contain", "does not contain"); },
+  get startsWith() { return dt("reports.designer.starts_with", "starts with"); },
+  get endsWith() { return dt("reports.designer.ends_with", "ends with"); },
+  get isNull() { return dt("reports.designer.is_empty", "is empty"); },
+  get isNotNull() { return dt("reports.designer.is_not_empty", "is not empty"); },
+  get in() { return dt("reports.designer.in", "in"); },
+  get notIn() { return dt("reports.designer.not_in", "not in"); },
+  get between() { return dt("reports.designer.between", "between"); },
+  get lastNDays() { return dt("reports.designer.in_the_last_n_days", "in the last N days"); },
+  get lastNHours() { return dt("reports.designer.in_the_last_n_hours", "in the last N hours"); },
+  get notLastNDays() { return dt("reports.designer.not_in_the_last_n_days", "not in the last N days"); },
+  get notLastNHours() { return dt("reports.designer.not_in_the_last_n_hours", "not in the last N hours"); },
+  get today() { return dt("reports.designer.is_today", "is today"); },
+  get thisMonth() { return dt("reports.designer.is_this_month", "is this month"); },
+  get thisYear() { return dt("reports.designer.is_this_year", "is this year"); },
 };
 
 const NO_VALUE = new Set(["isNull", "isNotNull", "today", "thisMonth", "thisYear"]);
@@ -106,10 +107,10 @@ function ValueInput({
       return (
         <Select
           value={value === true ? "true" : value === false ? "false" : ""}
-          placeholder={dt("reports.designer.choose", "Choose...")}
+          placeholder={dt("common.choose", "Choose")}
           options={[
-            { value: "true", label: dt("reports.designer.yes", "Yes") },
-            { value: "false", label: dt("reports.designer.no", "No") },
+            { value: "true", label: dt("common.yes", "Yes") },
+            { value: "false", label: dt("common.no", "No") },
           ]}
           onChange={(v) => onChange(v === "true")}
         />
@@ -118,7 +119,7 @@ function ValueInput({
       return (
         <Select
           value={String(value ?? "")}
-          placeholder={dt("reports.designer.choose", "Choose...")}
+          placeholder={dt("common.choose", "Choose")}
           options={(field.options ?? []).map((o) => ({ value: o, label: o }))}
           onChange={onChange}
         />
@@ -185,7 +186,7 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
             checked={!!node.not}
             onChange={(ev) => onChange({ ...node, not: ev.target.checked })}
           />
-          NOT
+          {dt("reports.designer.not", "NOT")}
         </label>
         <div className="flex-1" />
         <button
@@ -263,7 +264,7 @@ export default function FilterBuilder({ node, fields, parameters, onChange, onRe
                       onKeyDown={(ev) => ev.stopPropagation()}
                       onChange={(ev) => setRule(i, { ...rule, parameter: ev.target.value || null })}
                     >
-                      <option value="">{dt("reports.designer.value", "Value")}</option>
+                      <option value="">{dt("common.value", "Value")}</option>
                       {parameters.map((p) => (
                         <option key={p.name} value={p.name}>
                           @{p.name}

@@ -2,18 +2,19 @@
 // server, so the viewer and server exports colour the same rows. Change both together.
 import type { ReportCondition } from "@/lib/models/reports";
 import { toNumber } from "./format";
+import { dt } from "./i18n";
 
 export const CONDITION_OPERATORS = [
-  { value: "eq", label: "equals" },
-  { value: "neq", label: "does not equal" },
-  { value: "gt", label: "greater than" },
-  { value: "gte", label: "at least" },
-  { value: "lt", label: "less than" },
-  { value: "lte", label: "at most" },
-  { value: "contains", label: "contains" },
-  { value: "notContains", label: "does not contain" },
-  { value: "isNull", label: "is empty" },
-  { value: "isNotNull", label: "is not empty" },
+  { value: "eq", get label() { return dt("reports.designer.equals", "equals"); } },
+  { value: "neq", get label() { return dt("reports.designer.does_not_equal", "does not equal"); } },
+  { value: "gt", get label() { return dt("reports.designer.greater_than", "greater than"); } },
+  { value: "gte", get label() { return dt("reports.designer.at_least", "at least"); } },
+  { value: "lt", get label() { return dt("reports.designer.less_than", "less than"); } },
+  { value: "lte", get label() { return dt("reports.designer.at_most", "at most"); } },
+  { value: "contains", get label() { return dt("reports.designer.contains", "contains"); } },
+  { value: "notContains", get label() { return dt("reports.designer.does_not_contain", "does not contain"); } },
+  { value: "isNull", get label() { return dt("reports.designer.is_empty", "is empty"); } },
+  { value: "isNotNull", get label() { return dt("reports.designer.is_not_empty", "is not empty"); } },
 ];
 
 export interface ConditionStyle {

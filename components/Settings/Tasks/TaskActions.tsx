@@ -75,7 +75,7 @@ export default function TaskActionsPage() {
         if (isMounted) setTasks((prevTasks) => [...prevTasks, ...(globalTasks || [])]);
       } catch (error) {
         console.error("Failed to fetch task settings:", error);
-        toast.error(t("tasks.load_error", "Failed to load tasks"));
+        toast.error(t("errors.failed_to_load_tasks", "Failed to load tasks"));
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -93,7 +93,7 @@ export default function TaskActionsPage() {
     try {
       const success = await client.Tasks.updateTask(updatedTask);
       if (!success) {
-        toast.error(t("tasks.update_failed", 'Failed to update task "{{taskName}}"', { taskName: updatedTask.task }));
+        toast.error(t("errors.failed_to_update_task_taskname", 'Failed to update task {{taskName}}', { taskName: updatedTask.task }));
         return false;
       }
       setTasks((prevTasks) => prevTasks.map((t) => (t.task === updatedTask.task ? updatedTask : t)));
@@ -102,7 +102,7 @@ export default function TaskActionsPage() {
     } catch (error: any) {
       console.error("Failed to update task:", error);
       toast.error(
-        `${t("tasks.update_failed", 'Failed to update task "{{taskName}}"', { taskName: updatedTask.task })}: ${error?.message ?? String(error)}`,
+        `${t("errors.failed_to_update_task_taskname", 'Failed to update task {{taskName}}', { taskName: updatedTask.task })}: ${error?.message ?? String(error)}`,
       );
       return false;
     } finally {
@@ -112,13 +112,8 @@ export default function TaskActionsPage() {
 
   function toggleTaskEnabled(task: TaskSettings) {
     const updatedTask = { ...task, enabled: !task.enabled };
-    return saveTask(
-      updatedTask,
-      t("tasks.task_toggled", 'Task "{{taskName}}" {{action}}', {
-        taskName: updatedTask.task,
-        action: updatedTask.enabled ? t("tasks.enabled", "enabled") : t("tasks.disabled", "disabled"),
-      }),
-    );
+    const action = updatedTask.enabled ? t("tasks.enabled", "enabled") : t("tasks.disabled", "disabled");
+    return saveTask(updatedTask, t("tasks.task_toggled", 'Task {{taskName}} {{action}}', { taskName: updatedTask.task, action }));
   }
 
   function changeTaskInterval(task: TaskSettings, intervalMinutes: number) {
@@ -158,7 +153,7 @@ export default function TaskActionsPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                {t("tasks.background_tasks_title", "Background Tasks")}
+                {t("common.background_tasks", "Background Tasks")}
               </h1>
             </div>
             <p className="text-sm text-gray-400 mt-1 font-medium">
@@ -177,9 +172,9 @@ export default function TaskActionsPage() {
                 <th className="hidden sm:table-cell p-3 w-12"></th>
                 <th className="p-3 sm:p-4 w-1/5">{t("tasks.col_task", "Task")}</th>
                 <th className="p-3 sm:p-4 w-1/5">{t("tasks.col_interval", "Interval")}</th>
-                <th className="p-3 sm:p-4 w-1/5">{t("tasks.col_enabled", "Enabled")}</th>
-                <th className="hidden sm:table-cell p-4 w-1/5">{t("tasks.col_status", "Status")}</th>
-                <th className="p-3 sm:p-4 pr-4 sm:pr-6 text-right w-1/6">{t("tasks.col_actions", "Actions")}</th>
+                <th className="p-3 sm:p-4 w-1/5">{t("common.enabled", "Enabled")}</th>
+                <th className="hidden sm:table-cell p-4 w-1/5">{t("common.status", "Status")}</th>
+                <th className="p-3 sm:p-4 pr-4 sm:pr-6 text-right w-1/6">{t("common.actions", "Actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -187,13 +182,13 @@ export default function TaskActionsPage() {
                 <tr>
                   <td colSpan={5} className="p-8 text-center">
                     <Spinner size={24} className="text-primary mx-auto mb-2" />
-                    <span className="text-gray-500 text-sm font-medium">{t("common.loading", "Loading tasks...")}</span>
+                    <span className="text-gray-500 text-sm font-medium">{t("common.loading", "Loading")}</span>
                   </td>
                 </tr>
               ) : tasks.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="p-8 text-center text-gray-500 text-sm font-medium">
-                    {t("tasks.no_configurable_tasks", "No configurable tasks found.")}
+                    {t("empty.no_configurable_tasks_found", "No configurable tasks found.")}
                   </td>
                 </tr>
               ) : (
@@ -202,12 +197,13 @@ export default function TaskActionsPage() {
                   const isQueued = taskStatus.enqueuedTasks.some((t) => t.task === taskSetting.task);
 
                   const interval = taskSetting.intervalMinutes || 0;
+                  const toggleAction = taskSetting.enabled ? t("common.disable", "Disable") : t("common.enable", "Enable");
                   const isSaving = savingTask === taskSetting.task;
 
                   const isManualOnly = taskSetting.task === Tasks.PlaybackReportingPluginSync;
 
                   const executeTask = async () => {
-                    toast.loading(t("tasks.starting_task", "Starting {{taskName}}...", { taskName: taskSetting.task }), {
+                    toast.loading(t("tasks.starting_task", "Starting {{taskName}}", { taskName: taskSetting.task }), {
                       id: taskSetting.task,
                     });
                     try {
@@ -218,12 +214,12 @@ export default function TaskActionsPage() {
                           { id: taskSetting.task },
                         );
                       } else {
-                        toast.error(t("tasks.start_failed", "Failed to start {{taskName}}", { taskName: taskSetting.task }), {
+                        toast.error(t("errors.failed_to_start_taskname", "Failed to start {{taskName}}", { taskName: taskSetting.task }), {
                           id: taskSetting.task,
                         });
                       }
                     } catch (error) {
-                      toast.error(t("tasks.start_failed", "Failed to start {{taskName}}", { taskName: taskSetting.task }), {
+                      toast.error(t("errors.failed_to_start_taskname", "Failed to start {{taskName}}", { taskName: taskSetting.task }), {
                         id: taskSetting.task,
                       });
                     }
@@ -244,13 +240,13 @@ export default function TaskActionsPage() {
                         );
                       } else {
                         toast.error(
-                          t("tasks.stop_failed", "Failed to request stop for {{taskName}}", { taskName: taskSetting.task }),
+                          t("errors.failed_to_request_stop_for_taskname", "Failed to request stop for {{taskName}}", { taskName: taskSetting.task }),
                           { id: taskSetting.task },
                         );
                       }
                     } catch (error) {
                       toast.error(
-                        t("tasks.stop_failed", "Failed to request stop for {{taskName}}", { taskName: taskSetting.task }),
+                        t("errors.failed_to_request_stop_for_taskname", "Failed to request stop for {{taskName}}", { taskName: taskSetting.task }),
                         { id: taskSetting.task },
                       );
                     }
@@ -323,8 +319,8 @@ export default function TaskActionsPage() {
                           disabled={isSaving || isRunning || isQueued || taskSetting.intervalMinutes <= 0}
                           label={
                             <span className="sr-only">
-                              {t("tasks.toggle_task", '{{action}} task "{{taskName}}"', {
-                                action: taskSetting.enabled ? t("common.disable", "Disable") : t("common.enable", "Enable"),
+                              {t("tasks.toggle_task", '{{action}} task {{taskName}}', {
+                                action: toggleAction,
                                 taskName: taskSetting.task,
                               })}
                             </span>
@@ -340,7 +336,7 @@ export default function TaskActionsPage() {
                         <button
                           onClick={isRunning ? stopTask : executeTask}
                           disabled={isQueued || (!isManualOnly && taskSetting.intervalMinutes <= 0)}
-                          title={t("tasks.run_now", "Run {{taskName}} now", { taskName: taskSetting.task })}
+                          title={t("tasks.run_now", "Run {{taskName}} Now", { taskName: taskSetting.task })}
                           className={`p-2 rounded-lg bg-background hover:bg-success/20 text-gray-400 ${isRunning ? "hover:text-danger hover:border-danger/50" : "hover:text-success hover:border-success/50"} border border-border transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-background disabled:hover:border-border disabled:hover:text-gray-400 ml-auto flex cursor-pointer`}
                         >
                           {isRunning ? (

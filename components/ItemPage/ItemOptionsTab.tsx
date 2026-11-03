@@ -28,7 +28,7 @@ export default function ItemOptions({ item }: Props) {
         toast.error(t("item.not_archived", "Item is not archived"));
       } else {
         toast.error(
-          t("library.delete_archived_failed", "Delete failed: {{error}}", {
+          t("errors.delete_failed_error", "Delete failed: {{error}}", {
             error: error?.message || error?.statusText || String(error),
           }),
         );
@@ -58,7 +58,7 @@ export default function ItemOptions({ item }: Props) {
               </h5>
               <p className="mt-1 max-w-2xl text-sm text-gray-400">
                 {t(
-                  "item.confirmDeleteArchivedItemDescription",
+                  "item.deleteArchivedItemDescription",
                   "Delete this archived item and its contents. This action cannot be rolled back.",
                 )}
               </p>

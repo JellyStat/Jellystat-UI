@@ -130,7 +130,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "text",
     type: "text",
-    get label() { return dt("reports.designer.tool_text", "Text"); },
+    get label() { return dt("reports.designer.text", "Text"); },
     create: () => ({
       type: "text",
       width: 260,
@@ -143,7 +143,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "metric",
     type: "metric",
-    get label() { return dt("reports.designer.tool_metric", "Metric"); },
+    get label() { return dt("reports.designer.metric", "Metric"); },
     create: () => ({
       type: "metric",
       width: 220,
@@ -163,7 +163,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "table",
     type: "table",
-    get label() { return dt("reports.designer.tool_table", "Table"); },
+    get label() { return dt("reports.designer.table", "Table"); },
     create: () => ({
       type: "table",
       width: 520,
@@ -234,7 +234,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "image",
     type: "image",
-    get label() { return dt("reports.designer.tool_image", "Image"); },
+    get label() { return dt("reports.designer.image", "Image"); },
     create: () => ({
       type: "image",
       width: 160,
@@ -248,7 +248,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "rect",
     type: "shape",
-    get label() { return dt("reports.designer.tool_rectangle", "Rectangle"); },
+    get label() { return dt("reports.designer.rectangle", "Rectangle"); },
     create: () => ({
       type: "shape",
       shape: "rect",
@@ -261,7 +261,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "ellipse",
     type: "shape",
-    get label() { return dt("reports.designer.tool_ellipse", "Ellipse"); },
+    get label() { return dt("reports.designer.ellipse", "Ellipse"); },
     create: () => ({
       type: "shape",
       shape: "ellipse",
@@ -274,7 +274,7 @@ export const TOOLBOX: ToolboxItem[] = [
   {
     key: "divider",
     type: "line",
-    get label() { return dt("reports.designer.tool_line", "Line"); },
+    get label() { return dt("reports.designer.line", "Line"); },
     create: () => ({
       type: "line",
       width: 260,

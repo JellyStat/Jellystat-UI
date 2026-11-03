@@ -55,8 +55,8 @@ export default function GenreStatsCard({ gridify }: Props) {
       {!loading && !hasData ? (
         <div className="w-full">
           <NoData
-            title={t("error_cards.no_data_title", "No Data Found")}
-            message={t("error_cards.no_genre_data_message", "No genre statistics found for this item")}
+            title={t("empty.no_data", "No Data")}
+            message={t("empty.no_genre_statistics_found_for_this_item", "No genre statistics found for this item")}
             Icon={PieChart}
           />
         </div>

@@ -7,6 +7,7 @@ import type {
   ReportFieldInfo,
   ReportCalculatedField,
 } from "@/lib/models/reports";
+import { dt } from "./i18n";
 
 export const groupOutputName = (g: { field: string; bucket?: string | null; alias?: string | null }) =>
   g.alias?.trim() || (g.bucket ? `${g.field}_${g.bucket}` : g.field);
@@ -120,7 +121,10 @@ export function dataSourceColumns(
     if (a.fn !== "count" && a.fn !== "countDistinct") {
       type = a.fn === "avg" && f?.type === "integer" ? "number" : (f?.type ?? "number");
     }
-    const label = a.fn === "count" && !a.field ? "Count" : `${a.fn} of ${f?.label ?? a.field}`;
+    const label =
+      a.fn === "count" && !a.field
+        ? dt("reports.designer.count", "Count")
+        : dt("reports.designer.aggregate_of_field", "{{fn}} of {{field}}", { fn: a.fn, field: f?.label ?? a.field });
     columns.push({ name: aggregateOutputName(a), label, type });
   }
   return applyTransformColumns(columns, ds.transforms ?? []).columns;

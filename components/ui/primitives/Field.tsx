@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '../cn';
 import FieldError from './FieldError';
 import Label from './Label';
@@ -27,6 +28,7 @@ export default function Field({
   className,
   children,
 }: FieldProps) {
+  const { t } = useTranslation('common');
   return (
     <div className={cn('space-y-1.5', className)}>
       {label && (
@@ -38,7 +40,7 @@ export default function Field({
                 <span aria-hidden="true" className="ml-0.5 text-primary-soft">
                   *
                 </span>
-                <span className="sr-only"> (required)</span>
+                <span className="sr-only"> ({t('common.required', 'required')})</span>
               </>
             )}
           </Label>

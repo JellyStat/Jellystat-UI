@@ -1,5 +1,6 @@
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { Check, ChevronDown, type LucideIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '../cn';
 import Spinner from '../primitives/Spinner';
 import { focusRing } from '../tones';
@@ -31,13 +32,14 @@ export default function Select<T>({
   labelFn,
   onChange,
   disabled,
-  placeholder = 'Select',
+  placeholder,
   leftIcon,
   loading = false,
-  emptyDataMessage = 'No options available',
+  emptyDataMessage,
   widthPx = 200,
   className,
 }: SelectProps<T>) {
+  const { t } = useTranslation('common');
   const selected = value !== undefined ? data.find((d) => d.value === value) : undefined;
   const Icon = selected?.Icon ?? leftIcon;
   const hasLeftIcon = loading || Icon != null;
@@ -65,7 +67,7 @@ export default function Select<T>({
             </span>
           )}
           <span className={cn('min-w-0 flex-1 truncate text-left', !selected && 'text-gray-500')}>
-            {selected ? labelFn(selected.value) : placeholder}
+            {selected ? labelFn(selected.value) : (placeholder ?? t('common.select', 'Select'))}
           </span>
           <ChevronDown
             aria-hidden="true"
@@ -79,7 +81,7 @@ export default function Select<T>({
           className="z-50 w-(--button-width) [--anchor-gap:8px] [--anchor-padding:16px] max-h-60 overflow-auto rounded-lg border border-border bg-surface p-1 shadow-lg shadow-black/40 focus:outline-none transition duration-100 ease-in data-leave:data-closed:opacity-0"
         >
           {data.length === 0 && !loading && (
-            <div className="px-3 py-2 text-sm text-gray-500">{emptyDataMessage}</div>
+            <div className="px-3 py-2 text-sm text-gray-500">{emptyDataMessage ?? t('empty.no_options_available', 'No options available')}</div>
           )}
           {data.map((item, idx) => (
             <ListboxOption

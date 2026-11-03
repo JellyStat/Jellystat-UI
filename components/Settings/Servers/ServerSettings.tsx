@@ -31,7 +31,7 @@ export default function ServerSettingsPage() {
       setServers(data ?? []);
     } catch (err: any) {
       console.error(err);
-      setError(err?.message ?? t("settings.error_load_servers", "Failed to load server configuration."));
+      setError(err?.message ?? t("errors.failed_to_load_server_configuration", "Failed to load server configuration."));
     } finally {
       setLoading(false);
     }
@@ -54,7 +54,7 @@ export default function ServerSettingsPage() {
       );
     } catch (err) {
       console.error(err);
-      toast.error(t("settings.error_auth_update", "Failed to update authentication settings"));
+      toast.error(t("errors.failed_to_update_authentication_settings", "Failed to update authentication settings"));
     } finally {
       setTogglingId(null);
     }
@@ -68,7 +68,7 @@ export default function ServerSettingsPage() {
         title={t("settings.servers_auth_title", "Servers")}
         description={t(
           "settings.servers_auth_subtitle",
-          "Manage connected media servers and whether their users can sign in to Jellystat.",
+          "Manage connected media servers and control user access policies.",
         )}
       />
 
@@ -80,7 +80,7 @@ export default function ServerSettingsPage() {
           </SectionTitle>
           <Button variant="outline" onClick={() => setIsAddServerOpen(true)}>
             <Plus size={16} className="text-accent" />
-            {t("settings.add_server", "Add Server")}
+            {t("common.add_server", "Add Server")}
           </Button>
         </div>
 
@@ -99,7 +99,7 @@ export default function ServerSettingsPage() {
           )}
 
           {!loading && !error && servers.length === 0 ? (
-            <EmptyState bordered={false} Icon={Server} title={t("settings.no_servers", "No servers connected")} />
+            <EmptyState bordered={false} Icon={Server} title={t("empty.no_servers_connected", "No servers connected")} />
           ) : (
             <div className="divide-y divide-border/50">
               {servers.map((server: ServerModel) => (

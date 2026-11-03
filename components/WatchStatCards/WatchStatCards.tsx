@@ -243,7 +243,7 @@ export default function WatchStatCards() {
 
         <div className="flex items-center gap-3 bg-surface/60 backdrop-blur-md border border-border p-1.5 rounded-xl shadow-inner">
           <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-2">
-            {t("watch_stat_cards.days", "Days")}:
+            {t("common.days", "Days")}:
           </label>
           <NumberField
             value={days}
@@ -259,9 +259,9 @@ export default function WatchStatCards() {
       {Object.values(loadingStates).every((v) => !v) && !hasData ? (
         <div className="bg-surface/50 border-2 border-dashed border-border rounded-3xl p-16 flex flex-col items-center justify-center text-center">
           <Activity size={48} className="text-gray-500 opacity-30 mb-4" />
-          <h3 className="text-xl font-bold text-gray-300">{t("common.no_data", "No Data")}</h3>
+          <h3 className="text-xl font-bold text-gray-300">{t("empty.no_data", "No Data")}</h3>
           <p className="text-sm text-gray-500">
-            {t("watch_stat_cards.no_data_desc", "No watch statistics found for the selected period.")}
+            {t("empty.no_watch_statistics_found_for_the", "No watch statistics found for the selected period.")}
           </p>
         </div>
       ) : (

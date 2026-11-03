@@ -32,8 +32,20 @@ const ICONS: Record<string, LucideIcon> = {
   cards: LayoutGrid,
 };
 
+// Getters so the labels follow the current language.
+const TYPE_LABELS: Record<ReportElement["type"], string> = {
+  get text() { return dt("reports.designer.text", "Text"); },
+  get metric() { return dt("reports.designer.metric", "Metric"); },
+  get table() { return dt("reports.designer.table", "Table"); },
+  get chart() { return dt("reports.designer.chart", "Chart"); },
+  get image() { return dt("reports.designer.image", "Image"); },
+  get shape() { return dt("reports.designer.shape", "Shape"); },
+  get line() { return dt("reports.designer.line", "Line"); },
+  get cards() { return dt("reports.designer.cards", "Cards"); },
+};
+
 export const elementLabel = (e: ReportElement) =>
-  e.name || (e.type === "text" ? (e.text ?? "").slice(0, 30) || "Text" : e.type.charAt(0).toUpperCase() + e.type.slice(1));
+  e.name || (e.type === "text" ? (e.text ?? "").slice(0, 30) || TYPE_LABELS.text : (TYPE_LABELS[e.type] ?? e.type));
 
 /** Elements top-most first, as in other design tools. Drag rows to change the stacking order. */
 export default function LayersPanel() {
@@ -44,7 +56,7 @@ export default function LayersPanel() {
   const rows = [...page.elements].reverse();
 
   if (!rows.length) {
-    return <p className="p-4 text-xs text-gray-500">{dt("reports.designer.this_page_is_empty_add_elements_from_the_insert", "This page is empty. Add elements from the Insert tab.")}</p>;
+    return <p className="p-4 text-xs text-gray-500">{dt("reports.designer.empty.this_page_is_empty_add_elements_from_the", "This page is empty. Add elements from the Insert tab.")}</p>;
   }
 
   return (

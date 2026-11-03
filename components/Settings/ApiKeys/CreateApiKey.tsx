@@ -58,9 +58,9 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
     setError(null);
 
     const nextFieldErrors: typeof fieldErrors = {};
-    if (!name.trim()) nextFieldErrors.name = t("settings.error_api_key_name_required", "A name is required");
+    if (!name.trim()) nextFieldErrors.name = t("errors.a_name_is_required", "A name is required");
     if (isReadOnly && !serverId)
-      nextFieldErrors.serverId = t("settings.error_api_key_server_required", "Select a server for this key");
+      nextFieldErrors.serverId = t("errors.select_a_server_for_this_key", "Select a server for this key");
     setFieldErrors(nextFieldErrors);
     if (Object.keys(nextFieldErrors).length > 0) return;
 
@@ -74,7 +74,7 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
       setCreated(result);
       onCreated?.();
     } catch (err: any) {
-      const message = err?.message ?? t("settings.error_create_api_key", "Failed to create API key");
+      const message = err?.message ?? t("errors.failed_to_create_api_key", "Failed to create API key");
       setError(message);
       toast.error(message);
     } finally {
@@ -89,7 +89,7 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error(t("settings.error_copy_api_key", "Could not copy. Select the key and copy it manually."));
+      toast.error(t("errors.could_not_copy_select_the_key_and_copy", "Could not copy. Select the key and copy it manually."));
     }
   }
 
@@ -151,7 +151,7 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
       />
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <Field label={t("settings.api_key_name", "Name")} required htmlFor="api-key-name" error={fieldErrors.name}>
+        <Field label={t("common.name", "Name")} required htmlFor="api-key-name" error={fieldErrors.name}>
           <Input
             id="api-key-name"
             type="text"
@@ -194,7 +194,7 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
         </div>
 
         {isReadOnly && (
-          <Field label={t("settings.api_key_server", "Server")} required error={fieldErrors.serverId}>
+          <Field label={t("common.server", "Server")} required error={fieldErrors.serverId}>
             <Select<string>
               data={servers.map((s) => ({ value: s.id }))}
               value={serverId || undefined}
@@ -223,7 +223,7 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
             {t("common.cancel", "Cancel")}
           </Button>
           <Button type="submit" loading={loading} disabled={!name.trim()}>
-            {loading ? t("settings.creating_api_key", "Creating") : t("settings.create_api_key", "Create")}
+            {loading ? t("common.creating", "Creating") : t("common.create", "Create")}
           </Button>
         </ModalFooter>
       </form>

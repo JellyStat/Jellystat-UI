@@ -92,10 +92,10 @@ function PageSetup() {
       <ReportInfo />
       <Section title={dt("reports.designer.page_setup", "Page setup")}>
         <div className="grid grid-cols-2 gap-2">
-          <Field label={dt("reports.designer.size", "Size")}>
+          <Field label={dt("common.size", "Size")}>
             <Select
               value={PAGE_PRESETS[p.size] ? p.size : "Custom"}
-              options={[...Object.entries(PAGE_PRESETS).map(([k, v]) => ({ value: k, label: v.label })), { value: dt("reports.designer.custom", "Custom"), label: "Custom" }]}
+              options={[...Object.entries(PAGE_PRESETS).map(([k, v]) => ({ value: k, label: v.label })), { value: "Custom", label: dt("common.custom", "Custom") }]}
               onChange={(size) => {
                 const preset = PAGE_PRESETS[size];
                 if (!preset) {
@@ -171,7 +171,7 @@ function ReportInfo() {
   const { state, change } = useDesigner();
   return (
     <Section title={dt("reports.designer.report", "Report")}>
-      <Field label={dt("reports.designer.name", "Name")}>
+      <Field label={dt("common.name", "Name")}>
         <TextInput
           value={state.doc.name}
           onChange={(v) =>
@@ -297,7 +297,7 @@ function Layout({ e }: { e: ReportElement }) {
     );
   return (
     <Section title={dt("reports.designer.layout", "Layout")}>
-      <Field label={dt("reports.designer.name", "Name")}>
+      <Field label={dt("common.name", "Name")}>
         <TextInput value={e.name ?? ""} onChange={(v) => set("name", v || null)} />
       </Field>
       <div className="grid grid-cols-4 gap-1.5">
@@ -333,7 +333,7 @@ function DataSourcePicker({ e }: { e: ReportElement }) {
     <Field label={dt("reports.designer.data_source", "Data source")}>
       <Select
         value={e.dataSourceId ?? ""}
-        placeholder={definition.dataSources.length ? dt("reports.designer.choose", "Choose...") : dt("reports.designer.add_one_in_the_data_tab", "Add one in the Data tab")}
+        placeholder={definition.dataSources.length ? dt("common.choose", "Choose") : dt("reports.designer.add_one_in_the_data_tab", "Add one in the Data tab")}
         options={definition.dataSources.map((d) => ({ value: d.id, label: d.name }))}
         onChange={(v) =>
           updateElements([e.id], (x) => {
@@ -384,7 +384,7 @@ function MetricContent({ e }: { e: ReportElement }) {
   return (
     <Section title={dt("reports.designer.metric", "Metric")}>
       <DataSourcePicker e={e} />
-      <Field label={dt("reports.designer.value", "Value")}>
+      <Field label={dt("common.value", "Value")}>
         <Select
           value={e.valueField ?? ""}
           placeholder={dt("reports.designer.choose_a_column", "Choose a column...")}
@@ -623,7 +623,7 @@ function ChartContent({ e }: { e: ReportElement }) {
   return (
     <Section title={dt("reports.designer.chart", "Chart")}>
       <DataSourcePicker e={e} />
-      <Field label={dt("reports.designer.type", "Type")}>
+      <Field label={dt("common.type", "Type")}>
         <Select
           value={c.kind}
           options={[
@@ -641,7 +641,7 @@ function ChartContent({ e }: { e: ReportElement }) {
         <Field label={pie ? dt("reports.designer.slices", "Slices") : dt("reports.designer.categories_x", "Categories (X)")}>
           <Select
             value={c.categoryField ?? ""}
-            placeholder={dt("reports.designer.choose", "Choose...")}
+            placeholder={dt("common.choose", "Choose")}
             options={columns.map((x) => ({ value: x.name, label: x.label }))}
             onChange={(v) => set({ categoryField: v || null }, "category")}
           />
@@ -654,7 +654,7 @@ function ChartContent({ e }: { e: ReportElement }) {
           />
         </Field>
       </div>
-      <Field label={pie ? dt("reports.designer.value", "Value") : dt("reports.designer.series_y", "Series (Y)")}>
+      <Field label={pie ? dt("common.value", "Value") : dt("reports.designer.series_y", "Series (Y)")}>
         <div className="space-y-1.5">
           {c.series.map((s, i) => (
             <div key={i} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] gap-1 items-center">
@@ -798,7 +798,7 @@ function MediaSettings({ e }: { e: ReportElement }) {
           <Field label={dt("reports.designer.data_source", "Data source")}>
             <Select
               value={media.dataSourceId ?? ""}
-              placeholder={dt("reports.designer.choose", "Choose...")}
+              placeholder={dt("common.choose", "Choose")}
               options={definition.dataSources.map((d) => ({ value: d.id, label: d.name }))}
               onChange={(v) => set({ dataSourceId: v || null, field: null }, "source")}
             />
@@ -806,7 +806,7 @@ function MediaSettings({ e }: { e: ReportElement }) {
           <Field label={dt("reports.designer.id_column", "Id column")}>
             <Select
               value={media.field ?? ""}
-              placeholder={dt("reports.designer.choose", "Choose...")}
+              placeholder={dt("common.choose", "Choose")}
               options={columns.map((c) => ({ value: c.name, label: c.label }))}
               onChange={(v) => set({ field: v || null }, "field")}
             />
@@ -817,7 +817,7 @@ function MediaSettings({ e }: { e: ReportElement }) {
         <Field label={dt("reports.designer.parameter", "Parameter")}>
           <Select
             value={media.parameter ?? ""}
-            placeholder={definition.parameters.length ? dt("reports.designer.choose", "Choose...") : dt("reports.designer.add_one_in_the_data_tab", "Add one in the Data tab")}
+            placeholder={definition.parameters.length ? dt("common.choose", "Choose") : dt("reports.designer.add_one_in_the_data_tab", "Add one in the Data tab")}
             options={definition.parameters.map((p) => ({ value: p.name, label: `@${p.name}` }))}
             onChange={(v) => set({ parameter: v || null }, "parameter")}
           />
@@ -846,7 +846,7 @@ function ImageContent({ e }: { e: ReportElement }) {
 
   return (
     <Section title={dt("reports.designer.image", "Image")}>
-      <Field label={dt("reports.designer.source", "Source")}>
+      <Field label={dt("common.source", "Source")}>
         <Select
           value={e.media ? "media" : "file"}
           options={[
@@ -939,14 +939,14 @@ function StyleSection({ elements }: { elements: ReportElement[] }) {
   const isLine = elements.every((e) => e.type === "line");
 
   return (
-    <Section title={elements.length > 1 ? dt("reports.designer.style_n_elements", "Style ({{count}} elements)", { count: elements.length }) : dt("reports.designer.style", "Style")}>
+    <Section title={elements.length > 1 ? dt("reports.designer.style_n_elements", "Style ({{count}} elements)", { defaultValue_one: "Style ({{count}} element)", count: elements.length }) : dt("reports.designer.style", "Style")}>
       {hasText && (
         <>
           <div className="grid grid-cols-[1fr_64px] gap-2">
             <Field label={dt("reports.designer.font", "Font")}>
               <FontPicker value={s.fontFamily} onChange={(v) => set("fontFamily", v)} />
             </Field>
-            <Field label={dt("reports.designer.size", "Size")}>
+            <Field label={dt("common.size", "Size")}>
               <NumberInput value={s.fontSize} min={4} max={400} onChange={(v) => set("fontSize", v ?? 14)} />
             </Field>
           </div>

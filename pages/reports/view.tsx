@@ -42,7 +42,7 @@ export default function ReportViewPage() {
             <Link
               href="/reports"
               className="p-2 rounded-xl text-gray-400 hover:text-white hover:bg-surface-hover"
-              aria-label={t("reports.back", "Back to reports")}
+              aria-label={t("common.back_to_reports", "Back to reports")}
             >
               <ArrowLeft size={20} />
             </Link>
@@ -67,7 +67,7 @@ export default function ReportViewPage() {
                 href={{ pathname: "/reports/designer", query: { id } }}
                 className="flex items-center gap-2 bg-primary-solid hover:bg-primary-solid-hover text-white px-4 py-2 rounded-xl text-sm font-bold"
               >
-                <Pencil size={16} /> {t("reports.edit", "Edit")}
+                <Pencil size={16} /> {t("common.edit", "Edit")}
               </Link>
             </div>
           )}

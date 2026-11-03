@@ -53,7 +53,7 @@ export default function SetupPage() {
 
       setSystemState(state);
     } catch (err: any) {
-      let msg = err?.message ?? String(err ?? "Unknown error");
+      let msg = err?.message ?? String(err ?? t("errors.unknown_error", "Unknown error"));
       if (err instanceof client.ApiError) {
         msg = `${err.message} (${err.status} ${err.statusText})`;
       }
@@ -107,7 +107,7 @@ export default function SetupPage() {
           <div className="flex flex-col items-center justify-center animate-in fade-in z-10">
             <Spinner size={48} className="text-primary mb-4" />
             <p className="text-gray-400 font-medium tracking-wide">
-              {t("setup.checking_system", "Checking system configuration...")}
+              {t("setup.checking_system", "Checking system configuration")}
             </p>
           </div>
         ) : error ? (
@@ -115,7 +115,7 @@ export default function SetupPage() {
             <div className="mx-auto w-16 h-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mb-6 border border-danger/20 shadow-inner">
               <AlertTriangle size={32} />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">{t("setup.config_error_title", "Configuration Error")}</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">{t("errors.configuration_error", "Configuration Error")}</h2>
             <p className="text-gray-400 text-sm mb-6">{error}</p>
             <button
               onClick={() => void fetchSystem()}
@@ -191,13 +191,13 @@ export default function SetupPage() {
                         password: result?.password ?? "",
                       });
                       const tokenSet = await setToken(token);
-                      if (!tokenSet) throw new Error("Login succeeded but failed to persist token");
+                      if (!tokenSet) throw new Error(t("errors.login_succeeded_but_failed_to_persist", "Login succeeded but failed to persist token"));
 
                       setSystemState(SystemState.FirstUserCreated);
 
                       await fetchSystem(true);
                     } catch (err: any) {
-                      setError(err.message || t("setup.error_auth_failed", "Authentication failed during setup"));
+                      setError(err.message || t("errors.authentication_failed_during_setup", "Authentication failed during setup"));
                     } finally {
                       setIsTransitioning(false);
                     }

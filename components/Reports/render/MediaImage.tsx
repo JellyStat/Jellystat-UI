@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import client from "@/lib/api";
 import type { ReportImageBinding } from "@/lib/models/reports";
 import { findData } from "@/lib/reports/format";
+import { dt } from "@/lib/reports/i18n";
 import type { RenderContext } from "./ReportElementView";
 
 /** Same rules as ReportImageResolver.BindingId on the server: parameter, else first row of a data source, else fixed id. */
@@ -89,7 +90,7 @@ export default function MediaImage({
         className="w-full h-full flex items-center justify-center text-center px-2"
         style={{ background: "#f3f4f6", color: "#9ca3af", fontSize: 12 }}
       >
-        {!id ? "No image id" : failed ? "Image not available" : ""}
+        {!id ? dt("reports.designer.empty.no_image_id", "No image id") : failed ? dt("reports.designer.errors.image_not_available", "Image not available") : ""}
       </div>
     );
   }

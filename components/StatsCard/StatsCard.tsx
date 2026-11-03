@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import { MoreVertical, Activity, PlaySquare, Clock } from "lucide-react";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 
@@ -13,12 +14,12 @@ type Props = {
 };
 
 const PERIODS = [
-  { key: "1", tKey: "stats_card.last_24h", defaultLabel: "Last 24 Hours", days: 1 },
-  { key: "7", tKey: "stats_card.last_7d", defaultLabel: "Last 7 Days", days: 7 },
-  { key: "30", tKey: "stats_card.last_30d", defaultLabel: "Last 30 Days", days: 30 },
-  { key: "180", tKey: "stats_card.last_180d", defaultLabel: "Last 180 Days", days: 180 },
-  { key: "365", tKey: "stats_card.last_365d", defaultLabel: "Last 365 Days", days: 365 },
-  { key: "0", tKey: "stats_card.all_time", defaultLabel: "All Time", days: 0 },
+  { key: "1", label: (t: TFunction) => t("stats_card.last_24h", "Last 24 Hours"), days: 1 },
+  { key: "7", label: (t: TFunction) => t("stats_card.last_7d", "Last 7 Days"), days: 7 },
+  { key: "30", label: (t: TFunction) => t("stats_card.last_30d", "Last 30 Days"), days: 30 },
+  { key: "180", label: (t: TFunction) => t("stats_card.last_180d", "Last 180 Days"), days: 180 },
+  { key: "365", label: (t: TFunction) => t("stats_card.last_365d", "Last 365 Days"), days: 365 },
+  { key: "0", label: (t: TFunction) => t("stats_card.all_time", "All Time"), days: 0 },
 ];
 
 export default function StatsCard({ type, id }: Props) {
@@ -149,7 +150,7 @@ export default function StatsCard({ type, id }: Props) {
                 ? "bg-surface border-primary text-white shadow-inner"
                 : "bg-transparent border-transparent text-gray-400 hover:text-white hover:bg-surface-hover"
             }`}
-            aria-label="Toggle Stats Settings"
+            aria-label={t("stats_card.toggle_settings", "Toggle Stats Settings")}
           >
             <MoreVertical size={20} />
           </button>
@@ -198,7 +199,7 @@ export default function StatsCard({ type, id }: Props) {
                     <span
                       className={`text-sm font-medium ${isChecked ? "text-white" : "text-gray-400 group-hover:text-gray-200"}`}
                     >
-                      {t(p.tKey, p.defaultLabel)}
+                      {p.label(t)}
                     </span>
                   </label>
                 );
@@ -230,7 +231,7 @@ export default function StatsCard({ type, id }: Props) {
               <div className="absolute -bottom-12 -right-12 w-24 h-24 bg-accent/10 blur-[40px] rounded-full pointer-events-none group-hover:bg-primary/10 transition-colors duration-500"></div>
 
               <span className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 relative z-10">
-                {t(p.tKey, p.defaultLabel)}
+                {p.label(t)}
               </span>
 
               {isLoading ? (
@@ -262,7 +263,7 @@ export default function StatsCard({ type, id }: Props) {
                           : t("stats_card.zero_seconds", "0 Seconds")}
                       </span>
                       <span className="text-xs uppercase tracking-wider text-gray-500 mt-0.5">
-                        {t("stats_card.duration", "Duration")}
+                        {t("common.duration", "Duration")}
                       </span>
                     </div>
                   </div>

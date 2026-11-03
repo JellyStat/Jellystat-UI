@@ -18,8 +18,8 @@ export default function NoData({ title, message, Icon = Activity, showBorder = t
     <EmptyState
       Icon={Icon}
       bordered={showBorder}
-      title={title || t("error_cards.no_data_title", "No Data")}
-      message={message || t("error_cards.no_data_message", "No data available.")}
+      title={title || t("empty.no_data", "No Data")}
+      message={message || t("empty.no_data_available", "No data available.")}
     />
   );
 }

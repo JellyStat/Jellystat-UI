@@ -86,8 +86,8 @@ export default function ItemPage() {
   if (!item && !loading && !error) {
     return (
       <NotFound
-        title={t("item.not_found_title", "Item not found")}
-        message={t("item.not_found_message", "The requested media item could not be found.")}
+        title={t("errors.item_not_found", "Item not found")}
+        message={t("errors.the_requested_media_item_could_not_be", "The requested media item could not be found.")}
       />
     );
   }
@@ -100,7 +100,7 @@ export default function ItemPage() {
   const subtitle = isValidParent ? item?.name : null;
 
   const parentIndexUnit = isValidParent && item.type === ItemTypes.Episode ? t("item.season", "Season") : null;
-  const indexUnit = item?.type === ItemTypes.Episode ? t("item.episode", "Episode") : null;
+  const indexUnit = item?.type === ItemTypes.Episode ? t("common.episode", "Episode") : null;
 
   const imageUrl = `${client.API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(item?.parent?.id ?? item?.id ?? "")}&Width=600&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
   const backgroundImage = `${client.API_BASE}/Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(item?.parent?.id ?? item?.id ?? "")}&Width=1920&Quality=90&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
@@ -141,7 +141,7 @@ export default function ItemPage() {
         {error && (
           <div className="p-6 rounded-2xl bg-danger/10 border border-danger/20 flex flex-col items-center justify-center text-center max-w-lg mx-auto mt-12">
             <AlertCircle size={40} className="text-danger mb-3" />
-            <span className="text-xl font-bold text-white mb-2">{t("item.error_loading", "Error loading item")}</span>
+            <span className="text-xl font-bold text-white mb-2">{t("errors.error_loading_item", "Error loading item")}</span>
             <span className="text-sm text-gray-400">{error}</span>
           </div>
         )}
@@ -180,7 +180,7 @@ export default function ItemPage() {
                     className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent/10 text-accent hover:bg-accent hover:text-black border border-accent/20 transition-colors text-xs font-bold uppercase tracking-widest mb-4 cursor-pointer"
                   >
                     <ChevronLeft size={14} />
-                    {item.library?.name || t("item.library", "Library")}
+                    {item.library?.name || t("common.library", "Library")}
                   </button>
 
                   <div className="flex items-start justify-between md:justify-start gap-4 mb-2 w-full">

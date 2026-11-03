@@ -60,7 +60,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
         setModel(await client.Reports.renderModel({ reportId, parameters: params }));
       }
     } catch (err: any) {
-      setError(err?.message ?? dt("reports.designer.failed_to_render_the_report", "Failed to render the report"));
+      setError(err?.message ?? dt("reports.designer.errors.failed_to_render_the_report", "Failed to render the report"));
     } finally {
       setLoading(false);
     }
@@ -107,7 +107,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
         downloadBlob(await client.Reports.render({ reportId, format, parameters: params }, true), exportFileName(model.name, format));
       }
     } catch (err: any) {
-      toast.error(err?.message ?? i18next.t("reports.export_failed", "Export failed"));
+      toast.error(err?.message ?? i18next.t("errors.export_failed", "Export failed"));
     } finally {
       setExporting(false);
     }
@@ -127,7 +127,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
                 className="w-48"
                 source={{ reportId }}
                 values={values}
-                emptyLabel={p.type === "lookup" ? dt("reports.designer.all", "All") : dt("reports.designer.default", "Default")}
+                emptyLabel={p.type === "lookup" ? dt("common.all", "All") : dt("common.default", "Default")}
                 value={p.name in values ? values[p.name] : (p.defaultValue ?? null)}
                 onChange={(v) => setValues((s) => ({ ...s, [p.name]: v }))}
               />
@@ -138,7 +138,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
             onClick={() => (JSON.stringify(values) === JSON.stringify(applied) ? load() : setApplied(values))}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 border border-primary/40 text-primary-soft hover:bg-primary hover:text-white text-sm font-bold cursor-pointer"
           >
-            <RefreshCw size={14} className={clsx(loading && "animate-spin")} /> {parameters.length ? dt("reports.designer.apply", "Apply") : dt("reports.designer.refresh", "Refresh")}
+            <RefreshCw size={14} className={clsx(loading && "animate-spin")} /> {parameters.length ? dt("reports.designer.apply", "Apply") : dt("common.refresh", "Refresh")}
           </button>
           <div className="flex-1" />
           <div className="flex rounded-lg border border-border overflow-hidden text-xs font-bold">
@@ -172,7 +172,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
               disabled={!model}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-sm font-bold text-gray-300 hover:text-white hover:border-gray-500 cursor-pointer disabled:opacity-50"
             >
-              {exporting ? <Spinner size={14} className="" /> : <Download size={14} />} {dt("reports.designer.export", "Export")} <ChevronDown size={12} />
+              {exporting ? <Spinner size={14} className="" /> : <Download size={14} />} {dt("common.export", "Export")} <ChevronDown size={12} />
             </button>
             {exportOpen && hostRef.current && (
               <ContextMenu

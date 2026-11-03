@@ -65,7 +65,7 @@ export default function LoginPage() {
           })),
       );
     } catch (err: any) {
-      setServerError(t("login.error_fetch_servers", "Failed to load servers. Please check your connection."));
+      setServerError(t("errors.failed_to_load_servers_please_check_your", "Failed to load servers. Please check your connection."));
     } finally {
       setLoadingServers(false);
     }
@@ -90,15 +90,15 @@ export default function LoginPage() {
 
     let hasError = false;
     if (!username.trim()) {
-      setUsernameError(t("common.error_username_required", "Username is required"));
+      setUsernameError(t("errors.username_is_required", "Username is required"));
       hasError = true;
     }
     if (!password.trim()) {
-      setPasswordError(t("common.error_password_required", "Password is required"));
+      setPasswordError(t("errors.password_is_required", "Password is required"));
       hasError = true;
     }
     if (showServerPicker && !selectedServer) {
-      setServerValidationError(t("login.error_server_required", "Please select a server"));
+      setServerValidationError(t("errors.please_select_a_server", "Please select a server"));
       hasError = true;
     }
     if (hasError) return;
@@ -128,7 +128,7 @@ export default function LoginPage() {
 
       router.push("/");
     } catch (err: any) {
-      setError(err?.message || t("login.error_auth_failed", "Failed to authenticate. Please check your credentials."));
+      setError(err?.message || t("errors.failed_to_authenticate_please_check_your", "Failed to authenticate. Please check your credentials."));
     } finally {
       setLoading(false);
     }
@@ -199,7 +199,7 @@ export default function LoginPage() {
                   aria-describedby={usernameError ? "login-username-error" : undefined}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder={t("login.username_placeholder", "Username")}
+                  placeholder={t("common.username", "Username")}
                   className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-1 transition-all ${
                     usernameError
                       ? "border-danger/50 focus:border-danger focus:ring-danger"
@@ -230,7 +230,7 @@ export default function LoginPage() {
                   aria-describedby={passwordError ? "login-password-error" : undefined}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder={t("login.password_placeholder", "Password")}
+                  placeholder={t("common.password", "Password")}
                   className={`w-full bg-background/50 border rounded-xl py-3.5 pl-11 pr-4 text-gray-100 placeholder:text-gray-500 focus:outline-none focus:ring-1 transition-all ${
                     passwordError
                       ? "border-danger/50 focus:border-danger focus:ring-danger"
@@ -250,15 +250,15 @@ export default function LoginPage() {
 
             {showServerPicker && (
               <div className="space-y-1.5 animate-in fade-in slide-in-from-top-2 duration-300">
-                <Label>{t("login.server", "Server")}</Label>
+                <Label>{t("common.server", "Server")}</Label>
                 <Select<string | null>
                   data={serverOptions.map((opt) => ({ value: opt.value, Icon: loadingServers ? Loader2 : ServerIcon }))}
                   value={selectedServer}
                   onChange={setSelectedServer}
                   labelFn={(val) =>
-                    serverOptions.find((opt) => opt.value === val)?.label ?? t("common.select_server", "Select a server...")
+                    serverOptions.find((opt) => opt.value === val)?.label ?? t("common.select_server", "Select a server")
                   }
-                  placeholder={t("common.select_server", "Select a server...")}
+                  placeholder={t("common.select_server", "Select a server")}
                   leftIcon={ServerIcon}
                   loading={loadingServers}
                 />

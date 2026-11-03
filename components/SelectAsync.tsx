@@ -198,7 +198,7 @@ export function SelectAsync<T>({
                 })
               ) : (
                 <div className="p-4 text-center text-sm text-gray-500">
-                  {t("select_async.no_items", "No matching items found")}
+                  {t("empty.no_matching_items_found", "No matching items found")}
                 </div>
               )}
             </div>

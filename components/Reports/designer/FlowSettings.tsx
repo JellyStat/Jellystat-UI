@@ -118,7 +118,7 @@ export function ConditionsSection({ e, columns }: { e: ReportElement; columns: R
             {!noValue && (
               <TextInput
                 value={c.value === null || c.value === undefined ? "" : String(c.value)}
-                placeholder={dt("reports.designer.value", "Value")}
+                placeholder={dt("common.value", "Value")}
                 onChange={(v) => set(i, { value: numeric && v.trim() !== "" && !Number.isNaN(Number(v)) ? Number(v) : v }, "value")}
               />
             )}
@@ -170,8 +170,6 @@ export function ConditionsSection({ e, columns }: { e: ReportElement; columns: R
   );
 }
 
-const ROW_TOKEN_HELP = "Use {{row.FIELD}} for the card's row, with an optional |format, e.g. {{row.Plays|integer}} plays.";
-
 /** Card grid: one card per row with an optional picture and three text lines. */
 export function CardsSection({ e, columns, picker }: { e: ReportElement; columns: ReportColumn[]; picker: ReactNode }) {
   const { updateElements } = useDesigner();
@@ -219,7 +217,7 @@ export function CardsSection({ e, columns, picker }: { e: ReportElement; columns
             <Field label={dt("reports.designer.media_id_column", "Media id column")}>
               <Select
                 value={o.imageField ?? ""}
-                placeholder={dt("reports.designer.choose", "Choose...")}
+                placeholder={dt("common.choose", "Choose")}
                 options={columnOptions}
                 onChange={(v) => set({ imageField: v || null }, "imageField")}
               />
@@ -252,14 +250,14 @@ export function CardsSection({ e, columns, picker }: { e: ReportElement; columns
       )}
 
       {(["title", "subtitle", "value"] as const).map((key) => (
-        <Field key={key} label={key === "title" ? dt("reports.designer.title_bold", "Title (bold)") : key === "subtitle" ? dt("reports.designer.subtitle_small", "Subtitle (small)") : dt("reports.designer.value", "Value")}>
+        <Field key={key} label={key === "title" ? dt("reports.designer.title_bold", "Title (bold)") : key === "subtitle" ? dt("reports.designer.subtitle_small", "Subtitle (small)") : dt("common.value", "Value")}>
           <div className="grid grid-cols-[minmax(0,1fr)_110px] gap-1">
             <TextInput value={o[key] ?? ""} placeholder="{{row.Name}}" onChange={(v) => set({ [key]: v || null }, key)} />
             <Select value="" placeholder={dt("reports.designer.column_2", "+ column")} options={columnOptions} onChange={(v) => v && insert(key, v)} />
           </div>
         </Field>
       ))}
-      <p className="text-xs text-gray-500">{ROW_TOKEN_HELP}</p>
+      <p className="text-xs text-gray-500">{dt("reports.designer.row_token_help", "Use {{row.FIELD}} for the card's row, with an optional |format, e.g. {{row.Plays|integer}} plays.")}</p>
 
       <Field label={dt("reports.designer.card_fill", "Card fill")}>
         <ColorInput value={o.cardBackground} allowNone onChange={(v) => set({ cardBackground: v }, "cardBackground")} />

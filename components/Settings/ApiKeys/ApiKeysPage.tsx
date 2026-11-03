@@ -43,7 +43,7 @@ export default function ApiKeysPage() {
       setKeys((await client.ApiKeys.list()) ?? []);
     } catch (err: any) {
       console.error(err);
-      setError(err?.message ?? t("settings.error_load_api_keys", "Failed to load API keys"));
+      setError(err?.message ?? t("errors.failed_to_load_api_keys", "Failed to load API keys"));
     } finally {
       setLoading(false);
     }
@@ -60,7 +60,7 @@ export default function ApiKeysPage() {
       await fetchKeys();
     } catch (err: any) {
       console.error(err);
-      setError(err?.message ?? t("settings.error_delete_api_key", "Failed to delete API key"));
+      setError(err?.message ?? t("errors.failed_to_delete_api_key", "Failed to delete API key"));
       setLoading(false);
     }
   }
@@ -104,7 +104,7 @@ export default function ApiKeysPage() {
           )}
 
           {!loading && !error && keys.length === 0 ? (
-            <EmptyState bordered={false} Icon={KeyRound} title={t("settings.no_api_keys", "No API keys yet")} />
+            <EmptyState bordered={false} Icon={KeyRound} title={t("empty.no_api_keys_yet", "No API keys yet")} />
           ) : (
             <div className="divide-y divide-border/50">
               {keys.map((key) => {

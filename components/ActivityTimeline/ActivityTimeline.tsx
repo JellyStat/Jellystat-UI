@@ -141,15 +141,15 @@ export default function ActivityTimeline({ userId }: Props) {
       {!loading && error && (
         <div className="p-6 rounded-2xl bg-danger/10 border border-danger/20 flex flex-col items-center text-center max-w-lg mx-auto">
           <AlertCircle size={40} className="text-danger mb-3" />
-          <span className="text-xl font-bold text-white mb-2">{t("timeline.error_loading", "Error loading timeline")}</span>
+          <span className="text-xl font-bold text-white mb-2">{t("errors.error_loading_timeline", "Error loading timeline")}</span>
           <span className="text-sm text-gray-400">{error}</span>
         </div>
       )}
 
       {!loading && !error && entries.length === 0 && (
         <NoData
-          title={t("timeline.empty_title", "Nothing on the timeline yet")}
-          message={t("timeline.empty_message", "No qualifying playback found for the selected libraries")}
+          title={t("empty.nothing_on_the_timeline_yet", "Nothing on the timeline yet")}
+          message={t("empty.no_qualifying_playback_found_for_the", "No qualifying playback found for the selected libraries")}
         />
       )}
 

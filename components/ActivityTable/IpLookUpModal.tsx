@@ -102,7 +102,7 @@ export function IpLookupModal({ ip }: Props) {
               title={
                 error.notConfigured
                   ? t("ip_lookup.not_configured", "IP lookup isn't set up")
-                  : t("ip_lookup.failed", "Couldn't look up this IP address")
+                  : t("errors.couldn_t_look_up_this_ip_address", "Couldn't look up this IP address")
               }
             >
               <p>
@@ -133,7 +133,7 @@ export function IpLookupModal({ ip }: Props) {
                   ))}
                 </dl>
               ) : (
-                <p className="text-sm text-gray-400">{t("ip_lookup.no_details", "No location details are available for this IP.")}</p>
+                <p className="text-sm text-gray-400">{t("empty.no_location_details_are_available_for", "No location details are available for this IP.")}</p>
               )}
 
               {mapUrls && (

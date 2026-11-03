@@ -11,7 +11,7 @@ export default function MigrationStatusBadge({ status, error }: { status: Migrat
       return (
         <Badge tone="success" shape="square" className="gap-1.5 whitespace-nowrap">
           <Check size={12} strokeWidth={3} />
-          {t("settings.migration_status_ready", "Ready")}
+          {t("common.ready", "Ready")}
         </Badge>
       );
     case "waiting":
@@ -30,14 +30,14 @@ export default function MigrationStatusBadge({ status, error }: { status: Migrat
       return (
         <Badge tone="danger" shape="square" className="gap-1.5 whitespace-nowrap" title={error ?? undefined}>
           <AlertCircle size={12} />
-          {t("settings.migration_status_failed", "Failed")}
+          {t("common.failed", "Failed")}
         </Badge>
       );
     default:
       return (
         <Badge tone="danger" shape="square" className="gap-1.5 whitespace-nowrap">
           <X size={12} strokeWidth={3} />
-          {t("settings.migration_status_not_linked", "Not linked")}
+          {t("common.not_linked", "Not linked")}
         </Badge>
       );
   }

@@ -1,6 +1,7 @@
 // Same rules as Services/Reports/Rendering/ReportFormatting.cs on the server, so the designer, the viewer and
 // server exports format values identically. Change both together.
 import type { ReportColumn, ReportDataResult, ReportRenderModel } from "@/lib/models/reports";
+import { dt } from "./i18n";
 
 export const VALUE_FORMATS = [
   "auto",
@@ -190,15 +191,21 @@ export function findData(model: Pick<ReportRenderModel, "data" | "definition">, 
 const TOKEN = /\{\{\s*([^{}|]+?)\s*(?:\|\s*([a-zA-Z]+)\s*)?\}\}/g;
 
 export const TOKEN_HELP = [
-  { token: "{{report.name}}", description: "Report name" },
-  { token: "{{now|datetime}}", description: "When the report was generated (report time zone)" },
-  { token: "{{param.NAME}}", description: "A report parameter" },
-  { token: "{{ds.SOURCE.FIELD}}", description: "First row of a data source (name or id)" },
-  { token: "{{ds.SOURCE.rowCount}}", description: "Number of rows" },
-  { token: "{{page.number}} / {{page.count}}", description: "Page numbers" },
+  { token: "{{report.name}}", get description() { return dt("reports.designer.report_name", "Report name"); } },
+  {
+    token: "{{now|datetime}}",
+    get description() { return dt("reports.designer.when_the_report_was_generated_report_time_zone", "When the report was generated (report time zone)"); },
+  },
+  { token: "{{param.NAME}}", get description() { return dt("reports.designer.a_report_parameter", "A report parameter"); } },
+  {
+    token: "{{ds.SOURCE.FIELD}}",
+    get description() { return dt("reports.designer.first_row_of_a_data_source_name_or_id", "First row of a data source (name or id)"); },
+  },
+  { token: "{{ds.SOURCE.rowCount}}", get description() { return dt("reports.designer.number_of_rows", "Number of rows"); } },
+  { token: "{{page.number}} / {{page.count}}", get description() { return dt("reports.designer.page_numbers", "Page numbers"); } },
   {
     token: "{{...|duration}}",
-    description: "Add |format: number, integer, percent, duration, bytes, date...",
+    get description() { return dt("reports.designer.add_format_number_integer_percent_duration_byt", "Add |format: number, integer, percent, duration, bytes, date..."); },
   },
 ];
 

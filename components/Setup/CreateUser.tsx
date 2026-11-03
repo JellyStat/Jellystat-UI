@@ -36,20 +36,20 @@ export default function CreateUserPage({ onComplete }: Props) {
     const newFieldErrors: typeof fieldErrors = {};
 
     if (!username.trim()) {
-      newFieldErrors.username = t("common.error_username_required", "Username is required");
+      newFieldErrors.username = t("errors.username_is_required", "Username is required");
       hasError = true;
     }
 
     if (!password.trim()) {
-      newFieldErrors.password = t("common.error_password_required", "Password is required");
+      newFieldErrors.password = t("errors.password_is_required", "Password is required");
       hasError = true;
     }
 
     if (!passwordConfirmation.trim()) {
-      newFieldErrors.passwordConfirmation = t("setup.error_confirm_password", "Please confirm your password");
+      newFieldErrors.passwordConfirmation = t("errors.confirm_password_is_required", "Confirm password is required");
       hasError = true;
     } else if (password.trim() !== passwordConfirmation.trim()) {
-      newFieldErrors.passwordConfirmation = t("setup.error_passwords_mismatch", "Passwords do not match");
+      newFieldErrors.passwordConfirmation = t("errors.passwords_do_not_match", "Passwords do not match");
       hasError = true;
     }
 
@@ -64,7 +64,7 @@ export default function CreateUserPage({ onComplete }: Props) {
       toast.success(t("setup.toast_admin_created", "Local administrator account created"));
       onComplete?.({ username: username.trim(), password: password.trim() });
     } catch (err: any) {
-      const errMsg = err?.message ?? t("setup.error_registration_failed", "Registration failed. Please try again.");
+      const errMsg = err?.message ?? t("errors.registration_failed_please_try_again", "Registration failed. Please try again.");
       setError(errMsg);
       toast.error(errMsg);
     } finally {
@@ -85,7 +85,7 @@ export default function CreateUserPage({ onComplete }: Props) {
           <Input
             id="setup-username"
             type="text"
-            placeholder={t("setup.placeholder_username", "Choose a username")}
+            placeholder={t("common.placeholder_username", "Choose a username")}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             disabled={loading}
@@ -98,7 +98,7 @@ export default function CreateUserPage({ onComplete }: Props) {
           <Input
             id="setup-password"
             type={showPassword ? "text" : "password"}
-            placeholder={t("setup.placeholder_password", "Create a secure password")}
+            placeholder={t("common.placeholder_create_password", "Create a secure password")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
@@ -113,7 +113,7 @@ export default function CreateUserPage({ onComplete }: Props) {
         </Field>
 
         <Field
-          label={t("setup.label_confirm_password", "Confirm Password")}
+          label={t("common.confirm_password", "Confirm Password")}
           htmlFor="setup-password-confirm"
           error={fieldErrors.passwordConfirmation}
         >
@@ -139,7 +139,7 @@ export default function CreateUserPage({ onComplete }: Props) {
             loading={loading}
             disabled={!username.trim() || !password.trim() || !passwordConfirmation.trim()}
           >
-            {loading ? t("setup.btn_creating", "Creating Account...") : t("setup.btn_register", "Register Administrator")}
+            {loading ? t("setup.btn_creating", "Creating Account") : t("setup.btn_register", "Register Administrator")}
           </Button>
         </div>
       </form>

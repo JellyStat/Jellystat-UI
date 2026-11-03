@@ -46,7 +46,7 @@ export default function BackupsPage() {
     } catch (err: any) {
       console.error(err);
       toast.error(
-        t("settings.backup_delete_failed", "Failed to delete {{fileName}}: {{error}}", {
+        t("errors.failed_to_delete_filename_error", "Failed to delete {{fileName}}: {{error}}", {
           fileName: backupToDelete,
           error: err?.message ?? String(err),
         }),
@@ -93,7 +93,7 @@ export default function BackupsPage() {
     } catch (err: any) {
       console.error(err);
       toast.error(
-        t("settings.backup_download_failed", "Failed to download {{fileName}}: {{error}}", {
+        t("errors.failed_to_download_filename_error", "Failed to download {{fileName}}: {{error}}", {
           fileName: backup,
           error: err?.message ?? String(err),
         }),
@@ -112,7 +112,7 @@ export default function BackupsPage() {
     } catch (err: any) {
       console.error(err);
       setError(err?.message ?? String(err));
-      toast.error(t("settings.backup_restore_failed", "Couldn't start the restore: {{error}}", { error: err?.message ?? String(err) }));
+      toast.error(t("errors.couldn_t_start_the_restore_error", "Couldn't start the restore: {{error}}", { error: err?.message ?? String(err) }));
     } finally {
       setLoading(false);
     }
@@ -128,7 +128,7 @@ export default function BackupsPage() {
     } catch (err: any) {
       console.error(err);
       setError(err?.message ?? String(err));
-      toast.error(t("settings.backup_upload_failed", "Upload failed: {{error}}", { error: err?.message ?? String(err) }));
+      toast.error(t("errors.upload_failed_error", "Upload failed: {{error}}", { error: err?.message ?? String(err) }));
     } finally {
       setLoading(false);
     }
@@ -171,7 +171,7 @@ export default function BackupsPage() {
         )}
         confirmText={t("common.restore", "Restore")}
         cancelText={t("common.cancel", "Cancel")}
-        tooltip={t("common.restore", "Restore backup")}
+        tooltip={t("common.restore", "Restore")}
         confirmPhrase={{
           text: t("settings.backups_restore_phrase", "restore"),
           label: t("settings.backups_restore_phrase_label", "Type \"{{phrase}}\" to confirm", {
@@ -184,7 +184,7 @@ export default function BackupsPage() {
       />
       <IconButton
         variant="bordered"
-        label={t("common.download", "Download backup")}
+        label={t("common.download", "Download")}
         onClick={() => downloadBackup(backup.fileName)}
         disabled={loading}
       >
@@ -196,7 +196,7 @@ export default function BackupsPage() {
         description={t("settings.backups_delete_named_desc", "{{fileName}} will be permanently deleted. This can't be undone.", { fileName: backup.fileName })}
         confirmText={t("common.delete", "Delete")}
         cancelText={t("common.cancel", "Cancel")}
-        tooltip={t("common.delete", "Delete backup")}
+        tooltip={t("common.delete", "Delete")}
         tone="danger"
         disabled={loading}
         className={iconButtonClass("danger")}
@@ -210,8 +210,8 @@ export default function BackupsPage() {
     <EmptyState
       bordered={false}
       Icon={Archive}
-      title={t("settings.backups_empty_title", "No backups found")}
-      message={t("settings.backups_empty_desc", "No backups have been created yet.")}
+      title={t("empty.no_backups", "No Backups")}
+      message={t("empty.no_backups_available", "No backups available.")}
     />
   );
 
@@ -220,12 +220,12 @@ export default function BackupsPage() {
       <PageHeader
         iconTone="accent"
         icon={<Archive size={28} />}
-        title={t("settings.backups_title", "Backups")}
+        title={t("common.backups", "Backups")}
         description={t("settings.backups_subtitle", "Manage your backups.")}
         actions={
           <Button onClick={pickBackupFile} loading={loading} className="w-full md:w-auto">
             {!loading && <Upload size={16} />}
-            {t("common.upload", "Upload Backup")}
+            {t("common.upload", "Upload")}
           </Button>
         }
       />
@@ -249,7 +249,7 @@ export default function BackupsPage() {
         {error && (
           <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center gap-1 p-6 animate-in fade-in">
             <AlertCircle size={40} className="text-danger mb-2" />
-            <span className="text-lg font-bold text-danger">{t("settings.backups_error_load", "Failed to load data")}</span>
+            <span className="text-lg font-bold text-danger">{t("errors.failed_to_load_backups", "Failed to load backups.")}</span>
             <span className="text-sm text-gray-400 text-center max-w-md">{error}</span>
           </div>
         )}
@@ -273,7 +273,7 @@ export default function BackupsPage() {
 
         <Table wrapperClassName="hidden md:block flex-1" className="whitespace-nowrap">
           <TableHead>
-            <Th className="w-32">{t("common.title", "File")}</Th>
+            <Th className="w-32">{t("common.file", "File")}</Th>
             <Th className="w-48">{t("common.date", "Date")}</Th>
             <Th className="w-32">{t("common.size", "Size")}</Th>
             <Th className="w-64">{t("common.actions", "Actions")}</Th>

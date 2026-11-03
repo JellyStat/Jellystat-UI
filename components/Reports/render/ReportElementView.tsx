@@ -5,6 +5,7 @@ import type { ReportElement, ReportElementStyle, ReportRenderModel, ReportSlice 
 import { conditionStyle } from "@/lib/reports/conditions";
 import { defaultCardOptions, defaultChartOptions, defaultTableOptions } from "@/lib/reports/defaults";
 import { findData, formatValue, resolveLink, resolveTokens } from "@/lib/reports/format";
+import { dt } from "@/lib/reports/i18n";
 import { fontWeight } from "@/lib/reports/measure";
 import ChartView from "./ChartView";
 import MediaImage from "./MediaImage";
@@ -138,7 +139,7 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
       const t = { ...defaultTableOptions(), ...(e.table ?? {}) };
       const data = findData(model, e.dataSourceId);
       if (!data) {
-        content = <Message text="No data source" style={s} />;
+        content = <Message text={dt("reports.designer.empty.no_data_source", "No data source")} style={s} />;
         break;
       }
       if (data.error) {
@@ -203,7 +204,7 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
           )}
           {data.rows.length === 0 && (
             <div className="relative" style={{ height: Math.min(rowH * 2, innerH - headerH) }}>
-              <Message text="No rows" style={s} />
+              <Message text={dt("reports.designer.empty.no_rows", "No rows")} style={s} />
             </div>
           )}
           {data.rows.slice(start, start + count).map((row, n) => {
@@ -245,13 +246,13 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
       const chart = { ...defaultChartOptions(), ...(e.chart ?? {}) };
       const data = findData(model, e.dataSourceId);
       if (!data) {
-        content = <Message text="No data source" style={s} />;
+        content = <Message text={dt("reports.designer.empty.no_data_source", "No data source")} style={s} />;
       } else if (data.error) {
         content = <Message text={data.error} style={s} color="#ef4444" />;
       } else if (chart.series.length === 0 || !chart.categoryField) {
-        content = <Message text="Choose a category and at least one series" style={s} />;
+        content = <Message text={dt("reports.designer.choose_a_category_and_at_least_one_series", "Choose a category and at least one series")} style={s} />;
       } else if (data.rows.length === 0) {
-        content = <Message text="No data" style={s} />;
+        content = <Message text={dt("empty.no_data", "No Data")} style={s} />;
       } else {
         content = (
           <svg width={innerW} height={innerH} className="block overflow-visible">
@@ -266,7 +267,7 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
       const o = { ...defaultCardOptions(), ...(e.cards ?? {}) };
       const data = findData(model, e.dataSourceId);
       if (!data) {
-        content = <Message text="No data source" style={s} />;
+        content = <Message text={dt("reports.designer.empty.no_data_source", "No data source")} style={s} />;
         break;
       }
       if (data.error) {
@@ -274,7 +275,7 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
         break;
       }
       if (data.rows.length === 0) {
-        content = <Message text="No rows" style={s} />;
+        content = <Message text={dt("reports.designer.empty.no_rows", "No rows")} style={s} />;
         break;
       }
       // Same grid as SvgReportRenderer.Cards / CardGrid on the server
@@ -382,7 +383,7 @@ export default function ReportElementView({ element: e, model, pageNumber, pageC
         />
       ) : (
         <div className="w-full h-full relative" style={{ background: "#f3f4f6" }}>
-          <Message text="Image" style={s} />
+          <Message text={dt("reports.designer.image", "Image")} style={s} />
         </div>
       );
       break;

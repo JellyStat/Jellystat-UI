@@ -82,7 +82,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
         }),
       );
     } catch (err: any) {
-      setError(err?.message ?? dt("reports.designer.query_failed", "Query failed"));
+      setError(err?.message ?? dt("reports.designer.errors.query_failed", "Query failed"));
       setPreview(null);
     } finally {
       setRunning(false);
@@ -106,7 +106,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
             <ModalTitle className="flex items-center gap-2 text-lg font-bold text-white">
               <Database size={20} className="text-primary" /> {dt("reports.designer.data_source", "Data source")}
             </ModalTitle>
-            <button type="button" onClick={onClose} className="p-1 text-gray-400 hover:text-white cursor-pointer" aria-label={dt("reports.designer.close", "Close")}>
+            <button type="button" onClick={onClose} className="p-1 text-gray-400 hover:text-white cursor-pointer" aria-label={dt("common.close", "Close")}>
               <X size={18} />
             </button>
           </div>
@@ -134,7 +134,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <Field label={dt("reports.designer.name", "Name")}>
+                <Field label={dt("common.name", "Name")}>
                   <TextInput value={draft.name} onChange={(v) => set({ name: v })} />
                 </Field>
                 {!derived && (
@@ -182,7 +182,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                     />
                   </Field>
 
-                  <Field label={dt("reports.designer.filter", "Filter")}>
+                  <Field label={dt("common.filter", "Filter")}>
                     <FilterBuilder
                       node={draft.filter ?? { combinator: "and", rules: [] }}
                       fields={fields}
@@ -406,7 +406,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                               })
                             }
                           >
-                            <Plus size={12} /> {dt("reports.designer.value", "Value")}
+                            <Plus size={12} /> {dt("common.value", "Value")}
                           </button>
                         </div>
                       </Field>
@@ -440,8 +440,8 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
                               })
                             }
                           >
-                            <option value="asc">{dt("reports.designer.ascending", "Ascending")}</option>
-                            <option value="desc">{dt("reports.designer.descending", "Descending")}</option>
+                            <option value="asc">{dt("common.sort_ascending", "Ascending")}</option>
+                            <option value="desc">{dt("common.sort_descending", "Descending")}</option>
                           </select>
                           <button
                             type="button"
@@ -566,7 +566,7 @@ export default function DataSourceEditor({ source, allSources, parameters, timeZ
               onClick={onClose}
               className="px-4 py-2 rounded-lg bg-background border border-border text-gray-200 hover:text-white text-sm cursor-pointer"
             >
-              {dt("reports.designer.cancel", "Cancel")}
+              {dt("common.cancel", "Cancel")}
             </button>
             <button
               type="button"

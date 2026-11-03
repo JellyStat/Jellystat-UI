@@ -157,7 +157,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
         setPageCount(res?.count ?? 0);
       } catch (err: any) {
         if (err?.name === "AbortError") return;
-        setError(err?.message ?? t("error_cards.failed_to_load_desc", "Failed to load data"));
+        setError(err?.message ?? t("errors.failed_to_load_data", "Failed to load data"));
       } finally {
         setLoading(false);
       }
@@ -263,12 +263,12 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
       for (const [serverId, ids] of byServer) {
         await client.History.activity.delete(serverId, ids);
       }
-      toast.success(t("activity.deleted", "Deleted {{count}} activity records", { count: entries.length }));
+      toast.success(t("common.activity_deleted", "Deleted {{count}} activity records", { defaultValue_one: "Deleted {{count}} activity record", count: entries.length }));
       clearSelection();
       await fetchPage(page);
     } catch (err: any) {
       console.error(err);
-      toast.error(t("activity.delete_failed", "Failed to delete activity: {{error}}", { error: err?.message ?? String(err) }));
+      toast.error(t("errors.failed_to_delete_activity_error", "Failed to delete activity: {{error}}", { error: err?.message ?? String(err) }));
     } finally {
       setDeleting(false);
     }
@@ -499,9 +499,9 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
   const sortOptions: { value: string; label: string }[] = [
     { value: "dateCreated", label: t("common.date_created", "Date Created") },
     { value: "userName", label: t("common.user", "User") },
-    { value: "fullName", label: t("activity.title_col", "Title") },
+    { value: "fullName", label: t("common.title", "Title") },
     { value: "client", label: t("common.client", "Client") },
-    { value: "device", label: t("activity.device", "Device") },
+    { value: "device", label: t("common.device", "Device") },
     { value: "playCount", label: t("common.unit.plays", "Plays") },
     { value: "playDuration", label: t("activity.total_playback", "Total Playback") },
   ];
@@ -532,14 +532,14 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
               buttonElement={
                 <>
                   {deleting ? <Spinner size={16} className="" /> : <Trash2 size={16} />}
-                  {t("activity.delete_selected", "Delete ({{count}})", { count: selectedIds.length })}
+                  {t("activity.delete_selected", "Delete ({{n}})", { n: selectedIds.length })}
                 </>
               }
-              dialogTitle={t("activity.confirm_delete_title", "Delete selected activity?")}
+              dialogTitle={t("common.activity_delete_title", "Delete selected activity?")}
               description={t(
                 "activity.confirm_delete_desc",
                 "This permanently deletes {{count}} selected activity records, including any selected on other pages, and removes them from all statistics. This can't be undone.",
-                { count: selectedIds.length },
+                { defaultValue_one: "This permanently deletes {{count}} selected activity record and removes it from all statistics. This can't be undone.", count: selectedIds.length },
               )}
               confirmText={t("common.delete", "Delete")}
               cancelText={t("common.cancel", "Cancel")}
@@ -569,7 +569,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
               className="flex items-center gap-2 py-2 px-3 rounded-xl text-sm font-bold text-gray-300 hover:text-white border border-border hover:border-gray-500 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
             >
               <FilterX size={16} />
-              {t("activity.clear_filters", "Clear filters ({{count}})", { count: activeFilterCount })}
+              {t("activity.clear_filters", "Clear filters ({{n}})", { n: activeFilterCount })}
             </button>
           )}
           {showLibraryFilter && (
@@ -607,7 +607,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
         {error && (
           <div className="absolute inset-0 z-20 bg-surface/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in p-6">
             <AlertCircle size={40} className="text-danger mb-3" />
-            <span className="text-lg font-bold text-danger mb-1">{t("error_cards.failed_to_load", "Failed to load")}</span>
+            <span className="text-lg font-bold text-danger mb-1">{t("errors.failed_to_load", "Failed to load")}</span>
             <span className="text-sm text-gray-400 text-center max-w-md">{error}</span>
           </div>
         )}
@@ -653,7 +653,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           {!loading && activityData.length === 0 ? (
             <div className="p-12 text-center text-gray-500">
               <MonitorPlay size={40} className="mx-auto mb-3 opacity-20" />
-              <span className="font-medium">{t("activity.no_activity", "No activity found")}</span>
+              <span className="font-medium">{t("empty.no_activity_found", "No activity found")}</span>
             </div>
           ) : (
             activityData.map((activity) => (
@@ -675,7 +675,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                   <th className="w-10 pl-4 pr-1 text-center">
                     <input
                       type="checkbox"
-                      aria-label={t("activity.select_page", "Select all on this page")}
+                      aria-label={t("common.select_page", "Select all on this page")}
                       checked={allPageSelected}
                       ref={(el) => {
                         if (el) el.indeterminate = !allPageSelected && somePageSelected;
@@ -694,13 +694,13 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                   onSort={handleSort}
                 />
                 <SortableHeader
-                  label={t("activity.ip", "IP Address")}
+                  label={t("common.ip_address", "IP Address")}
                   accessor="ipAddress"
                   currentSort={sortStatus}
                   onSort={handleSort}
                 />
                 <SortableHeader
-                  label={t("activity.title_col", "Title")}
+                  label={t("common.title", "Title")}
                   accessor="fullName"
                   currentSort={sortStatus}
                   onSort={handleSort}
@@ -713,7 +713,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                 />
                 <th className="p-3 cursor-default">{t("common.transcode", "Transcode")}</th>
                 <SortableHeader
-                  label={t("activity.device", "Device")}
+                  label={t("common.device", "Device")}
                   accessor="device"
                   currentSort={sortStatus}
                   onSort={handleSort}
@@ -827,7 +827,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                 <tr>
                   <td colSpan={isAdmin ? 11 : 10} className="p-16 text-center text-gray-500">
                     <MonitorPlay size={48} className="mx-auto mb-4 opacity-20" />
-                    <span className="font-medium text-lg">{t("activity.no_activity", "No activity found")}</span>
+                    <span className="font-medium text-lg">{t("empty.no_activity_found", "No activity found")}</span>
                   </td>
                 </tr>
               ) : (

@@ -27,7 +27,7 @@ export default function LibraryOptions({ library }: Props) {
         toast.error(t("library.not_archived", "Library is not archived"));
       } else {
         toast.error(
-          t("library.delete_archived_failed", "Delete failed: {{error}}", {
+          t("errors.delete_failed_error", "Delete failed: {{error}}", {
             error: error?.message || error?.statusText || String(error),
           }),
         );
@@ -108,7 +108,7 @@ export default function LibraryOptions({ library }: Props) {
                   loading ? (
                     <Spinner className="h-5 w-5" />
                   ) : (
-                    <div>{t("library.deleteLibraryItems", "Delete Items")}</div>
+                    <div>{t("library.deleteLibraryItems", "Delete Library Items")}</div>
                   )
                 }
                 dialogTitle={t("library.deleteArchivedItems", "Delete Archived Items")}

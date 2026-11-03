@@ -96,10 +96,10 @@ export default function SettingsPage() {
     { id: "settings", label: t("settings.tab_general", "General"), icon: Settings, IsAdmin: false },
     { id: "servers", label: t("settings.tab_servers_users", "Servers & Users"), icon: Server, IsAdmin: true },
     { id: "integrations", label: t("settings.tab_integrations", "Integrations"), icon: Plug, IsAdmin: true },
-    { id: "librarySettings", label: t("settings.tab_library", "Library"), icon: Library, IsAdmin: true },
-    { id: "migrations", label: t("settings.tab_migrations", "Activity Migration"), icon: ArrowLeftRight, IsAdmin: true },
-    { id: "backups", label: t("settings.tab_backups", "Backups"), icon: Archive, IsAdmin: true },
-    { id: "tasks", label: t("settings.tab_tasks", "Background Tasks"), icon: Terminal, IsAdmin: true },
+    { id: "librarySettings", label: t("common.library", "Library"), icon: Library, IsAdmin: true },
+    { id: "migrations", label: t("common.activity_migration", "Activity Migration"), icon: ArrowLeftRight, IsAdmin: true },
+    { id: "backups", label: t("common.backups", "Backups"), icon: Archive, IsAdmin: true },
+    { id: "tasks", label: t("common.background_tasks", "Background Tasks"), icon: Terminal, IsAdmin: true },
   ];
 
   const updateUI = useCallback(async () => {
@@ -172,9 +172,9 @@ export default function SettingsPage() {
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-surface-hover/50 rounded-2xl border border-border">
                   <div>
-                    <h4 className="text-sm font-bold text-gray-200">{t("settings.language", "Language")}</h4>
+                    <h4 className="text-sm font-bold text-gray-200">{t("common.language", "Language")}</h4>
                     <p className="text-xs text-gray-500 mt-1">
-                      {t("settings.language_desc", "Select your preferred display language")}
+                      {t("settings.language_desc", "Select your preferred language")}
                     </p>
                   </div>
                   <LanguageSwitcher />

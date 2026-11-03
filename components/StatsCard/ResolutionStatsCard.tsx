@@ -52,8 +52,8 @@ export default function ResolutionStatsCard({ gridify }: Props) {
       return (
         <NoData
           Icon={PieChartIcon}
-          title={t("common.no_data", "No Data Available")}
-          message={t("statistics.no_data_desc", "There is no playback history for the last 31 days.")}
+          title={t("empty.no_data", "No Data")}
+          message={t("empty.there_is_no_playback_history_for_the", "There is no playback history for the last 31 days.")}
         />
       );
     }

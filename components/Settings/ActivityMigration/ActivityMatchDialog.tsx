@@ -162,7 +162,7 @@ function MatchSearch({
         if (!cancelled) setResults(res?.data ?? []);
       } catch (err) {
         console.error("Error searching items:", err);
-        if (!cancelled) setError(t("settings.migration_search_error", "Failed to search for migration items."));
+        if (!cancelled) setError(t("errors.failed_to_search_for_migration_items", "Failed to search for migration items."));
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -223,7 +223,7 @@ function MatchSearch({
             options={[
               { value: ItemTypes.Episode, label: t("settings.migration_type_episodes", "Episodes") },
               { value: ItemTypes.Movie, label: t("settings.migration_type_movies", "Movies") },
-              { value: ItemTypes.Series, label: t("settings.migration_type_series", "Series") },
+              { value: ItemTypes.Series, label: t("common.series", "Series") },
             ]}
           />
         )}
@@ -238,7 +238,7 @@ function MatchSearch({
           }}
           labelFn={(value) =>
             value === ""
-              ? t("settings.migration_all_libraries", "All Libraries")
+              ? t("common.all_libraries", "All libraries")
               : (libraries.find((l) => l.id === value)?.name ?? value)
           }
           disabled={parent != null}
@@ -279,7 +279,7 @@ function MatchSearch({
             <span className="text-gray-500 text-sm font-medium">{t("common.loading", "Loading")}</span>
           </div>
         ) : results.length === 0 ? (
-          <EmptyState bordered={false} className="bg-transparent" Icon={Search} title={t("media_grid.no_results", "No results found")} />
+          <EmptyState bordered={false} className="bg-transparent" Icon={Search} title={t("empty.no_results_found", "No results found")} />
         ) : (
           <>
             {/* Phones: list */}
@@ -335,13 +335,13 @@ function MatchSearch({
               <thead className="sticky top-0 z-10">
                 <tr className="bg-background border-b border-border text-xs font-bold text-gray-400 uppercase tracking-wider select-none">
                   <th className="px-4 py-3 w-12">
-                    <span className="sr-only">{t("settings.migration_col_choose", "Choose")}</span>
+                    <span className="sr-only">{t("common.choose", "Choose")}</span>
                   </th>
-                  <th className="px-4 py-3 w-28">{t("settings.migration_col_episode", "Episode")}</th>
-                  <th className="px-4 py-3">{t("settings.migration_col_name", "Name")}</th>
-                  <th className="px-4 py-3">{t("settings.migration_col_series", "Series")}</th>
-                  <th className="px-4 py-3">{t("settings.migration_col_type", "Type")}</th>
-                  <th className="px-4 py-3">{t("settings.migration_col_library", "Library")}</th>
+                  <th className="px-4 py-3 w-28">{t("common.episode", "Episode")}</th>
+                  <th className="px-4 py-3">{t("common.name", "Name")}</th>
+                  <th className="px-4 py-3">{t("common.series", "Series")}</th>
+                  <th className="px-4 py-3">{t("common.type", "Type")}</th>
+                  <th className="px-4 py-3">{t("common.library", "Library")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/50">

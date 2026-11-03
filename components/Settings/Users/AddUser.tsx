@@ -29,10 +29,10 @@ export default function AddUserModal({ onClose, onCreated }: Props) {
 
     const nextFieldErrors: typeof fieldErrors = {};
     if (!username.trim()) {
-      nextFieldErrors.username = t("common.error_username_required", "Username is required");
+      nextFieldErrors.username = t("errors.username_is_required", "Username is required");
     }
     if (!password.trim()) {
-      nextFieldErrors.password = t("common.error_password_required", "Password is required");
+      nextFieldErrors.password = t("errors.password_is_required", "Password is required");
     }
 
     if (Object.keys(nextFieldErrors).length > 0) {
@@ -47,7 +47,7 @@ export default function AddUserModal({ onClose, onCreated }: Props) {
       onCreated?.();
       onClose();
     } catch (err: any) {
-      const message = err?.message ?? t("settings.error_create_user", "Failed to create user");
+      const message = err?.message ?? t("errors.failed_to_create_user", "Failed to create user");
       setError(message);
       toast.error(message);
     } finally {
@@ -71,7 +71,7 @@ export default function AddUserModal({ onClose, onCreated }: Props) {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             disabled={loading}
-            placeholder={t("settings.placeholder_username", "Choose a username")}
+            placeholder={t("common.placeholder_username", "Choose a username")}
             leftIcon={<User size={18} />}
             error={!!fieldErrors.username}
           />
@@ -84,7 +84,7 @@ export default function AddUserModal({ onClose, onCreated }: Props) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
-            placeholder={t("settings.placeholder_password", "Create a secure password")}
+            placeholder={t("common.placeholder_create_password", "Create a secure password")}
             leftIcon={<Lock size={18} />}
             error={!!fieldErrors.password}
             rightSlot={
@@ -102,7 +102,7 @@ export default function AddUserModal({ onClose, onCreated }: Props) {
             {t("common.cancel", "Cancel")}
           </Button>
           <Button type="submit" loading={loading} disabled={!username.trim() || !password.trim()}>
-            {loading ? t("settings.creating_user", "Creating") : t("settings.create_user", "Create")}
+            {loading ? t("common.creating", "Creating") : t("common.create", "Create")}
           </Button>
         </ModalFooter>
       </form>

@@ -5,6 +5,7 @@ import {
 } from '@headlessui/react';
 import { X } from 'lucide-react';
 import type { ComponentProps, ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '../cn';
 import { focusRing } from '../tones';
 
@@ -28,9 +29,11 @@ export function PopoverField({
   children,
   empty = false,
   onClear,
-  clearLabel = 'Clear',
+  clearLabel: clearLabelProp,
   className,
 }: PopoverFieldProps) {
+  const { t } = useTranslation('common');
+  const clearLabel = clearLabelProp ?? t('common.clear', 'Clear');
   return (
     <div className={cn('relative w-full flex items-center min-w-50', className)}>
       <PopoverButton

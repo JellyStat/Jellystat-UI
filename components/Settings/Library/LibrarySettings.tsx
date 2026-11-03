@@ -35,7 +35,7 @@ export default function LibrarySettingsPage() {
         }),
       );
       toast.error(
-        t("settings.toast_tracking_failed", "Failed to update tracking for {{name}}: {{error}}", {
+        t("errors.failed_to_update_tracking_for_name_error", "Failed to update tracking for {{name}}: {{error}}", {
           name: targetLibrary.name,
           error: err?.message ?? String(err),
         }),
@@ -56,7 +56,7 @@ export default function LibrarySettingsPage() {
     } catch (err: any) {
       if (err?.name === "AbortError") return;
       console.error(err);
-      setError(err?.message ?? t("settings.error_load_libraries", "Failed to load libraries"));
+      setError(err?.message ?? t("errors.failed_to_load_libraries", "Failed to load libraries"));
     } finally {
       setLoading(false);
     }
@@ -86,7 +86,7 @@ export default function LibrarySettingsPage() {
         {error && !loading && (
           <Card className="max-w-lg mx-auto mt-12 flex flex-col items-center text-center animate-in fade-in">
             <AlertCircle size={48} className="text-danger mb-4" />
-            <span className="text-lg font-bold text-white mb-2">{t("libraries.failed_load", "Failed to load libraries")}</span>
+            <span className="text-lg font-bold text-white mb-2">{t("errors.failed_to_load_libraries", "Failed to load libraries")}</span>
             <span className="text-sm text-gray-400">{error}</span>
             <Button variant="outline" onClick={fetchPage} className="mt-6">
               {t("common.try_again", "Try again")}
@@ -101,8 +101,8 @@ export default function LibrarySettingsPage() {
                 className="col-span-full"
                 bordered={false}
                 Icon={Library}
-                title={t("common.no_libraries_found", "No libraries found")}
-                message={t("settings.no_libraries_desc", "Make sure your media server is connected properly.")}
+                title={t("empty.no_libraries_found", "No libraries found")}
+                message={t("empty.make_sure_your_media_server_is_connected", "Make sure your media server is connected properly.")}
               />
             ) : (
               libraryData.map((lib) => (

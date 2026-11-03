@@ -179,7 +179,7 @@ export function StreamInfoModal({ activity, open, onClose }: Props) {
               </tr>
             </thead>
             <tbody className="text-sm">
-              <SectionHeader title={t("stream.media", "Media")} />
+              <SectionHeader title={t("common.media", "Media")} />
 
               <DataRow label={t("stream.bitrate", "Bitrate")} current={<>{transcodeBitrate}</>} source={<>{origBitrate}</>} />
 
@@ -222,7 +222,7 @@ export function StreamInfoModal({ activity, open, onClose }: Props) {
               />
 
               <DataRow
-                label={t("stream.aspect_ratio", "Aspect")}
+                label={t("stream.aspect_ratio", "Aspect Ratio")}
                 current={videoStream?.aspectRatio || UNKNOWN}
                 source={videoStream?.aspectRatio || UNKNOWN}
               />
@@ -248,7 +248,7 @@ export function StreamInfoModal({ activity, open, onClose }: Props) {
               />
 
               <DataRow
-                label={t("stream.language", "Language")}
+                label={t("common.language", "Language")}
                 current={<span className="font-semibold">{langVal}</span>}
                 source={<span className="font-semibold">{langVal}</span>}
               />

@@ -14,7 +14,7 @@ function DefaultValueInput({ parameter, onChange }: { parameter: ReportParameter
   const v = parameter.defaultValue;
   switch (parameter.type) {
     case "lookup":
-      return <ParameterInput parameter={parameter} value={v} onChange={onChange} source={{ definition }} size="sm" emptyLabel={dt("reports.designer.all", "All")} />;
+      return <ParameterInput parameter={parameter} value={v} onChange={onChange} source={{ definition }} size="sm" emptyLabel={dt("common.all", "All")} />;
     case "number":
       return <NumberInput value={typeof v === "number" ? v : null} onChange={onChange} />;
     case "boolean":
@@ -23,8 +23,8 @@ function DefaultValueInput({ parameter, onChange }: { parameter: ReportParameter
           value={v === true ? "true" : v === false ? "false" : ""}
           placeholder={dt("reports.designer.none_2", "(none)")}
           options={[
-            { value: "true", label: dt("reports.designer.yes", "Yes") },
-            { value: "false", label: dt("reports.designer.no", "No") },
+            { value: "true", label: dt("common.yes", "Yes") },
+            { value: "false", label: dt("common.no", "No") },
           ]}
           onChange={(x) => onChange(x === "" ? null : x === "true")}
         />
@@ -68,7 +68,7 @@ function LookupSettings({
         <Field label={dt("reports.designer.value_column", "Value column")} hint={dt("reports.designer.passed_to_filters", "Passed to filters")}>
           <Select
             value={lookup.valueField}
-            placeholder={dt("reports.designer.choose", "Choose...")}
+            placeholder={dt("common.choose", "Choose")}
             options={columns}
             onChange={(v) => onChange({ ...lookup, valueField: v }, "value")}
           />
@@ -92,8 +92,8 @@ function LookupSettings({
             )
           : dt(
               "reports.designer.parameter_used_by",
-              "Used by {{count}} data source filter(s). Leaving it empty switches those filters off.",
-              { count: usedBy },
+              "Used by {{count}} data source filters. Leaving it empty switches those filters off.",
+              { defaultValue_one: "Used by {{count}} data source filter. Leaving it empty switches that filter off.", count: usedBy },
             )}
       </p>
     </div>
@@ -173,12 +173,12 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
                 >
                   {ds.name}
                 </button>
-                <button type="button" title={dt("reports.designer.edit", "Edit")} className="p-0.5 text-gray-500 hover:text-white cursor-pointer" onClick={() => setEditing(ds)}>
+                <button type="button" title={dt("common.edit", "Edit")} className="p-0.5 text-gray-500 hover:text-white cursor-pointer" onClick={() => setEditing(ds)}>
                   <Pencil size={12} />
                 </button>
                 <button
                   type="button"
-                  title={dt("reports.designer.duplicate", "Duplicate")}
+                  title={dt("common.duplicate", "Duplicate")}
                   className="p-0.5 text-gray-500 hover:text-white cursor-pointer"
                   onClick={() =>
                     change((doc) => {
@@ -194,7 +194,7 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
                 </button>
                 <button
                   type="button"
-                  title={dt("reports.designer.delete", "Delete")}
+                  title={dt("common.delete", "Delete")}
                   className="p-0.5 text-gray-500 hover:text-danger cursor-pointer"
                   onClick={() => removeSource(ds.id)}
                 >
@@ -220,7 +220,7 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
       </Section>
 
       <Section
-        title={dt("reports.designer.parameters", "Parameters")}
+        title={dt("common.parameters", "Parameters")}
         actions={
           <button
             type="button"
@@ -251,7 +251,7 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
               <span className="flex-1 text-xs font-bold text-gray-200 truncate">@{p.name}</span>
               <button
                 type="button"
-                title={dt("reports.designer.delete", "Delete")}
+                title={dt("common.delete", "Delete")}
                 className="p-0.5 text-gray-500 hover:text-danger cursor-pointer"
                 onClick={() =>
                   change((doc) => {
@@ -263,16 +263,16 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
               </button>
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <Field label={dt("reports.designer.name", "Name")}>
+              <Field label={dt("common.name", "Name")}>
                 <TextInput value={p.name} onChange={(v) => setParameter(i, { name: v.replace(/[^A-Za-z0-9_]/g, "") }, "name")} />
               </Field>
-              <Field label={dt("reports.designer.type", "Type")}>
+              <Field label={dt("common.type", "Type")}>
                 <Select
                   value={p.type}
                   options={[
                     { value: "string", label: dt("reports.designer.text", "Text") },
                     { value: "number", label: dt("reports.designer.number", "Number") },
-                    { value: "date", label: dt("reports.designer.date", "Date") },
+                    { value: "date", label: dt("common.date", "Date") },
                     { value: "boolean", label: dt("reports.designer.yes_no", "Yes/No") },
                     { value: "lookup", label: dt("reports.designer.lookup", "Lookup") },
                   ]}
@@ -300,7 +300,7 @@ export default function DataPanel({ data }: { data: Record<string, ReportDataRes
               <Field label={dt("reports.designer.label", "Label")}>
                 <TextInput value={p.label ?? ""} onChange={(v) => setParameter(i, { label: v || null }, "label")} />
               </Field>
-              <Field label={dt("reports.designer.default", "Default")}>
+              <Field label={dt("common.default", "Default")}>
                 <DefaultValueInput parameter={p} onChange={(v) => setParameter(i, { defaultValue: v }, "default")} />
               </Field>
             </div>

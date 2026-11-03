@@ -15,7 +15,7 @@ const C = ({ children }: { children: ReactNode }) => (
  * see whole sentences. {{tokens}} in the text are shown as written.
  */
 function rich(key: string, text: string, slots: ReactNode[] = []): ReactNode {
-  return dt(`reports.designer.help.${key}`, text)
+  return dt(key, text)
     .split(/(\{\d+\}|\*\*[^*]+\*\*)/)
     .map((part, i) => {
       const slot = /^\{(\d+)\}$/.exec(part);
@@ -30,7 +30,6 @@ function rich(key: string, text: string, slots: ReactNode[] = []): ReactNode {
       return part;
     });
 }
-const h = (key: string, text: string) => dt(`reports.designer.help.${key}`, text);
 
 const Table = ({ head, rows }: { head: string[]; rows: ReactNode[][] }) => (
   <table className="w-full text-[13px] border-collapse my-2">
@@ -71,25 +70,25 @@ const Ul = ({ items }: { items: ReactNode[] }) => (
 const sections = (): { key: string; title: string; body: ReactNode }[] => [
   {
     key: "start",
-    title: h("start_title", "Getting started"),
+    title: dt("reports.designer.help.start_title", "Getting started"),
     body: (
       <>
         <P>
           {rich(
-            "start_intro",
+            "reports.designer.help.start_intro",
             "A report is one or more pages of elements (text, metrics, tables, charts, card grids, images and shapes) bound to data sources.",
           )}
         </P>
         <Ul
           items={[
-            rich("start_data", "**Data** tab: add a data source (what to query), then bind elements to it."),
-            rich("start_insert", "**Insert** tab: drag an element onto the page, or click it to drop it at the top left."),
-            rich("start_select", "Select an element to edit it in the panel on the right; select several to align, distribute or style them together."),
+            rich("reports.designer.help.start_data", "**Data** tab: add a data source (what to query), then bind elements to it."),
+            rich("reports.designer.help.start_insert", "**Insert** tab: drag an element onto the page, or click it to drop it at the top left."),
+            rich("reports.designer.help.start_select", "Select an element to edit it in the panel on the right; select several to align, distribute or style them together."),
             rich(
-              "start_preview",
+              "reports.designer.help.start_preview",
               "**Preview** (eye icon) shows the finished pages with live data, including the extra pages growing tables add.",
             ),
-            rich("start_save", "Save, then use Schedules & webhooks to deliver the report automatically."),
+            rich("reports.designer.help.start_save", "Save, then use Schedules & webhooks to deliver the report automatically."),
           ]}
         />
       </>
@@ -97,26 +96,26 @@ const sections = (): { key: string; title: string; body: ReactNode }[] => [
   },
   {
     key: "data",
-    title: h("data_title", "Data sources"),
+    title: dt("reports.designer.data_sources", "Data sources"),
     body: (
       <>
-        <H>{h("data_query", "Query a dataset")}</H>
+        <H>{dt("reports.designer.query_a_dataset", "Query a dataset")}</H>
         <Ul
           items={[
             rich(
-              "data_pick",
+              "reports.designer.help.data_pick",
               "Pick a dataset (playback activity, library items, users...), filter it, and return either rows or a summary (group by + totals).",
             ),
             rich(
-              "data_params",
+              "reports.designer.help.data_params",
               "Filters can compare against a **parameter** (pick @name as the value), so viewers and schedules can change them.",
             ),
           ]}
         />
-        <H>{h("data_calculated", "Calculated fields")}</H>
+        <H>{dt("reports.designer.calculated_fields", "Calculated fields")}</H>
         <P>
           {rich(
-            "data_calculated_body",
+            "reports.designer.help.data_calculated_body",
             "Row-level expressions computed in the database and usable anywhere a field is: {0}, {1}, {2}, {3}. Write {4} rather than {5} for decimal division.",
             [
               <C key="0">Duration / 3600.0</C>,
@@ -128,22 +127,22 @@ const sections = (): { key: string; title: string; body: ReactNode }[] => [
             ],
           )}
         </P>
-        <H>{h("data_after", "After the query")}</H>
+        <H>{dt("reports.designer.after_the_query", "After the query")}</H>
         <P>
           {rich(
-            "data_after_body",
+            "reports.designer.help.data_after_body",
             'Steps applied to the result in order: filter, calculate a column, top N, pivot, running total, percent of total, rank, change from previous, fill missing dates, sort and limit. These work on totals too, e.g. "users with at least 10 plays".',
           )}
         </P>
-        <H>{h("data_combine", "Combine data sources")}</H>
+        <H>{dt("reports.designer.combine_data_sources", "Combine data sources")}</H>
         <Ul
           items={[
             rich(
-              "data_join",
+              "reports.designer.help.data_join",
               "**Join**: add another source's columns to matching rows (left, inner or full), e.g. this month next to last month per user.",
             ),
-            rich("data_union", "**Union**: stack rows from several sources, optionally with a column naming each row's source."),
-            rich("data_nested", "Combined sources can build on other combined sources."),
+            rich("reports.designer.help.data_union", "**Union**: stack rows from several sources, optionally with a column naming each row's source."),
+            rich("reports.designer.help.data_nested", "Combined sources can build on other combined sources."),
           ]}
         />
       </>
@@ -151,34 +150,34 @@ const sections = (): { key: string; title: string; body: ReactNode }[] => [
   },
   {
     key: "tokens",
-    title: h("tokens_title", "Placeholders & formats"),
+    title: dt("reports.designer.help.tokens_title", "Placeholders & formats"),
     body: (
       <>
         <P>
           {rich(
-            "tokens_intro",
+            "reports.designer.help.tokens_intro",
             "Placeholders use double curly braces and work in text, headings, metric labels, card text lines and link URLs. Unknown ones are left as they are, so a typo shows up rather than breaking the report.",
           )}
         </P>
         <Table
-          head={[h("tokens_col_placeholder", "Placeholder"), h("tokens_col_gives", "Gives")]}
+          head={[dt("reports.designer.help.tokens_col_placeholder", "Placeholder"), dt("reports.designer.help.tokens_col_gives", "Gives")]}
           rows={[
-            [<C key="a">{"{{page.number}}"}</C>, h("tokens_page_number", "Current page number, counting the extra pages growing elements add")],
-            [<C key="a">{"{{page.count}}"}</C>, h("tokens_page_count", "Total pages, including extra pages")],
-            [<C key="a">{"{{report.name}}"}</C>, h("tokens_report_name", "The report's name")],
-            [<C key="a">{"{{now}}"}</C>, h("tokens_now", "When the report was generated, in the report's time zone")],
-            [<C key="a">{"{{param.NAME}}"}</C>, h("tokens_param", "A parameter's value")],
-            [<C key="a">{"{{ds.SOURCE.FIELD}}"}</C>, h("tokens_ds_field", "A column from the first row of a data source (by name or id)")],
-            [<C key="a">{"{{ds.SOURCE.rowCount}}"}</C>, h("tokens_ds_count", "How many rows a data source returned")],
-            [<C key="a">{"{{row.FIELD}}"}</C>, h("tokens_row", "Card grid text and link URLs: a column of the card's (or table row's) own row")],
-            [<C key="a">{"{{value}}"}</C>, h("tokens_value", "Hyperlink URL templates: the value being linked")],
+            [<C key="a">{"{{page.number}}"}</C>, dt("reports.designer.help.tokens_page_number", "Current page number, counting the extra pages growing elements add")],
+            [<C key="a">{"{{page.count}}"}</C>, dt("reports.designer.help.tokens_page_count", "Total pages, including extra pages")],
+            [<C key="a">{"{{report.name}}"}</C>, dt("reports.designer.help.tokens_report_name", "The report's name")],
+            [<C key="a">{"{{now}}"}</C>, dt("reports.designer.help.tokens_now", "When the report was generated, in the report's time zone")],
+            [<C key="a">{"{{param.NAME}}"}</C>, dt("reports.designer.help.tokens_param", "A parameter's value")],
+            [<C key="a">{"{{ds.SOURCE.FIELD}}"}</C>, dt("reports.designer.help.tokens_ds_field", "A column from the first row of a data source (by name or id)")],
+            [<C key="a">{"{{ds.SOURCE.rowCount}}"}</C>, dt("reports.designer.help.tokens_ds_count", "How many rows a data source returned")],
+            [<C key="a">{"{{row.FIELD}}"}</C>, dt("reports.designer.help.tokens_row", "Card grid text and link URLs: a column of the card's (or table row's) own row")],
+            [<C key="a">{"{{value}}"}</C>, dt("reports.designer.help.tokens_value", "Hyperlink URL templates: the value being linked")],
           ]}
         />
-        <P>{rich("tokens_footer_example", "Example footer: {0}", [<C key="0">{"Page {{page.number}} of {{page.count}}"}</C>])}</P>
-        <H>{h("formats_title", "Formats")}</H>
+        <P>{rich("reports.designer.help.tokens_footer_example", "Example footer: {0}", [<C key="0">{"Page {{page.number}} of {{page.count}}"}</C>])}</P>
+        <H>{dt("reports.designer.help.formats_title", "Formats")}</H>
         <P>
           {rich(
-            "formats_body",
+            "reports.designer.help.formats_body",
             "Add {0} after a placeholder: {1}, {2}, {3}. The same formats are offered for table columns and metrics.",
             [
               <C key="0">|format</C>,
@@ -189,14 +188,14 @@ const sections = (): { key: string; title: string; body: ReactNode }[] => [
           )}
         </P>
         <Table
-          head={[h("formats_col_format", "Format"), h("formats_col_example", "Example")]}
+          head={[dt("reports.designer.format", "Format"), dt("reports.designer.help.formats_col_example", "Example")]}
           rows={[
-            [<C key="a">text</C>, h("formats_as_is", "As is")],
+            [<C key="a">text</C>, dt("reports.designer.help.formats_as_is", "As is")],
             [<C key="a">number</C>, "1,234.57"],
             [<C key="a">integer</C>, "1,235"],
-            [<C key="a">decimal</C>, h("formats_decimal", "1,234.57 (always 2 decimals)")],
+            [<C key="a">decimal</C>, dt("reports.designer.help.formats_decimal", "1,234.57 (always 2 decimals)")],
             [<C key="a">percent</C>, "42.5%"],
-            [<C key="a">duration</C>, h("formats_duration", "1h 52m (from seconds)")],
+            [<C key="a">duration</C>, dt("reports.designer.help.formats_duration", "1h 52m (from seconds)")],
             [<C key="a">bytes</C>, "1.4 GB"],
             [<C key="a">date</C>, "2026-10-29"],
             [<C key="a">datetime</C>, "2026-10-29 16:20"],
@@ -205,7 +204,7 @@ const sections = (): { key: string; title: string; body: ReactNode }[] => [
         />
         <P>
           {rich(
-            "formats_canvas_count",
+            "reports.designer.help.formats_canvas_count",
             "On the design canvas, {0} only counts design pages; Preview, the viewer and exports show the real total.",
             [<C key="0">{"{{page.count}}"}</C>],
           )}
@@ -215,50 +214,50 @@ const sections = (): { key: string; title: string; body: ReactNode }[] => [
   },
   {
     key: "flow",
-    title: h("flow_title", "Page flow"),
+    title: dt("reports.designer.help.flow_title", "Page flow"),
     body: (
       <>
         <P>
           {rich(
-            "flow_intro",
+            "reports.designer.help.flow_intro",
             "Turn on **Continue on new pages** (Pages section) for a table or card grid, and rows that don't fit go onto extra pages added after that page, with the table header repeated.",
           )}
         </P>
         <Ul
           items={[
             rich(
-              "flow_header",
+              "reports.designer.help.flow_header",
               "A dashed green **Header** line appears; drag it (or set Header height). On the extra pages the table starts there.",
             ),
             rich(
-              "flow_repeat",
+              "reports.designer.help.flow_repeat",
               "Everything entirely **above the header line** or **below the table** repeats on every extra page, like page headers and footers: titles, logos, page numbers.",
             ),
-            rich("flow_between", "Everything in between (intro text, metrics, charts) appears on the first page only."),
-            rich("flow_first_only", "**First page only** keeps a header or footer element off the extra pages."),
+            rich("reports.designer.help.flow_between", "Everything in between (intro text, metrics, charts) appears on the first page only."),
+            rich("reports.designer.help.flow_first_only", "**First page only** keeps a header or footer element off the extra pages."),
           ]}
         />
-        <P>{rich("flow_same_breaks", "The viewer, Preview and every export break pages in the same places. A report is capped at 500 pages.")}</P>
+        <P>{rich("reports.designer.help.flow_same_breaks", "The viewer, Preview and every export break pages in the same places. A report is capped at 500 pages.")}</P>
       </>
     ),
   },
   {
     key: "conditions",
-    title: h("conditions_title", "Conditional formatting"),
+    title: dt("reports.designer.conditional_formatting", "Conditional formatting"),
     body: (
       <>
         <P>
           {rich(
-            "conditions_intro",
+            "reports.designer.help.conditions_intro",
             "Tables, metrics and card grids have a Conditional formatting section. Each rule is a column, an operator and a value, plus the styles to apply.",
           )}
         </P>
         <Ul
           items={[
-            rich("conditions_tables", "**Tables**: style the whole row or one column, e.g. red text in Watch time when it's under 60."),
-            rich("conditions_metrics", "**Metrics**: checked against the first row; styles the value and fill."),
-            rich("conditions_cards", "**Card grids**: checked per card; styles the card."),
-            rich("conditions_order", "Rules apply in order; when two set the same thing, the later one wins."),
+            rich("reports.designer.help.conditions_tables", "**Tables**: style the whole row or one column, e.g. red text in Watch time when it's under 60."),
+            rich("reports.designer.help.conditions_metrics", "**Metrics**: checked against the first row; styles the value and fill."),
+            rich("reports.designer.help.conditions_cards", "**Card grids**: checked per card; styles the card."),
+            rich("reports.designer.help.conditions_order", "Rules apply in order; when two set the same thing, the later one wins."),
           ]}
         />
       </>
@@ -266,20 +265,20 @@ const sections = (): { key: string; title: string; body: ReactNode }[] => [
   },
   {
     key: "cards",
-    title: h("cards_title", "Card grids"),
+    title: dt("reports.designer.help.cards_title", "Card grids"),
     body: (
       <>
         <P>
           {rich(
-            "cards_intro",
+            "reports.designer.help.cards_intro",
             'One card per row: a poster, backdrop or user avatar, plus up to three text lines. Good for "top 10 movies" or "most active users".',
           )}
         </P>
         <Ul
           items={[
-            rich("cards_media_id", "**Media id column**: the column holding the item (or user) id, e.g. ItemId."),
+            rich("reports.designer.help.cards_media_id", "**Media id column**: the column holding the item (or user) id, e.g. ItemId."),
             rich(
-              "cards_text_lines",
+              "reports.designer.help.cards_text_lines",
               'Text lines use {0}, e.g. title {1}, subtitle {2}, value {3}. The "+ column" picker inserts one for you.',
               [
                 <C key="0">{"{{row.FIELD}}"}</C>,
@@ -289,10 +288,10 @@ const sections = (): { key: string; title: string; body: ReactNode }[] => [
               ],
             ),
             rich(
-              "cards_layout",
+              "reports.designer.help.cards_layout",
               "Set columns, card height, gap, fill, corner radius and a maximum number of cards. A card grid can continue on new pages like a table.",
             ),
-            rich("cards_link", "An optional link per card, e.g. {0}.", [
+            rich("reports.designer.help.cards_link", "An optional link per card, e.g. {0}.", [
               <C key="0">{"https://jellyfin.example/web/#/details?id={{row.ItemId}}"}</C>,
             ]),
           ]}
@@ -302,21 +301,21 @@ const sections = (): { key: string; title: string; body: ReactNode }[] => [
   },
   {
     key: "links",
-    title: h("links_title", "Hyperlinks"),
+    title: dt("reports.designer.help.links_title", "Hyperlinks"),
     body: (
       <>
         <Ul
           items={[
             rich(
-              "links_columns",
+              "reports.designer.help.links_columns",
               "Table columns and metrics: choose the **Hyperlink** format. Leave the URL empty if the value already is a URL, or write a template with {0} and {1}.",
               [<C key="0">{"{{value}}"}</C>, <C key="1">{"{{row.FIELD}}"}</C>],
             ),
-            rich("links_elements", "Text and images: set Link to make the whole element clickable. Placeholders work there too."),
-            rich("links_encoded", "Values inserted after the start of a URL are URL-encoded automatically."),
-            rich("links_schemes", "Only http, https and mailto links are created; anything else shows as plain text."),
+            rich("reports.designer.help.links_elements", "Text and images: set Link to make the whole element clickable. Placeholders work there too."),
+            rich("reports.designer.help.links_encoded", "Values inserted after the start of a URL are URL-encoded automatically."),
+            rich("reports.designer.help.links_schemes", "Only http, https and mailto links are created; anything else shows as plain text."),
             rich(
-              "links_where",
+              "reports.designer.help.links_where",
               "Links open in the viewer, HTML/SVG exports and server PDFs. Images (PNG) and in-browser PDFs can't hold links.",
             ),
           ]}
@@ -326,24 +325,24 @@ const sections = (): { key: string; title: string; body: ReactNode }[] => [
   },
   {
     key: "params",
-    title: h("params_title", "Parameters"),
+    title: dt("common.parameters", "Parameters"),
     body: (
       <>
         <P>
           {rich(
-            "params_intro",
+            "reports.designer.help.params_intro",
             "Parameters (Data tab) are values the viewer or a schedule can change: text, a number, a date, yes/no, or a lookup.",
           )}
         </P>
         <Ul
           items={[
             rich(
-              "params_filter",
+              "reports.designer.help.params_filter",
               "Use one in a filter by picking @name as the rule's value. An empty parameter switches its rule off, which is how optional filters work.",
             ),
-            rich("params_text", "Show one in text with {0}.", [<C key="0">{"{{param.NAME}}"}</C>]),
+            rich("reports.designer.help.params_text", "Show one in text with {0}.", [<C key="0">{"{{param.NAME}}"}</C>]),
             rich(
-              "params_lookup",
+              "reports.designer.help.params_lookup",
               "A **lookup** is a dropdown of choices from a data source (value column + optional label column), optionally allowing several choices.",
             ),
           ]}
@@ -353,24 +352,24 @@ const sections = (): { key: string; title: string; body: ReactNode }[] => [
   },
   {
     key: "export",
-    title: h("export_title", "Exports & delivery"),
+    title: dt("reports.designer.help.export_title", "Exports & delivery"),
     body: (
       <>
         <Table
-          head={[h("export_col_export", "Export"), h("export_col_notes", "Notes")]}
+          head={[dt("common.export", "Export"), dt("reports.designer.help.export_col_notes", "Notes")]}
           rows={[
             [
               dt("reports.designer.pdf_server_vector", "PDF (server, vector)"),
-              h("export_pdf", "Sharp text, fonts embedded, clickable links. Best for sharing and schedules."),
+              dt("reports.designer.help.export_pdf", "Sharp text, fonts embedded, clickable links. Best for sharing and schedules."),
             ],
-            [h("export_png_svg_name", "PNG / SVG of this page (server)"), h("export_png_svg", "One page as an image; SVG keeps links.")],
-            [dt("reports.designer.html_server", "HTML (server)"), h("export_html", "A standalone page with all pages, fonts and links.")],
-            [dt("reports.designer.data_as_json_server", "Data as JSON (server)"), h("export_json", "The data behind the report.")],
-            [h("export_browser_name", "PNG / PDF (in browser)"), h("export_browser", "Captures what you see; no clickable links.")],
+            [dt("reports.designer.help.export_png_svg_name", "PNG / SVG of this page (server)"), dt("reports.designer.help.export_png_svg", "One page as an image; SVG keeps links.")],
+            [dt("reports.designer.html_server", "HTML (server)"), dt("reports.designer.help.export_html", "A standalone page with all pages, fonts and links.")],
+            [dt("reports.designer.data_as_json_server", "Data as JSON (server)"), dt("reports.designer.help.export_json", "The data behind the report.")],
+            [dt("reports.designer.help.export_browser_name", "PNG / PDF (in browser)"), dt("reports.designer.help.export_browser", "Captures what you see; no clickable links.")],
             [
               dt("reports.designer.report_definition_json", "Report definition (.json)"),
-              h(
-                "export_definition",
+              dt(
+                "reports.designer.help.export_definition",
                 "The design itself, to back up or import elsewhere. Also on the Reports screen. Imports are checked first, and schedules aren't included.",
               ),
             ],
@@ -378,7 +377,7 @@ const sections = (): { key: string; title: string; body: ReactNode }[] => [
         />
         <P>
           {rich(
-            "export_delivery",
+            "reports.designer.help.export_delivery",
             "Saved reports can be delivered on a schedule or by webhook (generic, Discord or JSON) with Schedules & webhooks in the toolbar.",
           )}
         </P>
@@ -387,25 +386,25 @@ const sections = (): { key: string; title: string; body: ReactNode }[] => [
   },
   {
     key: "keys",
-    title: h("keys_title", "Keyboard shortcuts"),
+    title: dt("reports.designer.help.keys_title", "Keyboard shortcuts"),
     body: (
       <Table
-        head={[h("keys_col_keys", "Keys"), h("keys_col_action", "Action")]}
+        head={[dt("reports.designer.help.keys_col_keys", "Keys"), dt("reports.designer.help.keys_col_action", "Action")]}
         rows={[
-          ["Ctrl+S", h("keys_save", "Save")],
-          [h("keys_undo_keys", "Ctrl+Z / Ctrl+Y (or Ctrl+Shift+Z)"), h("keys_undo", "Undo / redo")],
-          ["Ctrl+C / Ctrl+X / Ctrl+V", h("keys_clipboard", "Copy / cut / paste")],
-          ["Ctrl+D", h("keys_duplicate", "Duplicate")],
-          ["Ctrl+A", h("keys_select_all", "Select everything on the page")],
-          [h("keys_delete_keys", "Delete / Backspace"), h("keys_delete", "Delete the selection")],
-          [h("keys_arrows_keys", "Arrow keys (Shift for 10px)"), h("keys_arrows", "Nudge the selection")],
-          [h("keys_order_keys", "Ctrl+] / Ctrl+[ (with Shift: to front / back)"), h("keys_order", "Bring forward / send backward")],
-          ["Ctrl+= / Ctrl+- / Ctrl+0", h("keys_zoom", "Zoom in / out / fit page")],
-          [h("keys_add_keys", "Shift / Ctrl + click"), h("keys_add", "Add to the selection")],
-          [h("keys_alt_keys", "Alt while dragging"), h("keys_alt", "Move without snapping")],
-          [h("keys_edit_keys", "Double-click text"), h("keys_edit", "Edit in place (Ctrl+Enter to finish)")],
-          [h("keys_escape_keys", "Escape"), h("keys_escape", "Clear the selection, leave Preview")],
-          ["?", h("keys_help", "Open this help")],
+          ["Ctrl+S", dt("common.save", "Save")],
+          [dt("reports.designer.help.keys_undo_keys", "Ctrl+Z / Ctrl+Y (or Ctrl+Shift+Z)"), dt("reports.designer.help.keys_undo", "Undo / redo")],
+          ["Ctrl+C / Ctrl+X / Ctrl+V", dt("reports.designer.help.keys_clipboard", "Copy / cut / paste")],
+          ["Ctrl+D", dt("common.duplicate", "Duplicate")],
+          ["Ctrl+A", dt("reports.designer.help.keys_select_all", "Select everything on the page")],
+          [dt("reports.designer.help.keys_delete_keys", "Delete / Backspace"), dt("reports.designer.help.keys_delete", "Delete the selection")],
+          [dt("reports.designer.help.keys_arrows_keys", "Arrow keys (Shift for 10px)"), dt("reports.designer.help.keys_arrows", "Nudge the selection")],
+          [dt("reports.designer.help.keys_order_keys", "Ctrl+] / Ctrl+[ (with Shift: to front / back)"), dt("reports.designer.help.keys_order", "Bring forward / send backward")],
+          ["Ctrl+= / Ctrl+- / Ctrl+0", dt("reports.designer.help.keys_zoom", "Zoom in / out / fit page")],
+          [dt("reports.designer.help.keys_add_keys", "Shift / Ctrl + click"), dt("reports.designer.help.keys_add", "Add to the selection")],
+          [dt("reports.designer.help.keys_alt_keys", "Alt while dragging"), dt("reports.designer.help.keys_alt", "Move without snapping")],
+          [dt("reports.designer.help.keys_edit_keys", "Double-click text"), dt("reports.designer.help.keys_edit", "Edit in place (Ctrl+Enter to finish)")],
+          [dt("reports.designer.help.keys_escape_keys", "Escape"), dt("reports.designer.help.keys_escape", "Clear the selection, leave Preview")],
+          ["?", dt("reports.designer.help.keys_help", "Open this help")],
         ]}
       />
     ),
@@ -424,13 +423,13 @@ export default function HelpDialog({ onClose }: { onClose: () => void }) {
         <ModalPanel className="p-0 md:p-0 max-w-4xl h-full max-h-[86dvh] flex flex-col overflow-hidden">
           <div className="flex items-center justify-between gap-4 px-5 py-3 border-b border-border">
             <ModalTitle className="flex items-center gap-2 text-lg font-bold text-white">
-              <CircleHelp size={20} className="text-primary" /> {h("title", "Report designer help")}
+              <CircleHelp size={20} className="text-primary" /> {dt("reports.designer.help.title", "Report designer help")}
             </ModalTitle>
             <button
               type="button"
               onClick={onClose}
               className="p-1 text-gray-400 hover:text-white cursor-pointer"
-              aria-label={dt("reports.designer.close", "Close")}
+              aria-label={dt("common.close", "Close")}
             >
               <X size={18} />
             </button>

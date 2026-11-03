@@ -65,7 +65,7 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
     (type === NumberFilterType.SINGLE && (query as number | null) === null);
 
   const displayText = () => {
-    if (isEmpty && type === NumberFilterType.RANGE) return t("filter.number_range", "Range");
+    if (isEmpty && type === NumberFilterType.RANGE) return t("common.range", "Range");
     if (isEmpty && type === NumberFilterType.SINGLE) return t("filter.single_number", "Exact");
     if (type === NumberFilterType.SINGLE) {
       return (query as number | null)?.toString() ?? "...";
@@ -111,14 +111,14 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
               {/* Number filter inputs go here */}
               {!filterType && (
                 <div className="mb-4 flex flex-row items-center gap-2">
-                  <div>{t("filter.number_type", "Type")}</div>
+                  <div>{t("common.type", "Type")}</div>
                   <Select
                     data={[{ value: NumberFilterType.SINGLE }, { value: NumberFilterType.RANGE }]}
                     value={type}
                     onChange={(val) => setType(val as NumberFilterType)}
                     labelFn={(val) => {
                       if (val === NumberFilterType.SINGLE) return t("filter.single_number", "Exact");
-                      if (val === NumberFilterType.RANGE) return t("filter.number_range", "Range");
+                      if (val === NumberFilterType.RANGE) return t("common.range", "Range");
                       return "";
                     }}
                   />

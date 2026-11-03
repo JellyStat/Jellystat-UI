@@ -42,7 +42,7 @@ export default function LibrariesPage() {
   return (
     <>
       <Head>
-        <title>{t("nav.libraries", "Libraries")} | Jellystat</title>
+        <title>{t("common.libraries", "Libraries")} | Jellystat</title>
       </Head>
 
       <div className="space-y-8 animate-in fade-in duration-500 max-w-[1600px] mx-auto pb-12">
@@ -50,7 +50,7 @@ export default function LibrariesPage() {
         <PageHeader
           iconTone="accent"
           icon={<Database size={28} />}
-          title={t("nav.libraries", "Libraries")}
+          title={t("common.libraries", "Libraries")}
           description={t("libraries.libraries_desc", "Manage, track, and analyze your media collections")}
         />
 
@@ -67,7 +67,7 @@ export default function LibrariesPage() {
           <div className="p-5 rounded-2xl bg-danger/10 border border-danger/20 flex items-start gap-4 shadow-xl shadow-danger/5">
             <AlertCircle size={24} className="text-danger shrink-0 mt-0.5" />
             <div className="flex flex-col">
-              <h3 className="text-lg font-bold text-danger mb-1">{t("libraries.failed_load", "Failed to load libraries")}</h3>
+              <h3 className="text-lg font-bold text-danger mb-1">{t("errors.failed_to_load_libraries", "Failed to load libraries")}</h3>
               <p className="text-sm text-danger/80 font-medium">{error}</p>
             </div>
           </div>
@@ -78,10 +78,10 @@ export default function LibrariesPage() {
           <div className="w-full py-24 bg-surface/30 border-2 border-dashed border-border rounded-3xl flex flex-col items-center justify-center text-gray-500">
             <Database size={48} className="mb-4 opacity-20" />
             <span className="font-bold text-lg tracking-wide text-gray-400">
-              {t("common.no_libraries_found", "No libraries found")}
+              {t("empty.no_libraries_found", "No libraries found")}
             </span>
             <span className="text-sm mt-1 text-center max-w-sm">
-              {t("libraries.no_libraries_desc", "Make sure your server is connected and synced.")}
+              {t("empty.make_sure_your_server_is_connected_and", "Make sure your server is connected and synced.")}
             </span>
           </div>
         )}

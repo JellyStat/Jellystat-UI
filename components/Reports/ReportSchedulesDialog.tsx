@@ -45,7 +45,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
     { value: "10080", label: t("reports.schedule_every_week", "Every week") },
     { value: "43200", label: t("reports.schedule_every_30_days", "Every 30 days") },
     { value: "0", label: t("reports.schedule_manual_only", "Manual only") },
-    { value: "custom", label: t("reports.schedule_custom", "Custom...") },
+    { value: "custom", label: t("common.custom", "Custom") },
   ];
 
   const FORMATS: { value: ExportFormat; label: string }[] = [
@@ -82,7 +82,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
     try {
       setSchedules(await client.Reports.schedules.list({ ReportId: reportId }));
     } catch (err: any) {
-      toast.error(err?.message ?? t("reports.schedules_load_failed", "Failed to load schedules"));
+      toast.error(err?.message ?? t("errors.failed_to_load_schedules", "Failed to load schedules"));
     } finally {
       setLoading(false);
     }
@@ -103,7 +103,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
       setEditing(null);
       await load();
     } catch (err: any) {
-      toast.error(err?.message ?? t("reports.schedule_save_failed", "Failed to save the schedule"));
+      toast.error(err?.message ?? t("errors.failed_to_save_the_schedule", "Failed to save the schedule"));
     } finally {
       setBusy(null);
     }
@@ -121,11 +121,11 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
           }),
         );
       } else {
-        toast.error(result.error ?? t("reports.schedule_delivery_failed", "Delivery failed"));
+        toast.error(result.error ?? t("errors.delivery_failed", "Delivery failed"));
       }
       await load();
     } catch (err: any) {
-      toast.error(err?.message ?? t("reports.schedule_delivery_failed", "Delivery failed"));
+      toast.error(err?.message ?? t("errors.delivery_failed", "Delivery failed"));
     } finally {
       setBusy(null);
     }
@@ -137,7 +137,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
       await client.Reports.schedules.delete({ Id: id });
       await load();
     } catch (err: any) {
-      toast.error(err?.message ?? t("reports.schedule_delete_failed", "Failed to delete the schedule"));
+      toast.error(err?.message ?? t("errors.failed_to_delete_the_schedule", "Failed to delete the schedule"));
     } finally {
       setBusy(null);
     }
@@ -151,7 +151,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
         <ModalPanel className="p-0 md:p-0 max-w-3xl max-h-[92dvh] flex flex-col overflow-hidden">
           <div className="flex items-center justify-between px-5 py-3 border-b border-border">
             <ModalTitle className="flex items-center gap-2 text-lg font-bold text-white">
-              <CalendarClock size={20} className="text-accent" /> {t("reports.schedules_title", "Schedules & webhooks")}
+              <CalendarClock size={20} className="text-accent" /> {t("common.schedules_and_webhooks", "Schedules & webhooks")}
             </ModalTitle>
             <button
               type="button"
@@ -176,7 +176,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                 </p>
                 {loading && <Spinner className="text-primary" />}
                 {!loading && schedules.length === 0 && (
-                  <p className="text-sm text-gray-500">{t("reports.no_schedules", "No schedules yet.")}</p>
+                  <p className="text-sm text-gray-500">{t("empty.no_schedules_yet", "No schedules yet.")}</p>
                 )}
                 <div className="space-y-2">
                   {schedules.map((s) => (
@@ -186,7 +186,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                           <Webhook size={14} className="text-accent shrink-0" />
                           <span className="font-bold text-sm text-white truncate">{s.name}</span>
                           <Badge tone={s.enabled ? "success" : "neutral"} shape="square">
-                            {s.enabled ? t("reports.schedule_on", "on") : t("reports.schedule_off", "off")}
+                            {s.enabled ? t("common.on", "On") : t("common.off", "Off")}
                           </Badge>
                         </div>
                         <div className="text-xs text-gray-500 mt-1 flex flex-wrap gap-x-3">
@@ -261,7 +261,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
             {editing && (
               <div className="space-y-3">
                 <div className="grid sm:grid-cols-2 gap-3">
-                  <Field label={t("reports.schedule_name", "Name")}>
+                  <Field label={t("common.name", "Name")}>
                     <TextInput value={editing.name} onChange={(v) => set({ name: v })} />
                   </Field>
                   <Field label={t("reports.schedule_repeat", "Repeat")}>
@@ -302,10 +302,10 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                     label={
                       editing.hasSecret
                         ? t(
-                            "reports.schedule_secret_saved",
+                            "common.signing_secret_saved",
                             "Signing secret (saved; type to replace, clear the box and save to remove)",
                           )
-                        : t("reports.schedule_secret_optional", "Signing secret (optional)")
+                        : t("common.signing_secret", "Signing secret (optional)")
                     }
                   >
                     <TextInput
@@ -319,7 +319,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                   <TextInput multiline rows={2} value={editing.message ?? ""} onChange={(v) => set({ message: v || null })} />
                 </Field>
                 {parameters.length > 0 && (
-                  <Field label={t("reports.schedule_parameters", "Parameters")}>
+                  <Field label={t("common.parameters", "Parameters")}>
                     <div className="grid sm:grid-cols-2 gap-2">
                       {parameters.map((p) => (
                         <div key={p.name} className="flex items-center gap-2">
@@ -329,7 +329,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                             className="flex-1"
                             source={{ reportId }}
                             values={editing.parameters ?? {}}
-                            emptyLabel={p.type === "lookup" ? t("common.all", "All") : t("reports.parameter_default", "Default")}
+                            emptyLabel={p.type === "lookup" ? t("common.all", "All") : t("common.default", "Default")}
                             value={editing.parameters?.[p.name] ?? null}
                             onChange={(v) => {
                               const next = { ...(editing.parameters ?? {}) };
@@ -346,7 +346,7 @@ export default function ReportSchedulesDialog({ reportId, reportName, parameters
                     </div>
                   </Field>
                 )}
-                <Toggle label={t("reports.schedule_enabled", "Enabled")} checked={editing.enabled} onChange={(v) => set({ enabled: v })} />
+                <Toggle label={t("common.enabled", "Enabled")} checked={editing.enabled} onChange={(v) => set({ enabled: v })} />
               </div>
             )}
           </div>

@@ -38,7 +38,7 @@ export default function Sessions() {
         <StatusIndicator
           tone={sessions.length == 0 ? "neutral" : "success"}
           pulse={sessions.length > 0}
-          label={sessions.length == 0 ? t("sessions.none_active", "No active streams") : t("sessions.live", "Live")}
+          label={sessions.length == 0 ? t("empty.no_active_streams", "No active streams") : t("sessions.live", "Live")}
         />
         <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
           {t("sessions.active_streams", "Active Streams")}
@@ -50,8 +50,8 @@ export default function Sessions() {
           /* Empty State */
           <NoData
             Icon={MonitorPlay}
-            title={t("sessions.no_active", "No active sessions")}
-            message={t("sessions.waiting", "Waiting for users to start playing media...")}
+            title={t("empty.no_active_sessions", "No active sessions")}
+            message={t("empty.waiting_for_users_to_start_playing_media", "Waiting for users to start playing media")}
           />
         ) : (
           /* Responsive Grid */

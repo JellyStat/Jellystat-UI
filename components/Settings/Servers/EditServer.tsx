@@ -43,7 +43,7 @@ export default function EditServerModal({ server, onClose, onSaved }: Props) {
     setFieldErrors({});
 
     if (!url.trim()) {
-      setFieldErrors({ url: t("common.error_url_required", "URL is required") });
+      setFieldErrors({ url: t("errors.url_is_required", "URL is required") });
       return;
     }
 
@@ -62,7 +62,7 @@ export default function EditServerModal({ server, onClose, onSaved }: Props) {
       onSaved?.();
       onClose();
     } catch (err: any) {
-      const message = err?.message ?? t("settings.error_update_server", "Failed to update server");
+      const message = err?.message ?? t("errors.failed_to_update_server", "Failed to update server");
       setError(message);
       toast.error(message);
     } finally {
@@ -80,7 +80,7 @@ export default function EditServerModal({ server, onClose, onSaved }: Props) {
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <Field
-          label={t("settings.label_server_name", "Name")}
+          label={t("common.name", "Name")}
           htmlFor="edit-server-name"
           description={t("settings.server_name_note", "The name comes from the server itself and is updated automatically.")}
         >
@@ -94,7 +94,7 @@ export default function EditServerModal({ server, onClose, onSaved }: Props) {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             disabled={loading}
-            placeholder={t("settings.placeholder_url", "Enter the server URL")}
+            placeholder={t("settings.placeholder_url", "Enter the URL")}
             leftIcon={<LinkIcon size={18} />}
             error={!!fieldErrors.url}
           />

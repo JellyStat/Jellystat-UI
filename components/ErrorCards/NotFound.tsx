@@ -14,8 +14,8 @@ export default function NotFound({ title, message, enableGoBack = true }: NotFou
   const router = useRouter();
   const { t } = useTranslation("common");
 
-  const displayTitle = title || t("error_cards.not_found_title", "Not Found");
-  const displayMessage = message || t("error_cards.not_found_message", "The requested resource could not be found.");
+  const displayTitle = title || t("errors.not_found", "Not Found");
+  const displayMessage = message || t("errors.the_requested_resource_could_not_be", "The requested resource could not be found.");
 
   return (
     <div className="flex items-center justify-center w-full h-full min-h-[300px] p-4 animate-in fade-in duration-500">

@@ -8,7 +8,7 @@ export const CALCULATED_TYPES = [
   { value: "number", get label() { return dt("reports.designer.number", "Number"); } },
   { value: "integer", get label() { return dt("reports.designer.whole_number", "Whole number"); } },
   { value: "string", get label() { return dt("reports.designer.text", "Text"); } },
-  { value: "date", get label() { return dt("reports.designer.date", "Date"); } },
+  { value: "date", get label() { return dt("common.date", "Date"); } },
   { value: "boolean", get label() { return dt("reports.designer.yes_no", "Yes/No"); } },
   { value: "duration", get label() { return dt("reports.designer.duration_seconds", "Duration (seconds)"); } },
   { value: "bytes", get label() { return dt("reports.designer.bytes", "Bytes"); } },
@@ -36,7 +36,7 @@ export default function CalculatedFieldsEditor({
       {calculated.map((c, i) => (
         <div key={i} className="rounded-lg border border-border bg-background/40 p-2 space-y-1.5">
           <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.9fr)_auto] gap-1.5">
-            <TextInput value={c.name} placeholder={dt("reports.designer.name", "Name")} onChange={(v) => set(i, { name: v.replace(/[^A-Za-z0-9_]/g, "") })} />
+            <TextInput value={c.name} placeholder={dt("common.name", "Name")} onChange={(v) => set(i, { name: v.replace(/[^A-Za-z0-9_]/g, "") })} />
             <TextInput value={c.label ?? ""} placeholder={dt("reports.designer.label_optional", "Label (optional)")} onChange={(v) => set(i, { label: v || null })} />
             <Select value={c.type ?? "auto"} options={CALCULATED_TYPES} onChange={(v) => set(i, { type: v === "auto" ? null : v })} />
             <button

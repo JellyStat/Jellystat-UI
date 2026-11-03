@@ -131,7 +131,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
             onChange={(val) => setArchivedFilter(val === "true" ? true : val === "false" ? false : null)}
             labelFn={(val) => {
               if (val === "null") return t("media_grid.filter_all", "All Media");
-              if (val === "true") return t("media_grid.filter_archived", "Archived");
+              if (val === "true") return t("common.archived", "Archived");
               if (val === "false") return t("media_grid.filter_not_archived", "Active");
               return "";
             }}
@@ -149,7 +149,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
                   if (val === "name") return t("common.title", "Title");
                   if (val === "dateCreated") return t("media_grid.sort_date_added", "Date Added");
                   if (val === "playCount") return t("media_grid.sort_views", "Views");
-                  if (val === "size") return t("media_grid.sort_size", "Size");
+                  if (val === "size") return t("common.size", "Size");
                   return "";
                 }}
                 disabled={loading}
@@ -158,7 +158,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
               <button
                 onClick={() => setSortDesc((s) => !s)}
                 className="flex items-center justify-center p-2 py-2.5 rounded-xl bg-surface/80 border border-border hover:border-gray-500 text-gray-400 transition-colors shadow-inner focus:outline-none focus-visible:ring-1 focus-visible:ring-primary cursor-pointer"
-                aria-label="Toggle Sort Direction"
+                aria-label={t("media_grid.toggle_sort_direction", "Toggle Sort Direction")}
               >
                 {sortDesc ? <ArrowDownWideNarrow size={18} /> : <ArrowUpNarrowWide size={18} />}
               </button>
@@ -172,7 +172,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
             </div>
             <input
               type="text"
-              placeholder={t("media_grid.search_placeholder", "Search media...")}
+              placeholder={t("media_grid.search_placeholder", "Search media")}
               value={input}
               onChange={(e) => setInput(e.currentTarget.value)}
               className="w-full bg-background/50 border border-border hover:border-gray-500 rounded-xl py-2 pl-9 pr-4 text-sm text-gray-200 placeholder:text-gray-500 focus:outline-none focus-visible:ring-1 focus-visible:ring-primary transition-all shadow-inner"
@@ -208,7 +208,7 @@ const MediaGrid: React.FC<Props> = ({ gridify, defaultOrderBy, defaultOrderDesc,
           {!loading && items.length === 0 && !error && (
             <div className="flex flex-col items-center justify-center text-gray-500 opacity-60 absolute inset-0">
               <Search size={48} className="mb-4" />
-              <span className="text-lg font-bold">{t("media_grid.no_results", "No results found")}</span>
+              <span className="text-lg font-bold">{t("empty.no_results_found", "No results found")}</span>
             </div>
           )}
         </div>

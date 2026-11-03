@@ -18,7 +18,7 @@ export default function MigrationToolbar({ status, onStatusChange, search, onSea
   const { t } = useTranslation("common");
 
   const typeLabels: Record<TypeFilter, string> = {
-    all: t("settings.migration_filter_all", "All"),
+    all: t("common.all", "All"),
     episodes: t("settings.migration_type_episodes", "Episodes"),
     movies: t("settings.migration_type_movies", "Movies"),
   };
@@ -30,9 +30,9 @@ export default function MigrationToolbar({ status, onStatusChange, search, onSea
         value={status}
         onChange={onStatusChange}
         options={[
-          { value: "all", label: t("settings.migration_filter_all", "All") },
-          { value: "notLinked", label: t("settings.migration_filter_not_linked", "Not Linked") },
-          { value: "ready", label: t("settings.migration_filter_ready", "Ready") },
+          { value: "all", label: t("common.all", "All") },
+          { value: "notLinked", label: t("common.not_linked", "Not linked") },
+          { value: "ready", label: t("common.ready", "Ready") },
         ]}
       />
 

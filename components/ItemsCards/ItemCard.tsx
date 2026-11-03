@@ -44,7 +44,7 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
       })
     : "";
   const episodeCount = item.grouped?.length ?? 0;
-  const episodesLabel = t("item.episodes", "{{episodeCount}} Episodes", { episodeCount });
+  const episodesLabel = t("common.episode_count", "{{episodeCount}} Episodes", { episodeCount });
   const sizeLabel = showSize && item.size ? item.size.formatBytes() : null;
   const fluid = typeof width === "string";
 
@@ -74,7 +74,7 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
         {sizeLabel && (
           <div
             className="pointer-events-none absolute bottom-2 right-2 z-30 flex items-center gap-1 rounded-md border border-primary/40 bg-black/70 px-1.5 py-0.5 shadow-lg backdrop-blur-md"
-            title={t("media_grid.sort_size", "Size")}
+            title={t("common.size", "Size")}
           >
             <HardDrive size={10} className="text-primary" />
             <span className="text-xs font-bold tabular-nums tracking-wide text-gray-100">{sizeLabel}</span>

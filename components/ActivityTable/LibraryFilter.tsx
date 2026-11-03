@@ -24,10 +24,10 @@ export default function LibraryFilter({ libraries, value, onChange, disabled }: 
   const selectedNames = libraries.filter((l) => value.includes(l.id)).map((l) => l.name);
   const label =
     value.length === 0
-      ? t("activity.all_libraries", "All libraries")
+      ? t("common.all_libraries", "All libraries")
       : value.length === 1
-        ? (selectedNames[0] ?? t("activity.one_library", "1 library"))
-        : t("activity.n_libraries", "{{count}} libraries", { count: value.length });
+        ? (selectedNames[0] ?? t("activity.n_libraries", "{{count}} libraries", { defaultValue_one: "{{count}} library", count: 1 }))
+        : t("activity.n_libraries", "{{count}} libraries", { defaultValue_one: "{{count}} library", count: value.length });
 
   return (
     <MultiSelect<string>

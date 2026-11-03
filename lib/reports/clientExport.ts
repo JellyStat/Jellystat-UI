@@ -1,5 +1,6 @@
 // Exports rendered pages straight from the browser, without a server round trip. Server exports
 // (Reports.render) give vector PDFs and work for automations; these capture exactly what is on screen.
+import { dt } from "./i18n";
 
 export function downloadBlob(blob: Blob, fileName: string): void {
   const url = URL.createObjectURL(blob);
@@ -43,7 +44,7 @@ export async function exportPng(nodes: HTMLElement[], fileName: string, pixelRat
         new Promise<HTMLImageElement>((resolve, reject) => {
           const img = new Image();
           img.onload = () => resolve(img);
-          img.onerror = () => reject(new Error("Could not load page image"));
+          img.onerror = () => reject(new Error(dt("reports.designer.errors.could_not_load_page_image", "Could not load page image")));
           img.src = src;
         }),
     ),
@@ -53,7 +54,7 @@ export async function exportPng(nodes: HTMLElement[], fileName: string, pixelRat
   canvas.height = loaded.reduce((a, i) => a + i.height, 0) + gap * pixelRatio * (loaded.length - 1);
   const ctx = canvas.getContext("2d");
   if (!ctx) {
-    throw new Error("Canvas is not available");
+    throw new Error(dt("reports.designer.errors.canvas_is_not_available", "Canvas is not available"));
   }
   ctx.fillStyle = "#e5e7eb";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -64,7 +65,7 @@ export async function exportPng(nodes: HTMLElement[], fileName: string, pixelRat
   }
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
   if (!blob) {
-    throw new Error("Could not create the image");
+    throw new Error(dt("reports.designer.errors.could_not_create_the_image", "Could not create the image"));
   }
   downloadBlob(blob, fileName);
 }

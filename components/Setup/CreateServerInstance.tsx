@@ -37,12 +37,12 @@ export default function CreateServerPage({ onComplete }: Props) {
     const newFieldErrors: { url?: string; apiKey?: string } = {};
 
     if (!url.trim()) {
-      newFieldErrors.url = t("common.error_url_required", "Local URL is required");
+      newFieldErrors.url = t("errors.url_is_required", "URL is required");
       hasError = true;
     }
 
     if (!apiKey.trim()) {
-      newFieldErrors.apiKey = t("common.error_api_key_required", "API key is required");
+      newFieldErrors.apiKey = t("errors.api_key_is_required", "API key is required");
       hasError = true;
     }
 
@@ -64,7 +64,7 @@ export default function CreateServerPage({ onComplete }: Props) {
       toast.success(t("setup.toast_server_connected", "Server connected successfully!"));
       onComplete?.({ server });
     } catch (err: any) {
-      const errMsg = err?.message ?? t("setup.error_server_add_failed", "Unable to add server. Check your URL and API Key.");
+      const errMsg = err?.message ?? t("errors.unable_to_add_server_check_your_url_and", "Unable to add server. Check your URL and API Key.");
       setError(errMsg);
       toast.error(errMsg);
     } finally {
@@ -127,7 +127,7 @@ export default function CreateServerPage({ onComplete }: Props) {
           <Input
             id="setup-api-key"
             type={showApiKey ? "text" : "password"}
-            placeholder={t("setup.placeholder_api_key", "Enter server API key")}
+            placeholder={t("common.placeholder_api_key", "Enter server API key")}
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             disabled={loading}
@@ -151,7 +151,7 @@ export default function CreateServerPage({ onComplete }: Props) {
             loading={loading}
             disabled={!url.trim() || !apiKey.trim()}
           >
-            {loading ? t("setup.btn_connecting", "Connecting...") : t("setup.btn_add_server", "Add Server")}
+            {loading ? t("setup.btn_connecting", "Connecting") : t("common.add_server", "Add Server")}
           </Button>
         </div>
       </form>

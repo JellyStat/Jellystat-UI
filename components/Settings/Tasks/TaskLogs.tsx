@@ -57,7 +57,7 @@ export default function TasksLogsPage() {
         setTotalCount(res?.count ?? 0);
       } catch (error) {
         console.error("Failed to fetch task logs:", error);
-        toast.error(t("tasks.logs_load_error", "Failed to load logs. Please try again later."));
+        toast.error(t("errors.failed_to_load_logs_please_try_again", "Failed to load logs. Please try again later."));
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -165,7 +165,7 @@ export default function TasksLogsPage() {
             ) : (
               <span className="flex items-center gap-2 text-danger">
                 <XCircle size={14} className="shrink-0" />{" "}
-                <span className="sr-only sm:not-sr-only">{t("tasks.failed", "Failed")}</span>
+                <span className="sr-only sm:not-sr-only">{t("common.failed", "Failed")}</span>
               </span>
             )}
           </div>
@@ -203,7 +203,7 @@ export default function TasksLogsPage() {
             <div className="flex items-center gap-3">
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{t("tasks.logs_title", "Task Logs")}</h1>
             </div>
-            <p className="text-sm text-gray-400 mt-1 font-medium">{t("tasks.logs_subtitle", "View task logs")}</p>
+            <p className="text-sm text-gray-400 mt-1 font-medium">{t("tasks.logs_subtitle", "View Task Logs")}</p>
           </div>
         </div>
       </div>
@@ -214,9 +214,9 @@ export default function TasksLogsPage() {
               <tr className="bg-background/80 border-b border-border text-xs font-bold text-gray-500 uppercase tracking-wider">
                 <th className="p-2 sm:p-3 w-10 sm:w-12"></th>
                 <th className="p-2 sm:p-4 w-1/5">{t("tasks.col_task", "Task")}</th>
-                <th className="p-2 sm:p-4 w-1/5">{t("tasks.col_date", "Date")}</th>
-                <th className="hidden sm:table-cell p-4 w-1/5">{t("tasks.col_duration", "Duration")}</th>
-                <th className="p-2 sm:p-4 w-1/5">{t("tasks.col_status", "Status")}</th>
+                <th className="p-2 sm:p-4 w-1/5">{t("common.date", "Date")}</th>
+                <th className="hidden sm:table-cell p-4 w-1/5">{t("common.duration", "Duration")}</th>
+                <th className="p-2 sm:p-4 w-1/5">{t("common.status", "Status")}</th>
                 <th className="hidden sm:table-cell p-4 pr-6 text-right w-1/6" />
               </tr>
             </thead>
@@ -225,13 +225,13 @@ export default function TasksLogsPage() {
                 <tr>
                   <td colSpan={6} className="p-8 text-center">
                     <Spinner size={24} className="text-primary mx-auto mb-2" />
-                    <span className="text-gray-500 text-sm font-medium">{t("common.loading", "Loading logs...")}</span>
+                    <span className="text-gray-500 text-sm font-medium">{t("common.loading", "Loading")}</span>
                   </td>
                 </tr>
               ) : logs.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="p-8 text-center text-gray-500 text-sm font-medium">
-                    {t("tasks.no_logs", "No logs found.")}
+                    {t("empty.no_logs_found", "No logs found.")}
                   </td>
                 </tr>
               ) : (

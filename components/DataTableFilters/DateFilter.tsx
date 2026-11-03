@@ -64,7 +64,7 @@ export default function DateFilter({ keyName, value, onChange }: DateFilterProps
   const isEmpty = !query || (query[0] === null && query[1] === null);
 
   const displayText = () => {
-    if (isEmpty) return t("filter.date_range", "Date range");
+    if (isEmpty) return t("filter.date_range", "Date Range");
     const s = query[0] ? formatDateForInput(query[0]) : "...";
     const e = query[1] ? formatDateForInput(query[1]) : "...";
     return `${s} → ${e}`;

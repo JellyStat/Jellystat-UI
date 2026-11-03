@@ -89,7 +89,7 @@ export default function LastWatched({ gridify }: Props) {
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <History className="text-primary" size={28} />
-        <h2 className="text-2xl font-bold text-white tracking-tight">{t("last_watched.title", "Last Watched")}</h2>
+        <h2 className="text-2xl font-bold text-white tracking-tight">{t("common.last_watched", "Last Watched")}</h2>
       </div>
 
       {/* Loading State */}
@@ -111,8 +111,8 @@ export default function LastWatched({ gridify }: Props) {
       {!loading && !error && items.length === 0 && (
         <div className="w-full">
           <NoData
-            title={t("common.no_activity_title", "No Activity Found")}
-            message={t("common.no_activity_message", "No items in your watch history")}
+            title={t("empty.no_activity_found", "No activity found")}
+            message={t("empty.no_items_in_your_watch_history", "No items in your watch history")}
             Icon={History}
           />
         </div>

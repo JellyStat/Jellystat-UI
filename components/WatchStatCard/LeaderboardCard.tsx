@@ -61,7 +61,7 @@ export function LeaderboardCard({
           ) : items.length === 0 ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500">
               <AlertCircle size={24} className="mb-2 opacity-30" />
-              <span className="text-xs font-medium">{t("watch_stat_cards.no_records", "No records found")}</span>
+              <span className="text-xs font-medium">{t("empty.no_records_found", "No records found")}</span>
             </div>
           ) : (
             <div className="space-y-2">

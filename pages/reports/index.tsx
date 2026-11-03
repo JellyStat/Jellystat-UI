@@ -48,7 +48,7 @@ export default function ReportsPage() {
     try {
       setReports(await client.Reports.list());
     } catch (err: any) {
-      setError(err?.message ?? t("reports.error_load", "Failed to load reports"));
+      setError(err?.message ?? t("errors.failed_to_load_reports", "Failed to load reports"));
     } finally {
       setLoading(false);
     }
@@ -64,7 +64,7 @@ export default function ReportsPage() {
       await client.Reports.duplicate({ Id: id });
       await load();
     } catch (err: any) {
-      toast.error(err?.message ?? i18next.t("reports.duplicate_failed", "Failed to duplicate the report"));
+      toast.error(err?.message ?? i18next.t("errors.failed_to_duplicate_the_report", "Failed to duplicate the report"));
     }
   };
 
@@ -73,7 +73,7 @@ export default function ReportsPage() {
       await client.Reports.delete({ Id: id });
       await load();
     } catch (err: any) {
-      toast.error(err?.message ?? i18next.t("reports.delete_failed", "Failed to delete the report"));
+      toast.error(err?.message ?? i18next.t("errors.failed_to_delete_the_report", "Failed to delete the report"));
     }
   };
 
@@ -82,7 +82,7 @@ export default function ReportsPage() {
       const detail = await client.Reports.get({ Id: r.id });
       downloadReportFile(detail.name, detail.description, detail.definition);
     } catch (err: any) {
-      toast.error(err?.message ?? i18next.t("reports.export_report_failed", "Failed to export the report"));
+      toast.error(err?.message ?? i18next.t("errors.failed_to_export_the_report", "Failed to export the report"));
     }
   };
 
@@ -97,7 +97,7 @@ export default function ReportsPage() {
       toast.success(t("reports.imported", "Imported {{name}}", { name: saved.name }));
       await router.push({ pathname: "/reports/designer", query: { id: saved.id } });
     } catch (err: any) {
-      toast.error(err?.message ?? i18next.t("reports.import_failed", "Failed to import the report"));
+      toast.error(err?.message ?? i18next.t("errors.failed_to_import_the_report", "Failed to import the report"));
     }
   };
 
@@ -110,7 +110,7 @@ export default function ReportsPage() {
         setImportReview({ file, result });
       }
     } catch (err: any) {
-      toast.error(err?.message ?? i18next.t("reports.check_file_failed", "Failed to check the file"));
+      toast.error(err?.message ?? i18next.t("errors.failed_to_check_the_file", "Failed to check the file"));
     }
   };
 
@@ -119,7 +119,7 @@ export default function ReportsPage() {
       const detail = await client.Reports.get({ Id: r.id });
       setSchedulesFor({ id: r.id, name: r.name, parameters: detail.definition.parameters });
     } catch (err: any) {
-      toast.error(err?.message ?? "Failed to load the report");
+      toast.error(err?.message ?? t("errors.failed_to_load_the_report", "Failed to load the report"));
     }
   };
 
@@ -183,8 +183,8 @@ export default function ReportsPage() {
             <EmptyState
               bordered={false}
               Icon={FileBarChart}
-              title={t("reports.empty", "No reports yet")}
-              message={isAdmin ? t("reports.empty_hint", "Start from the template to see how it works.") : undefined}
+              title={t("empty.no_reports_yet", "No reports yet")}
+              message={isAdmin ? t("empty.start_from_the_template_to_see_how_it", "Start from the template to see how it works.") : undefined}
             />
           )}
           <div className="divide-y divide-border/50">
@@ -214,7 +214,7 @@ export default function ReportsPage() {
                       href={{ pathname: "/reports/designer", query: { id: r.id } }}
                       className={buttonClass({ variant: "secondary", size: "sm" })}
                     >
-                      <Pencil size={14} /> {t("reports.edit", "Edit")}
+                      <Pencil size={14} /> {t("common.edit", "Edit")}
                     </Link>
                     <DropdownMenu
                       label={t("reports.more", "More")}
@@ -224,8 +224,8 @@ export default function ReportsPage() {
                           icon: <CalendarClock size={14} className="text-accent" />,
                           onClick: () => openSchedules(r),
                         },
-                        { label: t("reports.duplicate", "Duplicate"), icon: <Copy size={14} />, onClick: () => duplicate(r.id) },
-                        { label: t("reports.export", "Export"), icon: <Download size={14} />, onClick: () => exportReport(r) },
+                        { label: t("common.duplicate", "Duplicate"), icon: <Copy size={14} />, onClick: () => duplicate(r.id) },
+                        { label: t("common.export", "Export"), icon: <Download size={14} />, onClick: () => exportReport(r) },
                       ]}
                     />
                     <ConfirmationDialogButton
