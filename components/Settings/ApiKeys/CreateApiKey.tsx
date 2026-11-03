@@ -95,7 +95,7 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
 
   if (created) {
     return (
-      <ModalPanel onKeyDown={guard.onKeyDown}>
+      <ModalPanel>
         <ModalHeader icon={<KeyRound size={22} />} iconTone="success" title={t("settings.api_key_created", "API key created")} />
 
         <Alert tone="warning" className="mb-4">
@@ -142,7 +142,7 @@ export default function CreateApiKeyModal({ servers, onClose, onCreated }: Props
   ];
 
   return (
-    <ModalPanel onKeyDown={guard.onKeyDown}>
+    <ModalPanel>
       {guard.dialog}
       <ModalHeader
         icon={<KeyRound size={22} />}

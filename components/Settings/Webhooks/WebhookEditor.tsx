@@ -103,7 +103,7 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
   }
 
   return (
-    <ModalPanel size="xl" onKeyDown={guard.onKeyDown}>
+    <ModalPanel size="xl">
       {guard.dialog}
       <ModalHeader
         icon={<Webhook size={22} />}

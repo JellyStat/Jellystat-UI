@@ -1,4 +1,4 @@
-import { useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import ConfirmDialog from './ConfirmDialog';
 
 export type DiscardGuardLabels = {
@@ -9,7 +9,7 @@ export type DiscardGuardLabels = {
 };
 
 // Escape closes a form modal, asking first when there are unsaved edits.
-// Spread `onKeyDown` on the ModalPanel and render `dialog` inside it.
+// Call it from the component inside the Modal (mounted only while open) and render `dialog`.
 export default function useDiscardGuard({
   dirty,
   onClose,
@@ -26,12 +26,18 @@ export default function useDiscardGuard({
     else onClose();
   }
 
-  function onKeyDown(e: KeyboardEvent) {
-    // The confirm dialog handles its own Escape (keydown bubbles here through the portal).
-    if (e.key !== 'Escape' || asking || e.defaultPrevented) return;
-    e.preventDefault();
-    requestClose();
-  }
+  // On window, not the panel: focus can sit on <body> when the modal opens.
+  const latest = useRef({ asking, requestClose });
+  latest.current = { asking, requestClose };
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      // While the confirm dialog is up, Escape belongs to it.
+      if (e.key !== 'Escape' || latest.current.asking) return;
+      latest.current.requestClose();
+    }
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
 
   const dialog = (
     <ConfirmDialog
@@ -48,5 +54,5 @@ export default function useDiscardGuard({
     />
   );
 
-  return { onKeyDown, requestClose, dialog };
+  return { requestClose, dialog };
 }

@@ -37,7 +37,7 @@ export default function ConfirmDialog({
   useEffect(() => {
     if (!open) setTyped('');
   }, [open]);
-  const blocked = !!confirmPhrase && typed.trim() !== confirmPhrase.text;
+  const blocked = !!confirmPhrase && typed.trim().toLowerCase() !== confirmPhrase.text.toLowerCase();
 
   return (
     <Modal open={open} onClose={() => onResult(false)}>
