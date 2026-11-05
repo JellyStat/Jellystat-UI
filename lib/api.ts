@@ -52,7 +52,7 @@ import type {
   SaveReport,
 } from "./models/reports";
 
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://10.0.0.199:5020";
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
 class ApiError extends Error {
   status: number;
@@ -609,7 +609,10 @@ const getReportFonts = (): Promise<ReportFontFamily[]> => apiFetch<ReportFontFam
 const getReport = async (params: { Id: string }): Promise<ReportDetail> =>
   apiFetch<ReportDetail>(`/Reports/Get${await buildQuery(undefined, params, false)}`);
 const validateReportImport = (payload: { content: string }): Promise<ReportImportResult> =>
-  apiFetch<ReportImportResult>("/Reports/ValidateImport", { method: "POST", body: JSON.stringify({ ...payload, serverId: getServerId() }) });
+  apiFetch<ReportImportResult>("/Reports/ValidateImport", {
+    method: "POST",
+    body: JSON.stringify({ ...payload, serverId: getServerId() }),
+  });
 const saveReport = (payload: SaveReport): Promise<ReportSummary> =>
   apiFetch<ReportSummary>("/Reports/Save", { method: "POST", body: JSON.stringify(payload) });
 const duplicateReport = async (params: { Id: string }): Promise<ReportSummary> =>
