@@ -4,7 +4,8 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import client from "@/lib/api";
 import type { Server } from "@/lib/models/server";
-import type { EventWebhook, EventWebhookType, WebhookEventInfo, WebhookEventKey } from "@/lib/models/webhooks";
+import WebhookEvents from "@/lib/models/enums/WebhookEvents";
+import type { EventWebhook, EventWebhookType, WebhookEventInfo } from "@/lib/models/webhooks";
 import {
   Button,
   Checkbox,
@@ -19,6 +20,7 @@ import {
   Textarea,
   useDiscardGuard,
 } from "@/components/ui";
+import { webhookEventText } from "./webhookEventText";
 
 type Props = {
   webhook: EventWebhook;
@@ -38,7 +40,7 @@ export const emptyWebhook = (): EventWebhook => ({
   name: "",
   url: "",
   type: "discord",
-  events: ["playback.started"],
+  events: [WebhookEvents.PlaybackStarted],
   serverId: null,
   enabled: true,
   headers: {},
@@ -70,7 +72,7 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
   });
 
   const set = (patch: Partial<EventWebhook>) => setDraft((d) => ({ ...d, ...patch }));
-  const toggleEvent = (key: WebhookEventKey, on: boolean) =>
+  const toggleEvent = (key: WebhookEvents, on: boolean) =>
     set({ events: on ? [...draft.events, key] : draft.events.filter((e) => e !== key) });
 
   const typeLabels: Record<EventWebhookType, string> = {
@@ -138,16 +140,19 @@ export default function WebhookEditor({ webhook, events, servers, onClose, onSav
 
         <Field label={t("settings.webhook_events", "Events")} required>
           <div className="grid gap-2 sm:grid-cols-3">
-            {events.map((e) => (
-              <Checkbox
-                key={e.key}
-                variant="card"
-                checked={draft.events.includes(e.key)}
-                onChange={(ev) => toggleEvent(e.key, ev.target.checked)}
-                label={e.label}
-                description={e.description}
-              />
-            ))}
+            {events.map((e) => {
+              const text = webhookEventText(t, e.key, e);
+              return (
+                <Checkbox
+                  key={e.key}
+                  variant="card"
+                  checked={draft.events.includes(e.key)}
+                  onChange={(ev) => toggleEvent(e.key, ev.target.checked)}
+                  label={text.label}
+                  description={text.description}
+                />
+              );
+            })}
           </div>
         </Field>
 

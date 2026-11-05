@@ -1,4 +1,5 @@
-export type WebhookEventKey = "playback.started" | "playback.ended" | "media.added" | "sync.completed";
+import type WebhookEvents from "./enums/WebhookEvents";
+
 export type EventWebhookType = "generic" | "discord";
 
 export interface EventWebhook {
@@ -7,7 +8,7 @@ export interface EventWebhook {
   name: string;
   url: string;
   type: EventWebhookType;
-  events: WebhookEventKey[];
+  events: WebhookEvents[];
   /** Only events from this server; null for every server. */
   serverId?: string | null;
   enabled: boolean;
@@ -25,7 +26,7 @@ export interface EventWebhook {
 }
 
 export interface WebhookEventInfo {
-  key: WebhookEventKey;
+  key: WebhookEvents;
   label: string;
   description: string;
   /** The standard payload with sample values; template tokens are paths into it. */

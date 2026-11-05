@@ -32,7 +32,8 @@ import type { TimelineEntry } from "./models/timelineEntry";
 import { VersionInfo } from "./models/VersionInfo";
 import type { ApiKeyInfo, CreateApiKey, CreatedApiKey } from "./models/apiKey";
 import type { GeolocationInfo } from "./models/geolocationInfo";
-import type { EventWebhook, WebhookDeliveryResult, WebhookEventInfo, WebhookEventKey } from "./models/webhooks";
+import type WebhookEvents from "./models/enums/WebhookEvents";
+import type { EventWebhook, WebhookDeliveryResult, WebhookEventInfo } from "./models/webhooks";
 import type {
   ReportCapabilities,
   ReportDataResult,
@@ -682,7 +683,7 @@ const saveWebhook = (payload: EventWebhook): Promise<EventWebhook> =>
 const deleteWebhook = async (params: { Id: string }): Promise<void> =>
   apiFetch<void>(`/Webhooks/Delete${await buildQuery(undefined, params, false)}`, { method: "DELETE" });
 /** Sends a sample of the event (or a plain test message without one) right away. */
-const testWebhook = async (params: { Id: string; Event?: WebhookEventKey }): Promise<WebhookDeliveryResult> =>
+const testWebhook = async (params: { Id: string; Event?: WebhookEvents }): Promise<WebhookDeliveryResult> =>
   apiFetch<WebhookDeliveryResult>(`/Webhooks/Test${await buildQuery(undefined, params, false)}`, { method: "POST" });
 
 // Grouped exports by parent path

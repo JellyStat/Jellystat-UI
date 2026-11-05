@@ -23,6 +23,7 @@ import { formatDateTime } from "@/lib/dateFormat";
 import type { Server } from "@/lib/models/server";
 import type { EventWebhook, WebhookEventInfo } from "@/lib/models/webhooks";
 import WebhookEditor, { emptyWebhook } from "./WebhookEditor";
+import { webhookEventText } from "./webhookEventText";
 
 export default function WebhooksPage() {
   const { t } = useTranslation("common");
@@ -98,7 +99,7 @@ export default function WebhooksPage() {
     }
   }
 
-  const eventLabel = (key: string) => events.find((e) => e.key === key)?.label ?? key;
+  const eventLabel = (key: string) => webhookEventText(t, key, events.find((e) => e.key === key)).label;
   const serverName = (id?: string | null) =>
     id ? (servers.find((s) => s.id === id)?.name ?? id) : t("settings.webhook_all_servers", "All servers");
 

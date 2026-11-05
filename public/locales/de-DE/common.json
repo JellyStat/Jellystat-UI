@@ -1259,5 +1259,17 @@
     "viewed_shows": "Meistgesehene Serien",
     "watch_statistics": "Wiedergabestatistiken",
     "watch_stats_desc": "Bestenlisten für deine am meisten genutzten Medien und Benutzer."
+  },
+  "webhook_events": {
+    "media_added": "",
+    "media_added_desc": "",
+    "playback_below_threshold": "",
+    "playback_below_threshold_desc": "",
+    "playback_ended": "",
+    "playback_ended_desc": "",
+    "playback_started": "",
+    "playback_started_desc": "",
+    "sync_completed": "",
+    "sync_completed_desc": ""
   }
 }

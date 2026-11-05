@@ -1259,5 +1259,17 @@
     "viewed_shows": "Most Viewed Shows",
     "watch_statistics": "Watch Statistics",
     "watch_stats_desc": "Leaderboards for your most heavily utilized media and users."
+  },
+  "webhook_events": {
+    "media_added": "Media added",
+    "media_added_desc": "When a sync finds new item.",
+    "playback_below_threshold": "Playback below threshold",
+    "playback_below_threshold_desc": "When a playback ends before the minimum watch time so it isn't recorded as activity.",
+    "playback_ended": "Playback ended",
+    "playback_ended_desc": "When a user stops a playback.",
+    "playback_started": "Playback started",
+    "playback_started_desc": "When a user starts a playback.",
+    "sync_completed": "Full sync completed",
+    "sync_completed_desc": "When a full sync finishes, with the libraries synced and how many items were added, updated and archived."
   }
 }
