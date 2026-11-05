@@ -7,7 +7,7 @@ export type BadgeProps = ComponentProps<'span'> & {
   shape?: 'pill' | 'square';
 };
 
-export default function Badge({ tone = 'accent', shape = 'pill', className, ...rest }: BadgeProps) {
+export default function Badge({ tone = 'accent', shape = 'square', className, ...rest }: BadgeProps) {
   return (
     <span
       className={cn(

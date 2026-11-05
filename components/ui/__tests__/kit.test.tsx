@@ -60,7 +60,7 @@ describe('Field', () => {
 describe('Badge', () => {
   it('uses semantic tone classes', () => {
     render(<Badge tone="danger">Admin</Badge>);
-    expect(screen.getByText('Admin')).toHaveClass('bg-danger/10', 'text-danger', 'rounded-full');
+    expect(screen.getByText('Admin')).toHaveClass('bg-danger/10', 'text-danger', 'rounded-md');
   });
 });
 
