@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import i18next from "i18next";
 import client from "@/lib/api";
-import type { ReportRenderModel } from "@/lib/models/reports";
+import type { ReportParameter, ReportRenderModel } from "@/lib/models/reports";
 import { downloadBlob, exportFileName, exportPdf, exportPng } from "@/lib/reports/clientExport";
 import { useReportFonts } from "@/lib/reports/fonts";
 import ContextMenu from "./designer/ContextMenu";
@@ -37,6 +37,9 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
   const [mode, setMode] = useState(initialMode);
   const [values, setValues] = useState<Record<string, unknown>>(initialParameters ?? {});
   const [applied, setApplied] = useState<Record<string, unknown>>(initialParameters ?? {});
+  // Outside bare mode the parameter form is shown first and the report only runs once Apply is clicked
+  const [paramDefs, setParamDefs] = useState<ReportParameter[] | null>(null);
+  const [hasRun, setHasRun] = useState(!!bare);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [exportOpen, setExportOpen] = useState(false);
@@ -67,9 +70,36 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reportId, applied, mode]);
 
+  // Load the parameter definitions without running the report; reports without parameters run straight away
   useEffect(() => {
-    void load();
-  }, [load]);
+    if (bare) {
+      return;
+    }
+    let cancelled = false;
+    client.Reports.get({ Id: reportId })
+      .then((r) => {
+        if (cancelled) {
+          return;
+        }
+        const defs = r.definition.parameters ?? [];
+        setParamDefs(defs);
+        if (defs.length) {
+          setLoading(false);
+        } else {
+          setHasRun(true);
+        }
+      })
+      .catch(() => !cancelled && setHasRun(true));
+    return () => {
+      cancelled = true;
+    };
+  }, [reportId, bare]);
+
+  useEffect(() => {
+    if (hasRun) {
+      void load();
+    }
+  }, [load, hasRun]);
 
   // Scale pages down to fit narrow screens
   useEffect(() => {
@@ -122,7 +152,18 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
     }
   };
 
-  const parameters = model?.definition.parameters ?? [];
+  const parameters = model?.definition.parameters ?? paramDefs ?? [];
+
+  const apply = () => {
+    if (!hasRun) {
+      setApplied(values);
+      setHasRun(true);
+    } else if (JSON.stringify(values) === JSON.stringify(applied)) {
+      void load();
+    } else {
+      setApplied(values);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -144,7 +185,7 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
           ))}
           <button
             type="button"
-            onClick={() => (JSON.stringify(values) === JSON.stringify(applied) ? load() : setApplied(values))}
+            onClick={apply}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 border border-primary/40 text-primary-soft hover:bg-primary hover:text-white text-sm font-bold cursor-pointer"
           >
             <RefreshCw size={14} className={clsx(loading && "animate-spin")} />{" "}
@@ -210,6 +251,11 @@ export default function ReportViewer({ reportId, parameters: initialParameters, 
         {loading && !model && (
           <div className="flex items-center justify-center py-24">
             <Spinner size={32} className="text-primary" />
+          </div>
+        )}
+        {!hasRun && !loading && (
+          <div className="py-24 text-center text-sm text-gray-400">
+            {dt("reports.designer.apply_parameters_to_run", "Set the parameters and click Apply to run the report.")}
           </div>
         )}
         {error && <div className="p-4 rounded-xl border border-danger/30 bg-danger/5 text-sm text-danger">{error}</div>}

@@ -15,7 +15,7 @@ import {
   Trash2,
   Upload,
 } from "lucide-react";
-import { useContext, useRef } from "react";
+import { type ReactNode, useContext, useRef } from "react";
 import { toast } from "sonner";
 import i18next from "i18next";
 import type { ReportChartOptions, ReportElement, ReportElementStyle, ReportTableColumn, ReportTableOptions } from "@/lib/models/reports";
@@ -416,6 +416,16 @@ function MetricContent({ e }: { e: ReportElement }) {
   );
 }
 
+/** A small label above one setting inside a table column card. */
+function ColumnField({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <label className="flex flex-col gap-0.5 min-w-0">
+      <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500">{label}</span>
+      {children}
+    </label>
+  );
+}
+
 function TableContent({ e }: { e: ReportElement }) {
   const { updateElements } = useDesigner();
   const columns = useColumns(e);
@@ -444,8 +454,11 @@ function TableContent({ e }: { e: ReportElement }) {
       <Field label={cols.length ? dt("reports.designer.columns_2", "Columns") : dt("reports.designer.columns_showing_all", "Columns (showing all)")}>
         <div className="space-y-2">
           {cols.map((c, i) => (
-            <div key={i} className="rounded-md border border-border p-1.5 space-y-1.5">
-              <div className="flex gap-1">
+            <div key={i} className="rounded-lg border border-border bg-white/[0.02] overflow-hidden">
+              <div className="flex items-center gap-1.5 px-1.5 py-1.5 bg-white/[0.04] border-b border-border">
+                <span className="shrink-0 w-5 h-5 flex items-center justify-center rounded bg-primary/15 text-[10px] font-bold text-primary-soft">
+                  {i + 1}
+                </span>
                 <Select
                   value={c.field}
                   options={columns.map((x) => ({ value: x.name, label: x.label }))}
@@ -458,7 +471,7 @@ function TableContent({ e }: { e: ReportElement }) {
                 />
                 <button
                   type="button"
-                  className="p-1 text-gray-500 hover:text-danger cursor-pointer"
+                  className="shrink-0 p-1 text-gray-500 hover:text-danger cursor-pointer"
                   onClick={() =>
                     setCols(
                       cols.filter((_, j) => j !== i),
@@ -469,65 +482,77 @@ function TableContent({ e }: { e: ReportElement }) {
                   <Trash2 size={12} />
                 </button>
               </div>
-              <div className="grid grid-cols-[1fr_52px_1fr_1fr] gap-1">
-                <TextInput
-                  value={c.header ?? ""}
-                  placeholder={dt("reports.designer.header", "Header")}
-                  onChange={(v) =>
-                    setCols(
-                      cols.map((x, j) => (j === i ? { ...x, header: v || null } : x)),
-                      `${i}-header`,
-                    )
-                  }
-                />
-                <NumberInput
-                  value={c.width}
-                  min={0.1}
-                  step={0.1}
-                  onChange={(v) =>
-                    setCols(
-                      cols.map((x, j) => (j === i ? { ...x, width: v ?? 1 } : x)),
-                      `${i}-width`,
-                    )
-                  }
-                />
-                <Select
-                  value={c.align}
-                  options={[
-                    { value: "left", label: dt("reports.designer.left", "Left") },
-                    { value: "center", label: dt("reports.designer.center", "Center") },
-                    { value: "right", label: dt("reports.designer.right", "Right") },
-                  ]}
-                  onChange={(v) =>
-                    setCols(
-                      cols.map((x, j) => (j === i ? { ...x, align: v } : x)),
-                      `${i}-align`,
-                    )
-                  }
-                />
-                <Select
-                  value={c.format ?? "auto"}
-                  options={formatOptions}
-                  onChange={(v) =>
-                    setCols(
-                      cols.map((x, j) => (j === i ? { ...x, format: v === "auto" ? null : v } : x)),
-                      `${i}-format`,
-                    )
-                  }
-                />
-              </div>
-              {c.format === "link" && (
-                <div title={LINK_HELP}>
+              <div className="grid grid-cols-[1fr_56px] gap-1.5 p-1.5">
+                <ColumnField label={dt("reports.designer.header", "Header")}>
                   <TextInput
-                    value={c.link ?? ""}
-                    placeholder={dt("reports.designer.link_url_e_g_https_site_item_row_id_empty_the_va", "Link URL, e.g. https://site/item/{{row.Id}} (empty: the value)")}
+                    value={c.header ?? ""}
+                    placeholder={dt("reports.designer.header", "Header")}
                     onChange={(v) =>
                       setCols(
-                        cols.map((x, j) => (j === i ? { ...x, link: v || null } : x)),
-                        `${i}-link`,
+                        cols.map((x, j) => (j === i ? { ...x, header: v || null } : x)),
+                        `${i}-header`,
                       )
                     }
                   />
+                </ColumnField>
+                <ColumnField label={dt("reports.designer.width", "Width")}>
+                  <NumberInput
+                    value={c.width}
+                    min={0.1}
+                    step={0.1}
+                    onChange={(v) =>
+                      setCols(
+                        cols.map((x, j) => (j === i ? { ...x, width: v ?? 1 } : x)),
+                        `${i}-width`,
+                      )
+                    }
+                  />
+                </ColumnField>
+              </div>
+              <div className="grid grid-cols-2 gap-1.5 px-1.5 pb-1.5">
+                <ColumnField label={dt("reports.designer.align", "Align")}>
+                  <Select
+                    value={c.align}
+                    options={[
+                      { value: "left", label: dt("reports.designer.left", "Left") },
+                      { value: "center", label: dt("reports.designer.center", "Center") },
+                      { value: "right", label: dt("reports.designer.right", "Right") },
+                    ]}
+                    onChange={(v) =>
+                      setCols(
+                        cols.map((x, j) => (j === i ? { ...x, align: v } : x)),
+                        `${i}-align`,
+                      )
+                    }
+                  />
+                </ColumnField>
+                <ColumnField label={dt("reports.designer.format", "Format")}>
+                  <Select
+                    value={c.format ?? "auto"}
+                    options={formatOptions}
+                    onChange={(v) =>
+                      setCols(
+                        cols.map((x, j) => (j === i ? { ...x, format: v === "auto" ? null : v } : x)),
+                        `${i}-format`,
+                      )
+                    }
+                  />
+                </ColumnField>
+              </div>
+              {c.format === "link" && (
+                <div title={LINK_HELP} className="px-1.5 pb-1.5">
+                  <ColumnField label={dt("reports.designer.link_url", "Link URL")}>
+                    <TextInput
+                      value={c.link ?? ""}
+                      placeholder={dt("reports.designer.link_url_e_g_https_site_item_row_id_empty_the_va", "Link URL, e.g. https://site/item/{{row.Id}} (empty: the value)")}
+                      onChange={(v) =>
+                        setCols(
+                          cols.map((x, j) => (j === i ? { ...x, link: v || null } : x)),
+                          `${i}-link`,
+                        )
+                      }
+                    />
+                  </ColumnField>
                 </div>
               )}
             </div>
