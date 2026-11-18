@@ -13,4 +13,7 @@ export default withBundleAnalyzer({
   distDir: "out",
   output: "export",
   trailingSlash: true, // Crucial step
+  experimental: {
+    agentUpgrade: "security",
+  },
 });
