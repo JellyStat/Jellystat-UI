@@ -40,12 +40,18 @@ export default function LibraryOverView({ library }: Props) {
 
   const codecQuery = useMemo(() => {
     if (!library) return undefined;
-    return new GridifyQueryBuilder().addCondition("LibraryId", op.Equal, library.id).build();
+    return new GridifyQueryBuilder()
+      .addCondition("LibraryId", op.Equal, library.id)
+      .addCondition("archived", op.Equal, false)
+      .build();
   }, [library]);
 
   const resolutionQuery = useMemo(() => {
     if (!library) return undefined;
-    return new GridifyQueryBuilder().addCondition("LibraryId", op.Equal, library.id).build();
+    return new GridifyQueryBuilder()
+      .addCondition("LibraryId", op.Equal, library.id)
+      .addCondition("archived", op.Equal, false)
+      .build();
   }, [library]);
 
   const lastWatchedQuery = useMemo(() => {

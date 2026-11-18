@@ -5,6 +5,7 @@ import WatchTrendsCard from "@/components/StatsCard/WatchTrendsCard";
 import CodecStatsCard from "@/components/StatsCard/CodecStatsCard";
 import ResolutionStatsCard from "@/components/StatsCard/ResolutionStatsCard";
 import { PageHeader } from "@/components/ui";
+import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 
 export default function StatisticsPage() {
   const { t } = useTranslation("common");
@@ -25,8 +26,8 @@ export default function StatisticsPage() {
         <div className="flex flex-col gap-6">
           <WatchTrendsCard />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-            <CodecStatsCard />
-            <ResolutionStatsCard />
+            <CodecStatsCard gridify={new GridifyQueryBuilder().addCondition("archived", op.Equal, false).build()} />
+            <ResolutionStatsCard gridify={new GridifyQueryBuilder().addCondition("archived", op.Equal, false).build()} />
           </div>
         </div>
       </div>
