@@ -38,20 +38,10 @@ export default function LibraryOverView({ library }: Props) {
       .build();
   }, [library]);
 
-  const codecQuery = useMemo(() => {
-    if (!library) return undefined;
-    return new GridifyQueryBuilder()
-      .addCondition("LibraryId", op.Equal, library.id)
-      .addCondition("archived", op.Equal, false)
-      .build();
-  }, [library]);
-
-  const resolutionQuery = useMemo(() => {
-    if (!library) return undefined;
-    return new GridifyQueryBuilder()
-      .addCondition("LibraryId", op.Equal, library.id)
-      .addCondition("archived", op.Equal, false)
-      .build();
+  const codecResolutionQuery = useMemo(() => {
+    const query = new GridifyQueryBuilder().addCondition("archived", op.Equal, false);
+    if (!library) return query.build();
+    return query.and().addCondition("LibraryId", op.Equal, library.id).build();
   }, [library]);
 
   const lastWatchedQuery = useMemo(() => {
@@ -83,8 +73,8 @@ export default function LibraryOverView({ library }: Props) {
       {/* Codec and Resolution Stats */}
       <div className="w-full">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-          <CodecStatsCard gridify={codecQuery} />
-          <ResolutionStatsCard gridify={resolutionQuery} />
+          <CodecStatsCard gridify={codecResolutionQuery} />
+          <ResolutionStatsCard gridify={codecResolutionQuery} />
         </div>
       </div>
 
