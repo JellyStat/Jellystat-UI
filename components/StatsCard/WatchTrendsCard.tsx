@@ -11,7 +11,7 @@ import ErrorCard from "../ErrorCards/ErrorCard";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import { DateRange } from "react-day-picker";
 import StatMetric from "@/lib/models/enums/statMetric";
-import { formatHourOfDay } from "@/lib/dateFormat";
+import { formatDateTime, formatHourOfDay } from "@/lib/dateFormat";
 import { chartColors as themeChartColors, chartSeries as seriesColors, Select, Spinner } from "@/components/ui";
 
 // The API labels hourly buckets as "HH:00"; re-render them in the user's 12/24-hour style
@@ -218,8 +218,7 @@ export default function WatchTrendsCard() {
                           if (timeGranularity === StatMetric.Day) {
                             return val;
                           }
-                          const d = new Date(val);
-                          return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+                          return formatDateTime(val, { month: "short", day: "numeric" }) || val;
                         } catch {
                           return val;
                         }
@@ -275,7 +274,7 @@ const CustomTooltip = ({ active, payload, label, formatValue, metricType, timeGr
     let displayLabel = label;
     try {
       if (timeGranularity === StatMetric.Date) {
-        displayLabel = new Date(label).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+        displayLabel = formatDateTime(label, { weekday: "short", month: "short", day: "numeric" }) || label;
       } else if (timeGranularity === StatMetric.Hour) {
         displayLabel = formatHourKey(label);
       }

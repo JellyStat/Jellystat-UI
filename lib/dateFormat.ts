@@ -52,6 +52,9 @@ const DEFAULT_DATE_TIME: Intl.DateTimeFormatOptions = {
   second: "2-digit",
 };
 
+/** Numeric date in the display language's order, e.g. 19/11/2026 (en-GB) or 11/19/2026 (en-US). */
+export const SHORT_DATE: Intl.DateTimeFormatOptions = { year: "numeric", month: "2-digit", day: "2-digit" };
+
 /** Date and time, honouring the user's 12/24-hour preference. Returns "" for empty or invalid input. */
 export function formatDateTime(
   value: string | number | Date | null | undefined,

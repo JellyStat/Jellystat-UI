@@ -1263,15 +1263,15 @@
     "watch_stats_desc": "Bestenlisten für deine am meisten genutzten Medien und Benutzer."
   },
   "webhook_events": {
-    "media_added": "",
-    "media_added_desc": "",
-    "playback_below_threshold": "",
-    "playback_below_threshold_desc": "",
-    "playback_ended": "",
-    "playback_ended_desc": "",
-    "playback_started": "",
-    "playback_started_desc": "",
-    "sync_completed": "",
-    "sync_completed_desc": ""
+    "media_added": "Medien hinzugefügt",
+    "media_added_desc": "Wenn eine Synchronisierung ein neues Element findet.",
+    "playback_below_threshold": "Wiedergabe unter Schwellenwert",
+    "playback_below_threshold_desc": "Wenn eine Wiedergabe vor der Mindestwiedergabezeit endet und daher nicht als Aktivität erfasst wird.",
+    "playback_ended": "Wiedergabe beendet",
+    "playback_ended_desc": "Wenn ein Benutzer eine Wiedergabe beendet.",
+    "playback_started": "Wiedergabe gestartet",
+    "playback_started_desc": "Wenn ein Benutzer eine Wiedergabe startet.",
+    "sync_completed": "Vollständige Synchronisierung abgeschlossen",
+    "sync_completed_desc": "Wenn eine vollständige Synchronisierung endet, mit den synchronisierten Bibliotheken und der Anzahl hinzugefügter, aktualisierter und archivierter Elemente."
   }
 }

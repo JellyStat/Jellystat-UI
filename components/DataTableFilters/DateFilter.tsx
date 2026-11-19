@@ -6,6 +6,7 @@ import { HeadlessPopover as Popover, HeadlessPopoverPanel as PopoverPanel, Popov
 import { DateRange } from "react-day-picker";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import { DateRangePicker } from "@/components/ui";
+import { formatDateTime, SHORT_DATE } from "@/lib/dateFormat";
 
 interface DateFilterProps {
   keyName: string;
@@ -18,15 +19,6 @@ const equalDates = (a: Date | null, b: Date | null) => {
   if (a === null && b === null) return true;
   if (a === null || b === null) return false;
   return a.getTime() === b.getTime();
-};
-
-const formatDateForInput = (d: Date | null) => {
-  if (!d) return "";
-  // Ensures we get local YYYY-MM-DD format
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
 };
 
 export default function DateFilter({ keyName, value, onChange }: DateFilterProps) {
@@ -65,8 +57,8 @@ export default function DateFilter({ keyName, value, onChange }: DateFilterProps
 
   const displayText = () => {
     if (isEmpty) return t("filter.date_range", "Date Range");
-    const s = query[0] ? formatDateForInput(query[0]) : "...";
-    const e = query[1] ? formatDateForInput(query[1]) : "...";
+    const s = query[0] ? formatDateTime(query[0], SHORT_DATE) : "...";
+    const e = query[1] ? formatDateTime(query[1], SHORT_DATE) : "...";
     return `${s} → ${e}`;
   };
 

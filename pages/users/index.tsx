@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { GridifyQueryBuilder } from "gridify-client";
 
 import client, { API_BASE } from "@/lib/api";
+import { formatDateTime, SHORT_DATE } from "@/lib/dateFormat";
 import { TrackedUsers } from "@/lib/models/trackedUsers";
 import useFilters from "@/components/DataTableFilters/useFilters";
 import TextFilter from "@/components/DataTableFilters/TextFilter";
@@ -137,9 +138,9 @@ export default function UsersPage() {
     // Safely invoke prototype extension if available, fallback to simple date
     try {
       const difference = Date.now() - new Date(activity.dateCreated).getTime();
-      return (difference as any).formatTimeDifference?.() || new Date(activity.dateCreated).toLocaleDateString();
+      return (difference as any).formatTimeDifference?.() || formatDateTime(activity.dateCreated, SHORT_DATE);
     } catch {
-      return new Date(activity.dateCreated).toLocaleDateString();
+      return formatDateTime(activity.dateCreated, SHORT_DATE);
     }
   };
 

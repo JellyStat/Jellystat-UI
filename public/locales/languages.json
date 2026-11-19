@@ -1,4 +1,11 @@
 [
-  { "code": "en-US", "name": "English" },
-  { "code": "de-DE", "name": "Deutsch" }
+  { "code": "en-US", "name": "English (US)" },
+  { "code": "de-DE", "name": "Deutsch" },
+  { "code": "en-GB", "name": "English (UK)" },
+  { "code": "fr-FR", "name": "Français" },
+  { "code": "es-ES", "name": "Español" },
+  { "code": "it-IT", "name": "Italiano" },
+  { "code": "ca-ES", "name": "Català" },
+  { "code": "pl-PL", "name": "Polski" },
+  { "code": "zh-CN", "name": "简体中文" }
 ]
