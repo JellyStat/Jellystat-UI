@@ -22,7 +22,9 @@ import Permissions from "@/lib/models/enums/Permissions";
 import configManager from "@/lib/configManager";
 import { Server } from "@/lib/models/server";
 import { wsClient } from "@/lib/wsClient";
-import { Select, StatusIndicator } from "@/components/ui";
+import WebSocketMessageTypes from "@/lib/models/enums/WebSocketMessageTypes";
+import { WebsocketMessage } from "@/lib/models/WebsocketMessage";
+import { Badge, Select, StatusIndicator } from "@/components/ui";
 
 export default function SideNav() {
   const router = useRouter();
@@ -35,6 +37,7 @@ export default function SideNav() {
   const [selectedServer, setSelectedServer] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [sessionCount, setSessionCount] = useState(0);
 
   // Close the mobile drawer whenever the route changes
   useEffect(() => {
@@ -96,16 +99,27 @@ export default function SideNav() {
     setIsConnected(wsClient.isConnected());
 
     const handleOpen = () => setIsConnected(true);
-    const handleClose = () => setIsConnected(false);
+    const handleClose = () => {
+      setIsConnected(false);
+      setSessionCount(0);
+    };
+    // Same payload shape the Sessions page handles: an array, or a single object for one session
+    const handleSessions = (msg: WebsocketMessage<unknown>) => {
+      const payload = msg?.data;
+      setSessionCount(!payload ? 0 : Array.isArray(payload) ? payload.length : 1);
+    };
+    const sessionsTag = WebSocketMessageTypes.Sessions.toString();
 
     wsClient.on("open", handleOpen);
     wsClient.on("close", handleClose);
     wsClient.on("error", handleClose);
+    wsClient.on(sessionsTag, handleSessions);
 
     return () => {
       wsClient.off("open", handleOpen);
       wsClient.off("close", handleClose);
       wsClient.off("error", handleClose);
+      wsClient.off(sessionsTag, handleSessions);
     };
   }, []);
 
@@ -246,6 +260,16 @@ export default function SideNav() {
                   className={`transition-transform duration-200 ${isActive ? "scale-110" : "group-hover:scale-110 opacity-70 group-hover:opacity-100"}`}
                 />
                 <span className="ml-3 tracking-wide">{item.name}</span>
+                {item.path === "/sessions" && sessionCount > 0 && (
+                  <Badge
+                    tone="primary"
+                    shape="pill"
+                    className="ml-auto px-2 py-0.5 tabular-nums tracking-normal"
+                    aria-label={t("sessions.active_streams", "Active Streams") + `: ${sessionCount}`}
+                  >
+                    {sessionCount}
+                  </Badge>
+                )}
               </Link>
             );
           })}
