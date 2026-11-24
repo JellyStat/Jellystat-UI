@@ -80,11 +80,17 @@ export function LeaderboardCard({
                     </div>
 
                     {item.navLink ? (
-                      <Link href={item.navLink} className="text text-gray-200 hover:text-accent transition-colors truncate">
+                      <Link
+                        href={item.navLink}
+                        title={item.name}
+                        className="text text-gray-200 hover:text-accent transition-colors line-clamp-2 wrap-break-word"
+                      >
                         {item.name}
                       </Link>
                     ) : (
-                      <span className="text text-gray-200 truncate">{item.name}</span>
+                      <span title={item.name} className="text text-gray-200 line-clamp-2 wrap-break-word">
+                        {item.name}
+                      </span>
                     )}
                   </div>
 
