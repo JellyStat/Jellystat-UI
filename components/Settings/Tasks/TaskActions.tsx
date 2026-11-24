@@ -24,32 +24,7 @@ export default function TaskActionsPage() {
   const [loading, setLoading] = useState(true);
   const [savingTask, setSavingTask] = useState<Tasks | null>(null);
 
-  // When this page first saw each running task, for the elapsed timer.
-  const [runningSince, setRunningSince] = useState<Record<string, number>>({});
-  const [now, setNow] = useState(() => Date.now());
-
   const eventTag = WebSocketMessageTypes.TaskUpdate.toString();
-
-  const currentTask = taskStatus.currentTask?.task;
-  useEffect(() => {
-    if (!currentTask) {
-      setRunningSince({});
-      return;
-    }
-    setRunningSince((prev) => (prev[currentTask] ? prev : { [currentTask]: Date.now() }));
-    setNow(Date.now());
-    const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(timer);
-  }, [currentTask]);
-
-  function formatElapsed(since: number | undefined) {
-    if (!since) return "";
-    const seconds = Math.max(0, Math.floor((now - since) / 1000));
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = String(seconds % 60).padStart(2, "0");
-    return h > 0 ? `${h}:${String(m).padStart(2, "0")}:${s}` : `${m}:${s}`;
-  }
 
   // --- WEBSOCKET SUBSCRIPTION ---
   useEffect(() => {
@@ -265,9 +240,6 @@ export default function TaskActionsPage() {
                     <span className="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
                       <span className="inline-flex items-center bg-success/10 text-success border border-success/20 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider">
                         <Spinner size={12} className="mr-1.5" /> {t("tasks.running", "Running")}
-                        <span className="ml-1.5 font-mono tabular-nums normal-case tracking-normal">
-                          {formatElapsed(runningSince[taskSetting.task])}
-                        </span>
                       </span>
                       <a
                         href="#task-logs"
