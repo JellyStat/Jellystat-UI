@@ -65,13 +65,19 @@ export function SortableTh({
     <th
       aria-sort={sorted ? (sorted === 'desc' ? 'descending' : 'ascending') : 'none'}
       className={cn(
-        'p-3 group cursor-pointer select-none hover:bg-surface-hover transition-colors',
+        'p-0 group select-none hover:bg-surface-hover transition-colors',
         a.cell,
         className
       )}
-      onClick={onSort}
     >
-      <div className={cn('flex items-center gap-2', a.row)}>
+      <button
+        type="button"
+        onClick={onSort}
+        className={cn(
+          'w-full p-3 flex items-center gap-2 cursor-pointer uppercase tracking-wider font-bold focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-primary',
+          a.row
+        )}
+      >
         {children}
         {!sorted ? (
           <ArrowUpDown
@@ -84,7 +90,7 @@ export function SortableTh({
         ) : (
           <ArrowUp size={14} aria-hidden="true" className="text-accent" />
         )}
-      </div>
+      </button>
     </th>
   );
 }

@@ -64,8 +64,8 @@ export default function DateFilter({ keyName, value, onChange }: DateFilterProps
 
   return (
     <div className="relative">
-      <Popover className="relative w-full flex items-center min-w-50">
-        <PopoverButton className="w-full flex items-center gap-2 bg-surface/50 border border-transparent hover:border-border rounded py-1.5 px-3 text-xs text-gray-200 placeholder:text-gray-500  transition-all shadow-inner">
+      <Popover className="relative w-full flex items-center min-w-28">
+        <PopoverButton className="w-full flex items-center gap-2 bg-surface/50 border border-transparent hover:border-border rounded py-1.5 pl-3 pr-7 text-xs text-gray-200 placeholder:text-gray-500  transition-all shadow-inner">
           <div className="text-gray-500">
             <Calendar size={14} />
           </div>

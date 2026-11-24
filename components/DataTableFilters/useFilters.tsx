@@ -45,7 +45,7 @@ export default function useFilters(initial: FilterItem[] = []) {
           if (
             f.value == null ||
             (isDateRange && val.some((v) => v == null)) ||
-            (isNumberRange && (val.min == null || val.max == null))
+            (isNumberRange && val.min == null && val.max == null)
           )
             return;
 
@@ -64,11 +64,12 @@ export default function useFilters(initial: FilterItem[] = []) {
             query.addCondition(f.key, op.LessThanOrEqual, endDate);
             query.endGroup();
           } else if (isNumberRange) {
+            // Either bound may be left open, e.g. "at least 5"
             const numberRange = val as NumberRangeValue;
             query.startGroup();
-            query.addCondition(f.key, op.GreaterThanOrEqual, numberRange.min!.toString());
-            query.and();
-            query.addCondition(f.key, op.LessThanOrEqual, numberRange.max!.toString());
+            if (numberRange.min != null) query.addCondition(f.key, op.GreaterThanOrEqual, numberRange.min.toString());
+            if (numberRange.min != null && numberRange.max != null) query.and();
+            if (numberRange.max != null) query.addCondition(f.key, op.LessThanOrEqual, numberRange.max.toString());
             query.endGroup();
           } else if (typeof val === "string") {
             query.addCondition(f.key, op.Contains, val.toString(), false);

@@ -6,6 +6,7 @@ import {
   ModalHeader,
   ModalPanel,
   PageHeader,
+  SortableTh,
   Table,
   TableBody,
   TableHead,
@@ -59,6 +60,28 @@ describe('Table', () => {
     );
     expect(screen.getByRole('columnheader', { name: 'Task' })).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: 'No logs found.' })).toHaveAttribute('colspan', '1');
+  });
+
+  it('sorts from a keyboard-reachable button in the header cell', () => {
+    const onSort = jest.fn();
+    render(
+      <Table>
+        <TableHead>
+          <SortableTh sorted="desc" onSort={onSort}>
+            Plays
+          </SortableTh>
+        </TableHead>
+      </Table>
+    );
+    expect(screen.getByRole('columnheader', { name: 'Plays' })).toHaveAttribute(
+      'aria-sort',
+      'descending'
+    );
+    const button = screen.getByRole('button', { name: 'Plays' });
+    button.focus();
+    expect(button).toHaveFocus();
+    button.click();
+    expect(onSort).toHaveBeenCalledTimes(1);
   });
 });
 

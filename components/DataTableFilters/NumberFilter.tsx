@@ -33,8 +33,9 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
     }
 
     if (type === NumberFilterType.RANGE) {
-      const range = debounced as NumberRangeValue;
-      if (range?.min === null || range?.max === null || range?.min === undefined || range?.max === undefined) return;
+      // One bound is enough, e.g. "at least 5"
+      const range = debounced as NumberRangeValue | null;
+      if (range?.min == null && range?.max == null) return;
 
       onChangeRef.current(new FilterItem(keyName, debounced));
       return;
@@ -52,7 +53,6 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
   };
 
   const handleRangeChange = (val: number | null, minVal: boolean = true) => {
-    console.log(`Handling range change: val=${val}, minVal=${minVal}`);
     setQuery((prev) => ({
       min: minVal ? val : (prev as NumberRangeValue)?.min,
       max: minVal ? (prev as NumberRangeValue)?.max : val,
@@ -61,7 +61,7 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
 
   const isEmpty =
     !query ||
-    (type === NumberFilterType.RANGE && (query as NumberRangeValue)?.min === null && (query as NumberRangeValue)?.max === null) ||
+    (type === NumberFilterType.RANGE && (query as NumberRangeValue)?.min == null && (query as NumberRangeValue)?.max == null) ||
     (type === NumberFilterType.SINGLE && (query as number | null) === null);
 
   const displayText = () => {
@@ -83,8 +83,8 @@ export default function NumberFilter({ keyName, value, filterType, onChange }: N
 
   return (
     <div className="relative">
-      <Popover className="relative w-full flex items-center min-w-50">
-        <PopoverButton className="w-full flex items-center gap-2 bg-surface/50 border border-transparent hover:border-border rounded py-1.5 px-3 text-xs text-gray-200 placeholder:text-gray-500  transition-all shadow-inner">
+      <Popover className="relative w-full flex items-center min-w-24">
+        <PopoverButton className="w-full flex items-center gap-2 bg-surface/50 border border-transparent hover:border-border rounded py-1.5 pl-3 pr-7 text-xs text-gray-200 placeholder:text-gray-500  transition-all shadow-inner">
           <div className="text-gray-500">
             <Hash size={14} />
           </div>

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
@@ -28,9 +28,10 @@ import { BaseTranscodingInfo } from "@/lib/models/baseTranscodingInfo";
 import useFilters from "../DataTableFilters/useFilters";
 import TextFilter from "../DataTableFilters/TextFilter";
 import DateFilter from "../DataTableFilters/DateFilter";
-import { DatesRangeValue, NumberFilterType, NumberRangeValue } from "../DataTableFilters/FilterItem";
+import FilterItem, { DatesRangeValue, NumberFilterType, NumberRangeValue } from "../DataTableFilters/FilterItem";
 import { IpLookupModal } from "./IpLookUpModal";
 import { StreamInfoModal } from "./StreamInfoModal";
+import { isRemoteIp } from "./isRemoteIp";
 import BooleanFilter from "../DataTableFilters/BooleanFilter";
 import NumberFilter from "../DataTableFilters/NumberFilter";
 import ConfirmationDialogButton from "@/components/ConfirmationDialogButton";
@@ -127,8 +128,11 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
   const activeFilterCount = filter.filter((f) => f.value != null).length;
 
   // --- DATA FETCHING ---
+  // Each request gets an id so a slower, older response can't overwrite a newer one.
+  const latestRequestId = useRef(0);
   const fetchPage = useCallback(
-    async (pageToLoad: number, replace = false) => {
+    async (pageToLoad: number) => {
+      const requestId = ++latestRequestId.current;
       setLoading(true);
       setError(null);
       try {
@@ -152,27 +156,26 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
 
         const builtQuery = query.build();
         const res = await client.History.activity.get(builtQuery, { GroupResults: GroupResults });
+        if (requestId !== latestRequestId.current) return;
 
         setActivityData(res?.data ?? []);
         setPageCount(res?.count ?? 0);
       } catch (err: any) {
+        if (requestId !== latestRequestId.current) return;
         if (err?.name === "AbortError") return;
         setError(err?.message ?? t("errors.failed_to_load_data", "Failed to load data"));
       } finally {
-        setLoading(false);
+        if (requestId === latestRequestId.current) setLoading(false);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [gridify, sortStatus, filter, GroupResults, recordsPerPage, libraryIds],
   );
 
+  // A different base query can have fewer pages, so go back to the first one.
   useEffect(() => {
-    setActivityData([]);
-    setPageCount(0);
     setPage(1);
-    fetchPage(1, true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, gridify, libraryIds]);
+  }, [gridify]);
 
   useEffect(() => {
     if (!showLibraryFilter) return;
@@ -191,6 +194,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
 
   const changeLibraryFilter = (ids: string[]) => {
     setLibraryIds(ids);
+    setPage(1);
     try {
       localStorage.setItem(LIBRARY_FILTER_STORAGE_KEY, JSON.stringify(ids));
     } catch {
@@ -200,9 +204,16 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
 
   useEffect(() => {
     fetchPage(page);
-  }, [fetchPage, page, sortStatus]);
+  }, [fetchPage, page]);
 
   // --- HANDLERS ---
+  // Changing a filter can shrink the result set, so always go back to the first page
+  const applyFilter = (key: string, value: FilterItem | null) => {
+    if (value) addOrReplaceFilter(value);
+    else removeFilter(key);
+    setPage(1);
+  };
+
   const handleSort = (accessor: string) => {
     setSortStatus((prev) => ({
       columnAccessor: accessor,
@@ -355,7 +366,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           ) : null}
         </td>
 
-        <td className="p-3 whitespace-normal min-w-[200px] max-w-[320px]">
+        <td className="p-3 whitespace-normal max-w-[320px]">
           <Link
             href={`/users/${activity.userId}`}
             className="text-sm font-bold text-gray-200 hover:text-accent transition-colors line-clamp-2 leading-tight"
@@ -365,7 +376,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           </Link>
         </td>
         <td className="p-3 text-xs font-mono text-gray-500">
-          {activity.ipAddress && isRemoteSession(activity.ipAddress) ? (
+          {activity.ipAddress && isRemoteIp(activity.ipAddress) ? (
             <IpLookupModal ip={activity.ipAddress} />
           ) : (
             activity.ipAddress
@@ -477,7 +488,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
           </button>
           {activity.ipAddress && (
             <span className="font-mono text-gray-500">
-              {isRemoteSession(activity.ipAddress) ? <IpLookupModal ip={activity.ipAddress} /> : activity.ipAddress}
+              {isRemoteIp(activity.ipAddress) ? <IpLookupModal ip={activity.ipAddress} /> : activity.ipAddress}
             </span>
           )}
         </div>
@@ -505,18 +516,6 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
     { value: "playCount", label: t("common.unit.plays", "Plays") },
     { value: "playDuration", label: t("activity.total_playback", "Total Playback") },
   ];
-
-  const ipv4Regex = new RegExp(
-    /\b(?!(10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168))(?:(?:2(?:[0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9])\.){3}(?:(?:2([0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9]))\b/,
-  );
-
-  const isRemoteSession = (ipAddress: string) => {
-    ipv4Regex.lastIndex = 0;
-    if (ipv4Regex.test(ipAddress)) {
-      return true;
-    }
-    return false;
-  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
@@ -565,6 +564,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
               onClick={() => {
                 clearFilters();
                 setFilterResetKey((k) => k + 1);
+                setPage(1);
               }}
               className="flex items-center gap-2 py-2 px-3 rounded-xl text-sm font-bold text-gray-300 hover:text-white border border-border hover:border-gray-500 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
             >
@@ -618,7 +618,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
             key={filterResetKey}
             keyName="fullName"
             value={getFilterValueOrDefault("fullName", "") as string}
-            onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("fullName"))}
+            onChange={(val) => applyFilter("fullName", val)}
           />
           <div className="flex items-center gap-2">
             <div className="flex-1 min-w-0">
@@ -749,7 +749,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                   <TextFilter
                     keyName="userName"
                     value={getFilterValueOrDefault("userName", "") as string}
-                    onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("userName"))}
+                    onChange={(val) => applyFilter("userName", val)}
                   />
                 </th>
 
@@ -757,7 +757,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                   <TextFilter
                     keyName="ipAddress"
                     value={getFilterValueOrDefault("ipAddress", "") as string}
-                    onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("ipAddress"))}
+                    onChange={(val) => applyFilter("ipAddress", val)}
                   />
                 </th>
 
@@ -765,7 +765,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                   <TextFilter
                     keyName="fullName"
                     value={getFilterValueOrDefault("fullName", "") as string}
-                    onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("fullName"))}
+                    onChange={(val) => applyFilter("fullName", val)}
                   />
                 </th>
 
@@ -773,7 +773,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                   <TextFilter
                     keyName="client"
                     value={getFilterValueOrDefault("client", "") as string}
-                    onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("client"))}
+                    onChange={(val) => applyFilter("client", val)}
                   />
                 </th>
 
@@ -785,7 +785,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                     falseLabel={t("common.direct", "Direct")}
                     isInverted={true}
                     value={getFilterValueOrDefault("directPlay", null) as boolean | null}
-                    onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("directPlay"))}
+                    onChange={(val) => applyFilter("directPlay", val)}
                   />
                 </th>
 
@@ -793,7 +793,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                   <TextFilter
                     keyName="device"
                     value={getFilterValueOrDefault("device", "") as string}
-                    onChange={(val) => (val ? addOrReplaceFilter(val) : removeFilter("device"))}
+                    onChange={(val) => applyFilter("device", val)}
                   />
                 </th>
 
@@ -801,14 +801,14 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                   <DateFilter
                     keyName="dateCreated"
                     value={getFilterValueOrDefault("dateCreated", [null, null]) as DatesRangeValue}
-                    onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("dateCreated"))}
+                    onChange={(value) => applyFilter("dateCreated", value)}
                   />
                 </th>
                 <th className="p-2 border-r border-border/50">
                   <NumberFilter
                     keyName="playCount"
                     value={getFilterValueOrDefault("playCount", null) as number | NumberRangeValue | null}
-                    onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("playCount"))}
+                    onChange={(value) => applyFilter("playCount", value)}
                   />
                 </th>
                 <th className="p-2 border-r border-border/50">
@@ -816,7 +816,7 @@ export function ActivityTable({ gridify, GroupResults, showLibraryFilter = false
                     keyName="playDuration"
                     filterType={NumberFilterType.RANGE}
                     value={getFilterValueOrDefault("playDuration", null) as number | NumberRangeValue | null}
-                    onChange={(value) => (value ? addOrReplaceFilter(value) : removeFilter("playDuration"))}
+                    onChange={(value) => applyFilter("playDuration", value)}
                   />
                 </th>
               </tr>
