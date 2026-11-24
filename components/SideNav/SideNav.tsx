@@ -160,9 +160,7 @@ export default function SideNav() {
 
   const brand = (
     <>
-      <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-linear-to-br from-accent to-primary shadow-lg shadow-primary/20 mr-3 shrink-0">
-        <Activity className="text-white" size={24} />
-      </div>
+      <img src="/favicon.svg" alt="" className="w-10 h-10 mr-3 shrink-0" />
       <span className="text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-linear-to-r from-gray-100 to-gray-400">
         Jellystat
       </span>

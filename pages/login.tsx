@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { useTranslation } from "react-i18next";
-import { Activity, Lock, User, Server as ServerIcon, ChevronRight, AlertCircle, Loader2 } from "lucide-react";
+import { Lock, User, Server as ServerIcon, ChevronRight, AlertCircle, Loader2 } from "lucide-react";
 
 import client from "@/lib/api";
 import { wsClient } from "@/lib/wsClient";
@@ -149,21 +149,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md p-8 sm:p-10 bg-surface/80 backdrop-blur-2xl border border-border rounded-3xl shadow-2xl shadow-black/60 relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out m-4">
           {/* Logo & Header */}
           <div className="flex flex-col items-center text-center mb-10">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-primary p-[1px] shadow-lg shadow-accent/20 mb-6">
-              <div className="w-full h-full bg-surface rounded-[15px] flex items-center justify-center">
-                <Activity
-                  size={32}
-                  className="text-transparent bg-clip-text bg-gradient-to-br from-accent to-primary"
-                  style={{ stroke: "url(#gradient)" }}
-                />
-                <svg width="0" height="0">
-                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop stopColor="var(--color-accent)" offset="0%" />
-                    <stop stopColor="var(--color-primary)" offset="100%" />
-                  </linearGradient>
-                </svg>
-              </div>
-            </div>
+            <img src="/favicon.svg" alt="" className="w-16 h-16 mb-6" />
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">
               {t("login.welcome_back", "Welcome Back")}
             </h1>
