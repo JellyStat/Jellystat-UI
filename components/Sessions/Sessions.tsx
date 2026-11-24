@@ -27,8 +27,16 @@ export default function Sessions() {
       setSessions([...list].sort((a, b) => (a.userName ?? "").localeCompare(b.userName ?? "")));
     };
 
+    // Ask for the current list instead of waiting for the server's next change-driven push
+    const requestSnapshot = () => wsClient.send({ type: eventTag });
+
     wsClient.on(eventTag, handler);
-    return () => wsClient.off(eventTag, handler);
+    wsClient.on("open", requestSnapshot);
+    requestSnapshot();
+    return () => {
+      wsClient.off(eventTag, handler);
+      wsClient.off("open", requestSnapshot);
+    };
   }, [eventTag]);
 
   return (
