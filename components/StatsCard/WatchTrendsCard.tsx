@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BarChart3, AlertCircle, TrendingUp, Clock, Calendar, Calendar1 } from "lucide-react";
+import { BarChart3, AlertCircle, TrendingUp, Clock, Calendar, Calendar1, CalendarRange, ChevronDown } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
 import client from "@/lib/api";
@@ -11,8 +11,17 @@ import ErrorCard from "../ErrorCards/ErrorCard";
 import { GridifyQueryBuilder, ConditionalOperator as op } from "gridify-client";
 import { DateRange } from "react-day-picker";
 import StatMetric from "@/lib/models/enums/statMetric";
-import { formatDateTime, formatHourOfDay } from "@/lib/dateFormat";
-import { chartColors as themeChartColors, chartSeries as seriesColors, Select, Spinner } from "@/components/ui";
+import { formatDateTime, formatHourOfDay, SHORT_DATE } from "@/lib/dateFormat";
+import {
+  chartColors as themeChartColors,
+  chartSeries as seriesColors,
+  cn,
+  DateRangePicker,
+  focusRing,
+  Select,
+  Spinner,
+} from "@/components/ui";
+import { HeadlessPopover as Popover, HeadlessPopoverPanel as PopoverPanel, PopoverButton } from "@/components/ui/headless";
 
 // The API labels hourly buckets as "HH:00"; re-render them in the user's 12/24-hour style
 function formatHourKey(key: string): string {
@@ -20,9 +29,25 @@ function formatHourKey(key: string): string {
   return Number.isNaN(hour) ? key : formatHourOfDay(hour);
 }
 
+// The API labels weekday buckets with English day names; match on the first three letters
+// so both "Monday" and "Mon" resolve to a translation key.
+const DAY_KEYS: Record<string, string> = {
+  mon: "monday",
+  tue: "tuesday",
+  wed: "wednesday",
+  thu: "thursday",
+  fri: "friday",
+  sat: "saturday",
+  sun: "sunday",
+};
 
 export default function WatchTrendsCard() {
   const { t } = useTranslation("common");
+
+  const formatDayKey = (key: string): string => {
+    const dayKey = DAY_KEYS[String(key).slice(0, 3).toLowerCase()];
+    return dayKey ? t(`statistics.days.${dayKey}`, key) : key;
+  };
 
   const [stats, setStats] = useState<ChartStats[]>([]);
   const [metric, setMetric] = useState<keyof ChartStat>("count");
@@ -111,12 +136,25 @@ export default function WatchTrendsCard() {
     return `${val}`;
   };
 
+  // Only commit complete ranges so a half-picked range doesn't trigger a fetch.
+  // Clearing the selection falls back to the default 31-day window.
   const handleDateRange = (range: DateRange | undefined) => {
-    if (!range) {
-      range = { from: getDefaultStartDate(), to: getDefaultEndDate() };
+    if (!range?.from) {
+      setDateRange({ from: getDefaultStartDate(), to: getDefaultEndDate() });
+      return;
     }
-    setDateRange(range);
+    if (!range.to) return;
+    const from = new Date(range.from);
+    from.setHours(0, 0, 0, 0);
+    const to = new Date(range.to);
+    to.setHours(23, 59, 59, 999);
+    setDateRange({ from, to });
   };
+
+  const dateRangeLabel =
+    dateRange?.from && dateRange?.to
+      ? `${formatDateTime(dateRange.from, SHORT_DATE)} → ${formatDateTime(dateRange.to, SHORT_DATE)}`
+      : t("filter.date_range", "Date Range");
 
   return (
     <>
@@ -130,7 +168,24 @@ export default function WatchTrendsCard() {
             </h2>
           </div>
           <div className="grid grid-cols-1 min-[440px]:grid-cols-2 gap-2 sm:flex sm:items-end sm:gap-3">
-            {/* <DateRangePickerButton value={dateRange} onChange={handleDateRange} /> */}
+            <Popover className="relative min-[440px]:col-span-2 sm:col-span-1">
+              <PopoverButton
+                disabled={loading}
+                className={cn(
+                  "relative w-full flex items-center bg-surface/80 backdrop-blur-md border border-border rounded-xl py-2.5 pl-10 pr-10 text-sm font-bold text-gray-200 shadow-sm transition-all cursor-pointer hover:border-border-strong data-open:border-primary disabled:opacity-50 disabled:cursor-not-allowed",
+                  focusRing
+                )}
+              >
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-500">
+                  <CalendarRange size={16} />
+                </span>
+                <span className="min-w-0 flex-1 truncate text-left whitespace-nowrap">{dateRangeLabel}</span>
+                <ChevronDown aria-hidden="true" className="pointer-events-none absolute right-3.5 size-4 text-gray-500" />
+              </PopoverButton>
+              <PopoverPanel anchor="bottom end" className="z-50 [--anchor-gap:8px]">
+                <DateRangePicker value={dateRange} onChange={handleDateRange} />
+              </PopoverPanel>
+            </Popover>
             <Select
               data={[
                 { value: StatMetric.Date, Icon: Calendar },
@@ -216,7 +271,7 @@ export default function WatchTrendsCard() {
                             return formatHourKey(val);
                           }
                           if (timeGranularity === StatMetric.Day) {
-                            return val;
+                            return formatDayKey(val);
                           }
                           return formatDateTime(val, { month: "short", day: "numeric" }) || val;
                         } catch {
@@ -239,7 +294,14 @@ export default function WatchTrendsCard() {
                     />
 
                     <Tooltip
-                      content={<CustomTooltip formatValue={formatValue} metricType={metric} timeGranularity={timeGranularity} />}
+                      content={
+                        <CustomTooltip
+                          formatValue={formatValue}
+                          formatDayKey={formatDayKey}
+                          metricType={metric}
+                          timeGranularity={timeGranularity}
+                        />
+                      }
                       cursor={{ stroke: themeChartColors.cursor, strokeWidth: 1, strokeDasharray: "4 4" }}
                     />
 
@@ -268,7 +330,7 @@ export default function WatchTrendsCard() {
   );
 }
 
-const CustomTooltip = ({ active, payload, label, formatValue, metricType, timeGranularity }: any) => {
+const CustomTooltip = ({ active, payload, label, formatValue, formatDayKey, metricType, timeGranularity }: any) => {
   if (active && payload && payload.length) {
     // Format the date label cleanly
     let displayLabel = label;
@@ -277,6 +339,8 @@ const CustomTooltip = ({ active, payload, label, formatValue, metricType, timeGr
         displayLabel = formatDateTime(label, { weekday: "short", month: "short", day: "numeric" }) || label;
       } else if (timeGranularity === StatMetric.Hour) {
         displayLabel = formatHourKey(label);
+      } else if (timeGranularity === StatMetric.Day) {
+        displayLabel = formatDayKey(label);
       }
     } catch {
       /* ignore */

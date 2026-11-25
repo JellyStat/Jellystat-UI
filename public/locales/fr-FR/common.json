@@ -1165,6 +1165,15 @@
   "statistics": {
     "by_date": "Par date",
     "by_day": "Par jour",
+    "days": {
+      "monday": "Lundi",
+      "tuesday": "Mardi",
+      "wednesday": "Mercredi",
+      "thursday": "Jeudi",
+      "friday": "Vendredi",
+      "saturday": "Samedi",
+      "sunday": "Dimanche"
+    },
     "by_hour": "Par heure",
     "play_count": "Nombre de lectures",
     "play_duration": "Durée de lecture",

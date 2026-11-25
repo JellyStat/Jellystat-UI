@@ -1156,6 +1156,15 @@
   "statistics": {
     "by_date": "Nach Datum",
     "by_day": "Nach Tag",
+    "days": {
+      "monday": "Montag",
+      "tuesday": "Dienstag",
+      "wednesday": "Mittwoch",
+      "thursday": "Donnerstag",
+      "friday": "Freitag",
+      "saturday": "Samstag",
+      "sunday": "Sonntag"
+    },
     "by_hour": "Nach Stunde",
     "play_count": "Wiedergabeanzahl",
     "play_duration": "Wiedergabedauer",

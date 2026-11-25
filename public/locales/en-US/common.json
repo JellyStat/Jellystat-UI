@@ -1156,6 +1156,15 @@
   "statistics": {
     "by_date": "By Date",
     "by_day": "By Day",
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    },
     "by_hour": "By Hour",
     "play_count": "Play Count",
     "play_duration": "Play Duration",

@@ -1165,6 +1165,15 @@
   "statistics": {
     "by_date": "Por fecha",
     "by_day": "Por día",
+    "days": {
+      "monday": "Lunes",
+      "tuesday": "Martes",
+      "wednesday": "Miércoles",
+      "thursday": "Jueves",
+      "friday": "Viernes",
+      "saturday": "Sábado",
+      "sunday": "Domingo"
+    },
     "by_hour": "Por hora",
     "play_count": "Número de reproducciones",
     "play_duration": "Duración de reproducción",

@@ -1147,6 +1147,15 @@
   "statistics": {
     "by_date": "按日期",
     "by_day": "按星期",
+    "days": {
+      "monday": "星期一",
+      "tuesday": "星期二",
+      "wednesday": "星期三",
+      "thursday": "星期四",
+      "friday": "星期五",
+      "saturday": "星期六",
+      "sunday": "星期日"
+    },
     "by_hour": "按小时",
     "play_count": "播放次数",
     "play_duration": "播放时长",
