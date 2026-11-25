@@ -242,9 +242,7 @@ export default function WatchStatCards() {
         </div>
 
         <div className="flex items-center gap-3 bg-surface/60 backdrop-blur-md border border-border p-1.5 rounded-xl shadow-inner">
-          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-2">
-            {t("common.days", "Days")}:
-          </label>
+          <label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-2">{t("common.days", "Days")}:</label>
           <NumberField
             value={days}
             min={1}
@@ -265,7 +263,7 @@ export default function WatchStatCards() {
           </p>
         </div>
       ) : (
-        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory -mx-4 px-4 pb-2 scroll-px-4 custom-scrollbar max-md:*:w-[85%] max-md:*:max-w-sm max-md:*:shrink-0 max-md:*:snap-start sm:-mx-6 sm:px-6 sm:scroll-px-6 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:mx-0 md:px-0 md:pb-0 xl:grid-cols-3 2xl:grid-cols-4">
+        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory -mx-4 px-4 pb-2 scroll-px-4 custom-scrollbar max-md:*:w-[85%] max-md:*:max-w-sm max-md:*:shrink-0 max-md:*:snap-start sm:-mx-6 sm:px-6 sm:scroll-px-6 md:grid md:grid-cols-2 md:gap-6 md:overflow-visible md:mx-0 md:px-0 md:pb-0 lg:grid-cols-2 2xl:grid-cols-3">
           <LeaderboardCard
             title={t("watch_stat_cards.viewed_movies", "Most Viewed Movies")}
             unit={t("common.unit.plays", "Plays")}

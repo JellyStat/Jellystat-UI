@@ -67,7 +67,9 @@ export default function LibrariesPage() {
           <div className="p-5 rounded-2xl bg-danger/10 border border-danger/20 flex items-start gap-4 shadow-xl shadow-danger/5">
             <AlertCircle size={24} className="text-danger shrink-0 mt-0.5" />
             <div className="flex flex-col">
-              <h3 className="text-lg font-bold text-danger mb-1">{t("errors.failed_to_load_libraries", "Failed to load libraries")}</h3>
+              <h3 className="text-lg font-bold text-danger mb-1">
+                {t("errors.failed_to_load_libraries", "Failed to load libraries")}
+              </h3>
               <p className="text-sm text-danger/80 font-medium">{error}</p>
             </div>
           </div>
@@ -88,7 +90,7 @@ export default function LibrariesPage() {
 
         {/* Library Grid */}
         {!loading && !error && libs.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 xl:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2  2xl:grid-cols-3 gap-6 xl:gap-8">
             {libs.map((l) => (
               <LibraryCard key={`${l.serverId}-${l.id}`} lib={l} />
             ))}
