@@ -1235,8 +1235,7 @@
     "task_queued": "{{taskName}} se añadió a la cola",
     "task_toggled": "Tarea {{taskName}} {{action}}",
     "toggle_task": "{{action}} la tarea {{taskName}}",
-    "total_logs": "Total de registros:",
-    "view_logs": "Ver registros"
+    "total_logs": "Total de registros:"
   },
   "timeline": {
     "season": "Temporada {{n}}",

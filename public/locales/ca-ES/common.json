@@ -1235,8 +1235,7 @@
     "task_queued": "{{taskName}} s'ha afegit a la cua",
     "task_toggled": "Tasca {{taskName}} {{action}}",
     "toggle_task": "{{action}} la tasca {{taskName}}",
-    "total_logs": "Total de registres:",
-    "view_logs": "Mostra els registres"
+    "total_logs": "Total de registres:"
   },
   "timeline": {
     "season": "Temporada {{n}}",

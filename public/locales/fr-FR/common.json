@@ -1235,8 +1235,7 @@
     "task_queued": "{{taskName}} mise en file d'attente",
     "task_toggled": "Tâche {{taskName}} {{action}}",
     "toggle_task": "{{action}} la tâche {{taskName}}",
-    "total_logs": "Total des journaux :",
-    "view_logs": "Voir les journaux"
+    "total_logs": "Total des journaux :"
   },
   "timeline": {
     "season": "Saison {{n}}",

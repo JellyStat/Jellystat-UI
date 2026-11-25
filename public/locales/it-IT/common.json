@@ -1235,8 +1235,7 @@
     "task_queued": "{{taskName}} messa in coda",
     "task_toggled": "Attività {{taskName}} {{action}}",
     "toggle_task": "{{action}} l'attività {{taskName}}",
-    "total_logs": "Log totali:",
-    "view_logs": "Visualizza log"
+    "total_logs": "Log totali:"
   },
   "timeline": {
     "season": "Stagione {{n}}",

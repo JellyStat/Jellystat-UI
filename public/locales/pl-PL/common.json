@@ -1244,8 +1244,7 @@
     "task_queued": "Dodano {{taskName}} do kolejki",
     "task_toggled": "Zadanie {{taskName}} {{action}}",
     "toggle_task": "{{action}} zadanie {{taskName}}",
-    "total_logs": "Łączna liczba dzienników:",
-    "view_logs": "Pokaż dzienniki"
+    "total_logs": "Łączna liczba dzienników:"
   },
   "timeline": {
     "season": "Sezon {{n}}",

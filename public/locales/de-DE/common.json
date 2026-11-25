@@ -1226,8 +1226,7 @@
     "task_queued": "{{taskName}} erfolgreich in Warteschlange eingefügt",
     "task_toggled": "Aufgabe {{taskName}} {{action}}",
     "toggle_task": "{{action}} Aufgabe {{taskName}}",
-    "total_logs": "Logs gesamt:",
-    "view_logs": "Protokolle ansehen"
+    "total_logs": "Logs gesamt:"
   },
   "timeline": {
     "season": "Staffel {{n}}",

@@ -1217,8 +1217,7 @@
     "task_queued": "{{taskName}} 已加入队列",
     "task_toggled": "任务 {{taskName}} {{action}}",
     "toggle_task": "{{action}}任务 {{taskName}}",
-    "total_logs": "日志总数：",
-    "view_logs": "查看日志"
+    "total_logs": "日志总数："
   },
   "timeline": {
     "season": "第 {{n}} 季",

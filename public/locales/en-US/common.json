@@ -1226,8 +1226,7 @@
     "task_queued": "{{taskName}} queued successfully",
     "task_toggled": "Task {{taskName}} {{action}}",
     "toggle_task": "{{action}} task {{taskName}}",
-    "total_logs": "Total Logs:",
-    "view_logs": "View logs"
+    "total_logs": "Total Logs:"
   },
   "timeline": {
     "season": "Season {{n}}",

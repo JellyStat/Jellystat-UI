@@ -237,16 +237,8 @@ export default function TaskActionsPage() {
                   const badgeLabel = taskBadgeLabels[taskSetting.task] ?? taskSetting.task;
 
                   const statusBadge = isRunning ? (
-                    <span className="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <span className="inline-flex items-center bg-success/10 text-success border border-success/20 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider">
-                        <Spinner size={12} className="mr-1.5" /> {t("tasks.running", "Running")}
-                      </span>
-                      <a
-                        href="#task-logs"
-                        className="text-xs font-bold text-gray-400 hover:text-white underline underline-offset-2 rounded focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
-                      >
-                        {t("tasks.view_logs", "View logs")}
-                      </a>
+                    <span className="inline-flex items-center bg-success/10 text-success border border-success/20 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider">
+                      <Spinner size={12} className="mr-1.5" /> {t("tasks.running", "Running")}
                     </span>
                   ) : isQueued ? (
                     <span className="inline-flex items-center bg-accent/10 text-accent border border-accent/20 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider">
