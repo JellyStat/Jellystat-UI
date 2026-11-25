@@ -44,9 +44,7 @@ export default function ActivityMatchDialog({ open, onClose, activity, target, s
   const { t } = useTranslation("common");
 
   const unlinkedLabel =
-    target === "series"
-      ? (activity?.seriesName ?? "")
-      : [activity?.seriesName, activity?.name].filter(Boolean).join(" › ");
+    target === "series" ? (activity?.seriesName ?? "") : [activity?.seriesName, activity?.name].filter(Boolean).join(" › ");
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -114,12 +112,10 @@ function MatchSearch({
 
   const startInSeries = target === "item" && seriesItem != null;
   const [crumbs, setCrumbs] = useState<Crumb[]>(startInSeries ? [{ id: seriesItem!.id, name: seriesItem!.name }] : []);
-  const [input, setInput] = useState(
-    startInSeries ? "" : ((target === "series" ? activity.seriesName : activity.name) ?? "")
-  );
+  const [input, setInput] = useState(startInSeries ? "" : ((target === "series" ? activity.seriesName : activity.name) ?? ""));
   const debounced = useDebounce(input.trim(), 400);
   const [type, setType] = useState<ItemTypes>(
-    target === "series" ? ItemTypes.Series : activity.seriesId != null ? ItemTypes.Episode : ItemTypes.Movie
+    target === "series" ? ItemTypes.Series : activity.seriesId != null ? ItemTypes.Episode : ItemTypes.Movie,
   );
   const [libraryId, setLibraryId] = useState<string>("");
   const [libraries, setLibraries] = useState<{ id: string; name: string }[]>([]);
@@ -224,6 +220,7 @@ function MatchSearch({
               { value: ItemTypes.Episode, label: t("settings.migration_type_episodes", "Episodes") },
               { value: ItemTypes.Movie, label: t("settings.migration_type_movies", "Movies") },
               { value: ItemTypes.Series, label: t("common.series", "Series") },
+              { value: ItemTypes.Audio, label: t("common.audio", "Audio") },
             ]}
           />
         )}
@@ -237,9 +234,7 @@ function MatchSearch({
             setSelected(null);
           }}
           labelFn={(value) =>
-            value === ""
-              ? t("common.all_libraries", "All libraries")
-              : (libraries.find((l) => l.id === value)?.name ?? value)
+            value === "" ? t("common.all_libraries", "All libraries") : (libraries.find((l) => l.id === value)?.name ?? value)
           }
           disabled={parent != null}
           widthPx={200}
@@ -248,7 +243,10 @@ function MatchSearch({
 
       {/* Breadcrumbs */}
       {crumbs.length > 0 && (
-        <nav aria-label={t("settings.migration_browse_path", "Browse path")} className="flex flex-wrap items-center gap-2 text-sm font-bold">
+        <nav
+          aria-label={t("settings.migration_browse_path", "Browse path")}
+          className="flex flex-wrap items-center gap-2 text-sm font-bold"
+        >
           <button onClick={() => goTo(0)} className="text-accent hover:underline cursor-pointer">
             {t("settings.migration_all_results", "All Results")}
           </button>
@@ -279,7 +277,12 @@ function MatchSearch({
             <span className="text-gray-500 text-sm font-medium">{t("common.loading", "Loading")}</span>
           </div>
         ) : results.length === 0 ? (
-          <EmptyState bordered={false} className="bg-transparent" Icon={Search} title={t("empty.no_results_found", "No results found")} />
+          <EmptyState
+            bordered={false}
+            className="bg-transparent"
+            Icon={Search}
+            title={t("empty.no_results_found", "No results found")}
+          />
         ) : (
           <>
             {/* Phones: list */}
@@ -369,7 +372,9 @@ function MatchSearch({
                           />
                         )}
                       </td>
-                      <td className="px-4 py-3">{code ? <EpisodeCode code={code} /> : <span className="text-gray-500">-</span>}</td>
+                      <td className="px-4 py-3">
+                        {code ? <EpisodeCode code={code} /> : <span className="text-gray-500">-</span>}
+                      </td>
                       <td className="px-4 py-3 text-sm font-bold text-gray-200">
                         {container ? (
                           <button

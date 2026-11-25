@@ -19,6 +19,8 @@ export default function LibraryMedia({ library }: Props) {
       .addCondition("Type", op.Equal, ItemTypes.Movie.toString())
       .or()
       .addCondition("Type", op.Equal, ItemTypes.Series.toString())
+      .or()
+      .addCondition("Type", op.Equal, ItemTypes.Audio.toString())
       .endGroup();
   }, [library?.id]);
 
