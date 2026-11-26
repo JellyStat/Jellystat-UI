@@ -43,7 +43,10 @@ function getAudio(session: SessionItem, t: TFunction) {
   const streamIndex = session.playState?.audioStreamIndex ?? -1;
   const validStreamIndex = streamIndex >= 0 && streamIndex < (item?.mediaStreams?.length ?? 0);
 
-  const transcodeType = session.transcodingInfo && !session.transcodingInfo.isAudioDirect ? t("common.transcode", "Transcode") : t("common.direct_play", "Direct Play");
+  const transcodeType =
+    session.transcodingInfo && !session.transcodingInfo.isAudioDirect
+      ? t("common.transcode", "Transcode")
+      : t("common.direct_play", "Direct Play");
   const transcodeCodec =
     session.transcodingInfo && !session.transcodingInfo.isAudioDirect && session.transcodingInfo.audioCodec
       ? ` -> ${session.transcodingInfo.audioCodec.toUpperCase()}-${session.transcodingInfo.audioChannels ?? ""}Ch`
@@ -68,13 +71,9 @@ function getAudioBitrate(session: SessionItem) {
   let transcodeBitRate = "";
   let originalBitrate = "";
 
-  if (
-    session.nowPlayingItem?.mediaStreams &&
-    session.nowPlayingItem.mediaStreams.length &&
-    streamIndex < session.nowPlayingItem.mediaStreams.length &&
-    session.nowPlayingItem.mediaStreams[streamIndex].bitRate
-  ) {
-    originalBitrate = convertBitrate(session.nowPlayingItem.mediaStreams[streamIndex].bitRate!);
+  const bitRate = session.nowPlayingItem?.mediaStreams?.[streamIndex]?.bitRate;
+  if (bitRate) {
+    originalBitrate = convertBitrate(bitRate);
   } else if (transcodeBitRate) {
     originalBitrate = "N/A";
   }
@@ -229,7 +228,9 @@ export default function SessionCard({ session }: SessionCardProps) {
           {/* Details Row */}
           <div className="flex flex-col gap-1.5 w-full">
             <LabeledText label={t("common.container", "Container")} value={container} />
-            <LabeledText label={t("common.video", "Video")} value={`${video} ${videoBitrate}`} />
+            {session.nowPlayingItem.type != ItemTypes.Audio && (
+              <LabeledText label={t("common.video", "Video")} value={`${video} ${videoBitrate}`} />
+            )}
             <LabeledText label={t("common.audio", "Audio")} value={`${audio} ${audioBitrate}`} />
             <LabeledText label={t("session.subtitles", "Subtitles")} value={subtitles} />
           </div>
