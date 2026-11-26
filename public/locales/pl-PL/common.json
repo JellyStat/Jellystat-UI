@@ -186,7 +186,7 @@
     "nothing_matches_these_filters": "Nic nie pasuje do tych filtrów",
     "nothing_on_the_timeline_yet": "Na osi czasu nic jeszcze nie ma",
     "start_from_the_template_to_see_how_it": "Zacznij od szablonu, aby zobaczyć, jak to działa.",
-    "there_is_no_playback_history_for_the": "Brak historii odtwarzania z ostatnich 31 dni.",
+    "there_is_no_playback_history_for_the": "Brak historii odtwarzania.",
     "waiting_for_users_to_start_playing_media": "Oczekiwanie, aż użytkownicy zaczną odtwarzać multimedia"
   },
   "error_cards": {
@@ -1186,7 +1186,7 @@
     "by_hour": "Według godziny",
     "play_count": "Liczba odtworzeń",
     "play_duration": "Czas odtwarzania",
-    "playback_trends": "Globalne trendy odtwarzania z 31 dni"
+    "playback_trends": "Globalne trendy odtwarzania"
   },
   "stats": {
     "codec_stats": "Statystyki kodeków",

@@ -180,7 +180,7 @@
     "nothing_matches_these_filters": "Nothing matches these filters",
     "nothing_on_the_timeline_yet": "Nothing on the timeline yet",
     "start_from_the_template_to_see_how_it": "Start from the template to see how it works.",
-    "there_is_no_playback_history_for_the": "There is no playback history for the last 31 days.",
+    "there_is_no_playback_history_for_the": "There is no playback history.",
     "waiting_for_users_to_start_playing_media": "Waiting for users to start playing media"
   },
   "error_cards": {
@@ -1168,7 +1168,7 @@
     "by_hour": "By Hour",
     "play_count": "Play Count",
     "play_duration": "Play Duration",
-    "playback_trends": "31-Day global playback trends"
+    "playback_trends": "Global playback trends"
   },
   "stats": {
     "codec_stats": "Codec Statistics",

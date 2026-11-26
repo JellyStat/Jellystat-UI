@@ -183,7 +183,7 @@
     "nothing_matches_these_filters": "Rien ne correspond à ces filtres",
     "nothing_on_the_timeline_yet": "Rien sur la chronologie pour l'instant",
     "start_from_the_template_to_see_how_it": "Partez du modèle pour voir comment ça fonctionne.",
-    "there_is_no_playback_history_for_the": "Aucun historique de lecture pour les 31 derniers jours.",
+    "there_is_no_playback_history_for_the": "Aucun historique de lecture.",
     "waiting_for_users_to_start_playing_media": "En attente de lectures par les utilisateurs"
   },
   "error_cards": {
@@ -1177,7 +1177,7 @@
     "by_hour": "Par heure",
     "play_count": "Nombre de lectures",
     "play_duration": "Durée de lecture",
-    "playback_trends": "Tendances de lecture globales sur 31 jours"
+    "playback_trends": "Tendances de lecture globales"
   },
   "stats": {
     "codec_stats": "Statistiques des codecs",

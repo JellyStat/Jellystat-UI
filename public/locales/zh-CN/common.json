@@ -177,7 +177,7 @@
     "nothing_matches_these_filters": "没有符合这些筛选条件的内容",
     "nothing_on_the_timeline_yet": "时间线上暂无内容",
     "start_from_the_template_to_see_how_it": "从模板开始，了解它的工作方式。",
-    "there_is_no_playback_history_for_the": "最近 31 天没有播放记录。",
+    "there_is_no_playback_history_for_the": "没有播放记录。",
     "waiting_for_users_to_start_playing_media": "正在等待用户开始播放媒体"
   },
   "error_cards": {
@@ -1159,7 +1159,7 @@
     "by_hour": "按小时",
     "play_count": "播放次数",
     "play_duration": "播放时长",
-    "playback_trends": "最近 31 天的全局播放趋势"
+    "playback_trends": "全局播放趋势"
   },
   "stats": {
     "codec_stats": "编解码器统计",

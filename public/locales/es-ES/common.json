@@ -183,7 +183,7 @@
     "nothing_matches_these_filters": "Nada coincide con estos filtros",
     "nothing_on_the_timeline_yet": "Aún no hay nada en la cronología",
     "start_from_the_template_to_see_how_it": "Empieza desde la plantilla para ver cómo funciona.",
-    "there_is_no_playback_history_for_the": "No hay historial de reproducción de los últimos 31 días.",
+    "there_is_no_playback_history_for_the": "No hay historial de reproducción.",
     "waiting_for_users_to_start_playing_media": "Esperando a que los usuarios empiecen a reproducir contenido"
   },
   "error_cards": {
@@ -1177,7 +1177,7 @@
     "by_hour": "Por hora",
     "play_count": "Número de reproducciones",
     "play_duration": "Duración de reproducción",
-    "playback_trends": "Tendencias globales de reproducción de 31 días"
+    "playback_trends": "Tendencias globales de reproducción"
   },
   "stats": {
     "codec_stats": "Estadísticas de códecs",

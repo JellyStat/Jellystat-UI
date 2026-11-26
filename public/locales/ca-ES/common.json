@@ -183,7 +183,7 @@
     "nothing_matches_these_filters": "Res no coincideix amb aquests filtres",
     "nothing_on_the_timeline_yet": "Encara no hi ha res a la cronologia",
     "start_from_the_template_to_see_how_it": "Comenceu des de la plantilla per veure com funciona.",
-    "there_is_no_playback_history_for_the": "No hi ha historial de reproducció dels últims 31 dies.",
+    "there_is_no_playback_history_for_the": "No hi ha historial de reproducció.",
     "waiting_for_users_to_start_playing_media": "S'està esperant que els usuaris comencin a reproduir contingut"
   },
   "error_cards": {
@@ -1177,7 +1177,7 @@
     "by_hour": "Per hora",
     "play_count": "Nombre de reproduccions",
     "play_duration": "Durada de reproducció",
-    "playback_trends": "Tendències globals de reproducció de 31 dies"
+    "playback_trends": "Tendències globals de reproducció"
   },
   "stats": {
     "codec_stats": "Estadístiques de còdecs",

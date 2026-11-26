@@ -20,7 +20,7 @@ export default function StatisticsPage() {
         <PageHeader
           icon={<BarChart3 size={28} />}
           title={t("nav.statistics", "Statistics")}
-          description={t("statistics.playback_trends", "31-Day global playback trends")}
+          description={t("statistics.playback_trends", "Global playback trends")}
         />
 
         <div className="flex flex-col gap-6">

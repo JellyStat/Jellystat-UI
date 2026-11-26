@@ -180,7 +180,7 @@
     "nothing_matches_these_filters": "Keine Treffer für diese Filter",
     "nothing_on_the_timeline_yet": "Noch nichts auf der Zeitleiste",
     "start_from_the_template_to_see_how_it": "Beginne mit der Vorlage, um zu sehen, wie es funktioniert.",
-    "there_is_no_playback_history_for_the": "Es gibt keinen Wiedergabeverlauf für die letzten 31 Tage.",
+    "there_is_no_playback_history_for_the": "Es gibt keinen Wiedergabeverlauf.",
     "waiting_for_users_to_start_playing_media": "Warten darauf, dass Benutzer Medien abspielen"
   },
   "error_cards": {
@@ -1168,7 +1168,7 @@
     "by_hour": "Nach Stunde",
     "play_count": "Wiedergabeanzahl",
     "play_duration": "Wiedergabedauer",
-    "playback_trends": "31-Tägige globale Wiedergabetrends"
+    "playback_trends": "Globale Wiedergabetrends"
   },
   "stats": {
     "codec_stats": "Codec-Statistiken",

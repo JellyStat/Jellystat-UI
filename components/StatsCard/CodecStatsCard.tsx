@@ -60,7 +60,7 @@ export default function CodecStatsCard({ gridify, showLibraryFilter = false }: P
         <NoData
           Icon={PieChartIcon}
           title={t("empty.no_data", "No Data")}
-          message={t("empty.there_is_no_playback_history_for_the", "There is no playback history for the last 31 days.")}
+          message={t("empty.there_is_no_playback_history_for_the", "There is no playback history.")}
         />
       );
     }
