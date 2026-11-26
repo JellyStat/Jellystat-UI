@@ -8,6 +8,7 @@ export enum ItemTypes {
   Trailer = "Trailer",
   Unknown = "Unknown",
   TvChannel = "TvChannel",
+  MusicAlbum = "MusicAlbum",
 }
 
 export default ItemTypes;
