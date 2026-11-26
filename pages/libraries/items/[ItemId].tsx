@@ -3,16 +3,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { useTranslation } from "react-i18next";
 import { GridifyQueryBuilder } from "gridify-client";
-import {
-  ExternalLink,
-  Lock,
-  AlertCircle,
-  Info,
-  Film,
-  Activity as ActivityIcon,
-  ChevronLeft,
-  Settings,
-} from "lucide-react";
+import { ExternalLink, Lock, AlertCircle, Info, Film, Activity as ActivityIcon, ChevronLeft, Settings } from "lucide-react";
 
 import client from "@/lib/api";
 import { ItemsWithStats } from "@/lib/models/itemsWithStats";
@@ -102,11 +93,13 @@ export default function ItemPage() {
   const parentIndexUnit = isValidParent && item.type === ItemTypes.Episode ? t("item.season", "Season") : null;
   const indexUnit = item?.type === ItemTypes.Episode ? t("common.episode", "Episode") : null;
 
-  const imageUrl = `${client.API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(item?.parent?.id ?? item?.id ?? "")}&Width=600&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
-  const backgroundImage = `${client.API_BASE}/Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(item?.parent?.id ?? item?.id ?? "")}&Width=1920&Quality=90&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
+  const Itemid: string = (isValidParent ? item?.parent?.id : item?.id) ?? "";
+
+  const imageUrl = `${client.API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(Itemid)}&Width=600&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
+  const backgroundImage = `${client.API_BASE}/Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(Itemid)}&Width=1920&Quality=90&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
 
   // Tabs Configuration
-  const showMediaTab = item && [ItemTypes.Season, ItemTypes.Series].includes(item.type);
+  const showMediaTab = item && [ItemTypes.Season, ItemTypes.Series, ItemTypes.MusicAlbum].includes(item.type);
 
   if (item && !showMediaTab && activeTab === "media") {
     setAndStoreActiveTab("overview");

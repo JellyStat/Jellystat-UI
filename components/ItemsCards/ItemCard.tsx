@@ -23,12 +23,21 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
 
   const isValidParent = item.parent && item.parent.id && item.parent.id !== item.id;
   const hasGroupedItems = item.grouped && item.grouped.length > 0;
-  const id = isValidParent ? item.parent!.id : item.id;
+  var id = isValidParent ? item.parent!.id : item.id;
+
+  if (episodeStill) {
+    id = item.id;
+  }
+
   // When enabled, episodes show their own 16:9 still; everything else shows the parent's poster.
-  const isEpisodeStill = episodeStill && item.type === ItemTypes.Episode;
+  const isEpisodeStill = episodeStill && (item.type === ItemTypes.Episode || item.type === ItemTypes.Audio);
   const imageId = isEpisodeStill ? item.id : id;
   const serverId = item.serverId;
-  const imageUrl = `${API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(imageId)}&Width=400&ServerId=${encodeURIComponent(serverId)}`;
+  const primaryImageUrl = (itemId: string) =>
+    `${API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(itemId)}&Width=400&ServerId=${encodeURIComponent(serverId)}`;
+  const imageUrl = primaryImageUrl(imageId);
+  // If the item's own image is missing, try the parent's (e.g. album art for a track) before the placeholder icon.
+  const fallbackUrl = isValidParent && imageId !== item.parent!.id ? primaryImageUrl(item.parent!.id) : undefined;
 
   // Formatting
   const indexString =
@@ -61,6 +70,7 @@ export default function ItemCard({ item, width = 160, height = 240, showSize = f
       >
         <ItemImage
           imageUrl={imageUrl}
+          fallbackUrl={fallbackUrl}
           imageHash={item.imageHash}
           archived={item.archived}
           width="100%"

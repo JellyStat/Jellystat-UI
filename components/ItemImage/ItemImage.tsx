@@ -6,6 +6,8 @@ import { Spinner } from "@/components/ui";
 
 type Props = {
   imageUrl: string;
+  /** Tried once if imageUrl fails, before falling back to the placeholder icon. */
+  fallbackUrl?: string;
   imageHash?: string | null;
   archived?: boolean;
   width?: number | string;
@@ -19,6 +21,7 @@ type Props = {
 
 export default function ItemImage({
   imageUrl,
+  fallbackUrl,
   imageHash,
   archived = false,
   width = "100%",
@@ -30,6 +33,8 @@ export default function ItemImage({
 }: Props) {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [useFallback, setUseFallback] = useState(false);
+  const src = useFallback && fallbackUrl ? fallbackUrl : imageUrl;
   const radiusStyle = borderRadius.map((r) => `${r}px`).join(" ");
   const { t } = useTranslation("common");
 
@@ -94,8 +99,12 @@ export default function ItemImage({
             imageLoaded ? "opacity-100" : "opacity-0"
           } ${onClick ? "group-hover:scale-105" : ""}`}
           // style={{ backgroundImage: `url('${imageUrl}')` }}
-          src={imageUrl}
+          src={src}
           onError={() => {
+            if (fallbackUrl && !useFallback) {
+              setUseFallback(true);
+              return;
+            }
             setImageError(true);
             setImageLoaded(false);
           }}

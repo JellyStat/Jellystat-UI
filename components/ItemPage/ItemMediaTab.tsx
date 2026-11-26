@@ -19,21 +19,18 @@ export default function ItemMedia({ item }: Props) {
       .addCondition("Type", op.Equal, ItemTypes.Season.toString())
       .or()
       .addCondition("Type", op.Equal, ItemTypes.Episode.toString())
+      .or()
+      .addCondition("Type", op.Equal, ItemTypes.Audio.toString())
       .endGroup();
   }, [item?.id]);
 
-  if (!item || !itemMediaQuery || ![ItemTypes.Season, ItemTypes.Series].includes(item.type)) {
+  if (!item || !itemMediaQuery || ![ItemTypes.Season, ItemTypes.Series, ItemTypes.MusicAlbum].includes(item.type)) {
     return null;
   }
 
   return (
     <div className="w-full animate-in fade-in duration-500 pt-2">
-      <MediaGrid 
-        gridify={itemMediaQuery} 
-        defaultOrderBy="index" 
-        defaultOrderDesc={false} 
-        showSort={false} 
-      />
+      <MediaGrid gridify={itemMediaQuery} defaultOrderBy="index" defaultOrderDesc={false} showSort={false} />
     </div>
   );
 }
