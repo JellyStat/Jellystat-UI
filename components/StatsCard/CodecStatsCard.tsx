@@ -10,23 +10,29 @@ import ErrorCard from "../ErrorCards/ErrorCard";
 import { IGridifyQuery } from "gridify-client";
 import { CountModelWithSize } from "@/lib/models/countModelWithSize";
 import StatSizeListCard from "./StatSizeList";
+import StatsLibraryFilter, { applyLibraryFilter } from "./StatsLibraryFilter";
 
 type Props = {
   gridify?: IGridifyQuery;
+  /** Show a button in the header for limiting the stats to chosen libraries. */
+  showLibraryFilter?: boolean;
 };
 
-export default function CodecStatsCard({ gridify }: Props) {
+export default function CodecStatsCard({ gridify, showLibraryFilter = false }: Props) {
   const { t } = useTranslation("common");
 
   const [stats, setStats] = useState<CountModelWithSize[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Library filter (empty = all libraries)
+  const [libraryIds, setLibraryIds] = useState<string[]>([]);
+
   const fetchPage = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await client.Stats.getCodecStats(gridify);
+      const data = await client.Stats.getCodecStats(applyLibraryFilter(gridify, libraryIds));
       const filteredData = data.filter((item) => item.name !== null && item.name !== undefined);
       for (let i = 0; i < filteredData.length; i++) {
         if (filteredData[i].name === "") {
@@ -42,7 +48,7 @@ export default function CodecStatsCard({ gridify }: Props) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [libraryIds]);
 
   useEffect(() => {
     fetchPage();
@@ -87,6 +93,7 @@ export default function CodecStatsCard({ gridify }: Props) {
             <PieChartIcon size={28} className="text-primary" />
             <h2 className="text-2xl font-bold text-white tracking-tight">{t("stats.codec_stats", "Codec Statistics")}</h2>
           </div>
+          {showLibraryFilter && <StatsLibraryFilter value={libraryIds} onChange={setLibraryIds} />}
         </div>
 
         {/* Main Grid */}

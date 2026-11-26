@@ -26,8 +26,14 @@ export default function StatisticsPage() {
         <div className="flex flex-col gap-6">
           <WatchTrendsCard />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-            <CodecStatsCard gridify={new GridifyQueryBuilder().addCondition("archived", op.Equal, false).build()} />
-            <ResolutionStatsCard gridify={new GridifyQueryBuilder().addCondition("archived", op.Equal, false).build()} />
+            <CodecStatsCard
+              gridify={new GridifyQueryBuilder().addCondition("archived", op.Equal, false).build()}
+              showLibraryFilter
+            />
+            <ResolutionStatsCard
+              gridify={new GridifyQueryBuilder().addCondition("archived", op.Equal, false).build()}
+              showLibraryFilter
+            />
           </div>
         </div>
       </div>

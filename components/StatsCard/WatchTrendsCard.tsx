@@ -54,6 +54,17 @@ export default function WatchTrendsCard() {
   const [timeGranularity, setTimeGranularity] = useState<StatMetric>(StatMetric.Date);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Libraries the user has toggled off via the legend
+  const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
+
+  const toggleSeries = (name: string) => {
+    setHiddenSeries((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  };
 
   const getDefaultStartDate = () => {
     const now = new Date();
@@ -305,7 +316,11 @@ export default function WatchTrendsCard() {
                       cursor={{ stroke: themeChartColors.cursor, strokeWidth: 1, strokeDasharray: "4 4" }}
                     />
 
-                    <Legend content={<CustomLegend />} verticalAlign="top" height={60} />
+                    <Legend
+                      content={<CustomLegend hiddenSeries={hiddenSeries} onToggle={toggleSeries} />}
+                      verticalAlign="top"
+                      height={60}
+                    />
 
                     {chartSeries.map((series) => (
                       <Area
@@ -317,6 +332,7 @@ export default function WatchTrendsCard() {
                         strokeWidth={3}
                         fillOpacity={1}
                         fill={`url(#color-${series.dataKey})`}
+                        hide={hiddenSeries.has(series.dataKey)}
                       />
                     ))}
                   </AreaChart>
@@ -375,18 +391,31 @@ const CustomTooltip = ({ active, payload, label, formatValue, formatDayKey, metr
   return null;
 };
 
-const CustomLegend = ({ payload }: any) => {
+const CustomLegend = ({ payload, hiddenSeries, onToggle }: any) => {
   return (
     <div className="flex justify-end gap-x-6 gap-y-3 mb-6 flex-wrap pr-4">
-      {payload.map((entry: any, index: number) => (
-        <div
-          key={`item-${index}`}
-          className="flex items-center gap-2 text-xs font-bold text-gray-300 transition-colors hover:text-white cursor-default"
-        >
-          <span className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: entry.color }}></span>
-          {entry.value}
-        </div>
-      ))}
+      {payload.map((entry: any, index: number) => {
+        const hidden = hiddenSeries.has(entry.dataKey);
+        return (
+          <button
+            type="button"
+            key={`item-${index}`}
+            onClick={() => onToggle(entry.dataKey)}
+            aria-pressed={!hidden}
+            className={cn(
+              "flex items-center gap-2 text-xs font-bold transition-colors cursor-pointer rounded-md",
+              hidden ? "text-gray-500 line-through hover:text-gray-400" : "text-gray-300 hover:text-white",
+              focusRing
+            )}
+          >
+            <span
+              className={cn("w-3 h-3 rounded-full shadow-sm transition-opacity", hidden && "opacity-30")}
+              style={{ backgroundColor: entry.color }}
+            ></span>
+            {entry.value}
+          </button>
+        );
+      })}
     </div>
   );
 };

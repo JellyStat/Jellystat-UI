@@ -10,23 +10,33 @@ import ErrorCard from "../ErrorCards/ErrorCard";
 import { IGridifyQuery } from "gridify-client";
 import { CountModelWithSize } from "@/lib/models/countModelWithSize";
 import StatSizeListCard from "./StatSizeList";
+import StatsLibraryFilter, { applyLibraryFilter } from "./StatsLibraryFilter";
+import LibraryTypes from "@/lib/models/enums/LibraryTypes";
 
 type Props = {
   gridify?: IGridifyQuery;
+  /** Show a button in the header for limiting the stats to chosen libraries. */
+  showLibraryFilter?: boolean;
 };
 
-export default function ResolutionStatsCard({ gridify }: Props) {
+// Music libraries have no video resolutions, so they're left out of the filter list
+const EXCLUDED_LIBRARY_TYPES = [LibraryTypes.Music];
+
+export default function ResolutionStatsCard({ gridify, showLibraryFilter = false }: Props) {
   const { t } = useTranslation("common");
 
   const [stats, setStats] = useState<CountModelWithSize[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Library filter (empty = all libraries)
+  const [libraryIds, setLibraryIds] = useState<string[]>([]);
+
   const fetchPage = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await client.Stats.getResolutionStats(gridify);
+      const data = await client.Stats.getResolutionStats(applyLibraryFilter(gridify, libraryIds));
       const filteredData = data.filter((item) => item.name !== null && item.name !== undefined);
       for (let i = 0; i < filteredData.length; i++) {
         if (filteredData[i].name === "") {
@@ -42,7 +52,7 @@ export default function ResolutionStatsCard({ gridify }: Props) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [libraryIds]);
 
   useEffect(() => {
     fetchPage();
@@ -88,6 +98,9 @@ export default function ResolutionStatsCard({ gridify }: Props) {
               {t("stats.resolution_stats", "Resolution Statistics")}
             </h2>
           </div>
+          {showLibraryFilter && (
+            <StatsLibraryFilter value={libraryIds} onChange={setLibraryIds} excludeTypes={EXCLUDED_LIBRARY_TYPES} />
+          )}
         </div>
 
         {/* Main Grid */}
