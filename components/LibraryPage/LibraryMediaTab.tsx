@@ -20,7 +20,7 @@ export default function LibraryMedia({ library }: Props) {
       .or()
       .addCondition("Type", op.Equal, ItemTypes.Series.toString())
       .or()
-      .addCondition("Type", op.Equal, ItemTypes.Audio.toString())
+      .addCondition("Type", op.Equal, ItemTypes.MusicAlbum.toString())
       .endGroup();
   }, [library?.id]);
 
