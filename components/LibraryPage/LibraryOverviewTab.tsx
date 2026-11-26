@@ -16,6 +16,7 @@ import CodecStatsCard from "@/components/StatsCard/CodecStatsCard";
 import LibraryTypeIcons from "@/lib/declarations/libraryIcons";
 import ItemTypeIcons from "@/lib/declarations/itemIcons";
 import LibraryInfoOverviewCard from "@/components/LibraryOverview/LibraryInfoOverviewCard";
+import LibraryTypes from "@/lib/models/enums/LibraryTypes";
 
 type Props = {
   library: LibrariesWithStats | null;
@@ -72,9 +73,9 @@ export default function LibraryOverView({ library }: Props) {
 
       {/* Codec and Resolution Stats */}
       <div className="w-full">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+        <div className={`grid grid-cols-1 md:grid-cols-${library.type != LibraryTypes.Music ? 2 : 1} gap-6 items-stretch`}>
           <CodecStatsCard gridify={codecResolutionQuery} />
-          <ResolutionStatsCard gridify={codecResolutionQuery} />
+          {library.type != LibraryTypes.Music && <ResolutionStatsCard gridify={codecResolutionQuery} />}
         </div>
       </div>
 
