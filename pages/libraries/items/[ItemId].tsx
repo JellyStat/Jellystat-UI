@@ -93,10 +93,27 @@ export default function ItemPage() {
   const parentIndexUnit = isValidParent && item.type === ItemTypes.Episode ? t("item.season", "Season") : null;
   const indexUnit = item?.type === ItemTypes.Episode ? t("common.episode", "Episode") : null;
 
-  const Itemid: string = (isValidParent ? item?.parent?.id : item?.id) ?? "";
+  // Poster image, then a fallback before the placeholder icon:
+  //   Episode       -> season (item.parentId), fallback series (item.parent.id)
+  //   Season, Audio -> its own image, fallback parent (item.parent.id)
+  //   Anything else -> parent if it has one, otherwise its own image
+  const parentId = isValidParent ? item.parent!.id : undefined;
+  let imageId = parentId ?? item?.id ?? "";
+  if (item?.type === ItemTypes.Episode && item.parentId) {
+    imageId = item.parentId;
+  } else if (item?.type === ItemTypes.Season || item?.type === ItemTypes.Audio) {
+    imageId = item.id;
+  }
+  const fallbackId = parentId && parentId !== imageId ? parentId : undefined;
 
-  const imageUrl = `${client.API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(Itemid)}&Width=600&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
-  const backgroundImage = `${client.API_BASE}/Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(Itemid)}&Width=1920&Quality=90&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
+  const primaryImageUrl = (itemId: string) =>
+    `${client.API_BASE}/Proxy/Images/Items/Primary?Id=${encodeURIComponent(itemId)}&Width=600&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
+  const imageUrl = primaryImageUrl(imageId);
+  const fallbackUrl = fallbackId ? primaryImageUrl(fallbackId) : undefined;
+
+  // Backdrops live on the top-level item (series / album), not on seasons or episodes.
+  const backdropId = parentId ?? item?.id ?? "";
+  const backgroundImage = `${client.API_BASE}/Proxy/Images/Items/Backdrop?Id=${encodeURIComponent(backdropId)}&Width=1920&Quality=90&ServerId=${encodeURIComponent(item?.serverId ?? "")}`;
 
   // Tabs Configuration
   const showMediaTab = item && [ItemTypes.Season, ItemTypes.Series, ItemTypes.MusicAlbum].includes(item.type);
@@ -157,7 +174,9 @@ export default function ItemPage() {
                 {/* Poster Image */}
                 <div className="shrink-0 relative group self-center md:self-auto max-w-full">
                   <ItemImage
+                    key={imageUrl}
                     imageUrl={imageUrl}
+                    fallbackUrl={fallbackUrl}
                     imageHash={item.imageHash}
                     archived={item.archived}
                     width={200}
@@ -178,8 +197,8 @@ export default function ItemPage() {
 
                   <div className="flex items-start justify-between md:justify-start gap-4 mb-2 w-full">
                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-lg break-words">
-                      {item.parentId ? (
-                        <Link href={`/libraries/items/${item.parentId}`} className="hover:text-accent transition-colors">
+                      {parentId ? (
+                        <Link href={`/libraries/items/${parentId}`} className="hover:text-accent transition-colors">
                           {title}
                         </Link>
                       ) : (
